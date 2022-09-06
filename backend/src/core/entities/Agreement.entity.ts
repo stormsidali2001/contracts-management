@@ -1,8 +1,9 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { AgreementStatus } from "../types/agreement-status.enum";
 import { AgreementType } from "../types/agreement-type.enum";
 import { DepartementsEntity } from "./Departement.entity";
 import { DirectionEntity } from "./Direction.entity";
+import { VendorEntity } from "./Vendor.entity";
 
 
 @Entity('agreements')
@@ -56,5 +57,7 @@ export class AgreementEntity{
     @ManyToOne(type =>DepartementsEntity,dp=>dp.agreements)
     departement:DepartementsEntity;
 
+    @ManyToMany(type=>VendorEntity,vn=>vn.agreements) @JoinTable()
+    vendors:VendorEntity[];
 }
 
