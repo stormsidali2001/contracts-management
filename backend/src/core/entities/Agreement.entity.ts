@@ -1,6 +1,8 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { AgreementStatus } from "../types/agreement-status.enum";
 import { AgreementType } from "../types/agreement-type.enum";
+import { DepartementsEntity } from "./Departement.entity";
+import { DirectionEntity } from "./Direction.entity";
 
 
 @Entity('agreements')
@@ -46,6 +48,13 @@ export class AgreementEntity{
 
     @Column()
     url:string;
+
+    //relations
+    @ManyToOne(type =>DirectionEntity,dr=>dr.agreements)
+    direction:DirectionEntity;
+
+    @ManyToOne(type =>DepartementsEntity,dp=>dp.agreements)
+    departement:DepartementsEntity;
 
 }
 
