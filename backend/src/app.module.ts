@@ -4,6 +4,7 @@ import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AgreementModule } from './Agreement/Agreement.module';
 import { AuthModule } from './auth/auth.module';
+import { DirectionModule } from './direction/direction.module';
 import { HttpExceptionFilter } from './shared/HttpException.filter';
 import { HttpLoggingInteceptor } from './shared/HttpLogging.interceptor';
 import { UserModule } from './user/user.module';
@@ -27,6 +28,7 @@ import { UserModule } from './user/user.module';
 
     }),
    AgreementModule,
+   DirectionModule
    
 ],
   controllers: [],
