@@ -1,3 +1,4 @@
+###auth
 POST http://localhost:8080/api/auth/register
 Content-Type:application/json
 
@@ -15,3 +16,26 @@ Content-Type:application/json
     "password":"123456",
     "username":"sidali2.storm"
 }
+
+### direction --------------------------------------------
+#####*departement
+POST http://localhost:8080/api/departements
+Content-Type:application/json
+
+{
+    "title":"technique3"
+}
+
+###
+PUT http://localhost:8080/api/departements/5e6e6810-4b69-4984-8531-afa81080439a
+Content-Type:application/json
+
+{
+    "title":"technique 50"
+}
+###
+DELETE http://localhost:8080/api/departements/3dc32dc5-c147-4573-9331-816f3d316e0e
+###
+GET http://localhost:8080/api/departements?offset=0&limit=10
+###
+GET http://localhost:8080/api/departements/5e6e6810-4b69-4984-8531-afa81080439a
