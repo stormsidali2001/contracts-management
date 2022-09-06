@@ -1,4 +1,4 @@
-import { Injectable, Logger } from "@nestjs/common";
+import { Injectable, InternalServerErrorException, Logger } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { CreateUserDTO } from "src/core/dtos/user.dto";
 import { UserEntity } from "src/core/entities/User.entity";
@@ -20,7 +20,7 @@ export class UserService{
             .where('user.username = :username or user.email = :email',{username,email})
             .getOne();
         }catch(err){
-            this.logger.error(err)
+            throw new InternalServerErrorException(err);
         }
     }
 }

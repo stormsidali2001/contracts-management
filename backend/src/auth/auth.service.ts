@@ -12,6 +12,9 @@ export class AuthService{
     async hashPassword(password:string):Promise<string>{
         return bcrypt.hash(password,12);
     }
+    async comparePassword(password:string,passwordDb:string):Promise<boolean>{
+        return bcrypt.compare(password,passwordDb);
+    }
     async register(newUser:CreateUserDTO):Promise<UserEntity>{
         try{
             const userDb = await this.userService.findByEmailOrUsername({email:newUser.email,username:newUser.username});
@@ -30,8 +33,8 @@ export class AuthService{
             newUser.password = await this.hashPassword(newUser.password);
             return this.userService.create(newUser);
         }catch(err){    
-            this.logger.error(err);
             throw new InternalServerErrorException(err);
         }
     }
+
 }
