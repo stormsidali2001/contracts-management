@@ -1,4 +1,5 @@
 import {Entity , PrimaryGeneratedColumn , Column, ManyToOne} from 'typeorm';
+import { UserRole } from '../types/UserRole.enum';
 import { DepartementEntity } from './Departement.entity';
 
 @Entity('users')
@@ -18,6 +19,12 @@ export class UserEntity{
     @Column({nullable:true})
     refresh_token_hash:string;
 
+    @Column({
+        type:'enum',
+        enum:UserRole,
+        default:UserRole.EMPLOYEE
+    })
+    
     //relations
     @ManyToOne(type=>DepartementEntity,dp=>dp.employees)
     departement:DepartementEntity;
