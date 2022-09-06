@@ -1,0 +1,38 @@
+criteres de rechereches:
+num 
+fournisseur
+objet
+montant
+delai
+partie contratants
+date signature 
+date expiration
+direction: exp: informatique ,...
+observation: 
+entre ... , et ....
+//fournisseur
+
+x // status :executee , non execeutee(+ champ raison de non execution) , execute avec retard
+
+//
+juridique :gere les contrats crud operations , affecter vers departemnt dans une direction
+juridique ajouter des fournisseur
+ ,direction contractant : regard (view), (concerne sa direction) 
+ departement: direction a plusiers departement
+
+ , finance(any) ,
+ admin: gestion de compte
+
+deltai d expiration : notification 2 mois avant l'expiration 
+//acteur
+//from research:
+types de contrats:
+1-contrat de service : service =>payement
+2-contrat de partenariat: deux entreprises => atteindre un objective ou fournir un ensemble de service
+3-Contrat de travail: exemple entreprise & employee
+
+//general notes:
+type contrat :contrat ,convension  doivent etre gerer separement
+
+nif: numero identification fiscal
+nrc: numero de registre de commerce
