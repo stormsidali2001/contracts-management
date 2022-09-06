@@ -8,17 +8,17 @@ export class DepartementEntity{
     @PrimaryGeneratedColumn('uuid')
     id:string;
 
-    @Column()
+    @Column({unique:true})
     title:string;
 
     //relations
     @ManyToOne(type=>DirectionEntity,d=>d.departements)
-    direction:DirectionEntity;
+    direction?:DirectionEntity;
 
-    @OneToMany(type=>AgreementEntity,ag=>ag.departement)
-    agreements:AgreementEntity[];
-
+    
     @OneToMany(type=>UserEntity,u=>u.departement)
     employees:UserEntity[];
-
+    
+    @OneToMany(type=>AgreementEntity,ag=>ag.departement)
+    agreements:AgreementEntity[];
 }
