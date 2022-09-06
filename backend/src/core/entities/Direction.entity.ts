@@ -1,6 +1,7 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { AgreementEntity } from "./Agreement.entity";
-import { DepartementsEntity } from "./Departement.entity";
+import { DepartementEntity } from "./Departement.entity";
+import { UserEntity } from "./User.entity";
 
 @Entity('directions')
 export class DirectionEntity{
@@ -11,9 +12,12 @@ export class DirectionEntity{
     title:string;
 
     //relations
-    @OneToMany(type=>DepartementsEntity,dp=>dp.direction)
-    departements:DepartementsEntity[];
+    @OneToMany(type=>DepartementEntity,dp=>dp.direction)
+    departements:DepartementEntity[];
 
     @OneToMany(type=>AgreementEntity,ag=>ag.direction)
     agreements:AgreementEntity[];
+
+    @OneToOne(type=>UserEntity) @JoinColumn()
+    departement_cheif:UserEntity;
 }

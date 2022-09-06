@@ -1,4 +1,5 @@
-import {Entity , PrimaryGeneratedColumn , Column} from 'typeorm';
+import {Entity , PrimaryGeneratedColumn , Column, ManyToOne} from 'typeorm';
+import { DepartementEntity } from './Departement.entity';
 
 @Entity('users')
 export class UserEntity{
@@ -16,4 +17,8 @@ export class UserEntity{
 
     @Column({nullable:true})
     refresh_token_hash:string;
+
+    //relations
+    @ManyToOne(type=>DepartementEntity,dp=>dp.employees)
+    departement:DepartementEntity;
 }

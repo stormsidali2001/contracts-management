@@ -1,9 +1,10 @@
 import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { AgreementEntity } from "./Agreement.entity";
 import { DirectionEntity } from "./Direction.entity";
+import { UserEntity } from "./User.entity";
 
 @Entity('departements')
-export class DepartementsEntity{
+export class DepartementEntity{
     @PrimaryGeneratedColumn('uuid')
     id:string;
 
@@ -16,5 +17,8 @@ export class DepartementsEntity{
 
     @OneToMany(type=>AgreementEntity,ag=>ag.departement)
     agreements:AgreementEntity[];
+
+    @OneToMany(type=>UserEntity,u=>u.departement)
+    employees:UserEntity[];
 
 }
