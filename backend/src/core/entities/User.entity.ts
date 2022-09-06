@@ -13,4 +13,7 @@ export class UserEntity{
 
     @Column({unique:true})
     username:string;
+
+    @Column({nullable:true})
+    refresh_token_hash:string;
 }

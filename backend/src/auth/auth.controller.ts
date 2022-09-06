@@ -1,5 +1,5 @@
-import { Body, Controller, Post } from "@nestjs/common";
-import { CreateUserDTO } from "src/core/dtos/user.dto";
+import { Body, Controller, InternalServerErrorException, Post } from "@nestjs/common";
+import { CreateUserDTO, LoginUserDTO } from "src/core/dtos/user.dto";
 import { AuthService } from "./auth.service";
 
 
@@ -12,4 +12,14 @@ export class AuthController{
     async registerUser(@Body() newUser:CreateUserDTO){
         return await this.authService.register(newUser);
     }   
+
+    @Post("login")
+     async login(@Body() user:LoginUserDTO){
+        try{
+
+            return await this.authService.login(user)
+        }catch(err){
+            throw new InternalServerErrorException(err);
+        }
+    }
 }
