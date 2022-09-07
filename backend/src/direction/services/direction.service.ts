@@ -29,6 +29,16 @@ export class DirectionService{
         .take(limit)
         .getMany();
     }
+    async findDirectionWithDepartement(directionId:string,departementId:string){
+        return this.directionRepository.createQueryBuilder("dr")
+        .where('dr.id = :directionId',{directionId})
+        .leftJoinAndSelect('dr.departements','dp')
+        .andWhere('dp.id = :departementId',{departementId})
+        .getOne();
+    }
+    async find(id:string):Promise<DirectionEntity>{
+        return this.directionRepository.findOneBy({id});
+    }
     async deleteDirection(id:string):Promise<string>{
        return   this.dataSource.manager.transaction(async (entityManager:EntityManager)=>{
             const directionRepository = entityManager.getRepository(DirectionEntity);

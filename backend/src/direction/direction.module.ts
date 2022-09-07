@@ -11,8 +11,9 @@ import { DirectionService } from './services/direction.service';
 
 @Module({
     imports:[TypeOrmModule.forFeature([DepartementEntity,DirectionEntity,AgreementEntity,VendorEntity])],
+    controllers:[DepartementController,DirectionController],
     providers:[DepartementService,DirectionService],
-    controllers:[DepartementController,DirectionController]
+    exports:[DepartementService,DirectionService]
 })
 
 export class DirectionModule{}
