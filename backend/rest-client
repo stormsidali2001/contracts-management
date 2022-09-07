@@ -15,7 +15,7 @@ Content-Type:application/json
 
 {
     "password":"123456",
-    "username":"sidali3.storm"
+    "username":"sidali2.storm"
 }
 
 ###### departement  ########################################
@@ -91,6 +91,7 @@ Content-Type:application/json
 ###### agreements ########################
 POST http://localhost:8080/api/Agreements
 Content-Type:application/json
+authorization:Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImVtYWlsIjoiYXNzb3Vsc2lkYWxpMkBnbWFpbC5jb20iLCJ1c2VybmFtZSI6InNpZGFsaTIuc3Rvcm0iLCJzdWIiOiJhYWI3OWI4ZS05MTA3LTQzMTUtYTVlNC1hZWZjNWUxYmFjZDkifSwiaWF0IjoxNjYyNTc0Njg1LCJleHAiOjE2NjI1NzU0ODV9.NviCsQXFabE8cX8bnpgMewMAjeSpKqTyw0Dp-zRyNNI
 
 {
     "number":"fsjkls541",
