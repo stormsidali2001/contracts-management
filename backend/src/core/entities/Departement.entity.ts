@@ -8,7 +8,7 @@ export class DepartementEntity{
     @PrimaryGeneratedColumn('uuid')
     id:string;
 
-    @Column({unique:true})
+    @Column()
     title:string;
 
     //relations

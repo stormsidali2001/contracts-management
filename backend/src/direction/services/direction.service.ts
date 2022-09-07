@@ -1,4 +1,4 @@
-import {Injectable} from '@nestjs/common'
+import {BadRequestException, Injectable} from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateDirectionDTO } from 'src/core/dtos/direction.dto';
 import { DepartementEntity } from 'src/core/entities/Departement.entity';
@@ -28,7 +28,28 @@ export class DirectionService{
         .skip(offset)
         .take(limit)
         .getMany();
-        
     }
+    async deleteDirection(id:string):Promise<string>{
+       return   this.dataSource.manager.transaction(async (entityManager:EntityManager)=>{
+            const directionRepository = entityManager.getRepository(DirectionEntity);
+            const departementRepository = entityManager.getRepository(DepartementEntity);
+            const direction = await directionRepository.createQueryBuilder('direction')
+            .where('direction.id = :id',{id})
+            .leftJoinAndSelect('direction.departements','departements')
+            .getOne();
+            if(!direction){
+                throw new BadRequestException("could not find direction");
+            }
+            await departementRepository.createQueryBuilder()
+            .delete()
+            .where('departements.id in (:...ids)',{ids:direction.departements.map(dp=>dp.id)})
+            .execute();
+
+            await directionRepository.delete(id);
+            return "done";
+
+        })
+    }
+    
   
 }
