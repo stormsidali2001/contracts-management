@@ -17,21 +17,21 @@ Content-Type:application/json
     "username":"sidali2.storm"
 }
 
-### direction --------------------------------------------
-#####*departement
+###### departement  ########################################
 POST http://localhost:8080/api/departements
 Content-Type:application/json
 
 {
-    "title":"technique3"
+    "title":"dp4",
+    "directionId":"367bd9af-e0c2-4fad-b3c3-e367a577b743"
 }
 
 ###
-PUT http://localhost:8080/api/departements/5e6e6810-4b69-4984-8531-afa81080439a
+PUT http://localhost:8080/api/departements/7052363d-fae6-42d6-87aa-d58869d17c57
 Content-Type:application/json
 
 {
-    "title":"technique 50"
+    "title":"dp5"
 }
 ###
 DELETE http://localhost:8080/api/departements/3dc32dc5-c147-4573-9331-816f3d316e0e
@@ -62,7 +62,7 @@ Content-Type:application/json
 ###
 GET http://localhost:8080/api/directions?offset=0&limit=10
 ###
-DELETE http://localhost:8080/api/directions/6d3e4a29-cee8-477b-9e88-1a0e002823d5
+DELETE http://localhost:8080/api/directions/04b6b286-b803-4ead-9270-3b85bcc0d5a0
 
 ###
 PUT http://localhost:8080/api/directions/04b6b286-b803-4ead-9270-3b85bcc0d5a0

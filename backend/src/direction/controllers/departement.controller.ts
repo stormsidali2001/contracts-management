@@ -1,5 +1,5 @@
 import {Body, Controller, Delete, Get, Param, Post, Put, Query} from '@nestjs/common';
-import { CreateDepartementDTO } from 'src/core/dtos/departement.dto';
+import { CreateDepartementDTO, UpdateDepartementDTO } from 'src/core/dtos/departement.dto';
 import { DepartementService } from '../services/departement.service';
 @Controller('departements')
 export class DepartementController{
@@ -11,7 +11,7 @@ export class DepartementController{
         return await this.departementService.createDepartement(departement)
     }
     @Put(":id")
-    async updateDepartement(@Param('id') id:string,@Body() departement:CreateDepartementDTO){
+    async updateDepartement(@Param('id') id:string,@Body() departement:UpdateDepartementDTO){
         return await this.departementService.updateDepartement(id,departement)
     }
     @Delete(":id")

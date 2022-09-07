@@ -1,9 +1,11 @@
-import { IsNotEmpty } from "class-validator";
+import { IsNotEmpty, IsUUID } from "class-validator";
 
 export class CreateDepartementDTO{
 
     @IsNotEmpty()
     title:string;
+    @IsUUID()
+    directionId:string;
 }
 export class UpdateDepartementDTO{
 

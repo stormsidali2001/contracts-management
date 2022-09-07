@@ -1,17 +1,25 @@
-import {Injectable} from '@nestjs/common'
+import {BadRequestException, Injectable, NotFoundException} from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateDepartementDTO, UpdateDepartementDTO } from 'src/core/dtos/departement.dto';
 import { CreateUserDTO } from 'src/core/dtos/user.dto';
 import { DepartementEntity } from 'src/core/entities/Departement.entity';
+import { DirectionEntity } from 'src/core/entities/Direction.entity';
 import { DeleteResult, Repository, UpdateResult } from 'typeorm';
 @Injectable()
 export class DepartementService{
     constructor(
-        @InjectRepository(DepartementEntity) private readonly departementRepository:Repository<DepartementEntity>
+        @InjectRepository(DepartementEntity) private readonly departementRepository:Repository<DepartementEntity>,
+        @InjectRepository(DirectionEntity) private readonly directionRepository:Repository<DirectionEntity>
+
     ){}
 
     async createDepartement(departement:CreateDepartementDTO):Promise<DepartementEntity>{
-        const departementEntity =  this.departementRepository.create(departement);
+        const {title,directionId} = departement;
+        const direction = await this.directionRepository.findOneBy({id:directionId});
+        if(!direction){
+            throw new BadRequestException("direction not found")
+        }
+        const departementEntity =  this.departementRepository.create({title,direction});
         return this.departementRepository.save(departementEntity);
     }
     async updateDepartement(id:string,departement:UpdateDepartementDTO):Promise<UpdateResult>{
