@@ -3,21 +3,32 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CreateDirectionDTO } from 'src/core/dtos/direction.dto';
 import { DepartementEntity } from 'src/core/entities/Departement.entity';
 import { DirectionEntity } from 'src/core/entities/Direction.entity';
-import { Repository } from 'typeorm';
+import { InsertResult, Repository ,DataSource, EntityManager} from 'typeorm';
 @Injectable()
 export class DirectionService{
     constructor(
         @InjectRepository(DirectionEntity) private readonly directionRepository:Repository<DirectionEntity>,
-        @InjectRepository(DepartementEntity) private readonly departementRepository:Repository<DepartementEntity>
+        private dataSource:DataSource
     ){}
-    async createDirection(direction:CreateDirectionDTO){
-       const newDirection = this.directionRepository.create({title:direction.title});
-       newDirection.departements = [];
-       direction.departements.forEach(dp=>{
-        const departement = this.departementRepository.create({title:dp.title})
-        newDirection.departements.push(departement);
+    async createDirection(direction:CreateDirectionDTO):Promise<InsertResult>{
+
+      return  await this.dataSource.manager.transaction(async (entityManger:EntityManager)=>{
+        const newDirection = await entityManger.getRepository(DirectionEntity).save({title:direction.title});
+        const departementRepository = entityManger.getRepository(DepartementEntity);
+        return departementRepository.insert(direction.departements.map(dp=>{
+            const departement = departementRepository.create({...dp,direction:newDirection})
+            return departement;
+       }))
        })
-       return this.directionRepository.save(newDirection);
+    
+    }
+    async findAll(offset:number = 0 , limit:number = 10):Promise<DirectionEntity[]>{
+        return this.directionRepository.createQueryBuilder('direction')
+        .leftJoinAndSelect('direction.departements','departements')
+        .skip(offset)
+        .take(limit)
+        .getMany();
+        
     }
   
 }
