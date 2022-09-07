@@ -9,3 +9,8 @@ export class CreateDirectionDTO{
     @IsArray()
     departements:CreateDepartementDTO[];
 }
+export class updateDirectionDTO{
+    @IsString()
+    @IsNotEmpty()
+    title:string;
+}

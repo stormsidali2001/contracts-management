@@ -1,9 +1,9 @@
 import {BadRequestException, Injectable} from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm';
-import { CreateDirectionDTO } from 'src/core/dtos/direction.dto';
+import { CreateDirectionDTO, updateDirectionDTO } from 'src/core/dtos/direction.dto';
 import { DepartementEntity } from 'src/core/entities/Departement.entity';
 import { DirectionEntity } from 'src/core/entities/Direction.entity';
-import { InsertResult, Repository ,DataSource, EntityManager} from 'typeorm';
+import { InsertResult, Repository ,DataSource, EntityManager, UpdateResult} from 'typeorm';
 @Injectable()
 export class DirectionService{
     constructor(
@@ -49,6 +49,9 @@ export class DirectionService{
             return "done";
 
         })
+    }
+    async updateDirection(id:string,direction:updateDirectionDTO):Promise<UpdateResult>{
+        return this.directionRepository.update(id,direction);
     }
     
   
