@@ -34,11 +34,11 @@ Content-Type:application/json
     "title":"dp5"
 }
 ###
-DELETE http://localhost:8080/api/departements/3dc32dc5-c147-4573-9331-816f3d316e0e
+DELETE http://localhost:8080/api/departements/7052363d-fae6-42d6-87aa-d58869d17c57
 ###
 GET http://localhost:8080/api/departements?offset=0&limit=10
 ###
-GET http://localhost:8080/api/departements/5e6e6810-4b69-4984-8531-afa81080439a
+GET http://localhost:8080/api/departements/e2598a28-174a-41ef-9d39-9b57be4727fb
 
 ###### direction  ########################################
 POST http://localhost:8080/api/directions

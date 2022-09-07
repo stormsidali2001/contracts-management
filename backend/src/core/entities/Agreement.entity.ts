@@ -25,7 +25,7 @@ export class AgreementEntity{
     object:string;
 
     @Column()
-    amount:string; //fr: montant
+    amount:number; //fr: montant
 
     @Column({
         type:'date'
