@@ -17,11 +17,13 @@ export class AgreementService{
         @InjectRepository(VendorEntity) private readonly vendorRepository:Repository<VendorEntity>
     ){}
     async createAgreement(agreement:CreateAgreementDTO):Promise<AgreementEntity>{
-        const {directionId , departementId , vendorId, ...agreementData} = agreement;
-        const [direction,departement,vendor] = await Promise.all([
+        const {directionId , departementId , vendorIds, ...agreementData} = agreement;
+        const [direction,departement,vendors] = await Promise.all([
                         this.directionRepository.findOneBy({id:directionId}),
                         this.departementRepository.findOneBy({id:departementId}),
-                        this.vendorRepository.findOneBy({id:vendorId})
+                        this.vendorRepository.createQueryBuilder('vendor')
+                        .where('vendor.id in (:...vendorIds)',{vendorIds})
+                        .getMany()
                  ]);
         let str = "";
         if(!direction){
@@ -30,13 +32,13 @@ export class AgreementService{
         if(!departement){
             str += ", departement"
         }
-        if(!vendor){
-            str += "vendor"
+        if(vendorIds.length != vendors.length){
+            str += "vendors"
         }
-        if(!direction || !vendor || !departement){
+        if(!direction || (vendorIds.length != vendors.length) || !departement){
             throw new BadRequestException(`${str} not found`);
         }
 
-        return this.agreementRepository.save({...agreementData,direction,departement,vendor});
+        return this.agreementRepository.save({...agreementData,direction,departement,vendors});
     }
 }

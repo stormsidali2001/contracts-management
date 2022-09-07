@@ -71,3 +71,37 @@ Content-Type:application/json
 {
     "title":"editeddd"
 }
+
+###### vendors ########################
+POST http://localhost:8080/api/vendors
+Content-Type:application/json
+
+{
+    "num":"156fsa4fs2",
+    "company_name":"frigo dz2",
+    "nif":"dsaf454fa2",
+    "nrc":"sdaf54fas42",
+    "address":"country city state street",
+    "mobile_phone_number":"0663737507",
+    "home_phone_number":"0663737507",
+    "agreementIds":["7ff876ca-dbc9-4f5e-8fed-07a51393e7ed"]
+}
+
+###### agreements ########################
+POST http://localhost:8080/api/Agreements
+Content-Type:application/json
+
+{
+    "number":"fsjkls541",
+    "type":"convension",
+    "object":"some object",
+    "amount":6000,
+    "expiration_date":"2022-09-07",
+    "signature_date":"2022-09-07",
+    "status":"not executed",
+    "url":"/haja",
+    "directionId":"4385095c-ed50-4dd4-9748-de7bc11ff467",
+    "departementId":"679e8bf9-8d56-4e9c-9f31-a3743c147e03",
+    "vendorIds":["30e1a075-d502-45a7-9af3-bd46b7fdea86","c5f13a1a-24b5-40d2-84da-1bda3162c246"]
+
+}

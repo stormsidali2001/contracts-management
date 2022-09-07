@@ -9,13 +9,13 @@ export class VendorEntity{
     @Column({unique:true})
     num:string; //numero de fournisseur
 
-    @Column()
+    @Column({unique:true})
     company_name:string// raison sociale : le nom de l'entreprise
 
-    @Column()
+    @Column({unique:true})
     nif:string; //numero d'identification fascale
 
-    @Column()
+    @Column({unique:true})
     nrc:string // numero de registre de commerce
 
     @Column()
@@ -27,7 +27,8 @@ export class VendorEntity{
     @Column()
     home_phone_number:string;
 
-    @ManyToMany(type=>AgreementEntity,ag=>ag.vendors) @JoinTable()
+    @ManyToMany(type=>AgreementEntity,ag=>ag.vendors) 
     agreements:AgreementEntity[];
+    
 
 }
