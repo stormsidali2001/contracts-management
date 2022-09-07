@@ -39,3 +39,22 @@ DELETE http://localhost:8080/api/departements/3dc32dc5-c147-4573-9331-816f3d316e
 GET http://localhost:8080/api/departements?offset=0&limit=10
 ###
 GET http://localhost:8080/api/departements/5e6e6810-4b69-4984-8531-afa81080439a
+
+###### direction  ########################################
+POST http://localhost:8080/api/directions
+Content-Type:application/json
+
+{
+    "title":"technique 50",
+    "departements":[
+        {
+            "title":"dp1"
+        },
+        {
+            "title":"dp2"
+        },
+        {
+            "title":"dp3"
+        }
+    ]
+}
