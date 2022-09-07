@@ -1,6 +1,7 @@
 import {Entity , PrimaryGeneratedColumn , Column, ManyToOne} from 'typeorm';
 import { UserRole } from '../types/UserRole.enum';
 import { DepartementEntity } from './Departement.entity';
+import { DirectionEntity } from './Direction.entity';
 
 @Entity('users')
 export class UserEntity{
@@ -28,4 +29,7 @@ export class UserEntity{
     //relations
     @ManyToOne(type=>DepartementEntity,dp=>dp.employees)
     departement:DepartementEntity;
+
+    @ManyToOne(type=>DirectionEntity,dr=>dr.employees)
+    direction:DirectionEntity;
 }

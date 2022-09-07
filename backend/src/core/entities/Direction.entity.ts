@@ -20,4 +20,7 @@ export class DirectionEntity{
 
     @OneToOne(type=>UserEntity) @JoinColumn()
     departement_cheif:UserEntity;
+
+    @OneToMany(type=>UserEntity,u=>u.direction)
+    employees:UserEntity[];
 }

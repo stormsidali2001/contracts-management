@@ -91,10 +91,10 @@ Content-Type:application/json
 ###### agreements ########################
 POST http://localhost:8080/api/Agreements
 Content-Type:application/json
-authorization:Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImVtYWlsIjoiYXNzb3Vsc2lkYWxpMkBnbWFpbC5jb20iLCJ1c2VybmFtZSI6InNpZGFsaTIuc3Rvcm0iLCJzdWIiOiJhYWI3OWI4ZS05MTA3LTQzMTUtYTVlNC1hZWZjNWUxYmFjZDkifSwiaWF0IjoxNjYyNTc0Njg1LCJleHAiOjE2NjI1NzU0ODV9.NviCsQXFabE8cX8bnpgMewMAjeSpKqTyw0Dp-zRyNNI
+authorization:Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImVtYWlsIjoiYXNzb3Vsc2lkYWxpMkBnbWFpbC5jb20iLCJ1c2VybmFtZSI6InNpZGFsaTIuc3Rvcm0iLCJzdWIiOiJhYWI3OWI4ZS05MTA3LTQzMTUtYTVlNC1hZWZjNWUxYmFjZDkifSwiaWF0IjoxNjYyNTc2Nzc1LCJleHAiOjE2NjI1Nzc1NzV9.4R6gm3NsKjU8U04LiPqZz66wgmxEpFJO8gQ8UmtJqA0
 
 {
-    "number":"fsjkls541",
+    "number":"fsjkls542",
     "type":"convension",
     "object":"some object",
     "amount":6000,
