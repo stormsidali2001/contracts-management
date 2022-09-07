@@ -61,3 +61,5 @@ Content-Type:application/json
 
 ###
 GET http://localhost:8080/api/directions?offset=0&limit=10
+###
+DELETE http://localhost:8080/api/directions/6d3e4a29-cee8-477b-9e88-1a0e002823d5
