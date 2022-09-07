@@ -10,7 +10,8 @@ export class UserService{
     private logger = new Logger(UserService.name);
     constructor(@InjectRepository(UserEntity) private userRepository:Repository<UserEntity>){}
     async create(newUser:CreateUserDTO):Promise<UserEntity>{
-        return this.userRepository.save(newUser);
+        console.log("there.............",newUser)
+        return this.userRepository.save({...newUser});
     }
     async findBy(options:FindOptionsWhere<UserEntity>):Promise<UserEntity>{
         return this.userRepository.findOneBy(options)

@@ -24,7 +24,7 @@ export class UserEntity{
         enum:UserRole,
         default:UserRole.EMPLOYEE
     })
-    
+    role:UserRole
     //relations
     @ManyToOne(type=>DepartementEntity,dp=>dp.employees)
     departement:DepartementEntity;
