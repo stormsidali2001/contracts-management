@@ -3,10 +3,10 @@ POST http://localhost:8080/api/auth/register
 Content-Type:application/json
 
 {
-    "email":"admin@gmail.com",
+    "email":"ahmed@gmail.com",
     "password":"123456",
-    "username":"admin",
-    "role":"admin"
+    "username":"ahmed"
+    
 }
 
 ###
