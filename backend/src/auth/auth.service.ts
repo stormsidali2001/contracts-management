@@ -70,6 +70,7 @@ export class AuthService{
        try{
 
            const userDb = await this.userService.findByEmailOrUsername({email:user.email,username:user.username});
+           console.log(userDb,'login ...........')
            
            if(!userDb){
                 throw new UnauthorizedException("wrong credentials")

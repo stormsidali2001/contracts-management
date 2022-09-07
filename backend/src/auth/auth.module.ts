@@ -5,13 +5,15 @@ import { AuthController } from "./auth.controller";
 import { AuthService } from "./auth.service";
 import { JwtAccessTokenGuard } from "./guards/jwt-access-token.guard";
 import { JwtRefreshTokenGuard } from "./guards/jwt-refresh-token.guard";
+import { RoleGuard } from "./guards/Role.guard";
 import { JwtAccessTokenStrategy } from "./passport strategies/jwt-access-token.strategy";
 import { JwtRefreshTokenStrategy } from "./passport strategies/jwt-refresh-token.strategy";
 
 
 @Module({
     imports:[UserModule,JwtModule.register({})],
-    providers:[AuthService, JwtAccessTokenStrategy,JwtRefreshTokenStrategy,JwtAccessTokenGuard,JwtRefreshTokenGuard],
-    controllers:[AuthController]
+    providers:[AuthService, JwtAccessTokenStrategy,JwtRefreshTokenStrategy,JwtAccessTokenGuard,JwtRefreshTokenGuard,RoleGuard],
+    controllers:[AuthController],
+    exports:[UserModule]
 })
 export class AuthModule{}
