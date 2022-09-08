@@ -5,6 +5,7 @@ import { AgreementEntity } from 'src/core/entities/Agreement.entity';
 import { DepartementEntity } from 'src/core/entities/Departement.entity';
 import { DirectionEntity } from 'src/core/entities/Direction.entity';
 import { VendorEntity } from 'src/core/entities/Vendor.entity';
+import { DirectionService } from 'src/direction/services/direction.service';
 import {  Repository } from 'typeorm';
 
 
@@ -12,32 +13,29 @@ import {  Repository } from 'typeorm';
 export class AgreementService{
     constructor(
         @InjectRepository(AgreementEntity) private readonly agreementRepository:Repository<AgreementEntity>,
-        @InjectRepository(DirectionEntity) private readonly directionRepository:Repository<DirectionEntity>,
-        @InjectRepository(DepartementEntity) private readonly departementRepository:Repository<DepartementEntity>,
-        @InjectRepository(VendorEntity) private readonly vendorRepository:Repository<VendorEntity>
+        @InjectRepository(VendorEntity) private readonly vendorRepository:Repository<VendorEntity>,
+        private readonly directionService:DirectionService
     ){}
     async createAgreement(agreement:CreateAgreementDTO):Promise<AgreementEntity>{
         const {directionId , departementId , vendorIds, ...agreementData} = agreement;
-        const [direction,departement,vendors] = await Promise.all([
-                        this.directionRepository.findOneBy({id:directionId}),
-                        this.departementRepository.findOneBy({id:departementId}),
+        const [direction,vendors] = await Promise.all([
+                        this.directionService.findDirectionWithDepartement(directionId,departementId),
                         this.vendorRepository.createQueryBuilder('vendor')
                         .where('vendor.id in (:...vendorIds)',{vendorIds})
                         .getMany()
                  ]);
-        let str = "";
         if(!direction){
-            str += "direction"
+            throw new  BadRequestException("direction not found");
         }
+        const departement = direction.departements.length > 0 ? direction.departements[0]:null;
         if(!departement){
-            str += ", departement"
+            throw new  BadRequestException("departement is not in direction");
         }
+       
         if(vendorIds.length != vendors.length){
-            str += "vendors"
+            throw new  BadRequestException("cound not find one or more  vendor");
         }
-        if(!direction || (vendorIds.length != vendors.length) || !departement){
-            throw new BadRequestException(`${str} not found`);
-        }
+      
 
         return this.agreementRepository.save({...agreementData,direction,departement,vendors});
     }

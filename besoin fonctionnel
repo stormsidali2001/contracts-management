@@ -1,0 +1,13 @@
+launch:
+1-crud operations on  directions and sub-departements
+
+Account manament:
+admin:
+1- can do all the crud operations on the accounts 
+2- can disable an accounts
+3- can assign roles during account creation , or after that.
+user:
+1-login into his account.
+2-change his email and password
+3-
+
