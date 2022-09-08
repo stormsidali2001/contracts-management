@@ -5,7 +5,8 @@ import { RoleGuard } from "src/auth/guards/Role.guard";
 import { UserRole } from "src/core/types/UserRole.enum";
 import { CreateAgreementDTO } from "../../core/dtos/agreement.dto";
 import { AgreementService } from "../services/Agreement.service";
-
+import {ApiTags} from '@nestjs/swagger';
+@ApiTags('Agreements')
 @RequiredRoles(UserRole.JURIDICAL,UserRole.ADMIN)
 @UseGuards(JwtAccessTokenGuard,RoleGuard)
 @Controller('Agreements')

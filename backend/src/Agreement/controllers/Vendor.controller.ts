@@ -5,7 +5,8 @@ import { RoleGuard } from 'src/auth/guards/Role.guard';
 import { CreateVendorDTO } from 'src/core/dtos/vendor.dto';
 import { UserRole } from 'src/core/types/UserRole.enum';
 import { VendorService } from '../services/vendor.service';
-
+import {ApiTags} from '@nestjs/swagger';
+@ApiTags('vendors')
 @Controller('vendors')
 @RequiredRoles(UserRole.JURIDICAL,UserRole.ADMIN)
 @UseGuards(JwtAccessTokenGuard,RoleGuard)

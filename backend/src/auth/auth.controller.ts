@@ -1,8 +1,9 @@
 import { Body, Controller, InternalServerErrorException, Post } from "@nestjs/common";
 import { CreateUserDTO, LoginUserDTO } from "src/core/dtos/user.dto";
 import { AuthService } from "./auth.service";
+import {ApiTags} from '@nestjs/swagger';
 
-
+@ApiTags('auth')
 @Controller("auth")
 export class AuthController{
     constructor(

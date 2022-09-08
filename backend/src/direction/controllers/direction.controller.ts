@@ -3,6 +3,9 @@ import { CreateDirectionDTO, updateDirectionDTO } from 'src/core/dtos/direction.
 import { DirectionEntity } from 'src/core/entities/Direction.entity';
 import { UpdateResult } from 'typeorm';
 import { DirectionService } from '../services/direction.service';
+import {ApiTags} from '@nestjs/swagger';
+
+@ApiTags('directions')
 @Controller('directions')
 export class DirectionController{
     constructor(
