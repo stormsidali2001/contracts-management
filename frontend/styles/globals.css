@@ -1,3 +1,7 @@
+:root{
+  --glass:rgba(71, 71, 71, 0.575);
+  --dashboard-active-item: rgba(71, 71, 71, 0.7)
+}
 html,
 body {
   padding: 0;
@@ -13,7 +17,10 @@ a {
 
 * {
   box-sizing: border-box;
+  margin:0;
+  padding: 0;
 }
+
 
 @media (prefers-color-scheme: dark) {
   html {
