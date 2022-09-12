@@ -1,12 +1,16 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700&display=swap');
 :root{
-  --glass:rgba(71, 71, 71, 0.575);
-  --dashboard-active-item: rgba(71, 71, 71, 0.7)
+  --dashboard-bg:"rgba(255, 255, 255, 0.67)";
+  --sidebar-bg:"#FEFEFE";
+  --primary-text-contrast:"#17498E";
+  
 }
 html,
 body {
   padding: 0;
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
+  font-family: 'Poppins',-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
 }
 
