@@ -63,3 +63,4 @@ todos----------------------
 contrat encours : after being marked as executed add the following :date_debut, date_fin
 a vendor can have only one contract
 
+separating accords in the dashboard to : convension , contrat
