@@ -4,4 +4,66 @@
     border-radius: 15.2532px;
     width: 241px;
     height: 342px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    row-gap: 10px;
+}
+.title{
+    font-style: normal;
+    font-weight: 500;
+    font-size: 13.3333px;
+    color: #807D7D;
+    margin-top: -5px;
+    margin-left: 8px;
+}
+.events{
+    list-style: none;
+    margin:0;
+    display: flex;
+    flex-direction: column;
+    row-gap: 10px;
+    overflow-y: scroll;
+    padding: 2px 6px;
+}
+.events::-webkit-scrollbar{
+    width: 4px;
+   
+}
+.events::-webkit-scrollbar-track{
+    background-color: rgba(23, 73, 142, 0.1);
+    border-radius: 10px;
+}
+.events::-webkit-scrollbar-thumb{
+    background-color: rgba(23, 73, 142, 0.4);
+    border-radius: 10px;
+}
+.event{
+    display: flex;
+    background: rgba(255, 255, 255, 0.2);
+    box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.25);
+    border-radius: 5px;
+    padding: 8px;
+    column-gap: 4px;
+
+}
+.event .body{
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 12px;
+    color: #1E1D1D;
+}
+.circle{
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    margin-top: 4px;
+}
+.juridicalCircle{
+    background: #FFB359;
+
+}
+.adminOrChief{
+    background: #992CFF;
 }
