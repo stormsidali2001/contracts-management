@@ -1,0 +1,135 @@
+.container{
+    background: #FFFFFF;
+    box-shadow: 0px 1.52532px 6.86392px rgba(23, 73, 142, 0.2);
+    border-radius: 15.2532px;
+    width: 241px;
+    height: 342px;
+    padding: 0  10px ;
+    display: flex;
+    flex-direction: column;
+    row-gap: 10px;
+}
+.type,.status ,.direction{
+    display: flex;
+    flex-direction: column;
+    row-gap: 7px;
+}
+.title{
+    font-style: normal;
+    font-weight: 500;
+    font-size: 13.3333px;
+    color: #807D7D;
+    margin-top: 5px;
+    margin-left: 8px;
+}
+ 
+.subtitle{
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 12px;
+}
+.statusList{
+    margin:0;
+    padding-left: 15px;
+    display: flex;
+    flex-direction: column;
+}
+.statusItem{
+    display: flex;
+    align-items: center;
+    column-gap: 5px;
+    margin-bottom:7px;
+}
+.statusSubItem{
+  margin-left: 10px;
+  margin-bottom:4px;
+}
+.statusItem.statusSubItem > .statusCircle{
+background-color: rgba(23, 73, 142, 0.8);;
+}
+.statusCircle{
+    background: #17498E;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+}
+.text{
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 12px;
+}
+.text > span{
+    font-weight: 600;
+}
+
+/*type */
+.typeContainer{
+    display: flex;
+    justify-content: space-between;
+}
+.contractContainer{
+    width: 30px;
+    height: 30px;
+    background: rgba(255, 179, 89, 0.2);
+    border-radius: 9.18636px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.contractIcon{
+    stroke:rgb(243, 238, 238);
+    fill:#FAA036;
+}
+.convensionPercentage ,.contractPercentage{
+    width: 32px;
+    height: 32px;
+    
+}
+
+.contract , .convension{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.contract {
+    row-gap: 6px;
+}
+
+.contract > span , .convension >span {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 9.2948px;
+}
+
+.directionCircle{
+    background: #17498E;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    position: relative;
+}
+.directionCircle > span{
+    position: absolute;
+    top:50%;
+    left:50%;
+    transform: translate(-50%,-50%);
+    color:white;
+    font-weight: 600;
+font-size: 6.81818px;
+}
+.directionList{
+    margin:0;
+    padding-left: 15px;
+    display: flex;
+    flex-direction: column;
+    list-style: none;
+}
+.directionItem{
+    display: flex;
+    align-items: center;
+    column-gap: 5px;
+    margin-bottom:7px;
+}
