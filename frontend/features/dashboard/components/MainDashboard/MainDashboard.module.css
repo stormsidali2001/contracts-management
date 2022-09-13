@@ -1,7 +1,6 @@
 .container{
     width: 100%;
     height: calc(100% - 60px);
-    border:1px solid red;
     display: grid;
     grid-template-rows: 10% auto;
 

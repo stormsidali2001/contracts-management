@@ -97,8 +97,6 @@ function ExpandedCard({params,setExpanded,cardId}:{params:PropType,setExpanded:a
                             chart:{
                                 type:'area',
                                 height:'auto',
-                                
-                                
                             },
                             dataLabels:{
                                 enabled:false,

@@ -4,4 +4,44 @@
     background: #FFFFFF;
     box-shadow: 0px 1.52532px 6.86392px rgba(23, 73, 142, 0.2);
     border-radius: 15.2532px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 10px;
+}
+.title{
+    font-family: 'Poppins';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 13.3333px;
+    color: #807D7D;
+    margin-left: 8px;
+    margin-top: -4px;
+
+}
+.numUsers{
+    text-align: center;
+    font-family: 'Poppins';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 26.67px;
+    color: rgba(65, 62, 62, 0.89);
+}
+.percentages{
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+
+}
+.percentage{
+    display: flex;
+    align-items: center;
+    column-gap: 10px;
+}
+.percentage > span{
+    color:rgba(65, 62, 62, 0.89);
+    font-family: 'Poppins';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 10px;
 }

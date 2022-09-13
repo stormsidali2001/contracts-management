@@ -1,8 +1,34 @@
 .container{
     width: 241px;
-    height: 128.13px;
+    height:200px;
     background: #FFFFFF;
     box-shadow: 0px 1.52532px 6.86392px rgba(23, 73, 142, 0.2);
     border-radius: 15.2532px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
 
 }
+.title{
+    font-family: 'Poppins';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 13.3333px;
+    color: #807D7D;
+    margin-left: 8px;
+    margin-top: -4px;
+
+}
+.chartContainer{
+    width: 100%;
+    height:90%;
+    display: flex;
+    justify-content: center;
+    padding-left: 0;
+  
+    
+}
+.chartContainer  .apexcharts-tooltip {
+    background: #f3f3f3;
+    color: orange;
+  }
