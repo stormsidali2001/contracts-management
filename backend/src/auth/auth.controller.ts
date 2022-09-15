@@ -26,6 +26,7 @@ export class AuthController{
 
     @Post("verify-access-token")
     async verifyAccessToken(@Body('access_token') access_token:string):Promise<{exp:number}>{
+        console.log("jwt ",access_token )
         return await this.authService.verifyAccessToken(access_token);
     }
 }

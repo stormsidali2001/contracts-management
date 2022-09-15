@@ -92,6 +92,7 @@ export class AuthService{
     async verifyAccessToken(access_token:string):Promise<{exp:number}>{
         try{
             const jwtPayload:JwtCompletePayload = await this.jwtService.verify(access_token,{secret:this.configService.get('JWT_ACCESS_TOKEN_SECRET')})
+            console.log(jwtPayload)
             return {exp:jwtPayload.exp}
        
         }catch(err){

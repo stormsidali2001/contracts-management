@@ -25,8 +25,8 @@ const logout = async ()=>{
     localStorage.removeItem('user');
 }
 
-const verifyAccessToken = async (aceess_token:string):Promise<boolean>=>{
-    const response = await axios.post(`http://localhost:8080/api/auth/verify-jwt`,{aceess_token});
+const verifyAccessToken = async (access_token:string):Promise<boolean>=>{
+    const response = await axios.post(`http://localhost:8080/api/auth/verify-access-token`,{access_token});
     if(response.data){
         const jwtExpirationInMs = response.data.exp*1000;
         return jwtExpirationInMs > Date.now();
