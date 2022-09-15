@@ -48,7 +48,24 @@ export const AuthSlice = createSlice({
         }
     },
     extraReducers:(builder)=>{
-        
+        builder
+        .addCase(login.pending,(state)=>{
+            state.isLoading = true;
+        })
+        .addCase(login.fulfilled,(state,action)=>{
+            state.user = action.payload?.user;
+            state.jwt = action.payload?.jwt;
+            state.isSuccess = true;
+            state.isLoading = false;
+            state.isAuthenticated = true;
+        })
+        .addCase(login.rejected,(state)=>{
+            state.isLoading = false;
+            state.isError = true;
+            state.user = null;
+            state.isAuthenticated = false;
+        })
+
     }
 
 })
