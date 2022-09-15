@@ -20,8 +20,25 @@ const login = async (user:LoginUser):Promise<{user:DisplayUser| null , jwt:Jwt| 
             return {jwt:tokens , user:decodedJwt.user};
 }
 
-const authService ={
-    login
+const logout = async ()=>{
+    localStorage.removeItem('jwt');
+    localStorage.removeItem('user');
 }
+
+const verifyAccessToken = async (aceess_token:string):Promise<boolean>=>{
+    const response = await axios.post(`http://localhost:8080/api/auth/verify-jwt`,{aceess_token});
+    if(response.data){
+        const jwtExpirationInMs = response.data.exp*1000;
+        return jwtExpirationInMs > Date.now();
+    }
+    return false;
+}
+
+const authService ={
+    login,
+    logout,
+    verifyAccessToken
+}
+
 
 export default authService;

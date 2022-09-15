@@ -1,7 +1,8 @@
 import { Button, CircularProgress, TextField } from '@mui/material';
 import Link from 'next/link';
-import { FormEvent } from 'react';
-import { login } from '../features/auth/authSlice';
+import { useRouter } from 'next/router';
+import { FormEvent, useEffect } from 'react';
+import { login ,reset} from '../features/auth/authSlice';
 import { LoginUser } from '../features/auth/models/login-user.interface';
 import { BMT_LOGO_URL } from '../features/dashboard/data';
 import useInput from '../hooks/input/use-input';
@@ -11,10 +12,11 @@ import { validateEmailOrUsername } from '../shared/utils/validation/emailOrUsern
 import styles from '../styles/Signin.module.css';
 
 const signin = () => {
-  const {text:email,textChangeHandler:emailChangeHandler,shouldDisplayError,inputBlurHandler:emailBlurHandler} = useInput(validateEmailOrUsername);
-  const {text:password,textChangeHandler:passwordChangeHandler} = useInput();
+  const {text:email,textChangeHandler:emailChangeHandler,shouldDisplayError,inputBlurHandler:emailBlurHandler,inputClearHandler:emailClearHandler} = useInput(validateEmailOrUsername);
+  const {text:password,textChangeHandler:passwordChangeHandler,inputClearHandler:passwordClearHandler} = useInput();
   const dispatch = useAppDispatch();
-  const {isLoading} = useAppSelector(state=>state.auth)
+  const router = useRouter()
+  const {isLoading , isAuthenticated , isSuccess} = useAppSelector(state=>state.auth)
  const handleSubmit =  (e:FormEvent)=>{
     e.preventDefault();
      const isEmail = validateEmail(email);
@@ -24,11 +26,24 @@ const signin = () => {
      }else{
       loginUser.username = email;
      }
-
-    
      dispatch(login(loginUser))
-
  }
+ const clearForm = ()=>{
+  emailClearHandler();
+  passwordClearHandler();
+ }
+ useEffect(()=>{
+  if(isSuccess){
+    dispatch(reset());
+    clearForm();
+
+  }
+ },[isSuccess,dispatch])
+ useEffect(()=>{
+  if(!isAuthenticated) return;
+  
+  router.push('/')
+ },[isAuthenticated])
   return (
     <div className={styles.container}>
         <div className={styles.leftWrapper}>
@@ -66,4 +81,6 @@ const signin = () => {
   )
 }
 
-export default signin
+export default signin;
+
+

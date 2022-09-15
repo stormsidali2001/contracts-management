@@ -3,7 +3,7 @@ import * as bcrypt from 'bcrypt';
 import { CreateUserDTO, LoginUserDTO } from "src/core/dtos/user.dto";
 import { UserEntity } from "src/core/entities/User.entity";
 import { UserService } from "src/user/user.service";
-import { JwtPayload } from "./types/JwtPayload.interface";
+import { JwtCompletePayload, JwtPayload } from "./types/JwtPayload.interface";
 import {JwtService} from '@nestjs/jwt'
 import { ConfigService } from "@nestjs/config";
 import { Tokens } from "./types/tokens.interface";
@@ -89,4 +89,13 @@ export class AuthService{
 
     }
 
+    async verifyAccessToken(access_token:string):Promise<{exp:number}>{
+        try{
+            const jwtPayload:JwtCompletePayload = await this.jwtService.verify(access_token,{secret:this.configService.get('JWT_ACCESS_TOKEN_SECRET')})
+            return {exp:jwtPayload.exp}
+       
+        }catch(err){
+            throw new InternalServerErrorException(err);
+        }
+    }
 }

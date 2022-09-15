@@ -1,5 +1,5 @@
 export interface DisplayUser{
-    id:string;
+    sub:string;
     username:string;
     email:string;
     firstName:string;

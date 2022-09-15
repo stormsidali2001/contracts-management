@@ -23,4 +23,9 @@ export class AuthController{
             throw new InternalServerErrorException(err);
         }
     }
+
+    @Post("verify-access-token")
+    async verifyAccessToken(@Body('access_token') access_token:string):Promise<{exp:number}>{
+        return await this.authService.verifyAccessToken(access_token);
+    }
 }
