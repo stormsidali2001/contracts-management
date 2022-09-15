@@ -1,6 +1,8 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { DisplayUser } from "./models/DisplayUser.interface";
 import { Jwt } from "./models/Jwt.interface";
+import { LoginUser } from "./models/login-user.interface";
+import authService from "./services/auth.service";
 
 export interface AsyncState{
     isLoading:boolean;
@@ -24,7 +26,17 @@ const initialState:AuthState = {
    isAuthenticated:false
 }
 
-
+export const login = createAsyncThunk(
+    'login',
+    async (user:LoginUser,thunkAPI)=>{
+        try{
+            return await authService.login(user);
+        }catch(err){
+            console.log(err);
+            return  thunkAPI.rejectWithValue("unable to sign in ")
+        }
+    }
+)
 export const AuthSlice = createSlice({
     name:'auth',
     initialState,
@@ -36,7 +48,7 @@ export const AuthSlice = createSlice({
         }
     },
     extraReducers:(builder)=>{
-
+        
     }
 
 })
