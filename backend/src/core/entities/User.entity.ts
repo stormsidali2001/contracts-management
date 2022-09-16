@@ -17,6 +17,12 @@ export class UserEntity{
     @Column({unique:true})
     username:string;
 
+    @Column()
+    firstName:string;
+
+    @Column()
+    lastName:string;
+
     @Column({nullable:true})
     refresh_token_hash:string;
 

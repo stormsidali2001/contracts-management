@@ -15,7 +15,6 @@ export class UserService{
     constructor(
         @InjectRepository(UserEntity) private userRepository:Repository<UserEntity>,
         private readonly directionService:DirectionService,
-        private readonly departementService:DepartementService,
         ){}
     async create(newUser:CreateUserDTO):Promise<UserEntity>{
         const {departementId = null,directionId = null,...userData} = newUser;  

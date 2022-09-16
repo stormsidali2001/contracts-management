@@ -10,6 +10,14 @@ export class CreateUserDTO{
     @IsNotEmpty()
     username:string;
 
+    @ApiProperty({required:true, type:'string',example:"Assoul"})
+    @IsNotEmpty()
+    firstName:string;
+
+    @ApiProperty({required:true, type:'string',example:"Sidali"})
+    @IsNotEmpty()
+    lastName:string;
+
     @ApiProperty({required:true, type:'string',example:'123456'})
     @IsNotEmpty()
     password:string;

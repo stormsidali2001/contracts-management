@@ -22,6 +22,10 @@
     color: #807D7D;
     margin-left: 8px;
 }
+.indications >span:nth-of-type(2)::first-letter{
+    text-transform: capitalize;
+}
+
 .notificationBdge > span{
     right:5px ;
     top:5px;

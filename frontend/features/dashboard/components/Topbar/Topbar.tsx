@@ -1,5 +1,6 @@
 import { Badge, Button, IconButton, Popover } from '@mui/material'
 import { MouseEvent, useId ,useState } from 'react'
+import { useAppSelector } from '../../../../hooks/redux/hooks'
 import LittleChevronIcon from '../../../../icons/LittleChevronIcon'
 import NotificationIcon from '../../../../icons/NotificationIcon'
 import PopoverContent from './PopoverContent/PopoverContent'
@@ -8,6 +9,7 @@ import styles from './Topbar.module.css'
 const Topbar = () => {
   const popoverId = useId();
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+  const {user} = useAppSelector(state=>state.auth)
   const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -20,7 +22,7 @@ const Topbar = () => {
     <div className={styles.container}>
        <div className={styles.indications}>
             <span>Tableau de Bord</span>
-            <span>Juridique</span>
+            <span>{user?.role ?? ''}</span>
        </div>
        <div className={styles.rightButtons}>
 

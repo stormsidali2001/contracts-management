@@ -52,7 +52,6 @@ export const verifyAccessToken = createAsyncThunk(
         try{
             console.log("trying with ",access_token)
             const role =  await authService.verifyAccessToken(access_token)
-            console.log("role ",role)
             return role;
         }catch(err){
             console.log(err);

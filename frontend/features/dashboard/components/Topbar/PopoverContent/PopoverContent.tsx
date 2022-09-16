@@ -4,7 +4,7 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { Divider } from '@mui/material';
 import Link from 'next/link';
-import { useAppDispatch } from '../../../../../hooks/redux/hooks';
+import { useAppDispatch, useAppSelector } from '../../../../../hooks/redux/hooks';
 import { logout } from '../../../../auth/authSlice';
 const PopoverContent = () => {
     const links = [
@@ -12,6 +12,7 @@ const PopoverContent = () => {
         {text:"Parametres" , link:"",icon:SettingsIcon},
     ]
     const dispatch = useAppDispatch();
+    const {user} = useAppSelector(state=>state.auth)
     function handleLogout(e:any){
         e.preventDefault();
         dispatch(logout())
@@ -24,7 +25,7 @@ const PopoverContent = () => {
             </div>
             <div className={styles.userInfos}>
                 <span>Assoul Sidali</span>
-                <span>Juridique</span>
+                <span>{user?.role ?? ''}</span>
                 <span>assoulsidali@gmail.com</span>
             </div>
          </div>
