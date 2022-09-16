@@ -50,7 +50,10 @@ export const verifyAccessToken = createAsyncThunk(
     'auth/verify-access-token',
     async (access_token:string,thunkAPI)=>{
         try{
-            return await authService.verifyAccessToken(access_token)
+            console.log("trying with ",access_token)
+            const role =  await authService.verifyAccessToken(access_token)
+            console.log("role ",role)
+            return role;
         }catch(err){
             console.log(err);
             return  thunkAPI.rejectWithValue("invalide or expired access token")
@@ -84,6 +87,7 @@ export const authSlice = createSlice({
         //login
         .addCase(login.pending,(state)=>{
             state.isLoading = true;
+            state.isSuccess = false;
         })
         .addCase(login.fulfilled,(state,action)=>{
             state.user = action.payload?.user;
@@ -105,7 +109,11 @@ export const authSlice = createSlice({
         .addCase(verifyAccessToken.fulfilled,(state,action)=>{
             state.isSuccess = true;
             state.isLoading = false;
-            state.isAuthenticated = action.payload;
+            state.isAuthenticated = true;
+            if(state.user){
+                state.user.role = action.payload.role;
+            }
+            
         })
         .addCase(verifyAccessToken.rejected,(state)=>{
             state.isLoading = false;

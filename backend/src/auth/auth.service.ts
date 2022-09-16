@@ -8,6 +8,7 @@ import {JwtService} from '@nestjs/jwt'
 import { ConfigService } from "@nestjs/config";
 import { Tokens } from "./types/tokens.interface";
 import * as argon2 from 'argon2';
+import { UserRole } from "src/core/types/UserRole.enum";
 @Injectable()
 export class AuthService{
     private logger = new Logger(AuthService.name);
@@ -89,12 +90,11 @@ export class AuthService{
 
     }
 
-    async verifyAccessToken(access_token:string):Promise<{exp:number}>{
+    async verifyAccessToken(userId:string):Promise<{role:UserRole}>{
         try{
-            const jwtPayload:JwtCompletePayload = await this.jwtService.verify(access_token,{secret:this.configService.get('JWT_ACCESS_TOKEN_SECRET')})
-            console.log(jwtPayload)
-            return {exp:jwtPayload.exp}
-       
+          const user = await this.userService.findBy({id:userId});
+          return {role:user.role};
+            
         }catch(err){
             throw new InternalServerErrorException(err);
         }

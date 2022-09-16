@@ -1,7 +1,9 @@
-import { Body, Controller, InternalServerErrorException, Post } from "@nestjs/common";
+import { Body, Controller, InternalServerErrorException, Post ,Req,UseGuards , Get} from "@nestjs/common";
 import { CreateUserDTO, LoginUserDTO } from "src/core/dtos/user.dto";
 import { AuthService } from "./auth.service";
 import {ApiTags} from '@nestjs/swagger';
+import { JwtAccessTokenGuard } from "./guards/jwt-access-token.guard";
+import { UserRole } from "src/core/types/UserRole.enum";
 
 @ApiTags('auth')
 @Controller("auth")
@@ -24,9 +26,10 @@ export class AuthController{
         }
     }
 
-    @Post("verify-access-token")
-    async verifyAccessToken(@Body('access_token') access_token:string):Promise<{exp:number}>{
-        console.log("jwt ",access_token )
-        return await this.authService.verifyAccessToken(access_token);
+    @UseGuards(JwtAccessTokenGuard)
+    @Get("verify-access-token")
+    async verifyAccessToken(@Req() request):Promise<{role:UserRole}>{
+        const userId = request.user.id;
+        return await this.authService.verifyAccessToken(userId);
     }
 }

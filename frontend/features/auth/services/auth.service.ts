@@ -4,6 +4,7 @@ import jwt_decode from 'jwt-decode';
 import { DecodedJwt } from "../models/decoded-jwt.interface";
 import axios from "axios";
 import { DisplayUser } from "../models/DisplayUser.interface";
+import { UserRole } from "../models/user-role.enum";
 
 
 const login = async (user:LoginUser):Promise<{user:DisplayUser| null , jwt:Jwt| null} >=>{
@@ -25,13 +26,14 @@ const logout = async ()=>{
     localStorage.removeItem('user');
 }
 
-const verifyAccessToken = async (access_token:string):Promise<boolean>=>{
-    const response = await axios.post(`http://localhost:8080/api/auth/verify-access-token`,{access_token});
-    if(response.data){
-        const jwtExpirationInMs = response.data.exp*1000;
-        return jwtExpirationInMs > Date.now();
-    }
-    return false;
+const verifyAccessToken = async (access_token:string):Promise<{role:UserRole | undefined}>=>{
+    
+    const response = await axios.get(`http://localhost:8080/api/auth/verify-access-token`,{headers:{
+        'Authorization':`Bearer ${access_token}`
+    }})
+    console.log(response,response.data ,"response")
+    return response.data;
+   
 }
 
 const authService ={
