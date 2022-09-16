@@ -4,6 +4,7 @@ import { CreateUserDTO } from "src/core/dtos/user.dto";
 import { DepartementEntity } from "src/core/entities/Departement.entity";
 import { DirectionEntity } from "src/core/entities/Direction.entity";
 import { UserEntity } from "src/core/entities/User.entity";
+import { PaginationResponse } from "src/core/types/paginationResponse.interface";
 import { DepartementService } from "src/direction/services/departement.service";
 import { DirectionService } from "src/direction/services/direction.service";
 import { FindOptionsWhere, Repository, UpdateResult } from "typeorm";
@@ -47,4 +48,20 @@ export class UserService{
     async findAndUpdate(userId:string,partialEntity: QueryDeepPartialEntity<UserEntity>):Promise<UpdateResult>{
         return this.userRepository.update({id:userId},partialEntity);
     }
+    async findAll(offset:number = 0 ,limit:number = 10):Promise<PaginationResponse<UserEntity>>{
+        const res =  await  this.userRepository.createQueryBuilder('user')
+        .skip(offset)
+        .take(limit)
+        .getManyAndCount();
+
+        return {
+            total:res[1],
+            data:res[0]
+        }
+    }   
+    // async deleteUser(id:string): Promise<string>{
+       
+    // }
+    // async updateUser(id:string):Promise<UpdateResult>{
+    // }
 }
