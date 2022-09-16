@@ -13,7 +13,7 @@ export class CreateUserDTO{
     @ApiProperty({required:true, type:'string',example:"Assoul"})
     @IsNotEmpty()
     firstName:string;
-
+    
     @ApiProperty({required:true, type:'string',example:"Sidali"})
     @IsNotEmpty()
     lastName:string;

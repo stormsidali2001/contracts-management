@@ -13,6 +13,7 @@ const PopoverContent = () => {
     ]
     const dispatch = useAppDispatch();
     const {user} = useAppSelector(state=>state.auth)
+    
     function handleLogout(e:any){
         e.preventDefault();
         dispatch(logout())
@@ -24,9 +25,9 @@ const PopoverContent = () => {
                 <img src="sidali.jpg"/>
             </div>
             <div className={styles.userInfos}>
-                <span>Assoul Sidali</span>
+                <span>{`${user?.firstName}  ${user?.lastName}`}</span>
                 <span>{user?.role ?? ''}</span>
-                <span>assoulsidali@gmail.com</span>
+                <span>{user?.email ?? ''}</span>
             </div>
          </div>
          <Divider sx={{margin:'6px 0'}}/>
