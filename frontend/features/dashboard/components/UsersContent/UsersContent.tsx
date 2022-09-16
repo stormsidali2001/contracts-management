@@ -4,55 +4,68 @@ import FilterIcon from '../../../../icons/FilterIcon';
 import TextField from '@mui/material/TextField';
 import {SearchRounded } from '@mui/icons-material';
 import InputAdornment from '@mui/material/InputAdornment';
-import AccountCircle from '@mui/icons-material/AccountCircle';
-import { DataGrid } from '@mui/x-data-grid';
-import { useState } from 'react';
+import { DataGrid, GridColumns } from '@mui/x-data-grid';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
+import { PaginationResponse } from '../../models/paginationResponse.interface';
+import { DisplayUser } from '../../../auth/models/DisplayUser.interface';
 
-const columns = [
+const columns:GridColumns<any> = [
     {
         field:"id",
         headerName:"id",
-        width:78
+        flex:1,
+        
     },
     {
         field:"firstName",
         headerName:"nom",
-        width:78
+        flex:1
     },
     {
         field:"lastName",
         headerName:"prenom",
-        width:78
+        flex:1
     },
     {
         field:"role",
         headerName:"role",
-        width:100
+        flex:1
     },
     {
         field:"email",
         headerName:"email",
-        width:100
+        flex:1
     },
 ]
 const UsersContent = () => {
-    const [pageState,setPageState] = useState({
+    const [pageState,setPageState] = useState<any>({
         isLoading:false,
         data:[],
         total:0,
-        page:1,
-        pageSize:10,
+        page:0,
+        pageSize:5,
 
 
     })
-    const data = [
-        {firstName:"assoul",lastName:"sidali",email:"assoulsidali@gmail.com"},
-        {firstName:"assoul",lastName:"sidali",email:"assoulsidali@gmail.com"},
-        {firstName:"assoul",lastName:"sidali",email:"assoulsidali@gmail.com"},
-    ];
-const obj = <InputAdornment position="start">
-<SearchRounded />
-</InputAdornment>;
+ 
+    useEffect( ()=>{
+        
+        setPageState((old:any)=>({...old,isLoading:true}))
+             axios.get(`http://localhost:8080/api/users?offset=${pageState.page}&limit=${pageState.pageSize}`)
+            .then((res:any)=>{
+                const {data:d} = res;
+                console.log(1,d)
+                setPageState((old:any)=>({...old,data:d?.data,total:d?.total,isLoading:false}))
+            })
+            .catch(err=>{
+                console.error(err);
+            })
+       
+    },[pageState?.page,pageState?.pageSize])
+    const obj = <InputAdornment position="start">
+    <SearchRounded />
+    </InputAdornment>;
   return (
     <div className={styles.container}>
         <div className={styles.wrapperBox}>
@@ -81,19 +94,23 @@ const obj = <InputAdornment position="start">
                 />
                 
             </div>
-            <div>
+            <div className={styles.tableContainer}>
             <DataGrid
+                autoHeight
                 rows={pageState.data}
                 rowCount={pageState.total}
                 loading={pageState.isLoading}
-                rowsPerPageOptions={[5]}
+                rowsPerPageOptions={[5,10,20]}
                 pagination
                 page={pageState.page}
                 pageSize={pageState.pageSize}
                 paginationMode="server"
-                onPageChange={(newPage: number) => setPageState((old)=>({...old,page:newPage+1}))}
-                onPageSizeChange={(newPageSize: number) => setPageState((old)=>({...old,pageSize:newPageSize}))}
+                onPageChange={(newPage: number) => setPageState((old:any)=>({...old,page:newPage}))}
+                onPageSizeChange={(newPageSize: number) => setPageState((old:any)=>({...old,pageSize:newPageSize}))}
                 columns={columns}
+                disableColumnFilter
+                disableColumnMenu 
+                
             />
             </div>
             

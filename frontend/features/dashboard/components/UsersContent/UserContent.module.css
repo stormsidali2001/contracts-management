@@ -41,3 +41,8 @@
 .input:hover{
     border: none;
 }
+
+.tableContainer{
+    height:400;
+    width: 100%;
+}
