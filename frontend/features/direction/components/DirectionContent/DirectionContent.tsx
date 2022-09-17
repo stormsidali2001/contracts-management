@@ -9,6 +9,7 @@ import AddCircleIcon from '@mui/icons-material/AddCircle';
 import axios from 'axios';
 import { Direction } from '../../models/direction.interface';
 import CreateDepartement from '../CreateDepartement/CreateDepartement';
+import { Departement } from '../../models/departement.interface';
 
 
 const DirectionContent = () => {
@@ -17,6 +18,14 @@ const DirectionContent = () => {
   const [selectedDirectionId , setSelectedDirectionId] = useState<string | null>(null);
 
   const handleCloseDepartementModal = () => setOpenDepartementModal(false);
+
+  const pushDepartementToDirection = (selectedDirectionId:string,departement:Departement)=>{
+    const newDirections = [...directions];
+    const index = newDirections.findIndex(d=>d.id === selectedDirectionId)
+    newDirections[index].departements.push({...departement})
+
+    setDirections(newDirections)
+  }
   const handleOpenDepartementModal = (directionId:string)=>{
     setOpenDepartementModal(true)
     setSelectedDirectionId(directionId)
@@ -115,7 +124,10 @@ const DirectionContent = () => {
             aria-labelledby="modal-modal-title"
             aria-describedby="modal-modal-description"
       >
-        <CreateDepartement selectedDirectionId={selectedDirectionId} handleCloseDepartementModal={handleCloseDepartementModal}/>
+        <CreateDepartement 
+            selectedDirectionId={selectedDirectionId} handleCloseDepartementModal={handleCloseDepartementModal}
+            pushDepartementToDirection={pushDepartementToDirection}
+        />
       </Modal>
     </div>
   )

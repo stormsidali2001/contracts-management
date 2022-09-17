@@ -4,7 +4,14 @@ import useInput from '../../../../hooks/input/use-input';
 import { validateDepartementAbriviationLength, validateDepartementTitleLength } from '../../../../shared/utils/validation/length';
 import styles from './CreateDepartement.module.css';
 import axios from 'axios';
-const CreateDepartement = ({selectedDirectionId,handleCloseDepartementModal}:{selectedDirectionId:string | null,handleCloseDepartementModal:()=>void}) => {
+import { Departement } from '../../models/departement.interface';
+const CreateDepartement = ({
+    selectedDirectionId,
+    handleCloseDepartementModal,
+    pushDepartementToDirection}:{
+    selectedDirectionId:string | null,handleCloseDepartementModal:()=>void,
+    pushDepartementToDirection:(selectedDirectionId:string,departement:Departement)=>void
+}) => {
     const {
         text:title ,
         inputBlurHandler:titleBlurHandler,inputClearHandler:titleClearHandler,textChangeHandler:titleChangeHandler,
@@ -19,13 +26,21 @@ const CreateDepartement = ({selectedDirectionId,handleCloseDepartementModal}:{se
     const handleSubmit = (e:any)=>{
         e.preventDefault();
         if(!title || !abriviation || !selectedDirectionId) return;
-        axios.post('http://localhost:8080/api/departements',{
+        const departement = {
             directionId:selectedDirectionId,
             title,
             abriviation
+        }
+        axios.post('http://localhost:8080/api/departements',{
+           ...departement
         })
         .then(res=>{    
             console.log("create departement response",res)
+            pushDepartementToDirection(selectedDirectionId,{ 
+                title,
+                abriviation,
+                users:0
+            })
             handleCloseDepartementModal();
 
         })
@@ -68,7 +83,7 @@ const CreateDepartement = ({selectedDirectionId,handleCloseDepartementModal}:{se
                         || titleShouldDisplayError 
                         || abriviationShouldDisplayError}
                 >Creer</Button>
-                <Button>Annuler</Button>
+                <Button onClick={()=>handleCloseDepartementModal()}>Annuler</Button>
             </Stack>
         </form>
     </div>
