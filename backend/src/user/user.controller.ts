@@ -13,8 +13,8 @@ export class UserController{
     ){}
     
     @Get('')
-    async findAll(@Query('offset',ParseIntPipe) offset:number = 0 ,@Query('limit',ParseIntPipe) limit:number = 10):Promise<PaginationResponse<UserEntity>>{
-        return await  this.userService.findAll(offset,limit);
+    async findAll(@Query('offset') offset:number = 0 ,@Query('limit') limit:number = 10 ,@Query('orderBy') orderBy:string  = undefined):Promise<PaginationResponse<UserEntity>>{
+        return await  this.userService.findAll(offset,limit,orderBy);
     }   
     // @Delete(':id')
     // async deleteUser(@Param('id') id:string): Promise<string>{

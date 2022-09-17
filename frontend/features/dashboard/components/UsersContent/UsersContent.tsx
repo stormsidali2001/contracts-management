@@ -1,22 +1,21 @@
 import styles from './UserContent.module.css';
-import {Button, FormControl, Input, InputLabel} from '@mui/material';
+import {Button, Modal} from '@mui/material';
 import FilterIcon from '../../../../icons/FilterIcon';
 import TextField from '@mui/material/TextField';
 import {SearchRounded } from '@mui/icons-material';
-import InputAdornment from '@mui/material/InputAdornment';
-import { DataGrid, GridColumns } from '@mui/x-data-grid';
+import { DataGrid, GridColumns, GridSortItem, GridSortModel } from '@mui/x-data-grid';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { PaginationResponse } from '../../models/paginationResponse.interface';
 import { DisplayUser } from '../../../auth/models/DisplayUser.interface';
 
 const columns:GridColumns<any> = [
-    {
-        field:"id",
-        headerName:"id",
-        flex:1,
+    // {
+    //     field:"id",
+    //     headerName:"id",
+    //     flex:1,
         
-    },
+    // },
     {
         field:"firstName",
         headerName:"nom",
@@ -47,12 +46,23 @@ const UsersContent = () => {
         pageSize:5,
 
 
-    })
+    });
+    const [queryOptions, setQueryOptions] = useState<{ sortModel:GridSortItem[] | null}>({sortModel:null});
+    const [open, setOpen] = useState(false);
+    const handleOpen = () => setOpen(true);
+    const handleClose = () => setOpen(false);
+    const handleSortModelChange = (sortModel: GridSortModel)=> {
+        // Here you save the data you need from the sort model
+        setQueryOptions({ sortModel: [...sortModel] });
+      }
  
     useEffect( ()=>{
-        
+        let params = '';
+        if(queryOptions.sortModel){
+            params+= '&orderBy='+queryOptions.sortModel[0].field
+        }
         setPageState((old:any)=>({...old,isLoading:true}))
-             axios.get(`http://localhost:8080/api/users?offset=${pageState.page}&limit=${pageState.pageSize}`)
+             axios.get(`http://localhost:8080/api/users?offset=${pageState.page}&limit=${pageState.pageSize}${params}`)
             .then((res:any)=>{
                 const {data:d} = res;
                 console.log(1,d)
@@ -62,10 +72,12 @@ const UsersContent = () => {
                 console.error(err);
             })
        
-    },[pageState?.page,pageState?.pageSize])
-    const obj = <InputAdornment position="start">
-    <SearchRounded />
-    </InputAdornment>;
+    },[pageState?.page,pageState?.pageSize,queryOptions.sortModel])
+    // const obj = <InputAdornment position="start">
+    // <SearchRounded />
+    // </InputAdornment>;
+
+    
   return (
     <div className={styles.container}>
         <div className={styles.wrapperBox}>
@@ -85,9 +97,9 @@ const UsersContent = () => {
                     
                    InputProps={{
 
-                                startAdornment:obj
+                                // startAdornment:obj
                                 
-                                ,
+                                
                                 className: styles.input,
 
                                 }}
@@ -110,11 +122,21 @@ const UsersContent = () => {
                 columns={columns}
                 disableColumnFilter
                 disableColumnMenu 
+                onSortModelChange={handleSortModelChange}
                 
             />
             </div>
             
         </div>
+        <Modal
+            open={open}
+            onClose={handleClose}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+      >
+        <div> Modal Content</div>
+
+      </Modal>
     </div>
   )
 }

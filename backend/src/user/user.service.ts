@@ -48,11 +48,14 @@ export class UserService{
     async findAndUpdate(userId:string,partialEntity: QueryDeepPartialEntity<UserEntity>):Promise<UpdateResult>{
         return this.userRepository.update({id:userId},partialEntity);
     }
-    async findAll(offset:number = 0 ,limit:number = 10):Promise<PaginationResponse<UserEntity>>{
-        const res =  await  this.userRepository.createQueryBuilder('user')
+    async findAll(offset:number = 0 ,limit:number = 10 ,orderBy:string = undefined):Promise<PaginationResponse<UserEntity>>{
+        let query =    this.userRepository.createQueryBuilder('user')
         .skip(offset)
-        .take(limit)
-        .getManyAndCount();
+        .take(limit);
+        if(orderBy){
+            query = query.orderBy(`${orderBy}`);
+        }
+        const res = await query.getManyAndCount();
 
         return {
             total:res[1],
