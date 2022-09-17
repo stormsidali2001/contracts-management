@@ -51,8 +51,11 @@ const DirectionContent = () => {
   return (
     <div className={styles.container}>
         <div className={styles.wrapperBox}>
-            <Typography>Directions</Typography>
-            <div>
+             <Stack direction="row" className={styles.departementsTitleWrapper}>
+             <Typography sx={{color:"#807D7D",paddingLeft:"10px"}}>Directions</Typography>
+                        <Button ><AddCircleIcon /></Button>
+            </Stack>
+            <div className={styles.directionsWrapper}>
             {
                 directions.map((direction,index)=>{
                     return (
@@ -78,11 +81,11 @@ const DirectionContent = () => {
                             <Stack>
                                 
                                 <Stack direction="row" className={styles.departementsTitleWrapper}>
-                                    <Typography>Departements</Typography>
+                                    <Typography >Departements</Typography>
                                     <Button onClick={()=>handleOpenDepartementModal(direction.id)}><AddCircleIcon/></Button>
                                 </Stack>
-                                <TableContainer sx={{overflowY:"scroll"}}>
-                                    <Table  aria-label="simple table">
+                                <TableContainer sx={{overflowY:"scroll",height:'200px'}}>
+                                    <Table  aria-label="simple table" >
                                         <TableHead>
                                         <TableRow>
                                             <TableCell align="left">titre</TableCell>
