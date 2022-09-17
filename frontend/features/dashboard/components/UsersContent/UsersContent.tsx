@@ -8,6 +8,8 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { PaginationResponse } from '../../models/paginationResponse.interface';
 import { DisplayUser } from '../../../auth/models/DisplayUser.interface';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import CreateUser from '../CreateUser/CreateUser';
 
 const columns:GridColumns<any> = [
     // {
@@ -126,7 +128,9 @@ const UsersContent = () => {
                 
             />
             </div>
-            
+            <Button onClick={handleOpen} className={styles.UserFormButton}>
+                <PersonAddIcon/>
+            </Button>
         </div>
         <Modal
             open={open}
@@ -134,9 +138,10 @@ const UsersContent = () => {
             aria-labelledby="modal-modal-title"
             aria-describedby="modal-modal-description"
       >
-        <div> Modal Content</div>
-
+        <CreateUser/>
       </Modal>
+
+     
     </div>
   )
 }
