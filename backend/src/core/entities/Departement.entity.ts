@@ -11,6 +11,9 @@ export class DepartementEntity{
     @Column()
     title:string;
 
+    @Column()
+    abriviation:string;
+
     //relations
     @ManyToOne(type=>DirectionEntity,d=>d.departements)
     direction?:DirectionEntity;

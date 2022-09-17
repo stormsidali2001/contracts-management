@@ -14,12 +14,12 @@ export class DepartementService{
     ){}
 
     async createDepartement(departement:CreateDepartementDTO):Promise<DepartementEntity>{
-        const {title,directionId} = departement;
+        const {directionId,...otherDepartementData} = departement;
         const direction = await this.directionRepository.findOneBy({id:directionId});
         if(!direction){
             throw new BadRequestException("direction not found")
         }
-        const departementEntity =  this.departementRepository.create({title,direction});
+        const departementEntity =  this.departementRepository.create({...otherDepartementData,direction});
         return this.departementRepository.save(departementEntity);
     }
     async updateDepartement(id:string,departement:UpdateDepartementDTO):Promise<UpdateResult>{

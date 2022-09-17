@@ -1,5 +1,4 @@
-import { Accordion, AccordionDetails, AccordionSummary, Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
-import { GridExpandMoreIcon } from '@mui/x-data-grid';
+import { Accordion, AccordionDetails, AccordionSummary, Button, Modal, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
 import styles from './DirectionContent.module.css';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -9,23 +8,20 @@ import { Stack } from '@mui/system';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import axios from 'axios';
 import { Direction } from '../../models/direction.interface';
-function createData(
-    title: string,
-    abriviation: string,
-    users: number,
-   
-  ) {
-    return { title,abriviation,users };
-  }
-  
-  const rows = [
-    createData("dpartement1","dtq",200),
-    createData("dpartement1","dtq",200),
-    createData("dpartement1","dtq",200),
- 
-  ];
+import CreateDepartement from '../CreateDepartement/CreateDepartement';
+
+
 const DirectionContent = () => {
   const [directions,setDirections] = useState<Direction[]>([]);
+  const [openDepartementModal, setOpenDepartementModal] = useState(false);
+  const [selectedDirectionId , setSelectedDirectionId] = useState<string | null>(null);
+
+  const handleCloseDepartementModal = () => setOpenDepartementModal(false);
+  const handleOpenDepartementModal = (directionId:string)=>{
+    setOpenDepartementModal(true)
+    setSelectedDirectionId(directionId)
+
+  }
   useEffect(()=>{
     const abortController = new AbortController()
     axios.get("http://localhost:8080/api/directions?offset=0&limit=10",{
@@ -42,13 +38,16 @@ const DirectionContent = () => {
         abortController.abort();
     }
   },[])
+  
   return (
     <div className={styles.container}>
         <div className={styles.wrapperBox}>
+            <Typography>Directions</Typography>
+            <div>
             {
                 directions.map((direction,index)=>{
                     return (
-                        <Accordion>
+                        <Accordion key={index}>
                         <AccordionSummary
                           expandIcon={<ExpandMoreIcon />}
                           aria-controls="panel1a-content"
@@ -71,7 +70,7 @@ const DirectionContent = () => {
                                 
                                 <Stack direction="row" className={styles.departementsTitleWrapper}>
                                     <Typography>Departements</Typography>
-                                    <Button><AddCircleIcon/></Button>
+                                    <Button onClick={()=>handleOpenDepartementModal(direction.id)}><AddCircleIcon/></Button>
                                 </Stack>
                                 <TableContainer sx={{overflowY:"scroll"}}>
                                     <Table  aria-label="simple table">
@@ -106,9 +105,18 @@ const DirectionContent = () => {
                     )
                 })
             }
+            </div>
       
      
         </div>
+        <Modal
+            open={openDepartementModal}
+            onClose={handleCloseDepartementModal}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+      >
+        <CreateDepartement selectedDirectionId={selectedDirectionId} handleCloseDepartementModal={handleCloseDepartementModal}/>
+      </Modal>
     </div>
   )
 }
