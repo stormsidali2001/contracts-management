@@ -11,6 +11,9 @@ export class DirectionEntity{
     @Column({unique:true})
     title:string;
 
+    @Column({unique:true})
+    abriviation:string;
+
     //relations
     @OneToMany(type=>DepartementEntity,dp=>dp.direction)
     departements:DepartementEntity[];

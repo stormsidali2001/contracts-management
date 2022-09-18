@@ -8,9 +8,12 @@ import { Departement } from '../../models/departement.interface';
 const CreateDepartement = ({
     selectedDirectionId,
     handleCloseDepartementModal,
-    pushDepartementToDirection}:{
-    selectedDirectionId:string | null,handleCloseDepartementModal:()=>void,
-    pushDepartementToDirection:(selectedDirectionId:string,departement:Departement)=>void
+    pushDepartementToDirection,
+    linkToDirectionAsync = true}:{
+    selectedDirectionId?:string | null,
+    handleCloseDepartementModal:()=>void,
+    pushDepartementToDirection:(departement:Departement,selectedDirectionId?:string,)=>void,
+    linkToDirectionAsync?:boolean 
 }) => {
     const {
         text:title ,
@@ -31,22 +34,27 @@ const CreateDepartement = ({
             title,
             abriviation
         }
-        axios.post('http://localhost:8080/api/departements',{
-           ...departement
-        })
-        .then(res=>{    
-            console.log("create departement response",res)
-            pushDepartementToDirection(selectedDirectionId,{ 
-                title,
-                abriviation,
-                users:0
-            })
-            handleCloseDepartementModal();
+        if(linkToDirectionAsync){
 
-        })
-        .catch(err=>{
-            console.error(err);
-        })
+            axios.post('http://localhost:8080/api/departements',{
+               ...departement
+            })
+            .then(res=>{    
+                console.log("create departement response",res)
+                pushDepartementToDirection({ 
+                    title,
+                    abriviation,
+                    users:0
+                },selectedDirectionId)
+                handleCloseDepartementModal();
+    
+            })
+            .catch(err=>{
+                console.error(err);
+            })
+        }else{
+
+        }
     }
   return (
     <div className={styles.container}>

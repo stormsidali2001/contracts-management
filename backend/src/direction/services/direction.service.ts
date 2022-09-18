@@ -11,9 +11,9 @@ export class DirectionService{
         private dataSource:DataSource
     ){}
     async createDirection(direction:CreateDirectionDTO):Promise<InsertResult>{
-
+      const {departements,...otherDirectionData} = direction;
       return  await this.dataSource.manager.transaction(async (entityManger:EntityManager)=>{
-        const newDirection = await entityManger.getRepository(DirectionEntity).save({title:direction.title});
+        const newDirection = await entityManger.getRepository(DirectionEntity).save({...otherDirectionData});
         const departementRepository = entityManger.getRepository(DepartementEntity);
         return departementRepository.insert(direction.departements.map(dp=>{
             const departement = departementRepository.create({...dp,direction:newDirection})

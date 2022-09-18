@@ -10,16 +10,16 @@ import axios from 'axios';
 import { Direction } from '../../models/direction.interface';
 import CreateDepartement from '../CreateDepartement/CreateDepartement';
 import { Departement } from '../../models/departement.interface';
+import CreateDirection from '../CreateDirection/CreateDirection';
 
 
 const DirectionContent = () => {
   const [directions,setDirections] = useState<Direction[]>([]);
+  //departement modal state ----------------
   const [openDepartementModal, setOpenDepartementModal] = useState(false);
   const [selectedDirectionId , setSelectedDirectionId] = useState<string | null>(null);
-
   const handleCloseDepartementModal = () => setOpenDepartementModal(false);
-
-  const pushDepartementToDirection = (selectedDirectionId:string,departement:Departement)=>{
+  const pushDepartementToDirection = (departement:Departement,selectedDirectionId?:string)=>{
     const newDirections = [...directions];
     const index = newDirections.findIndex(d=>d.id === selectedDirectionId)
     newDirections[index].departements.push({...departement})
@@ -31,6 +31,11 @@ const DirectionContent = () => {
     setSelectedDirectionId(directionId)
 
   }
+  //direction modal state ----------------
+  const [openDirectionModal, setOpenDirectionModal] = useState(false);
+  const handleDirectionModalOpen = ()=>setOpenDirectionModal(true)
+  const handleDirectionModalClose = ()=>setOpenDirectionModal(false)
+  
   useEffect(()=>{
     const abortController = new AbortController()
     axios.get("http://localhost:8080/api/directions?offset=0&limit=10",{
@@ -53,7 +58,7 @@ const DirectionContent = () => {
         <div className={styles.wrapperBox}>
              <Stack direction="row" className={styles.departementsTitleWrapper}>
              <Typography sx={{color:"#807D7D",paddingLeft:"10px"}}>Directions</Typography>
-                        <Button ><AddCircleIcon /></Button>
+                        <Button onClick={()=>handleDirectionModalOpen()}><AddCircleIcon /></Button>
             </Stack>
             <div className={styles.directionsWrapper}>
             {
@@ -131,6 +136,16 @@ const DirectionContent = () => {
             selectedDirectionId={selectedDirectionId} handleCloseDepartementModal={handleCloseDepartementModal}
             pushDepartementToDirection={pushDepartementToDirection}
         />
+      </Modal>
+
+      <Modal
+            open={openDirectionModal}
+            onClose={handleDirectionModalClose}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+      >
+       
+        <CreateDirection/>
       </Modal>
     </div>
   )
