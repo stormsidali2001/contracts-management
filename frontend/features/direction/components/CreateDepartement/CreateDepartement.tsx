@@ -12,7 +12,7 @@ const CreateDepartement = ({
     linkToDirectionAsync = true}:{
     selectedDirectionId?:string | null,
     handleCloseDepartementModal:()=>void,
-    pushDepartementToDirection:(departement:Departement,selectedDirectionId?:string,)=>void,
+    pushDepartementToDirection:(departement:Departement ,selectedDirectionId?:string,)=>void,
     linkToDirectionAsync?:boolean 
 }) => {
     const {
@@ -25,16 +25,18 @@ const CreateDepartement = ({
         inputBlurHandler:abriviationBlurHandler,inputClearHandler:abriviationClearHandler,textChangeHandler:abriviationChangeHandler,
         shouldDisplayError:abriviationShouldDisplayError
     } = useInput(validateDepartementAbriviationLength);
-
+    
     const handleSubmit = (e:any)=>{
         e.preventDefault();
-        if(!title || !abriviation || !selectedDirectionId) return;
+        console.log(123,linkToDirectionAsync,title,abriviation)
+        if(!title || !abriviation ) return;
         const departement = {
             directionId:selectedDirectionId,
             title,
             abriviation
         }
-        if(linkToDirectionAsync){
+       
+        if(linkToDirectionAsync && selectedDirectionId){
 
             axios.post('http://localhost:8080/api/departements',{
                ...departement
@@ -53,7 +55,12 @@ const CreateDepartement = ({
                 console.error(err);
             })
         }else{
-
+            pushDepartementToDirection({ 
+                title,
+                abriviation,
+                users:0
+            })
+            handleCloseDepartementModal();
         }
     }
   return (

@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react';
 import { Stack } from '@mui/system';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import axios from 'axios';
-import { Direction } from '../../models/direction.interface';
+import { Direction, DisplayDirection } from '../../models/direction.interface';
 import CreateDepartement from '../CreateDepartement/CreateDepartement';
 import { Departement } from '../../models/departement.interface';
 import CreateDirection from '../CreateDirection/CreateDirection';
@@ -35,7 +35,9 @@ const DirectionContent = () => {
   const [openDirectionModal, setOpenDirectionModal] = useState(false);
   const handleDirectionModalOpen = ()=>setOpenDirectionModal(true)
   const handleDirectionModalClose = ()=>setOpenDirectionModal(false)
-  
+  const pushDirection = (direction:Direction)=>{
+      setDirections(d=>[...d,direction])
+  }
   useEffect(()=>{
     const abortController = new AbortController()
     axios.get("http://localhost:8080/api/directions?offset=0&limit=10",{
@@ -145,7 +147,7 @@ const DirectionContent = () => {
             aria-describedby="modal-modal-description"
       >
        
-        <CreateDirection/>
+        <CreateDirection pushDirection={pushDirection} handleDirectionModalClose={handleDirectionModalClose}/>
       </Modal>
     </div>
   )

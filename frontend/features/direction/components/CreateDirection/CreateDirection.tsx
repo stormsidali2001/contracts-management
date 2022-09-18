@@ -1,10 +1,31 @@
-import { Button, TextField, Typography } from '@mui/material';
+import { Button, Modal, TextField, Typography } from '@mui/material';
 import { Stack } from '@mui/system';
 import useInput from '../../../../hooks/input/use-input';
 import { validateDepartementAbriviationLength, validateDepartementTitleLength } from '../../../../shared/utils/validation/length';
 import styles from './CreateDirection.module.css';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
+import { useState } from 'react';
+import { Departement } from '../../models/departement.interface';
+import CreateDepartement from '../CreateDepartement/CreateDepartement';
+import axios from 'axios';
+import { Direction } from '../../models/direction.interface';
 
-const CreateDirection = () => {
+interface PropTypes{
+  pushDirection:(direction:Direction)=>void,
+  handleDirectionModalClose:()=>void
+}
+const CreateDirection = ({
+  pushDirection,
+  handleDirectionModalClose
+}:PropTypes) => {
+  const [openDepartementModal, setOpenDepartementModal] = useState(false);
+  const [departements,setDepartements]= useState<Departement[]>([])
+  
+  const handleCloseDepartementModal = () => setOpenDepartementModal(false);
+  const handleOpenDepartementModal = ()=>setOpenDepartementModal(true)
+  const pushDepartementToDirection = (departement:Departement,selectedDirectionId?:string)=>{
+    setDepartements(dpts=>[...dpts,departement])
+  }
   const {
     text:title ,
     inputBlurHandler:titleBlurHandler,inputClearHandler:titleClearHandler,textChangeHandler:titleChangeHandler,
@@ -19,12 +40,35 @@ const {
 
   const handleSubmit = (e:any)=>{
     e.preventDefault();
+    if(!title || !abriviation || !departements) return;
+    try{
+      axios.post("http://localhost:8080/api/directions",{
+        title,
+        abriviation,
+        departements
+      })
+      .then(res=>{
+        pushDirection({
+          title,
+          abriviation,
+          departements,
+          id:Date.now().toString()
+        })
+        handleDirectionModalClose()
+      })
+      .catch(err=>{
+        console.error(err)
+      })
+      
+    }catch(err){
+      console.error(err)
+    }
   }
   return (
     <div className={styles.container}>
           <form onSubmit={handleSubmit}>
             <Stack className={styles.formElementsWrapper}>
-                <Typography className={styles.title} variant='h4' sx={{fontWeight:'400'}}>Nouveau departement</Typography>
+                <Typography className={styles.title} variant='h4' sx={{fontWeight:'400'}}>Nouvelle direction</Typography>
                 <TextField 
                     value={title} 
                     onChange={titleChangeHandler} 
@@ -44,6 +88,26 @@ const {
                     helperText = {abriviationShouldDisplayError && "min caracteres: 2 , max caracteres: 5"}
                 />
             </Stack>
+            <Stack className={styles.departementsContainer}>
+                <Stack direction="row" className={styles.departementsTitleWrapper}>
+                <Typography sx={{color:"#807D7D",paddingLeft:"10px"}}>Departements</Typography>
+                            <Button><AddCircleIcon onClick={()=>handleOpenDepartementModal()}/></Button>
+                </Stack>
+                <Stack className={styles.departements}>
+                  {
+                    departements.map((d,index)=>{
+                      return (
+                        <Stack direction="row" gap={2}>
+                          <Typography>{`${index+1}- ${d?.title}`}</Typography>
+                          <Typography sx={{fontSize:"500"}}>{`(${d?.abriviation})`}</Typography>
+                        </Stack>
+                      )
+                    })
+                  }
+                </Stack>
+            </Stack>
+            
+
             <Stack direction="row" className={styles.actionButtonsContainer}>
                 <Button 
                     type="submit" 
@@ -55,9 +119,21 @@ const {
                         || titleShouldDisplayError 
                         || abriviationShouldDisplayError}
                 >Creer</Button>
-                <Button >Annuler</Button>
+                <Button onClick={()=>{handleDirectionModalClose()}}>Annuler</Button>
             </Stack>
         </form>
+        <Modal
+            open={openDepartementModal}
+            onClose={handleCloseDepartementModal}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+      >
+        <CreateDepartement  
+            pushDepartementToDirection={pushDepartementToDirection}
+            linkToDirectionAsync={false}
+            handleCloseDepartementModal={handleCloseDepartementModal}
+        />
+      </Modal>
     </div>
   )
 }
