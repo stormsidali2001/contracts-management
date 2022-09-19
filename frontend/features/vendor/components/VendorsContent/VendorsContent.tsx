@@ -8,6 +8,7 @@ import TextField from '@mui/material/TextField';
 import FilterIcon from '../../../../icons/FilterIcon';
 import styles from './VendorsContent.module.css';
 import axios from 'axios';
+import CreateVendor from '../CreateVendor/CreateVendor';
 
 const columns:GridColumns<any> = [
 
@@ -136,7 +137,7 @@ useEffect( ()=>{
             aria-labelledby="modal-modal-title"
             aria-describedby="modal-modal-description"
       >
-        <div></div>
+        <CreateVendor/>
       </Modal>
 
      

@@ -1,5 +1,5 @@
 import UploadIcon from '@mui/icons-material/Upload';
-import { Avatar, Button, Divider, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Step, StepLabel, Stepper, TextField, Typography } from '@mui/material';
+import { Avatar, Button, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Step, StepLabel, Stepper, TextField, Typography } from '@mui/material';
 import { Stack } from '@mui/system';
 import { useEffect, useState } from 'react';
 import useInput from '../../../../hooks/input/use-input';
