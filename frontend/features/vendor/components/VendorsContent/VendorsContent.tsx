@@ -1,82 +1,83 @@
-import styles from './UserContent.module.css';
 import {Button, Modal} from '@mui/material';
-import FilterIcon from '../../../../icons/FilterIcon';
-import TextField from '@mui/material/TextField';
 import { DataGrid, GridColumns, GridSortItem, GridSortModel } from '@mui/x-data-grid';
 import { useEffect, useState } from 'react';
-import axios from 'axios';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
-import CreateUser from '../CreateUser/CreateUser';
+import TextField from '@mui/material/TextField';
+
+
+import FilterIcon from '../../../../icons/FilterIcon';
+import styles from './VendorsContent.module.css';
+import axios from 'axios';
 
 const columns:GridColumns<any> = [
-    // {
-    //     field:"id",
-    //     headerName:"id",
-    //     flex:1,
-        
-    // },
-    {
-        field:"firstName",
-        headerName:"nom",
-        flex:1
-    },
-    {
-        field:"lastName",
-        headerName:"prenom",
-        flex:1
-    },
-    {
-        field:"role",
-        headerName:"role",
-        flex:1
-    },
-    {
-        field:"email",
-        headerName:"email",
-        flex:1
-    },
+
+  {
+      field:"num",
+      headerName:"numero",
+      flex:1
+  },
+  {
+      field:"company_name",
+      headerName:"raison sociale",
+      flex:1
+  },
+  {
+      field:"nif",
+      headerName:"nif",
+      flex:1
+  },
+  {
+      field:"address",
+      headerName:"adresse",
+      flex:1
+  },
+  {
+      field:"mobile_phone_number",
+      headerName:"mobile",
+      flex:1
+  },
+  {
+      field:"home_phone_number",
+      headerName:"fixe",
+      flex:1
+  },
 ]
-const UsersContent = () => {
-    const [pageState,setPageState] = useState<any>({
-        isLoading:false,
-        data:[],
-        total:0,
-        page:0,
-        pageSize:5,
+const VendorsContent = () => {
+  const [pageState,setPageState] = useState<any>({
+    isLoading:false,
+    data:[],
+    total:0,
+    page:0,
+    pageSize:5,
 
 
-    });
-    const [queryOptions, setQueryOptions] = useState<{ sortModel:GridSortItem[] | null}>({sortModel:null});
-    const [open, setOpen] = useState(false);
-    const handleOpen = () => setOpen(true);
-    const handleClose = () => setOpen(false);
-    const handleSortModelChange = (sortModel: GridSortModel)=> {
-        // Here you save the data you need from the sort model
-        setQueryOptions({ sortModel: [...sortModel] });
-      }
- 
-    useEffect( ()=>{
-        let params = '';
-        if(queryOptions.sortModel){
-            params+= '&orderBy='+queryOptions.sortModel[0].field
-        }
-        setPageState((old:any)=>({...old,isLoading:true}))
-             axios.get(`http://localhost:8080/api/users?offset=${pageState.page}&limit=${pageState.pageSize}${params}`)
-            .then((res:any)=>{
-                const {data:d} = res;
-                console.log(1,d)
-                setPageState((old:any)=>({...old,data:d?.data,total:d?.total,isLoading:false}))
-            })
-            .catch(err=>{
-                console.error(err);
-            })
-       
-    },[pageState?.page,pageState?.pageSize,queryOptions.sortModel])
-    // const obj = <InputAdornment position="start">
-    // <SearchRounded />
-    // </InputAdornment>;
+});
+const [queryOptions, setQueryOptions] = useState<{ sortModel:GridSortItem[] | null}>({sortModel:null});
+const [open, setOpen] = useState(false);
+const handleOpen = () => setOpen(true);
+const handleClose = () => setOpen(false);
+const handleSortModelChange = (sortModel: GridSortModel)=> {
+    // Here you save the data you need from the sort model
+    setQueryOptions({ sortModel: [...sortModel] });
+  }
 
-    
+useEffect( ()=>{
+    let params = '';
+    if(queryOptions.sortModel){
+        params+= '&orderBy='+queryOptions.sortModel[0].field
+    }
+    setPageState((old:any)=>({...old,isLoading:true}))
+         axios.get(`http://localhost:8080/api/vendors?offset=${pageState.page}&limit=${pageState.pageSize}${params}`)
+        .then((res:any)=>{
+            const {data:d} = res;
+            console.log(1,d)
+            setPageState((old:any)=>({...old,data:d?.data,total:d?.total,isLoading:false}))
+        })
+        .catch(err=>{
+            console.error(err);
+        })
+   
+},[pageState?.page,pageState?.pageSize,queryOptions.sortModel])
   return (
     <div className={styles.container}>
         <div className={styles.wrapperBox}>
@@ -135,7 +136,7 @@ const UsersContent = () => {
             aria-labelledby="modal-modal-title"
             aria-describedby="modal-modal-description"
       >
-        <CreateUser/>
+        <div></div>
       </Modal>
 
      
@@ -143,4 +144,4 @@ const UsersContent = () => {
   )
 }
 
-export default UsersContent
+export default VendorsContent
