@@ -9,6 +9,7 @@ import FilterIcon from '../../../../icons/FilterIcon';
 import styles from './VendorsContent.module.css';
 import axios from 'axios';
 import CreateVendor from '../CreateVendor/CreateVendor';
+import { Vendor } from '../../models/vendor.interface';
 
 const columns:GridColumns<any> = [
 
@@ -59,13 +60,19 @@ const handleOpen = () => setOpen(true);
 const handleClose = () => setOpen(false);
 const handleSortModelChange = (sortModel: GridSortModel)=> {
     // Here you save the data you need from the sort model
-    setQueryOptions({ sortModel: [...sortModel] });
+    if(sortModel){
+
+      setQueryOptions({ sortModel: [...sortModel] });
+    }
   }
+
+
 
 useEffect( ()=>{
     let params = '';
     if(queryOptions.sortModel){
-        params+= '&orderBy='+queryOptions.sortModel[0].field
+      console.log(queryOptions,"code530")
+        params+= '&orderBy='+queryOptions.sortModel[0]?.field
     }
     setPageState((old:any)=>({...old,isLoading:true}))
          axios.get(`http://localhost:8080/api/vendors?offset=${pageState.page}&limit=${pageState.pageSize}${params}`)
@@ -73,6 +80,7 @@ useEffect( ()=>{
             const {data:d} = res;
             console.log(1,d)
             setPageState((old:any)=>({...old,data:d?.data,total:d?.total,isLoading:false}))
+
         })
         .catch(err=>{
             console.error(err);

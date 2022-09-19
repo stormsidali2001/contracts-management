@@ -11,20 +11,25 @@ import { validateHomePhoneNumber } from '../../../../shared/utils/validation/val
 import { validateNrc } from '../../../../shared/utils/validation/validateNrc';
 import CheckIcon from '@mui/icons-material/Check';
 import CircularProgress from '@mui/material/CircularProgress';
-import { green } from '@mui/material/colors';
+import axios from 'axios';
+import { Vendor } from '../../models/vendor.interface';
+ interface PropType{
+}
 
-const CreateVendor = () => {
+
+const CreateVendor = ({}:PropType) => {
     const steps = [
         'identifiants',
         'Localisation',
         'validation',
       ];
-      const [activeStep,setActiveStep] = useState(2);
+      const [activeStep,setActiveStep] = useState(0);
       const {
         text:num ,
         inputBlurHandler:numBlurHandler,
         textChangeHandler:numChangeHandler,
         shouldDisplayError:numShouldDisplayError,
+        inputClearHandler:numInputClearHandler
         
       } = useInput();
       const {
@@ -32,6 +37,7 @@ const CreateVendor = () => {
         inputBlurHandler:companyNameBlurHandler,
         textChangeHandler:companyNameChangeHandler,
         shouldDisplayError:companyNameShouldDisplayError,
+        inputClearHandler:companyNameInputClearHandler
     
       } = useInput(validateCompanyName);
       const {
@@ -39,6 +45,8 @@ const CreateVendor = () => {
         inputBlurHandler:nifBlurHandler,
         textChangeHandler:nifChangeHandler,
         shouldDisplayError:nifShouldDisplayError,
+        inputClearHandler:nifInputClearHandler
+
     
       } = useInput(validateNif);
       const {
@@ -46,13 +54,16 @@ const CreateVendor = () => {
         inputBlurHandler:nrcBlurHandler,
         textChangeHandler:nrcChangeHandler,
         shouldDisplayError:nrcShouldDisplayError,
-    
+        inputClearHandler:nrcInputClearHandler
+
       } = useInput();
       const {
         text:address ,
         inputBlurHandler:addressBlurHandler,
         textChangeHandler:addressChangeHandler,
         shouldDisplayError:addressShouldDisplayError,
+        inputClearHandler:addressInputClearHandler
+
     
       } = useInput();
       const {
@@ -60,6 +71,8 @@ const CreateVendor = () => {
         inputBlurHandler:homePhoneNumberBlurHandler,
         textChangeHandler:homePhoneNumberChangeHandler,
         shouldDisplayError:homePhoneNumberShouldDisplayError,
+        inputClearHandler:homePhoneNumberInputClearHandler
+
     
       } = useInput(validateHomePhoneNumber);
       const {
@@ -67,13 +80,17 @@ const CreateVendor = () => {
         inputBlurHandler:personalPhoneNumberBlurHandler,
         textChangeHandler:personalPhoneNumberChangeHandler,
         shouldDisplayError:personalPhoneNumberShouldDisplayError,
+        inputClearHandler:personalPhoneNumberInputClearHandler
+
     
       } = useInput(validateMobilePhoneNumber);
       const [loading,setLoading] = useState(false);
-   
+      const [isError,setIsError] = useState(false)
+      const [done,setDone] = useState(false)
       function nextBtnshouldBeDisabled():boolean{
         const bl =   Boolean(
-        (activeStep === 0) 
+        !done &&(
+             (activeStep === 0) 
         && (
                 num.length ===0 
                 || companyName.length ===0
@@ -90,25 +107,84 @@ const CreateVendor = () => {
      
     
       )
+        )
       ;
     
         return bl;
       }
- 
+      const handleSubmit = ()=>{
+        if(!num || !companyName || !nif || !nrc ||!homePhoneNumber || !personalPhoneNumber)return;
+        const vendor:Vendor = {
+            num,
+            company_name:companyName,
+            nif,
+            nrc,
+            address,
+            home_phone_number:homePhoneNumber,
+            mobile_phone_number:personalPhoneNumber
+          }
+
+            setLoading(true) 
+            axios.post("http://localhost:8080/api/vendors",vendor)
+            .then(res =>{
+                console.log(res)
+                handleRestForm();
+                setLoading(false) 
+                setIsError(false)
+                setDone(true)
+
+            })
+            .catch(err=>{
+                console.log(err)
+                setLoading(false) 
+                setIsError(true)
+
+            })
+
+       
+      }
+      const handleNextStep = ()=>{
+        if(done) return;
+        if(activeStep === 1){
+
+            handleSubmit();
+        }
+        setActiveStep(s=>(s+1)%3)
+      }
+      const handleStepLabel = (index:number)=>{
+        if(done) return;
+        if(index === 2){
+
+            handleSubmit();
+        }
+        setActiveStep(index)
+      }
+      const handleRestForm = ()=>{
+        numInputClearHandler();
+        companyNameInputClearHandler();
+        nifInputClearHandler();
+        nrcInputClearHandler()
+        addressInputClearHandler()
+        personalPhoneNumberInputClearHandler();
+        homePhoneNumberInputClearHandler();
+        
+    }
       return (
         <div className={styles.container}>
+        <form >
           <Stack direction="row">
             <Typography className={styles.title}>Nouveau Fournisseur</Typography>
           </Stack>
           <Stepper   activeStep={activeStep} alternativeLabel>
             {steps.map((label,index) => (
-              <Step     key={label} onClick={()=>!nextBtnshouldBeDisabled() && setActiveStep(index)}>
+              <Step     key={label} onClick={()=>!nextBtnshouldBeDisabled() && handleStepLabel(index)}>
                 <StepLabel>{label}</StepLabel>
               </Step>
             ))}
           </Stepper>
     
           <Stack className={styles.inputsContainer}>
+            
             {
              activeStep === 0 && ( <>
                 <TextField 
@@ -220,12 +296,13 @@ const CreateVendor = () => {
                 
           </Stack>
           <Stack direction="row" className={styles.actionButtons}>
-            <Button disabled={activeStep === 0 || (activeStep === 2 && !loading) }>Precedent</Button>
-            <Button disabled={nextBtnshouldBeDisabled()}
-              onClick={()=>setActiveStep(s=>((s+1)%3))}
+            <Button disabled={activeStep === 0 || (activeStep === 2 && done ) }>Precedent</Button>
+            <Button 
+            disabled={nextBtnshouldBeDisabled()}
+              onClick={()=>{handleNextStep()}}
               >{activeStep === 2 ?"Fermer":"Suivant"}</Button>
           </Stack>
-          
+          </form>
         </div>
       )
 }

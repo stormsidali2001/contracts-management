@@ -8,7 +8,7 @@ import { AuthModule } from './auth/auth.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.setGlobalPrefix('api')
-  app.useGlobalPipes(new ValidationPipe({transform:true}))
+  app.useGlobalPipes(new ValidationPipe({transform:true,disableErrorMessages:false}))
   app.enableCors();
   const config = new DocumentBuilder().setTitle('Contracts Management')
   .setDescription("description")

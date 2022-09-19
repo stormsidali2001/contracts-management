@@ -10,7 +10,9 @@ export class HttpExceptionFilter implements ExceptionFilter{
 
         const status = exception.getStatus();
         const {url ,method} = request;
-     
+        
+        
+        
         response.status(status).json({
             path:url,
             method,
@@ -18,7 +20,7 @@ export class HttpExceptionFilter implements ExceptionFilter{
             timestamp:new Date,
             statusCode:status
         })
-        this.logger.error(`request: ${method} ${url} ${exception.message} `);
+        this.logger.error(`request: ${method} ${url} ${exception.message} ${exception}`);
         
     }
     
