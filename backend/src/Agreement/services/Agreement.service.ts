@@ -5,6 +5,7 @@ import { AgreementEntity } from 'src/core/entities/Agreement.entity';
 import { DepartementEntity } from 'src/core/entities/Departement.entity';
 import { DirectionEntity } from 'src/core/entities/Direction.entity';
 import { VendorEntity } from 'src/core/entities/Vendor.entity';
+import { AgreementType } from 'src/core/types/agreement-type.enum';
 import { PaginationResponse } from 'src/core/types/paginationResponse.interface';
 import { DirectionService } from 'src/direction/services/direction.service';
 import {  Repository } from 'typeorm';
@@ -40,8 +41,9 @@ export class AgreementService{
         return this.agreementRepository.save({...agreementData,direction,departement,vendor});
     }
 
-    async findAll(offset:number = 0 ,limit:number = 10 ,orderBy:string = undefined):Promise<PaginationResponse<AgreementEntity>>{
+    async findAll(offset:number = 0 ,limit:number = 10 ,orderBy:string = undefined,agreementType:AgreementType):Promise<PaginationResponse<AgreementEntity>>{
         let query =    this.agreementRepository.createQueryBuilder('ag')
+        .where("ag.type = :type",{type:agreementType})
         .skip(offset)
         .take(limit);
         if(orderBy && orderBy!== 'type'){
