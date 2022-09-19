@@ -1,6 +1,19 @@
 import {createTheme} from '@mui/material';
 
+//@ts-ignore
 export const theme = createTheme({
+    components:{
+        MuiStepIcon:{
+           styleOverrides:{
+            root:{
+                text: {
+                    fill: '#fefefe',
+                  },
+
+            }
+           }
+        }
+     },
     palette:{
         primary:{
             main:'#17498E',

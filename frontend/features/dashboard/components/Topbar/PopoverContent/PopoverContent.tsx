@@ -6,6 +6,7 @@ import { Divider } from '@mui/material';
 import Link from 'next/link';
 import { useAppDispatch, useAppSelector } from '../../../../../hooks/redux/hooks';
 import { logout } from '../../../../auth/authSlice';
+
 const PopoverContent = () => {
     const links = [
         {text:"Profile" , link:"",icon:AccountCircleIcon},
