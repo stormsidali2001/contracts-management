@@ -1,4 +1,4 @@
-import { Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { AgreementEntity } from "./Agreement.entity";
 
 @Entity('vendors')
@@ -27,7 +27,7 @@ export class VendorEntity{
     @Column()
     home_phone_number:string;
 
-    @ManyToMany(type=>AgreementEntity,ag=>ag.vendors) 
+    @OneToMany(type=>AgreementEntity,ag=>ag.vendor) 
     agreements:AgreementEntity[];
     
 

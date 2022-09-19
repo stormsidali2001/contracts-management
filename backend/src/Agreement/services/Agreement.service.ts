@@ -7,22 +7,21 @@ import { DirectionEntity } from 'src/core/entities/Direction.entity';
 import { VendorEntity } from 'src/core/entities/Vendor.entity';
 import { DirectionService } from 'src/direction/services/direction.service';
 import {  Repository } from 'typeorm';
+import { VendorService } from './vendor.service';
 
 
 @Injectable()
 export class AgreementService{
     constructor(
         @InjectRepository(AgreementEntity) private readonly agreementRepository:Repository<AgreementEntity>,
-        @InjectRepository(VendorEntity) private readonly vendorRepository:Repository<VendorEntity>,
+        private readonly vendorService:VendorService,
         private readonly directionService:DirectionService
     ){}
     async createAgreement(agreement:CreateAgreementDTO):Promise<AgreementEntity>{
-        const {directionId , departementId , vendorIds, ...agreementData} = agreement;
-        const [direction,vendors] = await Promise.all([
+        const {directionId , departementId , vendorId, ...agreementData} = agreement;
+        const [direction,vendor] = await Promise.all([
                         this.directionService.findDirectionWithDepartement(directionId,departementId),
-                        this.vendorRepository.createQueryBuilder('vendor')
-                        .where('vendor.id in (:...vendorIds)',{vendorIds})
-                        .getMany()
+                        this.vendorService.findBy({id:vendorId})
                  ]);
         if(!direction){
             throw new  BadRequestException("direction not found");
@@ -32,11 +31,11 @@ export class AgreementService{
             throw new  BadRequestException("departement is not in direction");
         }
        
-        if(vendorIds.length != vendors.length){
-            throw new  BadRequestException("cound not find one or more  vendor");
+        if(!vendor){
+            throw new  BadRequestException("cound not find the vendor");
         }
       
 
-        return this.agreementRepository.save({...agreementData,direction,departement,vendors});
+        return this.agreementRepository.save({...agreementData,direction,departement,vendor});
     }
 }

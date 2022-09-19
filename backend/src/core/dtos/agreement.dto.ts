@@ -45,9 +45,8 @@ export class CreateAgreementDTO{
     @IsUUID()
     departementId:string;
 
-    @ApiProperty({  example:["",""] ,required:true,isArray:true ,})
-    @IsArray()
-    @IsUUID('all',{each:true})
-    vendorIds:string[];
+    @ApiProperty({  example:"4385095c-ed50-4dd4-9748-de7bc11ff467" ,required:true})
+    @IsUUID()
+    vendorId:string;
 
 }

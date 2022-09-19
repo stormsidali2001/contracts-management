@@ -57,8 +57,8 @@ export class AgreementEntity{
     @ManyToOne(type =>DepartementEntity,dp=>dp.agreements)
     departement:DepartementEntity;
 
-    @ManyToMany(type=>VendorEntity,vn=>vn.agreements) @JoinTable({name:'agreements_vendors'})
-    vendors:VendorEntity[];
+    @ManyToOne(type=>VendorEntity,vn=>vn.agreements) 
+    vendor:VendorEntity;
 }
 
 

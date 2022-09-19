@@ -8,8 +8,8 @@ import { VendorService } from '../services/vendor.service';
 import {ApiTags} from '@nestjs/swagger';
 @ApiTags('vendors')
 @Controller('vendors')
-@RequiredRoles(UserRole.JURIDICAL,UserRole.ADMIN)
-@UseGuards(JwtAccessTokenGuard,RoleGuard)
+// @RequiredRoles(UserRole.JURIDICAL,UserRole.ADMIN)
+// @UseGuards(JwtAccessTokenGuard,RoleGuard)
 export class VendorController{
     constructor(
         private readonly vendorService:VendorService

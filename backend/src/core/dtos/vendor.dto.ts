@@ -35,9 +35,5 @@ export class CreateVendorDTO{
     @IsPhoneNumber('AL')
     home_phone_number:string;
 
-    @ApiPropertyOptional({isArray:true,example:["",""]})
-    @IsOptional()
-    @IsArray()
-    @IsUUID('all',{each:true})
-    agreementIds:string[];
+   
 }
