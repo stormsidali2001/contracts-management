@@ -7,6 +7,9 @@ import { validateEmail } from '../../../../shared/utils/validation/email';
 import { validateFirstName, validateLastName } from '../../../../shared/utils/validation/length';
 import CheckIcon from '@mui/icons-material/Check';
 import styles from './CreateUser.module.css';
+import axios from 'axios';
+import LinearProgress from '@mui/material/LinearProgress';
+
 
 const CreateUser = () => {
   const steps = [
@@ -14,7 +17,7 @@ const CreateUser = () => {
     'role et photo de profile',
     'validation',
   ];
-  const [activeStep,setActiveStep] = useState(1);
+  const [activeStep,setActiveStep] = useState(0);
   const {
     text:firstName ,
     inputBlurHandler:firstNameBlurHandler,
@@ -37,10 +40,13 @@ const CreateUser = () => {
 
   } = useInput(validateEmail);
 
+  const [imageUploadProgress,setImageUploadProgress] = useState(0)
+
   const [role,setRole] = useState<string>("Employee");
   const handleRoleChange = (event: SelectChangeEvent) => {
     setRole(event.target.value as string);
   };
+  const [userProfileUrl,setUserProfileUrl] = useState("")
   function nextBtnshouldBeDisabled():boolean{
     const bl =   Boolean(
    !done &&( 
@@ -63,10 +69,11 @@ const CreateUser = () => {
     )
     return bl;
   }
-  const [profilImgFile,setProfileImageFile] = useState(null);
+  const [profilImgFile,setProfileImageFile] = useState<any>(null);
   const [profileImgPreview,setProfileImgPreview] = useState('');
   const [loading,setLoading] = useState(false);
   const [done,setDone] = useState(false);
+  const [isImageUploading,setIsImageUploading] = useState(false)
   useEffect(()=>{
     if(!profilImgFile) return;
     const objectUrl = URL.createObjectURL(profilImgFile);
@@ -78,8 +85,55 @@ const CreateUser = () => {
     e.preventDefault();
     setProfileImageFile(e.target.files[0])
   }
-   const handleSubmit = ()=>{
-    alert("submit")
+   const handleSubmit = async()=>{
+  
+      if(profilImgFile) setIsImageUploading(true)
+      const formData = new FormData();
+      formData.append("file",profilImgFile)
+      try{
+        let res;
+        if(profilImgFile){
+          res = await axios.post("http://localhost:8080/api/users/image/upload",formData,
+         {
+           onUploadProgress:(e)=>{
+               const {loaded,total} = e;
+               console.log(`${loaded} kbof ${total}`)
+               setImageUploadProgress(Math.floor((loaded/total)*100))
+           },
+           headers:{
+             'Authorization':"Bearer "+JSON.parse(localStorage.getItem("jwt") ?? "" )?.access_token
+           }
+         })
+
+        }
+       if( res){
+         console.log(res)
+         setIsImageUploading(false);
+         setUserProfileUrl(res.data.filename);
+       }
+        const newUser = {
+            email,
+            firstName,
+            lastName,
+            imageUrl:userProfileUrl
+        }
+        setLoading(true)
+        await axios.post("http://localhost:8080/api/auth/register",{
+          ...newUser
+        })
+
+        setLoading(false)
+        setDone(true)
+
+
+
+      }catch(err){
+        console.error(err)
+        setLoading(false)
+        setIsImageUploading(false);
+      }
+    
+    
    }
   const handleNextStep = ()=>{
     if(done) return;
@@ -198,7 +252,12 @@ const CreateUser = () => {
                        { <Stack alignItems="center" gap={1}>
                           
                             {
-                                loading?(
+                               isImageUploading ?(<>
+                               {imageUploadProgress}
+                               <LinearProgress  variant="buffer"  valueBuffer={imageUploadProgress} value={imageUploadProgress} color="primary" sx={{width:"100%"}} />
+                               
+                               </>):(
+                                  loading?(
                                     <>
                                     <Typography>Creation de  Compte...</Typography>
                                     <CircularProgress/>
@@ -217,6 +276,8 @@ const CreateUser = () => {
                                     </Fab>
                                     </>
                                 )
+                               )
+                              
                             }
                            
                           
