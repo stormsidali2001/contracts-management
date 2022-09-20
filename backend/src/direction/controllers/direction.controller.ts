@@ -18,7 +18,7 @@ export class DirectionController{
         return await this.directionService.createDirection(direction)
     }
     @Get('')
-    async findAll(@Query('offset',ParseIntPipe) offset:number = 0 ,@Query('limit',ParseIntPipe) limit:number = 10):Promise<DirectionEntity[]>{
+    async findAll(@Query('offset') offset:number ,@Query('limit') limit:number ):Promise<DirectionEntity[]>{
         return await this.directionService.findAll(offset,limit);
     }   
     @Delete(':id')

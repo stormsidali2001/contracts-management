@@ -9,15 +9,31 @@ import CheckIcon from '@mui/icons-material/Check';
 import styles from './CreateUser.module.css';
 import axios from 'axios';
 import LinearProgress from '@mui/material/LinearProgress';
+import { CreateUser } from '../../models/CreateUser.interface';
+import { Direction } from '../../../direction/models/direction.interface';
 
-
-const CreateUser = () => {
+interface Proptype{
+  handleClose:()=>void
+}
+const CreateUser = ({handleClose}:Proptype) => {
   const steps = [
     'identifiants',
+    'direction , departement',
     'role et photo de profile',
     'validation',
   ];
   const [activeStep,setActiveStep] = useState(0);
+  const [directions,setDirections] = useState<Direction[]>([]);
+  const [selectedDirection,setSelectedDirection] = useState<{label:string,value:string}>({label:"",value:""})
+  const [selectedDepartement,setSelectedDepartement] = useState<{label:string,value:string}>({label:"",value:""});
+
+  const [profilImgFile,setProfileImageFile] = useState<any>(null);
+  const [profileImgPreview,setProfileImgPreview] = useState('');
+  const [loading,setLoading] = useState(false);
+  const [done,setDone] = useState(false);
+  const [isImageUploading,setIsImageUploading] = useState(false)
+  const [role,setRole] = useState<string>("employee");
+
   const {
     text:firstName ,
     inputBlurHandler:firstNameBlurHandler,
@@ -42,11 +58,11 @@ const CreateUser = () => {
 
   const [imageUploadProgress,setImageUploadProgress] = useState(0)
 
-  const [role,setRole] = useState<string>("Employee");
+ 
   const handleRoleChange = (event: SelectChangeEvent) => {
     setRole(event.target.value as string);
   };
-  const [userProfileUrl,setUserProfileUrl] = useState("")
+
   function nextBtnshouldBeDisabled():boolean{
     const bl =   Boolean(
    !done &&( 
@@ -58,7 +74,7 @@ const CreateUser = () => {
     || lastNameShouldDisplayError 
     || emailShouldDisplayError
     )
-    || (activeStep === 2) && (
+    || (activeStep === 3) && (
 
        loading
     )
@@ -69,11 +85,27 @@ const CreateUser = () => {
     )
     return bl;
   }
-  const [profilImgFile,setProfileImageFile] = useState<any>(null);
-  const [profileImgPreview,setProfileImgPreview] = useState('');
-  const [loading,setLoading] = useState(false);
-  const [done,setDone] = useState(false);
-  const [isImageUploading,setIsImageUploading] = useState(false)
+  const handleDirectionChange = (event: SelectChangeEvent)=>{
+    const directionId = event.target.value;
+    const directionIndex = directions.findIndex(d=>d.id === directionId);
+    if(directionIndex < 0 ) return ;
+    const direction = directions[directionIndex];
+    setSelectedDirection({label:direction?.title, value:directionId});
+    console.log("selected direction: ",direction)
+    if(direction.departements.length === 0 ) return;
+    const departement = direction.departements[Math.floor(Math.random()*(direction.departements.length-1))];
+    console.log("random departement",departement)
+    setSelectedDepartement({label:departement?.title , value:departement.id as string})
+  }
+  const handleChangeDepartement = (event: SelectChangeEvent)=>{
+    const departementId = event.target.value;
+    const departements =  getDepartementsFromDirections();
+    const directionIndex = departements.findIndex(d=>d.id === departementId);
+    const departement = departements[directionIndex];
+    if(directionIndex < 0 ) return ;
+    setSelectedDepartement({label:departement.title , value:departementId})
+
+  }
   useEffect(()=>{
     if(!profilImgFile) return;
     const objectUrl = URL.createObjectURL(profilImgFile);
@@ -81,6 +113,31 @@ const CreateUser = () => {
     
     return () => URL.revokeObjectURL(objectUrl)
   },[profilImgFile])
+
+  useEffect(()=>{
+    const abortController = new AbortController();
+    axios.get("http://localhost:8080/api/directions",{
+      signal:abortController.signal
+    }).then(res=>{
+      const newDirections = res.data;
+      setDirections(newDirections)
+      if(newDirections.length ===0 ) return;
+      const direction:Direction = newDirections[Math.floor(Math.random()*(newDirections.length-1))];
+      setSelectedDirection({label:direction?.title, value:direction.id});
+      console.log("selected direction: ",direction)
+      if(direction.departements.length === 0 ) return;
+      const departement = direction.departements[Math.floor(Math.random()*(direction.departements.length-1))];
+      console.log("random departement",departement)
+      setSelectedDepartement({label:departement?.title , value:departement.id as string})
+      console.log(res.data)
+    })
+    .catch(err=>{
+      console.error(err)
+    })
+    return ()=>{
+      abortController.abort();
+    }
+  },[])
   const handleFileChange = (e:any)=>{
     e.preventDefault();
     setProfileImageFile(e.target.files[0])
@@ -106,24 +163,30 @@ const CreateUser = () => {
          })
 
         }
+        let imageUrl =""
        if( res){
          console.log(res)
          setIsImageUploading(false);
-         setUserProfileUrl(res.data.filename);
+         imageUrl = res.data.filename
        }
-        const newUser = {
+
+        const newUser:CreateUser = {
             email,
             firstName,
             lastName,
-            imageUrl:userProfileUrl
+            imageUrl,
+            role,
+            directionId:selectedDirection.value,
+            departementId:selectedDepartement.value,
+           
         }
         setLoading(true)
         await axios.post("http://localhost:8080/api/auth/register",{
           ...newUser
         })
 
-        setLoading(false)
-        setDone(true)
+        setLoading(false);
+        setDone(true);
 
 
 
@@ -137,19 +200,27 @@ const CreateUser = () => {
    }
   const handleNextStep = ()=>{
     if(done) return;
-    if(activeStep === 1){
+    if(activeStep === 2){
 
         handleSubmit();
     }
-    setActiveStep(s=>(s+1)%3)
+    setActiveStep(s=>(s+1)%4)
   }
   const handleStepLabel = (index:number)=>{
     if(done) return;
-    if(index === 2){
+    if(index === 3){
 
         handleSubmit();
     }
     setActiveStep(index)
+  }
+
+  function getDepartementsFromDirections(){
+    if(directions.length === 0) return [];
+    const directionId =selectedDirection?.value;
+    const directionIndex = directions.findIndex(d=>d.id === directionId);
+    if(directionIndex < 0 ) return [];
+    return directions[directionIndex].departements;
   }
   return (
     <div className={styles.container}>
@@ -196,9 +267,59 @@ const CreateUser = () => {
           /> 
         </>)
         }
+        {
+          activeStep === 1&& (
+            <>
+            <Stack direction="row" justifyContent="center" gap={3}>
+              <FormControl className={styles.selectFormControl}>
+                <InputLabel id="direction-input-label">Direction</InputLabel>
+                <Select
+                  labelId="direction-label"
+                  id="direction-id"
+                  value={selectedDirection?.value ??""}
+                  label="direction"
+                  size="small"
+                  onChange={handleDirectionChange}
+                  fullWidth
+                >
+                  {
+                    directions.map((dr,index)=>{
+                      return (
+                        <MenuItem value={dr?.id ?? ""} key={index}>{dr.abriviation ?? ""}</MenuItem>
+                      )
+                    })
+                  }
+              
+                </Select>
+            </FormControl>
+            <FormControl className={styles.selectFormControl}>
+                <InputLabel id="direction-input-label">Departement</InputLabel>
+                <Select
+                  labelId="direction-label"
+                  id="direction-id"
+                  value={selectedDepartement?.value }
+                  label="direction"
+                  size="small"
+                  onChange={handleChangeDepartement}
+                  fullWidth
+                >
+                  {
+                    getDepartementsFromDirections().map((dp,index)=>{
+                      return (
+                        <MenuItem value={dp?.id} key={index}>{dp?.abriviation}</MenuItem>
+                      )
+                    })
+                  }
+              
+                </Select>
+            </FormControl>
+            </Stack>
+            </>
+          )
+        }
 
         {
-          activeStep === 1 && (
+          activeStep === 2 && (
             <>
               <Typography></Typography>
               <Stack direction="row" className={styles.headerContainer}>
@@ -225,29 +346,29 @@ const CreateUser = () => {
                 </div>
               </Stack>
               <Stack direction="row" justifyContent="center">
-              <FormControl className={styles.selectFormControl}>
-              <InputLabel id="role-input-label">Role</InputLabel>
-              <Select
-                labelId="role-label"
-                id="role-id"
-                value={role}
-                label="role"
-                size="small"
-                onChange={handleRoleChange}
-                fullWidth
-              >
-                <MenuItem value={'Employee'}>Employee</MenuItem>
-                <MenuItem value={'Admin'}>Admin</MenuItem>
-                <MenuItem value={'Juridique'}>Juridique</MenuItem>
-              </Select>
-            </FormControl>
+                <FormControl className={styles.selectFormControl}>
+                <InputLabel id="role-input-label">Role</InputLabel>
+                <Select
+                  labelId="role-label"
+                  id="role-id"
+                  value={role}
+                  label="role"
+                  size="small"
+                  onChange={handleRoleChange}
+                  fullWidth
+                >
+                  <MenuItem value={'employee'}>Employee</MenuItem>
+                  <MenuItem value={'admin'}>Admin</MenuItem>
+                  <MenuItem value={'juridical'}>Juridique</MenuItem>
+                </Select>
+              </FormControl>
             </Stack>
             </>
           )
         }
 
 {
-                activeStep === 2 &&(
+                activeStep === 3 &&(
                     <>
                        { <Stack alignItems="center" gap={1}>
                           
@@ -288,10 +409,10 @@ const CreateUser = () => {
             
       </Stack>
       <Stack direction="row" className={styles.actionButtons}>
-        <Button disabled={activeStep === 0 }>Precedent</Button>
-        <Button disabled={nextBtnshouldBeDisabled()}
-          onClick={()=>handleNextStep()}
-          >Suivant</Button>
+        <Button disabled={activeStep === 0 || done}>Precedent</Button>
+        <Button disabled={nextBtnshouldBeDisabled() }
+          onClick={()=>!done?handleNextStep():handleClose()}
+          >{done?"Fermer":"Suivant"}</Button>
       </Stack>
       
     </div>

@@ -22,12 +22,19 @@ export class DirectionService{
        })
     
     }
-    async findAll(offset:number = 0 , limit:number = 10):Promise<DirectionEntity[]>{
-        return this.directionRepository.createQueryBuilder('direction')
+    async findAll(offset:number  , limit:number ):Promise<DirectionEntity[]>{
+        console.log(offset, limit,"limit offset")
+        let q =  this.directionRepository.createQueryBuilder('direction')
         .leftJoinAndSelect('direction.departements','departements')
-        .skip(offset)
-        .take(limit)
-        .getMany();
+       
+        console.log(".........",offset,limit,typeof offset , typeof limit)
+        if(Number.isInteger(offset)  && Number.isInteger(limit)){
+           q = q
+            .skip(offset)
+            .take(limit)
+        }
+        return await q.getMany();
+
     }
     async findDirectionWithDepartement(directionId:string,departementId:string){
         return this.directionRepository.createQueryBuilder("dr")

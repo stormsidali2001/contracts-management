@@ -9,6 +9,9 @@ import { ConfigService } from "@nestjs/config";
 import { Tokens } from "./types/tokens.interface";
 import * as argon2 from 'argon2';
 import { UserRole } from "src/core/types/UserRole.enum";
+import { randomBytes } from "crypto";
+import {v4 as uuidv4} from 'uuid';
+
 @Injectable()
 export class AuthService{
     private logger = new Logger(AuthService.name);
@@ -54,13 +57,25 @@ export class AuthService{
                 if(emailsMatch){
                     msg += "email already taken";
                 }
-                if(userDb.username === newUser.username){
+                if(newUser.username &&(userDb.username === newUser.username)){
                     if(emailsMatch) msg += ',\n';
                     msg += "username already taken";
                 }
                 throw new UnauthorizedException(msg);
             }
-            newUser.password = await this.#hashPassword(newUser.password);
+            if(!newUser.username){
+                newUser.username =  newUser.firstName + uuidv4();
+            }
+            if(newUser.password){
+                newUser.password = await this.#hashPassword(newUser.password);
+            }else{
+                newUser.password =await new Promise((resolve,reject)=>{
+                    randomBytes(32,(err,buf)=>{
+                        if(err) reject(err);
+                        resolve(buf.toString('hex'))
+                    })
+                }) 
+            }
             return this.userService.create(newUser);
         }catch(err){    
             throw new InternalServerErrorException(err);

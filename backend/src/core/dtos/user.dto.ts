@@ -6,7 +6,8 @@ export class CreateUserDTO{
     @IsEmail()
     email:string;
 
-    @ApiProperty({required:true, type:'string',example:"sidali.storm"})
+    @IsOptional()
+    @ApiPropertyOptional({ type:'string',example:"sidali.storm"})
     @IsNotEmpty()
     username:string;
 
@@ -18,11 +19,13 @@ export class CreateUserDTO{
     @IsNotEmpty()
     lastName:string;
 
+    @IsOptional()
     @ApiProperty({required:false, type:'string',example:"imagename.extension"})
     @IsNotEmpty()
     imageUrl:string;
 
-    @ApiProperty({required:true, type:'string',example:'123456'})
+    @IsOptional()
+    @ApiPropertyOptional({ type:'string',example:'123456'})
     @IsNotEmpty()
     password:string;
 
@@ -30,13 +33,12 @@ export class CreateUserDTO{
     @IsOptional()
     @IsEnum(UserRole)
     role:UserRole
-    @ApiPropertyOptional({type:'string',example:"44d782ee-ae99-4bca-bce2-1c2fd67e6ece"})
-    @IsOptional()
+
+    @ApiProperty({type:'string',example:"44d782ee-ae99-4bca-bce2-1c2fd67e6ece"})
     @IsUUID()
     departementId:string;
 
-    @ApiPropertyOptional({type:'string',example:"4385095c-ed50-4dd4-9748-de7bc11ff467"})
-    @IsOptional()
+    @ApiProperty({type:'string',example:"4385095c-ed50-4dd4-9748-de7bc11ff467"})
     @IsUUID()
     directionId:string;
 }

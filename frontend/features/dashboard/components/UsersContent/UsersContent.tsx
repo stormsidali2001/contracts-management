@@ -135,7 +135,7 @@ const UsersContent = () => {
             aria-labelledby="modal-modal-title"
             aria-describedby="modal-modal-description"
       >
-        <CreateUser/>
+        <CreateUser handleClose={handleClose}/>
       </Modal>
 
      
