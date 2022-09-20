@@ -1,10 +1,11 @@
 import UploadIcon from '@mui/icons-material/Upload';
-import { Avatar, Button, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Step, StepLabel, Stepper, TextField, Typography } from '@mui/material';
+import { Avatar, Button, CircularProgress, Fab, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Step, StepLabel, Stepper, TextField, Typography } from '@mui/material';
 import { Stack } from '@mui/system';
 import { useEffect, useState } from 'react';
 import useInput from '../../../../hooks/input/use-input';
 import { validateEmail } from '../../../../shared/utils/validation/email';
 import { validateFirstName, validateLastName } from '../../../../shared/utils/validation/length';
+import CheckIcon from '@mui/icons-material/Check';
 import styles from './CreateUser.module.css';
 
 const CreateUser = () => {
@@ -42,19 +43,30 @@ const CreateUser = () => {
   };
   function nextBtnshouldBeDisabled():boolean{
     const bl =   Boolean(
-    (activeStep === 0) 
-    && (
+   !done &&( 
+    (activeStep === 0) && (
        email.length === 0 
     || firstName.length ===0 
     || lastName.length === 0 
     || firstNameShouldDisplayError 
     || lastNameShouldDisplayError 
-    || emailShouldDisplayError) );
+    || emailShouldDisplayError
+    )
+    || (activeStep === 2) && (
 
+       loading
+    )
+
+    
+    )
+     
+    )
     return bl;
   }
   const [profilImgFile,setProfileImageFile] = useState(null);
-  const [profileImgPreview,setProfileImgPreview] = useState('')
+  const [profileImgPreview,setProfileImgPreview] = useState('');
+  const [loading,setLoading] = useState(false);
+  const [done,setDone] = useState(false);
   useEffect(()=>{
     if(!profilImgFile) return;
     const objectUrl = URL.createObjectURL(profilImgFile);
@@ -66,6 +78,25 @@ const CreateUser = () => {
     e.preventDefault();
     setProfileImageFile(e.target.files[0])
   }
+   const handleSubmit = ()=>{
+    alert("submit")
+   }
+  const handleNextStep = ()=>{
+    if(done) return;
+    if(activeStep === 1){
+
+        handleSubmit();
+    }
+    setActiveStep(s=>(s+1)%3)
+  }
+  const handleStepLabel = (index:number)=>{
+    if(done) return;
+    if(index === 2){
+
+        handleSubmit();
+    }
+    setActiveStep(index)
+  }
   return (
     <div className={styles.container}>
       <Stack direction="row">
@@ -73,7 +104,7 @@ const CreateUser = () => {
       </Stack>
       <Stepper   activeStep={activeStep} alternativeLabel>
         {steps.map((label,index) => (
-          <Step     key={label} onClick={()=>!nextBtnshouldBeDisabled() && setActiveStep(index)}>
+          <Step     key={label} onClick={()=>!nextBtnshouldBeDisabled() && handleStepLabel(index)}>
             <StepLabel>{label}</StepLabel>
           </Step>
         ))}
@@ -160,12 +191,45 @@ const CreateUser = () => {
             </>
           )
         }
+
+{
+                activeStep === 2 &&(
+                    <>
+                       { <Stack alignItems="center" gap={1}>
+                          
+                            {
+                                loading?(
+                                    <>
+                                    <Typography>Creation de  Compte...</Typography>
+                                    <CircularProgress/>
+                                  </>
+                                    
+                                ):(
+                                    <>
+                                      <Typography>Compte cree !</Typography>
+                                      <Fab
+                                      aria-label="save"
+                                      color="secondary"
+                                      size="small"
+                                      sx={{boxShadow:"none"}}
+                                      >
+                                       <CheckIcon sx={{ color:"white"}}/> 
+                                    </Fab>
+                                    </>
+                                )
+                            }
+                           
+                          
+                        </Stack>}
+                    </>
+                )
+            }
             
       </Stack>
       <Stack direction="row" className={styles.actionButtons}>
         <Button disabled={activeStep === 0 }>Precedent</Button>
         <Button disabled={nextBtnshouldBeDisabled()}
-          onClick={()=>setActiveStep(s=>((s+1)%3))}
+          onClick={()=>handleNextStep()}
           >Suivant</Button>
       </Stack>
       

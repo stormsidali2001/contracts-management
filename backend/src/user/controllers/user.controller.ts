@@ -3,7 +3,7 @@ import { ApiTags } from "@nestjs/swagger";
 import { UserEntity } from "src/core/entities/User.entity";
 import { PaginationResponse } from "src/core/types/paginationResponse.interface";
 import { UpdateResult } from "typeorm";
-import { UserService } from "./user.service";
+import { UserService } from "../user.service";
 
 @ApiTags('users')
 @Controller('users')
