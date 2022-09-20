@@ -18,6 +18,10 @@ export class CreateUserDTO{
     @IsNotEmpty()
     lastName:string;
 
+    @ApiProperty({required:false, type:'string',example:"imagename.extension"})
+    @IsNotEmpty()
+    imageUrl:string;
+
     @ApiProperty({required:true, type:'string',example:'123456'})
     @IsNotEmpty()
     password:string;

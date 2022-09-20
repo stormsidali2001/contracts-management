@@ -14,6 +14,7 @@ async function bootstrap() {
   .setDescription("description")
   .setVersion('v1')
   .addTag('Contracts Management')
+  .addBearerAuth()
   .build();
 
   const document = SwaggerModule.createDocument(app, config);

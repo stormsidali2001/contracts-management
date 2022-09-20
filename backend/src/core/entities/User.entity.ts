@@ -22,6 +22,9 @@ export class UserEntity{
 
     @Column()
     lastName:string;
+    
+    @Column({default:""})
+    imageUrl:string;
 
     @Column({nullable:true})
     refresh_token_hash:string;

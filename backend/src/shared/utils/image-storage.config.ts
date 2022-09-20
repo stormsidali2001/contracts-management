@@ -5,7 +5,7 @@ import { extname } from "path";
 type ValidFileExtension = 'png' | 'jpg' | 'jpeg';
 type ValidMimeType = `image/${ValidFileExtension}`;
 import {v4 as uuidv4} from 'uuid';
-import {fileTypeFromFile} from 'file-type';
+const   FileType  = require('file-type') ;
 
 const validExtensions:ValidFileExtension[] = ['png','jpg','jpeg'];
 const validMimeTypes:ValidMimeType[] = ['image/png','image/jpg','image/jpeg'];
@@ -25,7 +25,7 @@ export const imageStorageConfig:MulterOptions = {
 }
 
 export const isFileExtensionSafe = async (path):Promise<boolean>=>{
-    const fileExtAndMimeType = await fileTypeFromFile(path);
+    const fileExtAndMimeType = await FileType.fromFile(path);
 
     if(!fileExtAndMimeType) return false;
     const {ext,mime} = fileExtAndMimeType;
