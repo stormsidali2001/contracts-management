@@ -1,20 +1,23 @@
 import styles from './UserContent.module.css';
-import {Button, Modal} from '@mui/material';
+import {Avatar, Button, Modal} from '@mui/material';
 import FilterIcon from '../../../../icons/FilterIcon';
 import TextField from '@mui/material/TextField';
-import { DataGrid, GridColumns, GridSortItem, GridSortModel } from '@mui/x-data-grid';
+import { DataGrid, GridColumns, GridRenderCellParams, GridSortItem, GridSortModel } from '@mui/x-data-grid';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import CreateUser from '../CreateUser/CreateUser';
 
 const columns:GridColumns<any> = [
-    // {
-    //     field:"id",
-    //     headerName:"id",
-    //     flex:1,
-        
-    // },
+    {
+        field:"imageUrl",
+        headerName:"photo",
+        renderCell: (params: GridRenderCellParams<Date>) => (
+           <Avatar  src={params.row.imageUrl?`http://localhost:8080/api/users/image/${params.row.imageUrl}`:"blank-profile-picture.png"}/>
+          ),
+        align:"left",
+        colSpan:1
+    },
     {
         field:"firstName",
         headerName:"nom",
@@ -122,6 +125,7 @@ const UsersContent = () => {
                 disableColumnFilter
                 disableColumnMenu 
                 onSortModelChange={handleSortModelChange}
+                
                 
             />
             </div>
