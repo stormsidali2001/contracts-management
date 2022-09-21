@@ -23,7 +23,7 @@ const PopoverContent = () => {
     <div className={styles.container}>
          <div className={styles.header}>
             <div className={styles.profilImgContainer}>
-                <img src="sidali.jpg"/>
+                <img src={user?.imageUrl?`http://localhost:8080/api/users/image/${user?.imageUrl}`:"blank-profile-picture.png"}/>
             </div>
             <div className={styles.userInfos}>
                 <span>{`${user?.firstName}  ${user?.lastName}`}</span>

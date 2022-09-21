@@ -5,6 +5,7 @@ export interface JwtPayload{
     username:string;
     firstName:string;
     lastName:string;
+    imageUrl?:string;
 
 }
 export interface JwtCompletePayload  {

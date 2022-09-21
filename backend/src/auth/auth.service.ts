@@ -96,7 +96,7 @@ export class AuthService{
            if(!matches){
                 throw new UnauthorizedException("wrong credentials")
            }
-           const tokens = await this.#generateTokens({email:userDb.email , username:userDb.username, sub:userDb.id,firstName:userDb.firstName ,lastName:userDb.lastName});
+           const tokens = await this.#generateTokens({email:userDb.email , username:userDb.username, sub:userDb.id,firstName:userDb.firstName ,lastName:userDb.lastName,imageUrl:userDb.imageUrl});
            await this.#updateRefreshTokenHash(userDb.id,tokens.refresh_token);
            return tokens;
        }catch(err){

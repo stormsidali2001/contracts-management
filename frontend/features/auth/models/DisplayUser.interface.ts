@@ -7,4 +7,5 @@ export interface DisplayUser{
     firstName:string;
     lastName:string;
     role?:UserRole;
+    imageUrl?:string;
 }
