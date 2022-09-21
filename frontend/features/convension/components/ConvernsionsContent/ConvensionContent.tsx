@@ -6,6 +6,7 @@ import styles from './ConvensionContent.module.css';
 import axios from 'axios';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import FilterIcon from '../../../../icons/FilterIcon';
+import { useDebounce } from '../../../../hooks/useDebounce.hook';
 
 
 const columns:GridColumns<any> = [
@@ -22,7 +23,7 @@ const columns:GridColumns<any> = [
     },
     {
         field:"object",
-        headerName:"prenom",
+        headerName:"objet",
         flex:1
     },
     {
@@ -60,6 +61,8 @@ const ConvensionsContent = () => {
     const [open, setOpen] = useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
+    const {debounce} = useDebounce();
+    const [searchQuery,setSearchQuery] = useState('');
     const handleSortModelChange = (sortModel: GridSortModel)=> {
         // Here you save the data you need from the sort model
         setQueryOptions({ sortModel: [...sortModel] });
@@ -70,6 +73,9 @@ const ConvensionsContent = () => {
         if(queryOptions.sortModel){
             params+= '&orderBy='+queryOptions.sortModel[0].field
         }
+        if(searchQuery.length > 0 ){
+            params+= `&searchQuery=${searchQuery}`;
+          }
         setPageState((old:any)=>({...old,isLoading:true}))
              axios.get(`http://localhost:8080/api/agreements?offset=${pageState.page}&limit=${pageState.pageSize}${params}&agreementType=convension`)
             .then((res:any)=>{
@@ -82,6 +88,10 @@ const ConvensionsContent = () => {
             })
        
     },[pageState?.page,pageState?.pageSize,queryOptions.sortModel])
+    const handleSearch = (e:any)=>{
+        const {value} = e.target;
+        debounce(()=>setSearchQuery(value),1000)
+      }
     return (
         <div className={styles.container}>
             <div className={styles.wrapperBox}>
@@ -98,7 +108,7 @@ const ConvensionsContent = () => {
                         placeholder='mot clé...' color='secondary' 
                         size='small' 
                         fullWidth type='search' 
-                        
+                        onChange={handleSearch}
                        InputProps={{
     
                                     // startAdornment:obj

@@ -1,4 +1,4 @@
-import {Entity , PrimaryGeneratedColumn , Column, ManyToOne} from 'typeorm';
+import {Entity , PrimaryGeneratedColumn , Column, ManyToOne, Index} from 'typeorm';
 import { UserRole } from '../types/UserRole.enum';
 import { DepartementEntity } from './Departement.entity';
 import { DirectionEntity } from './Direction.entity';
@@ -8,18 +8,22 @@ export class UserEntity{
     @PrimaryGeneratedColumn('uuid')
     id:string;
 
-    @Column({unique:true})
+    @Index({fulltext:true})
+    @Column()
     email:string;
 
     @Column({select:false})
     password:string;
 
-    @Column({unique:true})
+    @Index({fulltext:true})
+    @Column()
     username:string;
 
+    @Index({fulltext:true})
     @Column()
     firstName:string;
 
+    @Index({fulltext:true})
     @Column()
     lastName:string;
     

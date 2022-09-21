@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import CreateUser from '../CreateUser/CreateUser';
+import { useDebounce } from '../../../../hooks/useDebounce.hook';
 
 const columns:GridColumns<any> = [
     {
@@ -49,6 +50,8 @@ const UsersContent = () => {
 
 
     });
+    const [searchQuery,setSearchQuery] = useState('');
+    const {debounce} = useDebounce();
     const [queryOptions, setQueryOptions] = useState<{ sortModel:GridSortItem[] | null}>({sortModel:null});
     const [open, setOpen] = useState(false);
     const handleOpen = () => setOpen(true);
@@ -63,6 +66,9 @@ const UsersContent = () => {
         if(queryOptions.sortModel){
             params+= '&orderBy='+queryOptions.sortModel[0].field
         }
+        if(searchQuery.length > 0 ){
+            params+= `&searchQuery=${searchQuery}`;
+          }
         setPageState((old:any)=>({...old,isLoading:true}))
              axios.get(`http://localhost:8080/api/users?offset=${pageState.page}&limit=${pageState.pageSize}${params}`)
             .then((res:any)=>{
@@ -74,12 +80,15 @@ const UsersContent = () => {
                 console.error(err);
             })
        
-    },[pageState?.page,pageState?.pageSize,queryOptions.sortModel])
+    },[pageState?.page,pageState?.pageSize,queryOptions.sortModel,searchQuery])
     // const obj = <InputAdornment position="start">
     // <SearchRounded />
     // </InputAdornment>;
 
-    
+ const handleSearch = (e:any)=>{
+        const {value} = e.target;
+        debounce(()=>setSearchQuery(value),1000)
+    }
   return (
     <div className={styles.container}>
         <div className={styles.wrapperBox}>
@@ -96,7 +105,7 @@ const UsersContent = () => {
                     placeholder='mot clé...' color='secondary' 
                     size='small' 
                     fullWidth type='search' 
-                    
+                    onChange={handleSearch}
                    InputProps={{
 
                                 // startAdornment:obj

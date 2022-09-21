@@ -48,10 +48,18 @@ export class UserService{
     async findAndUpdate(userId:string,partialEntity: QueryDeepPartialEntity<UserEntity>):Promise<UpdateResult>{
         return this.userRepository.update({id:userId},partialEntity);
     }
-    async findAll(offset:number = 0 ,limit:number = 10 ,orderBy:string = undefined):Promise<PaginationResponse<UserEntity>>{
+    async findAll(offset:number = 0 ,limit:number = 10 ,orderBy:string = undefined ,searchQuery:string = undefined):Promise<PaginationResponse<UserEntity>>{
         let query =    this.userRepository.createQueryBuilder('user')
         .skip(offset)
         .take(limit);
+
+        if(searchQuery && searchQuery.length >= 2){
+            query = query.where(`MATCH(user.username) AGAINST ('${searchQuery}' IN BOOLEAN MODE)`)
+            .orWhere(`MATCH(user.firstName) AGAINST ('${searchQuery}' IN BOOLEAN MODE)`)
+            .orWhere(`MATCH(user.lastName) AGAINST ('${searchQuery}' IN BOOLEAN MODE)`)
+            .orWhere(`MATCH(user.email) AGAINST ('${searchQuery}' IN BOOLEAN MODE)`)
+           
+        }
         if(orderBy){
             query = query.orderBy(`${orderBy}`);
         }

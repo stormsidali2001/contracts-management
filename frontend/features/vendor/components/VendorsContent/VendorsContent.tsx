@@ -10,6 +10,7 @@ import styles from './VendorsContent.module.css';
 import axios from 'axios';
 import CreateVendor from '../CreateVendor/CreateVendor';
 import { Vendor } from '../../models/vendor.interface';
+import { useDebounce } from '../../../../hooks/useDebounce.hook';
 
 const columns:GridColumns<any> = [
 
@@ -59,6 +60,7 @@ const [queryOptions, setQueryOptions] = useState<{ sortModel:GridSortItem[] | nu
 const [open, setOpen] = useState(false);
 const handleOpen = () => setOpen(true);
 const handleClose = () => setOpen(false);
+const {debounce} = useDebounce();
 const handleSortModelChange = (sortModel: GridSortModel)=> {
     // Here you save the data you need from the sort model
     if(sortModel){
@@ -91,6 +93,10 @@ useEffect( ()=>{
         })
    
 },[pageState?.page,pageState?.pageSize,queryOptions.sortModel,searchQuery])
+const handleSearch = (e:any)=>{
+  const {value} = e.target;
+  debounce(()=>setSearchQuery(value),1000)
+}
   return (
     <div className={styles.container}>
         <div className={styles.wrapperBox}>
@@ -107,8 +113,7 @@ useEffect( ()=>{
                     placeholder='mot clé...' color='secondary' 
                     size='small' 
                     fullWidth type='search' 
-                    value={searchQuery}
-                    onChange={e=>setSearchQuery(e.target.value)}
+                    onChange={handleSearch}
                    InputProps={{
 
                                 // startAdornment:obj

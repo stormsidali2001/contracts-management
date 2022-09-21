@@ -28,7 +28,7 @@ export class AgreementController{
         enumName:'agreementType'
     })
     @Get('')
-    async findAll(@Query('offset') offset:number = 0 ,@Query('limit') limit:number = 10 ,@Query('orderBy') orderBy:string  = undefined,@Query('agreementType') agreementType:AgreementType):Promise<PaginationResponse<AgreementEntity>>{
-        return await  this.AgreementService.findAll(offset,limit,orderBy,agreementType);
+    async findAll(@Query('offset') offset:number = 0 ,@Query('limit') limit:number = 10 ,@Query('orderBy') orderBy:string  = undefined,@Query('agreementType') agreementType:AgreementType ,@Query("searchQuery") searchQuery:string):Promise<PaginationResponse<AgreementEntity>>{
+        return await  this.AgreementService.findAll(offset,limit,orderBy,agreementType,searchQuery);
     }   
 }

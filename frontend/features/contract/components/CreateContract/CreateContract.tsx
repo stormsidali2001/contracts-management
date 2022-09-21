@@ -1,5 +1,5 @@
 import styles from './CreateContract.module.css';
-import { Avatar, Button, CircularProgress, Fab, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Step, StepLabel, Stepper, TextField, Typography } from '@mui/material';
+import { Avatar, Button, CircularProgress, Fab, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Step, StepLabel, Stepper, TextField, Typography ,Modal} from '@mui/material';
 import LinearProgress from '@mui/material/LinearProgress';
 import { useEffect, useState } from 'react';
 import { Stack } from '@mui/system';
@@ -10,6 +10,9 @@ import UploadIcon from '@mui/icons-material/Upload';
 import CheckIcon from '@mui/icons-material/Check';
 import { MobileDatePicker } from '@mui/x-date-pickers';
 import dayjs, { Dayjs } from 'dayjs';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
+import SelectVendor from '../SelectVendor/SelectVendor';
+
 
 
 
@@ -33,6 +36,7 @@ interface Proptype{
     const [done,setDone] = useState(false);
     const [isAgreementDocumentFileUploading,setIsAgreementDocumentFileUploading] = useState(false)
     const [amount,setAmount] = useState(0)
+    const [vendor,setVendor] = useState({});
     const [signatureDate, setSignatureDate] = useState<Dayjs | null>(
         dayjs('2014-08-18'),
       );
@@ -40,7 +44,9 @@ interface Proptype{
         dayjs('2014-08-18'),
       );
     const [fileUploadProgress,setFileUploadProgress] = useState(0)
-  
+    const [vendorModalOpen,setVendorModalOpen] = useState(false)
+    const handleVendorModalOpen = ()=>setVendorModalOpen(true)
+    const handleVendorModalClose = ()=>setVendorModalOpen(false)
   
     const {
       text:number ,
@@ -204,7 +210,7 @@ interface Proptype{
     const handleStepLabel = (index:number)=>{
       if(done) return;
       if(index === 3){
-  
+
           handleSubmit();
       }
       setActiveStep(index)
@@ -332,7 +338,7 @@ interface Proptype{
                   </Stack>
                  {/* TODO : make a file displayer */}
                 </Stack>
-                <Stack direction="row" justifyContent="center" gap={3}>
+                <Stack direction="row" justifyContent="center" gap={3} sx={{marginTop:"10px"}}>
                
    
        
@@ -351,10 +357,15 @@ interface Proptype{
                     onChange={(value)=>setExpirationDate(value)}
                     renderInput={(params) => <TextField size="small"  {...params} />}
                     />
-      
-      
      
     
+                </Stack>
+                <Stack direction="row" justifyContent="center" sx={{marginTop:"10px"}} >
+                  <Button onClick={()=>handleVendorModalOpen()}>
+                  <Stack direction="row" justifyContent="center" alignItems="center" gap={1}>
+                    <AddCircleIcon color="primary"/><Typography sx={{fontSize:"13px",textTransform:"initial"}}>aucun fournisseur selectionee</Typography>
+                  </Stack>
+                  </Button>
                 </Stack>
               </>
             )
@@ -408,6 +419,13 @@ interface Proptype{
             >{done?"Fermer":"Suivant"}</Button>
         </Stack>
         
+
+        <Modal
+          open={vendorModalOpen}
+          onClose={handleClose}
+        >
+          <SelectVendor/>
+        </Modal>
       </div>
     )
   }

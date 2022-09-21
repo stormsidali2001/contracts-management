@@ -1,54 +1,45 @@
-import {Button, Modal} from '@mui/material';
-import { DataGrid, GridColumns, GridSortItem, GridSortModel } from '@mui/x-data-grid';
-import TextField from '@mui/material/TextField';
-import { useEffect, useState } from 'react';
-import styles from './ContractsContent.module.css';
-import axios from 'axios';
-import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import styles from './SelectVendor.module.css'
+import {  Button, Fab, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Step, StepLabel, TextField, Typography ,Modal,Stack} from '@mui/material';
 import FilterIcon from '../../../../icons/FilterIcon';
-import CreateContract from '../CreateContract/CreateContract';
+import {useState,useEffect} from 'react';
 import { useDebounce } from '../../../../hooks/useDebounce.hook';
-
+import { DataGrid, GridColumns, GridSortItem, GridSortModel } from '@mui/x-data-grid';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
 
 const columns:GridColumns<any> = [
-    // {
-    //     field:"id",
-    //     headerName:"id",
-    //     flex:1,
-        
-    // },
+
     {
-        field:"number",
+        field:"num",
         headerName:"numero",
         flex:1
     },
     {
-        field:"object",
-        headerName:"objet",
+        field:"company_name",
+        headerName:"raison sociale",
         flex:1
     },
     {
-        field:"amount",
-        headerName:"montant",
+        field:"nif",
+        headerName:"nif",
         flex:1
     },
     {
-        field:"expiration_date",
-        headerName:"expiration",
+        field:"address",
+        headerName:"adresse",
         flex:1
     },
     {
-        field:"signature_date",
-        headerName:"signature",
+        field:"mobile_phone_number",
+        headerName:"mobile",
         flex:1
     },
     {
-        field:"status",
-        headerName:"status",
+        field:"home_phone_number",
+        headerName:"fixe",
         flex:1
     },
-];
-const ContractsContent = () => {
+  ]
+const SelectVendor = () => {
     const [pageState,setPageState] = useState<any>({
         isLoading:false,
         data:[],
@@ -61,42 +52,21 @@ const ContractsContent = () => {
     const [searchQuery,setSearchQuery] = useState('');
     const {debounce} = useDebounce();
     const [queryOptions, setQueryOptions] = useState<{ sortModel:GridSortItem[] | null}>({sortModel:null});
-    const [open, setOpen] = useState(false);
-    const handleOpen = () => setOpen(true);
-    const handleClose = () => setOpen(false);
-    const handleSortModelChange = (sortModel: GridSortModel)=> {
-        // Here you save the data you need from the sort model
-        setQueryOptions({ sortModel: [...sortModel] });
-      }
- 
-    useEffect( ()=>{
-        let params = '';
-        if(queryOptions.sortModel){
-            params+= '&orderBy='+queryOptions.sortModel[0].field
-        }
-        if(searchQuery.length > 0 ){
-            params+= `&searchQuery=${searchQuery}`;
-          }
-        setPageState((old:any)=>({...old,isLoading:true}))
-             axios.get(`http://localhost:8080/api/agreements?offset=${pageState.page}&limit=${pageState.pageSize}${params}&agreementType=contract`)
-            .then((res:any)=>{
-                const {data:d} = res;
-                console.log(1,d)
-                setPageState((old:any)=>({...old,data:d?.data,total:d?.total,isLoading:false}))
-            })
-            .catch(err=>{
-                console.error(err);
-            })
-       
-    },[pageState?.page,pageState?.pageSize,queryOptions.sortModel,searchQuery])
- 
     const handleSearch = (e:any)=>{
         const {value} = e.target;
         debounce(()=>setSearchQuery(value),1000)
+    }
+    const handleSortModelChange = (sortModel: GridSortModel)=> {
+        // Here you save the data you need from the sort model
+        if(sortModel){
+    
+          setQueryOptions({ sortModel: [...sortModel] });
+        }
       }
-    return (
-        <div className={styles.container}>
-            <div className={styles.wrapperBox}>
+  return (
+    <div className={styles.container}>
+        <form>
+        <div className={styles.wrapperBox}>
                 <div className={styles.searchContainer}>
                     <Button 
                         startIcon ={<FilterIcon/>}  
@@ -142,22 +112,12 @@ const ContractsContent = () => {
                     
                 />
                 </div>
-                <Button onClick={handleOpen} className={styles.UserFormButton}>
-                    <PersonAddIcon/>
-                </Button>
+             
             </div>
-            <Modal
-                open={open}
-                onClose={handleClose}
-                aria-labelledby="modal-modal-title"
-                aria-describedby="modal-modal-description"
-          >
-            <CreateContract handleClose={handleClose}/>
-          </Modal>
-    
-         
-        </div>
-      )
+
+        </form>
+    </div>
+  )
 }
 
-export default ContractsContent
+export default SelectVendor

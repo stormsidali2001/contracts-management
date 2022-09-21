@@ -1,4 +1,4 @@
-import { Column, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, Index, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { AgreementStatus } from "../types/agreement-status.enum";
 import { AgreementType } from "../types/agreement-type.enum";
 import { DepartementEntity } from "./Departement.entity";
@@ -11,6 +11,7 @@ export class AgreementEntity{
     @PrimaryGeneratedColumn('uuid')
     id:string;
 
+    @Index({fulltext:true})
     @Column()
     number:string;
 
@@ -21,6 +22,7 @@ export class AgreementEntity{
     })
     type:AgreementType;
 
+    @Index({fulltext:true})
     @Column()
     object:string;
 
@@ -37,6 +39,7 @@ export class AgreementEntity{
     })
     signature_date:Date;
 
+    @Index({fulltext:true})
     @Column({nullable:true})
     observation?:string;
 

@@ -41,11 +41,18 @@ export class AgreementService{
         return this.agreementRepository.save({...agreementData,direction,departement,vendor});
     }
 
-    async findAll(offset:number = 0 ,limit:number = 10 ,orderBy:string = undefined,agreementType:AgreementType):Promise<PaginationResponse<AgreementEntity>>{
+    async findAll(offset:number = 0 ,limit:number = 10 ,orderBy:string = undefined,agreementType:AgreementType,searchQuery:string = undefined):Promise<PaginationResponse<AgreementEntity>>{
         let query =    this.agreementRepository.createQueryBuilder('ag')
         .where("ag.type = :type",{type:agreementType})
         .skip(offset)
         .take(limit);
+
+        if(searchQuery && searchQuery.length >= 2){
+            query = query.where(`MATCH(ag.number) AGAINST ('${searchQuery}' IN BOOLEAN MODE)`)
+            .orWhere(`MATCH(ag.object) AGAINST ('${searchQuery}' IN BOOLEAN MODE)`)
+            .orWhere(`MATCH(ag.observation) AGAINST ('${searchQuery}' IN BOOLEAN MODE)`)
+           
+        }
         if(orderBy && orderBy!== 'type'){
             query = query.orderBy(`${orderBy}`);
         }
