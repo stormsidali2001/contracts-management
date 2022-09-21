@@ -14,7 +14,7 @@
     "@mui/icons-material": "^5.10.3",
     "@mui/material": "^5.10.4",
     "@mui/x-data-grid": "^5.17.3",
-    "@mui/x-date-pickers": "^5.0.1",
+    "@mui/x-date-pickers": "^5.0.2",
     "@reduxjs/toolkit": "^1.8.5",
     "@types/jwt-decode": "^3.1.0",
     "apexcharts": "^3.35.5",

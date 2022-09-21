@@ -6,6 +6,7 @@ import styles from './ContractsContent.module.css';
 import axios from 'axios';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import FilterIcon from '../../../../icons/FilterIcon';
+import CreateContract from '../CreateContract/CreateContract';
 
 
 const columns:GridColumns<any> = [
@@ -140,7 +141,7 @@ const ContractsContent = () => {
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
           >
-            <div></div>
+            <CreateContract handleClose={handleClose}/>
           </Modal>
     
          
