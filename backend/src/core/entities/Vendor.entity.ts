@@ -1,4 +1,4 @@
-import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, Index, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { AgreementEntity } from "./Agreement.entity";
 
 @Entity('vendors')
@@ -6,18 +6,23 @@ export class VendorEntity{
     @PrimaryGeneratedColumn('uuid')
     id:string;
 
-    @Column({unique:true})
+    @Index({fulltext:true})
+    @Column({type:'varchar'})
     num:string; //numero de fournisseur
 
-    @Column({unique:true})
+    @Index({fulltext:true})
+    @Column({type:'varchar'})
     company_name:string// raison sociale : le nom de l'entreprise
 
-    @Column({unique:true})
+    @Index({fulltext:true})
+    @Column({type:'varchar'})
     nif:string; //numero d'identification fascale
 
-    @Column({unique:true})
+    @Index({fulltext:true})
+    @Column({type:'varchar'})
     nrc:string // numero de registre de commerce
 
+    @Index({fulltext:true})
     @Column()
     address:string;
 

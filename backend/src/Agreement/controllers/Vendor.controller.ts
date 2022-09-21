@@ -21,7 +21,7 @@ export class VendorController{
         return await this.vendorService.createVendor(vendor);
     }
     @Get('')
-    async findAll(@Query('offset') offset:number = 0 ,@Query('limit') limit:number = 10 ,@Query('orderBy') orderBy:string  = undefined):Promise<PaginationResponse<VendorEntity>>{
-        return await  this.vendorService.findAll(offset,limit,orderBy);
+    async findAll(@Query('offset') offset:number = 0 ,@Query('limit') limit:number = 10 ,@Query('orderBy') orderBy:string  = undefined ,@Query("searchQuery") searchQuery:string = undefined):Promise<PaginationResponse<VendorEntity>>{
+        return await  this.vendorService.findAll(offset,limit,orderBy ,searchQuery );
     }   
 }

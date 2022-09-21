@@ -6,7 +6,6 @@ import { Stack } from '@mui/system';
 import axios from 'axios';
 import { Direction } from '../../../direction/models/direction.interface';
 import useInput from '../../../../hooks/input/use-input';
-import { CreateUser } from '../../../dashboard/models/CreateUser.interface';
 import UploadIcon from '@mui/icons-material/Upload';
 import CheckIcon from '@mui/icons-material/Check';
 import { MobileDatePicker } from '@mui/x-date-pickers';
@@ -29,11 +28,19 @@ interface Proptype{
     const [selectedDirection,setSelectedDirection] = useState<{label:string,value:string}>({label:"",value:""})
     const [selectedDepartement,setSelectedDepartement] = useState<{label:string,value:string}>({label:"",value:""});
   
-    const [profilImgFile,setProfileImageFile] = useState<any>(null);
-    const [profileImgPreview,setProfileImgPreview] = useState('');
+    const [agreementDocumentFile,setAgreementDocumentFile] = useState<any>(null);
     const [loading,setLoading] = useState(false);
     const [done,setDone] = useState(false);
-    const [isImageUploading,setIsImageUploading] = useState(false)
+    const [isAgreementDocumentFileUploading,setIsAgreementDocumentFileUploading] = useState(false)
+    const [amount,setAmount] = useState(0)
+    const [signatureDate, setSignatureDate] = useState<Dayjs | null>(
+        dayjs('2014-08-18'),
+      );
+    const [expirationDate, setExpirationDate] = useState<Dayjs | null>(
+        dayjs('2014-08-18'),
+      );
+    const [fileUploadProgress,setFileUploadProgress] = useState(0)
+  
   
     const {
       text:number ,
@@ -49,15 +56,7 @@ interface Proptype{
       shouldDisplayError:objectShouldDisplayError,
   
     } = useInput();
-    const [amount,setAmount] = useState(0)
-    const [signatureDate, setSignatureDate] = useState<Dayjs | null>(
-        dayjs('2014-08-18'),
-      );
-    const [expirationDate, setExpirationDate] = useState<Dayjs | null>(
-        dayjs('2014-08-18'),
-      );
-    const [imageUploadProgress,setImageUploadProgress] = useState(0)
-  
+ 
    
     
   
@@ -71,6 +70,10 @@ interface Proptype{
       || numberShouldDisplayError
       || objectShouldDisplayError 
 
+      )
+      || (activeStep === 2) && (
+  
+         true
       )
       || (activeStep === 3) && (
   
@@ -104,13 +107,7 @@ interface Proptype{
       setSelectedDepartement({label:departement.title , value:departementId})
   
     }
-    useEffect(()=>{
-      if(!profilImgFile) return;
-      const objectUrl = URL.createObjectURL(profilImgFile);
-      setProfileImgPreview(objectUrl)
-      
-      return () => URL.revokeObjectURL(objectUrl)
-    },[profilImgFile])
+ 
   
     useEffect(()=>{
       const abortController = new AbortController();
@@ -138,22 +135,22 @@ interface Proptype{
     },[])
     const handleFileChange = (e:any)=>{
       e.preventDefault();
-      setProfileImageFile(e.target.files[0])
+      setAgreementDocumentFile(e.target.files[0])
     }
      const handleSubmit = async()=>{
     
-        if(profilImgFile) setIsImageUploading(true)
+        if(agreementDocumentFile) setIsAgreementDocumentFileUploading(true)
         const formData = new FormData();
-        formData.append("file",profilImgFile)
+        formData.append("file",agreementDocumentFile)
         try{
           let res;
-          if(profilImgFile){
-            res = await axios.post("http://localhost:8080/api/users/image/upload",formData,
+          if(agreementDocumentFile){
+            res = await axios.post("http://localhost:8080/api/agreements/files/upload",formData,
            {
              onUploadProgress:(e)=>{
                  const {loaded,total} = e;
                  console.log(`${loaded} kbof ${total}`)
-                 setImageUploadProgress(Math.floor((loaded/total)*100))
+                 setFileUploadProgress(Math.floor((loaded/total)*100))
              },
              headers:{
                'Authorization':"Bearer "+JSON.parse(localStorage.getItem("jwt") ?? "" )?.access_token
@@ -161,18 +158,18 @@ interface Proptype{
            })
   
           }
-          let imageUrl =""
+          let url =""
          if( res){
            console.log(res)
-           setIsImageUploading(false);
-           imageUrl = res.data.filename
+           setIsAgreementDocumentFileUploading(false);
+           url = res.data.filename
          }
   
         //   const newUser:CreateUser = {
         //       email,
         //       firstName,
         //       lastName,
-        //       imageUrl,
+        //       url,
         //       role,
         //       directionId:selectedDirection.value,
         //       departementId:selectedDepartement.value,
@@ -191,7 +188,7 @@ interface Proptype{
         }catch(err){
           console.error(err)
           setLoading(false)
-          setIsImageUploading(false);
+          setIsAgreementDocumentFileUploading(false);
         }
       
       
@@ -369,9 +366,9 @@ interface Proptype{
                          { <Stack alignItems="center" gap={1}>
                             
                               {
-                                 isImageUploading ?(<>
-                                 {imageUploadProgress}
-                                 <LinearProgress  variant="buffer"  valueBuffer={imageUploadProgress} value={imageUploadProgress} color="primary" sx={{width:"100%"}} />
+                                 isAgreementDocumentFileUploading ?(<>
+                                 {fileUploadProgress}
+                                 <LinearProgress  variant="buffer"  valueBuffer={fileUploadProgress} value={fileUploadProgress} color="primary" sx={{width:"100%"}} />
                                  
                                  </>):(
                                     loading?(

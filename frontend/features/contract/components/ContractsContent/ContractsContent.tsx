@@ -57,6 +57,7 @@ const ContractsContent = () => {
 
 
     });
+    const [searchQuery,setSearchQuery] = useState('');
     const [queryOptions, setQueryOptions] = useState<{ sortModel:GridSortItem[] | null}>({sortModel:null});
     const [open, setOpen] = useState(false);
     const handleOpen = () => setOpen(true);
@@ -82,7 +83,8 @@ const ContractsContent = () => {
                 console.error(err);
             })
        
-    },[pageState?.page,pageState?.pageSize,queryOptions.sortModel])
+    },[pageState?.page,pageState?.pageSize,queryOptions.sortModel,searchQuery])
+ 
     return (
         <div className={styles.container}>
             <div className={styles.wrapperBox}>
@@ -99,7 +101,8 @@ const ContractsContent = () => {
                         placeholder='mot clé...' color='secondary' 
                         size='small' 
                         fullWidth type='search' 
-                        
+                        value={searchQuery}
+                        onChange={e=>setSearchQuery(e.target.value)}
                        InputProps={{
     
                                     // startAdornment:obj

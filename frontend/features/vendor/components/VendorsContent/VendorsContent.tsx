@@ -54,6 +54,7 @@ const VendorsContent = () => {
 
 
 });
+const [searchQuery,setSearchQuery] = useState('')
 const [queryOptions, setQueryOptions] = useState<{ sortModel:GridSortItem[] | null}>({sortModel:null});
 const [open, setOpen] = useState(false);
 const handleOpen = () => setOpen(true);
@@ -74,6 +75,9 @@ useEffect( ()=>{
       console.log(queryOptions,"code530")
         params+= '&orderBy='+queryOptions.sortModel[0]?.field
     }
+    if(searchQuery.length > 0 ){
+      params+= `&searchQuery=${searchQuery}`;
+    }
     setPageState((old:any)=>({...old,isLoading:true}))
          axios.get(`http://localhost:8080/api/vendors?offset=${pageState.page}&limit=${pageState.pageSize}${params}`)
         .then((res:any)=>{
@@ -86,7 +90,7 @@ useEffect( ()=>{
             console.error(err);
         })
    
-},[pageState?.page,pageState?.pageSize,queryOptions.sortModel])
+},[pageState?.page,pageState?.pageSize,queryOptions.sortModel,searchQuery])
   return (
     <div className={styles.container}>
         <div className={styles.wrapperBox}>
@@ -103,7 +107,8 @@ useEffect( ()=>{
                     placeholder='mot clé...' color='secondary' 
                     size='small' 
                     fullWidth type='search' 
-                    
+                    value={searchQuery}
+                    onChange={e=>setSearchQuery(e.target.value)}
                    InputProps={{
 
                                 // startAdornment:obj

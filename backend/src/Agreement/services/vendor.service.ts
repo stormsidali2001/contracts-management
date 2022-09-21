@@ -21,13 +21,21 @@ export class VendorService{
     async findBy(options:FindOptionsWhere<VendorEntity>){
         return this.vendorRepository.findOneBy(options);
     }
-    async findAll(offset:number = 0 ,limit:number = 10 ,orderBy:string = undefined):Promise<PaginationResponse<VendorEntity>>{
+    async findAll(offset:number = 0 ,limit:number = 10 ,orderBy:string = undefined ,searchQuery:string = undefined):Promise<PaginationResponse<VendorEntity>>{
         let query =    this.vendorRepository.createQueryBuilder('vendor')
         .skip(offset)
         .take(limit);
+        if(searchQuery && searchQuery.length >= 2){
+            query = query.where(`MATCH(vendor.company_name) AGAINST ('${searchQuery}' IN BOOLEAN MODE)`)
+            .orWhere(`MATCH(vendor.nif) AGAINST ('${searchQuery}' IN BOOLEAN MODE)`)
+            .orWhere(`MATCH(vendor.nrc) AGAINST ('${searchQuery}' IN BOOLEAN MODE)`)
+            .orWhere(`MATCH(vendor.address) AGAINST ('${searchQuery}' IN BOOLEAN MODE)`)
+           
+        }
         if(orderBy){
             query = query.orderBy(`${orderBy}`);
         }
+
         const res = await query.getManyAndCount();
 
         return {
