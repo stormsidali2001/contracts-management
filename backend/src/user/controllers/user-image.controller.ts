@@ -32,8 +32,8 @@ export class UserImageController{
     })
     async updateProfileImage( @UploadedFile()  file:Express.Multer.File,@CurrentUserId() userId:string):Promise<ImageUploadResponse>{
         try{
+            if(!file) throw new BadRequestException("file should be a png/jpg");
             const filename = file.filename;
-            if(!filename) throw new BadRequestException("file should be a png/jpg");
             const imagesDirectory = join(process.cwd() ,"upload/images");
             const fullImagePath = join(imagesDirectory+"/"+filename);
             const safe = await isFileExtensionSafe(fullImagePath);
@@ -60,12 +60,12 @@ export class UserImageController{
     })
     async uploadProfileImage( @UploadedFile()  file:Express.Multer.File):Promise<ImageUploadResponse>{
         try{
+            if(!file) throw new BadRequestException("the file should be a png/jpg");
             const filename = file.filename;
-            if(!filename) throw new BadRequestException("file should be a png/jpg");
             const imagesDirectory = join(process.cwd() ,"upload/images");
             const fullImagePath = join(imagesDirectory+"/"+filename);
-            const safe = await isFileExtensionSafe(fullImagePath);
-            if(!safe){
+            const isSafe = await isFileExtensionSafe(fullImagePath);
+            if(!isSafe){
                  removeFile(fullImagePath);
                  throw new ForbiddenException("file content does not match the extension")
             }

@@ -21,7 +21,7 @@ interface Proptype{
     const steps = [
       'identifiants',
       'direction , departement',
-      'role et photo de profile',
+      'fichier et date',
       'validation',
     ];
     const [activeStep,setActiveStep] = useState(0);
