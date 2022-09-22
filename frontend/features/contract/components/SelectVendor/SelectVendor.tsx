@@ -5,6 +5,7 @@ import {useState,useEffect} from 'react';
 import { useDebounce } from '../../../../hooks/useDebounce.hook';
 import { DataGrid, GridColumns, GridSortItem, GridSortModel } from '@mui/x-data-grid';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import axios from 'axios';
 
 const columns:GridColumns<any> = [
 
@@ -39,7 +40,12 @@ const columns:GridColumns<any> = [
         flex:1
     },
   ]
-const SelectVendor = () => {
+
+interface PropType{
+    handleClose:()=>void;
+    selectVendor:(vendor:any)=>void
+}
+const SelectVendor = ({handleClose,selectVendor}:PropType) => {
     const [pageState,setPageState] = useState<any>({
         isLoading:false,
         data:[],
@@ -52,6 +58,7 @@ const SelectVendor = () => {
     const [searchQuery,setSearchQuery] = useState('');
     const {debounce} = useDebounce();
     const [queryOptions, setQueryOptions] = useState<{ sortModel:GridSortItem[] | null}>({sortModel:null});
+    const [selectedVendor,setSelectedVendor] = useState<any>(null)
     const handleSearch = (e:any)=>{
         const {value} = e.target;
         debounce(()=>setSearchQuery(value),1000)
@@ -63,19 +70,40 @@ const SelectVendor = () => {
           setQueryOptions({ sortModel: [...sortModel] });
         }
       }
+    useEffect( ()=>{
+    let params = '';
+    if(queryOptions.sortModel){
+      console.log(queryOptions,"code530")
+        params+= '&orderBy='+queryOptions.sortModel[0]?.field
+    }
+    if(searchQuery.length > 0 ){
+      params+= `&searchQuery=${searchQuery}`;
+    }
+    setPageState((old:any)=>({...old,isLoading:true}))
+         axios.get(`http://localhost:8080/api/vendors?offset=${pageState.page}&limit=${pageState.pageSize}${params}`)
+        .then((res:any)=>{
+            const {data:d} = res;
+            console.log(1,d)
+            setPageState((old:any)=>({...old,data:d?.data,total:d?.total,isLoading:false}))
+
+        })
+        .catch(err=>{
+            console.error(err);
+        })
+   
+},[pageState?.page,pageState?.pageSize,queryOptions.sortModel,searchQuery]);
+  const handleConfirm = (e:any)=>{
+    e.preventDefault();
+    selectVendor(selectedVendor)
+    handleClose()
+    
+  }
   return (
     <div className={styles.container}>
-        <form>
-        <div className={styles.wrapperBox}>
+        
+                <Typography  sx={{margin:"-5px 0 10px 0",fontSize:"14px",color:"#807D7D"}}>Selectioner un fournisseur</Typography>
                 <div className={styles.searchContainer}>
-                    <Button 
-                        startIcon ={<FilterIcon/>}  
-                        size='small' 
-                        color='secondary' 
-                        variant="contained" 
-                        className={styles.advancedButton}>Avancée</Button>
-                  
-              
+                 
                     <TextField 
                         placeholder='mot clé...' color='secondary' 
                         size='small' 
@@ -109,13 +137,21 @@ const SelectVendor = () => {
                     disableColumnFilter
                     disableColumnMenu 
                     onSortModelChange={handleSortModelChange}
+                    onSelectionModelChange={itm =>{ 
+                        const id = itm[0];
+                        const row = pageState.data.find((row:any)=>row.id === id)
+                        setSelectedVendor(row)
+                        console.log(itm,row,"selection")
+                    }}
                     
                 />
                 </div>
              
-            </div>
+     <Stack direction="row" justifyContent="center" gap={3} className={styles.actionButtons}>
+        <Button onClick={()=>handleClose()}>Fermer</Button>
+        <Button disabled={selectedVendor==null} onClick={handleConfirm}>Confirmer</Button>
+      </Stack>
 
-        </form>
     </div>
   )
 }

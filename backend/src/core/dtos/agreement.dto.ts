@@ -7,8 +7,8 @@ export class CreateAgreementDTO{
     @IsNotEmpty()
     number:string;
 
-    @ApiPropertyOptional({example:AgreementType.CONTRACT , enum:AgreementType , default:AgreementType.CONTRACT})
     @IsOptional()
+    @ApiPropertyOptional({example:AgreementType.CONTRACT , enum:AgreementType , default:AgreementType.CONTRACT})
     @IsEnum(AgreementType)
     type?:AgreementType;
 
@@ -27,14 +27,13 @@ export class CreateAgreementDTO{
     @IsDateString({strict:true})
     signature_date:Date;
     
-    @ApiPropertyOptional({example:AgreementStatus.NOT_EXECUTED , enum:AgreementStatus , default:AgreementStatus.NOT_EXECUTED})
     @IsOptional()
+    @ApiPropertyOptional({example:AgreementStatus.NOT_EXECUTED , enum:AgreementStatus , default:AgreementStatus.NOT_EXECUTED})
     @IsEnum(AgreementStatus)
     status:AgreementStatus;
 
     @ApiProperty({  example:"asff/ss" ,required:true})
     @IsString()
-    @IsNotEmpty()
     url:string;
 
     @ApiProperty({  example:"" ,required:true})
