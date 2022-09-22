@@ -12,18 +12,20 @@ import { MobileDatePicker } from '@mui/x-date-pickers';
 import dayjs, { Dayjs } from 'dayjs';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import SelectVendor from '../SelectVendor/SelectVendor';
+import { CreateAgreement } from '../../models/CreateAgreement.interface';
 
 
 
 
 interface Proptype{
-    handleClose:()=>void
+    handleClose:()=>void,
+    type?: 'contract' | 'convension'
   }
-  const CreateContract = ({handleClose}:Proptype) => {
+  const CreateContract = ({handleClose,type = "contract"}:Proptype) => {
     const steps = [
       'identifiants',
       'direction , departement',
-      'fichier et date',
+      'fichier , date et Fournisseur',
       'validation',
     ];
     const [activeStep,setActiveStep] = useState(0);
@@ -36,11 +38,11 @@ interface Proptype{
     const [done,setDone] = useState(false);
     const [isAgreementDocumentFileUploading,setIsAgreementDocumentFileUploading] = useState(false)
     const [amount,setAmount] = useState(0)
-    const [vendor,setVendor] = useState({});
-    const [signatureDate, setSignatureDate] = useState<Dayjs | null>(
+    const [vendor,setVendor] = useState<any>(null);
+    const [signatureDate, setSignatureDate] = useState<Dayjs>(
         dayjs('2014-08-18'),
       );
-    const [expirationDate, setExpirationDate] = useState<Dayjs | null>(
+    const [expirationDate, setExpirationDate] = useState<Dayjs>(
         dayjs('2014-08-18'),
       );
     const [fileUploadProgress,setFileUploadProgress] = useState(0)
@@ -79,7 +81,7 @@ interface Proptype{
       )
       || (activeStep === 2) && (
   
-         true
+        vendor == null
       )
       || (activeStep === 3) && (
   
@@ -151,6 +153,7 @@ interface Proptype{
         try{
           let res;
           if(agreementDocumentFile){
+            setIsAgreementDocumentFileUploading(true);
             res = await axios.post("http://localhost:8080/api/agreements/files/upload",formData,
            {
              onUploadProgress:(e)=>{
@@ -170,21 +173,26 @@ interface Proptype{
            setIsAgreementDocumentFileUploading(false);
            url = res.data.filename
          }
-  
-        //   const newUser:CreateUser = {
-        //       email,
-        //       firstName,
-        //       lastName,
-        //       url,
-        //       role,
-        //       directionId:selectedDirection.value,
-        //       departementId:selectedDepartement.value,
-             
-        //   }
-        //   setLoading(true)
-        //   await axios.post("http://localhost:8080/api/auth/register",{
-        //     ...newUser
-        //   })
+          const format = (d:Date)=>{
+              
+              return d.toISOString().replace(/T[0-9:.Z]*/g,"");
+
+          }
+          const newAgreement:CreateAgreement = {
+              number,
+              object,
+              amount,
+              url,
+              directionId:selectedDirection.value,
+              departementId:selectedDepartement.value,
+              vendorId:vendor.id,
+              signature_date:format(signatureDate.toDate()),
+              expiration_date:format(expirationDate.toDate()),
+          }
+          setLoading(true)
+          await axios.post("http://localhost:8080/api/Agreements?agreementType=contract",{
+            ...newAgreement
+          })
   
           setLoading(false);
           setDone(true);
@@ -346,7 +354,7 @@ interface Proptype{
                     label="date de signature"
                     inputFormat="MM/DD/YYYY"
                     value={signatureDate}
-                    onChange={(value)=>setSignatureDate(value)}
+                    onChange={(value)=>setSignatureDate(value ?? dayjs(""))}
                     renderInput={(params) => <TextField size="small" {...params} />}
                     />
       
@@ -354,16 +362,17 @@ interface Proptype{
                     label="date d'expiration"
                     inputFormat="MM/DD/YYYY"
                     value={expirationDate}
-                    onChange={(value)=>setExpirationDate(value)}
+                    onChange={(value)=>setExpirationDate(value ?? dayjs(""))}
                     renderInput={(params) => <TextField size="small"  {...params} />}
                     />
      
     
                 </Stack>
                 <Stack direction="row" justifyContent="center" sx={{marginTop:"10px"}} >
-                  <Button onClick={()=>handleVendorModalOpen()}>
+                  <Button  onClick={()=>handleVendorModalOpen()}>
                   <Stack direction="row" justifyContent="center" alignItems="center" gap={1}>
-                    <AddCircleIcon color="primary"/><Typography sx={{fontSize:"13px",textTransform:"initial"}}>aucun fournisseur selectionee</Typography>
+                    <AddCircleIcon color="primary"/>
+                    <Typography sx={{fontSize:"13px",textTransform:"initial"}}>{vendor?"Raison sociale: "+vendor.company_name:"aucun fournisseur selectionee"}</Typography>
                   </Stack>
                   </Button>
                 </Stack>
@@ -422,9 +431,13 @@ interface Proptype{
 
         <Modal
           open={vendorModalOpen}
-          onClose={handleClose}
+          onClose={handleVendorModalClose}
+          
         >
-          <SelectVendor/>
+          <SelectVendor 
+            handleClose={handleVendorModalClose}
+            selectVendor={(vendor:any)=>setVendor(vendor)}
+          />
         </Modal>
       </div>
     )
