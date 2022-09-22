@@ -1,4 +1,4 @@
-import { Controller , Post , Body ,UseGuards , Query , Get} from "@nestjs/common";
+import { Controller , Post , Body ,UseGuards , Query , Get, Param} from "@nestjs/common";
 import { RequiredRoles } from "src/auth/decorators/RequiredRoles.decorator";
 import { JwtAccessTokenGuard } from "src/auth/guards/jwt-access-token.guard";
 import { RoleGuard } from "src/auth/guards/Role.guard";
@@ -27,8 +27,13 @@ export class AgreementController{
         name:'agreementType',
         enumName:'agreementType'
     })
+    @Get(':id')
+    async findById(@Param("id") id:string ,@Query("agreementType") agreementType:AgreementType){
+        return await this.AgreementService.findById(id,agreementType)
+    }
     @Get('')
     async findAll(@Query('offset') offset:number = 0 ,@Query('limit') limit:number = 10 ,@Query('orderBy') orderBy:string  = undefined,@Query('agreementType') agreementType:AgreementType ,@Query("searchQuery") searchQuery:string):Promise<PaginationResponse<AgreementEntity>>{
         return await  this.AgreementService.findAll(offset,limit,orderBy,agreementType,searchQuery);
     }   
+
 }

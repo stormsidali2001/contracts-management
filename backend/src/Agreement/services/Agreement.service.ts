@@ -62,5 +62,12 @@ export class AgreementService{
             total:res[1],
             data:res[0]
         }
-    }    
+    } 
+    
+    async findById(id:string,agrreementType:AgreementType = AgreementType.CONTRACT){
+        return await this.agreementRepository.createQueryBuilder("ag")
+        .where("ag.type = :agrreementType",{agrreementType})
+        .andWhere("ag.id = :id",{id})
+        .getOne();
+    }
 }
