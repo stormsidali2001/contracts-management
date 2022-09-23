@@ -1,4 +1,4 @@
-import { BadRequestException, Controller, ForbiddenException, Post, UploadedFile, UseInterceptors } from "@nestjs/common";
+import { BadRequestException, Controller, ForbiddenException, Get, Param, Post, Res, UploadedFile, UseInterceptors } from "@nestjs/common";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { ApiBody, ApiConsumes, ApiTags } from "@nestjs/swagger";
 import { join } from "path";
@@ -34,5 +34,12 @@ export class AgreementFileController{
         }catch(err){
             throw err;
         }
+    }
+
+    @Get(":fileName")
+    async getAgreement(@Param("fileName") fileName:string , @Res() res){
+        if(!fileName || ['null','[null]'].includes(fileName)) return;
+
+        return res.sendFile(fileName,{root:'./upload/documents'})
     }
 }

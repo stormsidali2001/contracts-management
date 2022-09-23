@@ -68,6 +68,9 @@ export class AgreementService{
         return await this.agreementRepository.createQueryBuilder("ag")
         .where("ag.type = :agrreementType",{agrreementType})
         .andWhere("ag.id = :id",{id})
+        .leftJoinAndSelect("ag.direction","direction")
+        .leftJoinAndSelect("ag.departement","departement")
+        .leftJoinAndSelect("ag.vendor","vendor")
         .getOne();
     }
 }
