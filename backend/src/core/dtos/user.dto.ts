@@ -58,3 +58,42 @@ export class LoginUserDTO{
     @IsNotEmpty()
     password:string;
 }
+
+export class UpdateUserDTO{
+    @IsOptional()
+    @ApiPropertyOptional({ type:'string',example:"assoulsidali@gmail.com"})
+    @IsEmail()
+    email?:string;
+
+    @IsOptional()
+    @ApiPropertyOptional({ type:'string',example:"sidali.storm"})
+    @IsNotEmpty()
+    username:string;
+
+    @IsOptional()
+    @ApiPropertyOptional({ type:'string',example:"Assoul"})
+    @IsNotEmpty()
+    firstName:string;
+
+    @IsOptional()
+    @ApiPropertyOptional({ type:'string',example:"Sidali"})
+    @IsNotEmpty()
+    lastName:string;
+
+    @IsOptional()
+    @ApiPropertyOptional({ type:'string',example:'123456'})
+    @IsNotEmpty()
+    password:string;
+
+    @ApiPropertyOptional({type:'enum',enum:UserRole,default:UserRole.EMPLOYEE , example:UserRole.EMPLOYEE})
+    @IsOptional()
+    @IsEnum(UserRole)
+    role:UserRole
+
+    
+    @ApiPropertyOptional({type:'boolean',example:true})
+    @IsOptional()
+    active:boolean;    
+
+   
+}

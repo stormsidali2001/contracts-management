@@ -3,43 +3,14 @@ import {Avatar, Button, Modal} from '@mui/material';
 import FilterIcon from '../../../../icons/FilterIcon';
 import TextField from '@mui/material/TextField';
 import { DataGrid, GridColumns, GridRenderCellParams, GridSortItem, GridSortModel } from '@mui/x-data-grid';
-import { useEffect, useState } from 'react';
+import { useEffect, useState ,useMemo} from 'react';
 import axios from 'axios';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import CreateUser from '../CreateUser/CreateUser';
 import { useDebounce } from '../../../../hooks/useDebounce.hook';
+import UserActions from '../UserActions/UserActions';
 
-const columns:GridColumns<any> = [
-    {
-        field:"imageUrl",
-        headerName:"photo",
-        renderCell: (params: GridRenderCellParams<Date>) => (
-           <Avatar  src={params.row.imageUrl?`http://localhost:8080/api/users/image/${params.row.imageUrl}`:"blank-profile-picture.png"}/>
-          ),
-        align:"left",
-        colSpan:1
-    },
-    {
-        field:"firstName",
-        headerName:"nom",
-        flex:1
-    },
-    {
-        field:"lastName",
-        headerName:"prenom",
-        flex:1
-    },
-    {
-        field:"role",
-        headerName:"role",
-        flex:1
-    },
-    {
-        field:"email",
-        headerName:"email",
-        flex:1
-    },
-]
+
 const UsersContent = () => {
     const [pageState,setPageState] = useState<any>({
         isLoading:false,
@@ -50,6 +21,7 @@ const UsersContent = () => {
 
 
     });
+    const [rowId,setRowId] = useState<any>(null)
     const [searchQuery,setSearchQuery] = useState('');
     const {debounce} = useDebounce();
     const [queryOptions, setQueryOptions] = useState<{ sortModel:GridSortItem[] | null}>({sortModel:null});
@@ -57,10 +29,78 @@ const UsersContent = () => {
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
     const handleSortModelChange = (sortModel: GridSortModel)=> {
-        // Here you save the data you need from the sort model
-        setQueryOptions({ sortModel: [...sortModel] });
+        if(sortModel){
+            
+            setQueryOptions({ sortModel: [...sortModel] });
+        }
       }
- 
+      const columns:GridColumns<any> = useMemo(()=>(
+        [
+            {
+                field:"imageUrl",
+                headerName:"photo",
+                renderCell: (params: GridRenderCellParams<Date>) => (
+                   <Avatar  src={params.row.imageUrl?`http://localhost:8080/api/users/image/${params.row.imageUrl}`:"blank-profile-picture.png"}/>
+                  ),
+                align:"left",
+                sortable:false,
+                width:60
+            },
+            
+            {
+                field:"firstName",
+                headerName:"nom",
+                width:100
+            },
+            {
+                field:"lastName",
+                headerName:"prenom",
+                width:100
+            },
+            {
+                field:"role",
+                headerName:"role",
+                width:100,
+                valueOptions:['admin','juridical','employee'],
+                type: "singleSelect",
+                editable:true,
+        
+            },
+            {
+                field:"email",
+                headerName:"email",
+                width:200
+            },
+            {
+                field:"active",
+                type:"boolean",
+                editable:true
+            },
+            {
+                field:"created_at",
+                headerName:"cree a",
+                editable:true,
+                width:200
+            },
+            {
+                field:"username",
+                headerName:"nom d'utilisateur",
+                editable:true,
+                width:200
+            },
+            {
+                field:"actions",
+                headerName:"actions",
+                type:"actions",
+                renderCell:(params)=>{
+        
+                    return (
+                      <UserActions {...{params,rowId,setRowId}}/>
+                    )
+                }
+            }
+        ]
+    ),[rowId])
     useEffect( ()=>{
         let params = '';
         if(queryOptions.sortModel){
@@ -134,8 +174,10 @@ const UsersContent = () => {
                 disableColumnFilter
                 disableColumnMenu 
                 onSortModelChange={handleSortModelChange}
-                
-                
+                experimentalFeatures={{ newEditingApi: true }}
+                onCellEditStop={params=>{console.log(params,"...");setRowId(params.id)}}
+                getRowId={(row)=>row.id}
+
             />
             </div>
             <Button onClick={handleOpen} className={styles.UserFormButton}>

@@ -1,6 +1,6 @@
 import { Injectable, InternalServerErrorException, Logger,BadRequestException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { CreateUserDTO } from "src/core/dtos/user.dto";
+import { CreateUserDTO, UpdateUserDTO } from "src/core/dtos/user.dto";
 import { DepartementEntity } from "src/core/entities/Departement.entity";
 import { DirectionEntity } from "src/core/entities/Direction.entity";
 import { UserEntity } from "src/core/entities/User.entity";
@@ -73,6 +73,7 @@ export class UserService{
     // async deleteUser(id:string): Promise<string>{
        
     // }
-    // async updateUser(id:string):Promise<UpdateResult>{
-    // }
+    async updateUser(id:string,newUser:UpdateUserDTO):Promise<UpdateResult>{
+        return this.userRepository.update(id,newUser)
+    }
 }

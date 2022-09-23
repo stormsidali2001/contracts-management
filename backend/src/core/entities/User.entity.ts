@@ -1,4 +1,4 @@
-import {Entity , PrimaryGeneratedColumn , Column, ManyToOne, Index} from 'typeorm';
+import {Entity , PrimaryGeneratedColumn , Column, ManyToOne, Index, CreateDateColumn} from 'typeorm';
 import { UserRole } from '../types/UserRole.enum';
 import { DepartementEntity } from './Departement.entity';
 import { DirectionEntity } from './Direction.entity';
@@ -30,6 +30,10 @@ export class UserEntity{
     @Column({default:""})
     imageUrl:string;
 
+    @Column({default:true})
+    active:boolean;
+
+
     @Column({nullable:true})
     refresh_token_hash:string;
 
@@ -39,6 +43,9 @@ export class UserEntity{
         default:UserRole.EMPLOYEE
     })
     role:UserRole
+
+    @CreateDateColumn({type:'datetime'})
+    created_at:Date;
     //relations
     @ManyToOne(type=>DepartementEntity,dp=>dp.employees)
     departement:DepartementEntity;

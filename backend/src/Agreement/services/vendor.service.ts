@@ -31,6 +31,9 @@ export class VendorService{
             .orWhere(`MATCH(vendor.nif) AGAINST ('${searchQuery}' IN BOOLEAN MODE)`)
             .orWhere(`MATCH(vendor.nrc) AGAINST ('${searchQuery}' IN BOOLEAN MODE)`)
             .orWhere(`MATCH(vendor.address) AGAINST ('${searchQuery}' IN BOOLEAN MODE)`)
+            .orWhere(`MATCH(vendor.home_phone_number) AGAINST ('${searchQuery}' IN BOOLEAN MODE)`)
+            .orWhere(`MATCH(vendor.mobile_phone_number) AGAINST ('${searchQuery}' IN BOOLEAN MODE)`)
+            .orWhere(`MATCH(vendor.num) AGAINST ('${searchQuery}' IN BOOLEAN MODE)`)
            
         }
         if(orderBy){

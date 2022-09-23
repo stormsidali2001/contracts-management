@@ -26,9 +26,11 @@ export class VendorEntity{
     @Column()
     address:string;
 
+    @Index({fulltext:true})
     @Column()
     mobile_phone_number:string;
 
+    @Index({fulltext:true})
     @Column()
     home_phone_number:string;
 
