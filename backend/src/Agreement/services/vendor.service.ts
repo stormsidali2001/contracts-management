@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CreateVendorDTO } from 'src/core/dtos/vendor.dto';
 import { AgreementEntity } from 'src/core/entities/Agreement.entity';
 import { VendorEntity } from 'src/core/entities/Vendor.entity';
+import { AgreementType } from 'src/core/types/agreement-type.enum';
 import { PaginationResponse } from 'src/core/types/paginationResponse.interface';
 import { FindOptionsWhere, Repository } from 'typeorm';
 
@@ -43,4 +44,12 @@ export class VendorService{
             data:res[0]
         }
     }   
+
+    async findByIdWithRelations(id:string){
+        return this.vendorRepository.createQueryBuilder("vendor")
+        .where("vendor.id = :id",{id})
+        .loadRelationCountAndMap("vendor.contractCount","vendor.agreements","agreements",qb=>qb.where("agreements.type = :agreementType",{agreementType:AgreementType.CONTRACT}))
+        .loadRelationCountAndMap("vendor.convensionCount","vendor.agreements","agreements",qb=>qb.where("agreements.type = :agreementType",{agreementType:AgreementType.CONVENSION}))
+        .getOne()
+    }
 }
