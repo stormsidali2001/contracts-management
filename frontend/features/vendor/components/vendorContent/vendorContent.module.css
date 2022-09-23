@@ -1,8 +1,123 @@
 .container{
     display: flex;
+    height:calc(100% - 60px);
+}
+.left{
+    flex:1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.right{
+    flex:1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    row-gap:40px
 }
 .vendorCard{
+    width: 436px;
+    min-height: 350px;
     background: #FFFFFF;
     box-shadow: 0px 1.52532px 6.86392px rgba(23, 73, 142, 0.6);
     border-radius: 15.2532px;
+    padding: 10px 20px;
+
+}
+.littleCard{
+    width: 213px;
+    height: 155px;
+    background: #FFFFFF;
+    box-shadow: 0px 1.52532px 6.86392px rgba(23, 73, 142, 0.6);
+    border-radius: 15.2532px
+}
+.labelWrapper{
+    display: flex;
+    align-items: center;
+    column-gap: 10px;
+}
+.label{
+    background: rgba(23, 73, 142, 0.7);
+    border-radius: 4.19355px;
+    color:white;
+    width: 23.48px;
+    height: 23.48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.labelText{
+    font-family: 'Poppins';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14.8056px;
+    line-height: 22px;
+    color: #1E1D1D;
+}
+.vendorTitle{
+margin-top: 10px;
+font-family: 'Poppins';
+font-style: normal;
+font-weight: 500;
+font-size: 28.9198px;
+line-height: 43px;
+
+color: #1E1D1D;
+text-align: center;
+}
+.vendorContentItem{
+    display: flex;
+    column-gap: 10px;
+}
+.vendorContentItem > span:nth-of-type(1){
+    font-family: 'Poppins';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 24px;
+    color: #807D7D;
+}
+.vendorContentItem > span::nth-of-type(2){
+    font-family: 'Poppins';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 22px;
+    color: #1E1D1D;
+}
+.content{
+    display: flex;
+    flex-direction: column;
+    row-gap: 10px;
+    margin-top: 20px;
+
+}
+
+.littleCard{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 10px 20px;
+}
+.littleCard .title{
+    text-align: center;
+    font-family: 'Poppins';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 20px;
+    color: #807D7D;}
+.littleCard .counter{
+    font-family: 'Poppins';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 27px;
+    color: rgba(65, 62, 62, 0.89);
+    text-align: center;
+    
+}
+.cardButton{
+    width: fit-content;
+    margin: 0 auto;
+    padding: 0 4px;
 }
