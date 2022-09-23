@@ -24,6 +24,6 @@ export class UserController{
     // }
     @Put(':id')
     async updateUser(@Param('id') id:string,@Body() user:UpdateUserDTO):Promise<UpdateResult>{
-        return this.updateUser(id,user)
+        return this.userService.updateUser(id,user)
     }
 }

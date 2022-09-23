@@ -50,12 +50,14 @@ const UsersContent = () => {
             {
                 field:"firstName",
                 headerName:"nom",
-                width:100
+                width:100,
+                editable:true,
             },
             {
                 field:"lastName",
                 headerName:"prenom",
-                width:100
+                width:100,
+                editable:true,
             },
             {
                 field:"role",
@@ -69,7 +71,8 @@ const UsersContent = () => {
             {
                 field:"email",
                 headerName:"email",
-                width:200
+                width:200,
+                editable:true
             },
             {
                 field:"active",

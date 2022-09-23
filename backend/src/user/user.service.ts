@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException, Logger,BadRequestException } from "@nestjs/common";
+import { Injectable, InternalServerErrorException, Logger,BadRequestException, ForbiddenException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { CreateUserDTO, UpdateUserDTO } from "src/core/dtos/user.dto";
 import { DepartementEntity } from "src/core/entities/Departement.entity";
@@ -74,6 +74,11 @@ export class UserService{
        
     // }
     async updateUser(id:string,newUser:UpdateUserDTO):Promise<UpdateResult>{
+        if(newUser.username){
+            const userDb = await this.userRepository.findOneBy({username:newUser.username,email:newUser.email})
+            if(userDb) throw new ForbiddenException("username or email already  exists")
+            
+        }
         return this.userRepository.update(id,newUser)
     }
 }
