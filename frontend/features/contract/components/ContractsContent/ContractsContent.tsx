@@ -8,6 +8,7 @@ import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import FilterIcon from '../../../../icons/FilterIcon';
 import CreateContract from '../CreateContract/CreateContract';
 import { useDebounce } from '../../../../hooks/useDebounce.hook';
+import Link from 'next/link';
 
 
 const columns:GridColumns<any> = [
@@ -47,6 +48,17 @@ const columns:GridColumns<any> = [
         headerName:"status",
         flex:1
     },
+    {
+        field:"actions",
+        headerName:"Details",
+        type:"actions",
+        renderCell:(params)=>{
+
+            return (
+             <Button><Link href={`/contracts/${params.id}`}>Details</Link></Button>
+            )
+        }
+    }
 ];
 const ContractsContent = () => {
     const [pageState,setPageState] = useState<any>({

@@ -342,9 +342,10 @@ interface Proptype{
                          </label>
                       </Button>
                    
-                    <Typography sx = {{fontSize:"11px"}}>Photo de Profile</Typography>
+                    <Typography sx = {{fontSize:"11px"}}>{agreementDocumentFile?.name?agreementDocumentFile?.name:"Associer un fichier"}</Typography>
                   </Stack>
-                 {/* TODO : make a file displayer */}
+                  
+                 
                 </Stack>
                 <Stack direction="row" justifyContent="center" gap={3} sx={{marginTop:"10px"}}>
                
@@ -393,13 +394,13 @@ interface Proptype{
                                  </>):(
                                     loading?(
                                       <>
-                                      <Typography>Creation de  Compte...</Typography>
+                                      <Typography>Creation de  Contrat...</Typography>
                                       <CircularProgress/>
                                     </>
                                       
                                   ):(
                                       <>
-                                        <Typography>Compte cree !</Typography>
+                                        <Typography>Contrat cree !</Typography>
                                         <Fab
                                         aria-label="save"
                                         color="secondary"

@@ -12,6 +12,7 @@ import CreateVendor from '../CreateVendor/CreateVendor';
 import { Vendor } from '../../models/vendor.interface';
 import { useDebounce } from '../../../../hooks/useDebounce.hook';
 import VendorActions from '../../../dashboard/VendorActions/VendorActions';
+import Link from 'next/link';
 
 
 const VendorsContent = () => {
@@ -79,7 +80,19 @@ const columns:GridColumns<any> = useMemo(()=>[
           <VendorActions {...{params,rowId,setRowId}}/>
         )
     }
+},
+{
+  field:"details",
+  headerName:"Details",
+  type:"actions",
+  renderCell:(params)=>{
+
+      return (
+       <Button><Link href={`/vendors/${params.id}`}>Details</Link></Button>
+      )
+  }
 }
+
 ],[rowId])
 const handleSortModelChange = (sortModel: GridSortModel)=> {
     // Here you save the data you need from the sort model
