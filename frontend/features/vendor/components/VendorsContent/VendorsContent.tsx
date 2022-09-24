@@ -1,6 +1,6 @@
 import {Button, Modal} from '@mui/material';
 import { DataGrid, GridColumns, GridSortItem, GridSortModel } from '@mui/x-data-grid';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import TextField from '@mui/material/TextField';
 
@@ -11,40 +11,9 @@ import axios from 'axios';
 import CreateVendor from '../CreateVendor/CreateVendor';
 import { Vendor } from '../../models/vendor.interface';
 import { useDebounce } from '../../../../hooks/useDebounce.hook';
+import VendorActions from '../../../dashboard/VendorActions/VendorActions';
 
-const columns:GridColumns<any> = [
 
-  {
-      field:"num",
-      headerName:"numero",
-      flex:1
-  },
-  {
-      field:"company_name",
-      headerName:"raison sociale",
-      flex:1
-  },
-  {
-      field:"nif",
-      headerName:"nif",
-      flex:1
-  },
-  {
-      field:"address",
-      headerName:"adresse",
-      flex:1
-  },
-  {
-      field:"mobile_phone_number",
-      headerName:"mobile",
-      flex:1
-  },
-  {
-      field:"home_phone_number",
-      headerName:"fixe",
-      flex:1
-  },
-]
 const VendorsContent = () => {
   const [pageState,setPageState] = useState<any>({
     isLoading:false,
@@ -55,12 +24,63 @@ const VendorsContent = () => {
 
 
 });
+const [rowId,setRowId] = useState<any>(null)
 const [searchQuery,setSearchQuery] = useState('')
 const [queryOptions, setQueryOptions] = useState<{ sortModel:GridSortItem[] | null}>({sortModel:null});
 const [open, setOpen] = useState(false);
 const handleOpen = () => setOpen(true);
 const handleClose = () => setOpen(false);
 const {debounce} = useDebounce();
+const columns:GridColumns<any> = useMemo(()=>[
+
+  {
+      field:"num",
+      headerName:"numero",
+      flex:1,
+      editable:true
+  },
+  {
+      field:"company_name",
+      headerName:"raison sociale",
+      flex:1,
+      editable:true
+  },
+  {
+      field:"nif",
+      headerName:"nif",
+      flex:1,
+      editable:true
+  },
+  {
+      field:"address",
+      headerName:"adresse",
+      flex:1,
+      editable:true
+  },
+  {
+      field:"mobile_phone_number",
+      headerName:"mobile",
+      flex:1,
+      editable:true
+  },
+  {
+      field:"home_phone_number",
+      headerName:"fixe",
+      flex:1,
+      editable:true
+  },
+  {
+    field:"actions",
+    headerName:"actions",
+    type:"actions",
+    renderCell:(params)=>{
+
+        return (
+          <VendorActions {...{params,rowId,setRowId}}/>
+        )
+    }
+}
+],[rowId])
 const handleSortModelChange = (sortModel: GridSortModel)=> {
     // Here you save the data you need from the sort model
     if(sortModel){
@@ -142,6 +162,9 @@ const handleSearch = (e:any)=>{
                 disableColumnFilter
                 disableColumnMenu 
                 onSortModelChange={handleSortModelChange}
+                experimentalFeatures={{ newEditingApi: true }}
+                onCellEditStop={params=>{console.log(params,"...");setRowId(params.id)}}
+                getRowId={(row)=>row.id}
                 
             />
             </div>

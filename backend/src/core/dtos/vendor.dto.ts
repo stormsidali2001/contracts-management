@@ -35,3 +35,47 @@ export class CreateVendorDTO{
     home_phone_number:string;
    
 }
+
+export class UpdateVendorDTO{
+
+    @IsOptional()
+    @ApiPropertyOptional({type:'string',example:'safkjasfjs54'})
+    @IsNotEmpty()
+    @IsString()
+    num:string;
+
+    @IsOptional()
+    @ApiPropertyOptional({type:'string',example:'frigo dz'})
+    @IsNotEmpty()
+    @IsString()
+    company_name:string;
+
+    @IsOptional()
+    @ApiPropertyOptional({type:'string',example:'safkjfs577'})
+    @IsNotEmpty()
+    @IsString()
+    nif:string;
+
+    @IsOptional()
+    @ApiPropertyOptional({type:'string',example:'safkjfs577'})
+    @IsNotEmpty()
+    @IsString()
+    nrc:string;
+
+    @IsOptional()
+    @ApiPropertyOptional({type:'string',example:'contry state city street'})
+    @IsNotEmpty()
+    @IsString()
+    address:string;
+
+    @IsOptional()
+    @ApiPropertyOptional({type:'string',example:'0663737507'})
+    @IsNotEmpty()
+    mobile_phone_number:string;
+
+    @IsOptional()
+    @ApiPropertyOptional({type:'string',example:'0663737507'})
+    @IsNotEmpty()
+    home_phone_number:string;
+   
+}
