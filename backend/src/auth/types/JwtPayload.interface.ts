@@ -1,4 +1,4 @@
-
+import { Socket } from "socket.io";
 export interface JwtPayload{
     sub:string;
     email:string;
@@ -13,3 +13,5 @@ export interface JwtCompletePayload  {
     exp:number;
     iat:number;
 };
+
+export type SocketWithJwtPayload = Socket & JwtCompletePayload;
