@@ -1,7 +1,8 @@
-import {Entity , PrimaryGeneratedColumn , Column, ManyToOne, Index, CreateDateColumn} from 'typeorm';
+import {Entity , PrimaryGeneratedColumn , Column, ManyToOne, Index, CreateDateColumn, OneToMany} from 'typeorm';
 import { UserRole } from '../types/UserRole.enum';
 import { DepartementEntity } from './Departement.entity';
 import { DirectionEntity } from './Direction.entity';
+import { NotificationEntity } from './Notification.entity';
 
 @Entity('users')
 export class UserEntity{
@@ -52,4 +53,7 @@ export class UserEntity{
 
     @ManyToOne(type=>DirectionEntity,dr=>dr.employees)
     direction:DirectionEntity;
+
+    @OneToMany(type=>NotificationEntity,n=>n.user)
+    notifications:NotificationEntity[];
 }

@@ -8,8 +8,7 @@ import { SocketWithJwtPayload } from "src/auth/types/JwtPayload.interface";
 
 export class SocketIoAdapter extends IoAdapter   {
     private readonly logger = new Logger(SocketIoAdapter.name);
-    constructor(private app:INestApplicationContext,
-              
+    constructor(private app:INestApplicationContext   
         ) {
       super(app)
     }
@@ -32,7 +31,7 @@ export class SocketIoAdapter extends IoAdapter   {
 
         const server:Server =  super.createIOServer(port,{...options, cors});
         const middleWare = tokenMiddlewareWrapper(jwtService,this.logger,configService);
-        server.of('rooms').use(middleWare);
+        server.use(middleWare);
         return server;
 
     }
@@ -48,6 +47,8 @@ function tokenMiddlewareWrapper(jwtService:JwtService,logger:Logger,configServic
           const payload = await jwtService.verify(token,{
               secret:configService.get('ACCESS_TOKEN_SECRET')
           });
+
+          socket.user = payload;
          
           logger.log(`socket ${socket.id} authenticated`);
           next()
