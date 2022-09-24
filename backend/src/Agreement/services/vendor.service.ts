@@ -61,7 +61,7 @@ export class VendorService{
                 if(!uniques[key]) delete uniques[key];
             })
             const vendorDb = await this.vendorRepository.findOneBy({...uniques})
-            if(vendorDb) throw new ForbiddenException("nif , nrc , company_name  ,num should be unique")
+            if(vendorDb && vendorDb.id !== id ) throw new ForbiddenException("nif , nrc , company_name  ,num should be unique")
             
         return this.vendorRepository.update(id,newVendor)
     }

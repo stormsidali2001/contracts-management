@@ -10,15 +10,10 @@ const VendorActions = ({params,rowId,setRowId}:any) => {
     const [success,setSuccess] = useState(false);
 
     const handleSubmit = async ()=>{
-        const {id,role,active,email,firstName,lastName,username} = params.row;
+        const {id,...others} = params.row;
             setLoading(true)
             axios.put(`http://localhost:8080/api/vendors/${id}`,{
-                role,
-                active,
-                email,
-                firstName,
-                lastName,
-                username
+                ...others
             })
             .then(res=>{
                 setSuccess(true)

@@ -76,7 +76,7 @@ export class UserService{
     async updateUser(id:string,newUser:UpdateUserDTO):Promise<UpdateResult>{
        
             const userDb = await this.userRepository.findOneBy({username:newUser.username,email:newUser.email})
-            if(userDb) throw new ForbiddenException("username or email already  exists")
+            if(userDb && userDb.id !== id) throw new ForbiddenException("username or email already  exists")
             
    
         return this.userRepository.update(id,newUser)
