@@ -2,14 +2,18 @@ import axios from 'axios';
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react';
 import styles from './ContractContent.module.css'
-import {Button} from '@mui/material';
+import {Button, Modal} from '@mui/material';
+import PlayCircleFilledWhiteIcon from '@mui/icons-material/PlayCircleFilledWhite';
 
 const ContractContent = () => {
   const router = useRouter();
-  const [contract,setContract] = useState<any>(null)
+  const [contract,setContract] = useState<any>(null);
+  const [openExecutionModal,setOpenExecutionModal] = useState(false)
   const {query} = router;
   const {contractId} = query;
   
+  const handelOpenExecutionModal = ()=>setOpenExecutionModal(true)
+  const handelCloseExecutionModal = ()=>setOpenExecutionModal(false)
   useEffect(()=>{
     if(!contractId) return;
     axios.get(`http://localhost:8080/api/Agreements/${contractId}`)
@@ -85,8 +89,15 @@ const ContractContent = () => {
             </div>
            
         </div>
-        <div className={styles.wrapperBox}>
 
+
+        <div className={styles.wrapperBox}>
+           <Button
+            className={styles.executionButton}
+            onClick={()=>handelOpenExecutionModal()}
+           >
+                <PlayCircleFilledWhiteIcon/>
+           </Button>
            <div className={styles.labelWrapper}>
               <div className={styles.label}>N</div>
               <div className={styles.labelText}>{contract?.number}</div>
@@ -118,6 +129,12 @@ const ContractContent = () => {
             </div>
            
         </div>
+        <Modal
+          open={openExecutionModal}
+          onClose={handelCloseExecutionModal}
+        >
+          <div></div>
+        </Modal>
     </div>
   )
 }
