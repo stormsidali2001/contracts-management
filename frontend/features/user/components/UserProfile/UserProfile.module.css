@@ -1,0 +1,97 @@
+.userCard{
+    width: 436px;
+    min-height: 450px;
+    background: #FFFFFF;
+    box-shadow: 0px 1.52532px 6.86392px rgba(23, 73, 142, 0.6);
+    border-radius: 15.2532px;
+    padding: 10px 20px;
+    margin: 40px auto;
+    position: relative;
+
+}
+.userTitle{
+    margin-top: 10px;
+    font-family: 'Poppins';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 28.9198px;
+    line-height: 43px;
+    
+    color: #1E1D1D;
+    text-align: center;
+    }
+    .userContentItem{
+        display: flex;
+        column-gap: 10px;
+    }
+    .userContentItem > span:nth-of-type(1){
+        font-family: 'Poppins';
+        font-style: normal;
+        font-weight: 500;
+        font-size: 16px;
+        line-height: 24px;
+        color: #807D7D;
+    }
+    .userContentItem > span::nth-of-type(2){
+        font-family: 'Poppins';
+        font-style: normal;
+        font-weight: 400;
+        font-size: 12px;
+        line-height: 22px;
+        color: #1E1D1D;
+    }
+    .editInput{
+        font-family: 'Poppins';
+        font-style: normal;
+        font-weight: 400;
+        font-size: 16px;
+        line-height: 22px;
+        outline: none;
+        background-color: transparent;
+        border: none;
+    }
+
+    .content{
+        display: flex;
+        flex-direction: column;
+        row-gap: 10px;
+        margin-top: 40px;
+    
+    }
+    .imageContainer{
+        display: flex;
+        align-items: center;
+        column-gap: 60px;
+        justify-content: center;
+        margin-top: 20px;
+    }
+    .imageLabel{
+        background: rgba(23, 73, 142, 0.8);
+        border-radius: 4.19355px;
+        color:white;
+        padding: 2px 4px;
+        font-family: 'Poppins';
+        font-style: normal;
+        font-weight: 400;
+        font-size: 14.6774px;
+    }
+    .imageTitle{
+        font-family: 'Poppins';
+        font-style: normal;
+        font-weight: 400;
+        font-size: 32px;
+    }
+    .imageItem{
+        display: flex;
+        align-items: center;
+        column-gap: 20px;
+    }
+    .profileImg{
+        width: 84px;
+        height: 84px;
+    }
+    .editButton{
+        position: absolute;
+        right:4px;
+        top:4px;
+    }

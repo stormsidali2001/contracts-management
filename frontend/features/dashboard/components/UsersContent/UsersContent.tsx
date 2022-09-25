@@ -9,6 +9,7 @@ import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import CreateUser from '../CreateUser/CreateUser';
 import { useDebounce } from '../../../../hooks/useDebounce.hook';
 import UserActions from '../UserActions/UserActions';
+import Link from 'next/link';
 
 
 const UsersContent = () => {
@@ -99,6 +100,17 @@ const UsersContent = () => {
         
                     return (
                       <UserActions {...{params,rowId,setRowId}}/>
+                    )
+                }
+            },
+            {
+                field:"details",
+                headerName:"Details",
+                type:"actions",
+                renderCell:(params)=>{
+              
+                    return (
+                     <Button><Link href={`/users/${params.id}`}>Details</Link></Button>
                     )
                 }
             }

@@ -5,7 +5,6 @@ import { DepartementEntity } from "src/core/entities/Departement.entity";
 import { DirectionEntity } from "src/core/entities/Direction.entity";
 import { UserEntity } from "src/core/entities/User.entity";
 import { PaginationResponse } from "src/core/types/paginationResponse.interface";
-import { DepartementService } from "src/direction/services/departement.service";
 import { DirectionService } from "src/direction/services/direction.service";
 import { FindOptionsWhere, Repository, UpdateResult } from "typeorm";
 import { QueryDeepPartialEntity } from "typeorm/query-builder/QueryPartialEntity";
@@ -80,5 +79,13 @@ export class UserService{
             
    
         return this.userRepository.update(id,newUser)
+    }
+
+    async findByIdWithDepartementAndDirection(id:string){
+        return this.userRepository.createQueryBuilder("u")
+        .where('u.id = :id',{id})
+        .leftJoinAndSelect("u.departement","dp")
+        .leftJoinAndSelect("u.direction","dr")
+        .getOne()
     }
 }

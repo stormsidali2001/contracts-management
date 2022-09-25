@@ -6,14 +6,15 @@ import { Divider } from '@mui/material';
 import Link from 'next/link';
 import { useAppDispatch, useAppSelector } from '../../../../../hooks/redux/hooks';
 import { logout } from '../../../../auth/authSlice';
+import { useMemo } from 'react';
 
 const PopoverContent = () => {
-    const links = [
-        {text:"Profile" , link:"",icon:AccountCircleIcon},
-        {text:"Parametres" , link:"",icon:SettingsIcon},
-    ]
     const dispatch = useAppDispatch();
     const {user} = useAppSelector(state=>state.auth)
+    const links = useMemo(()=>[
+        {text:"Profile" , link:`/users/${user?.sub ?? ""}`,icon:AccountCircleIcon},
+        {text:"Parametres" , link:"",icon:SettingsIcon},
+    ],[user?.sub])
     
     function handleLogout(e:any){
         e.preventDefault();

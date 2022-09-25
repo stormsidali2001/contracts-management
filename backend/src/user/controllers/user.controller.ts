@@ -17,6 +17,11 @@ export class UserController{
     async findAll(@Query('offset') offset:number = 0 ,@Query('limit') limit:number = 10 ,@Query('orderBy') orderBy:string  = undefined , @Query('searchQuery') searchQuery:string):Promise<PaginationResponse<UserEntity>>{
         return await  this.userService.findAll(offset,limit,orderBy,searchQuery);
     }   
+
+    @Get(":id")
+    async findById(@Param('id') id:string){
+        return await  this.userService.findByIdWithDepartementAndDirection(id);
+    }  
     
     // @Delete(':id')
     // async deleteUser(@Param('id') id:string): Promise<string>{
