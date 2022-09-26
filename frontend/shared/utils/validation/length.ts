@@ -9,14 +9,14 @@ const _validateLength:ValidatorFn = (text:string , options?:LengthOptions):boole
 };
 
 export const validatePasswordLength:ValidatorFn = (text:string):boolean=>{
-    return _validateLength(text,{ min:6 , max:20})
+    return _validateLength(text,{ min:6 , max:25})
 }
 export const validateUsernameLength:ValidatorFn = (text:string):boolean=>{
     return _validateLength(text,{ min:2 })
 }
 
 export const validateDepartementTitleLength:ValidatorFn = (text:string):boolean=>{
-    return _validateLength(text,{ min:5,max:15 })
+    return _validateLength(text,{ min:5,max:25 })
 }
 
 export const validateDepartementAbriviationLength:ValidatorFn = (text:string):boolean=>{

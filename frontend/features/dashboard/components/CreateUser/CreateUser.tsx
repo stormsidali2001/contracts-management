@@ -11,6 +11,9 @@ import axios from 'axios';
 import LinearProgress from '@mui/material/LinearProgress';
 import { CreateUser } from '../../models/CreateUser.interface';
 import { Direction } from '../../../direction/models/direction.interface';
+import { useAppDispatch } from '../../../../hooks/redux/hooks';
+import { showSnackbar } from '../../../ui/UiSlice';
+import ErrorIcon from '@mui/icons-material/Error';
 
 interface Proptype{
   handleClose:()=>void
@@ -55,6 +58,7 @@ const CreateUser = ({handleClose}:Proptype) => {
     shouldDisplayError:emailShouldDisplayError,
 
   } = useInput(validateEmail);
+  const dispatch = useAppDispatch()
 
   const [imageUploadProgress,setImageUploadProgress] = useState(0)
 
@@ -129,10 +133,15 @@ const CreateUser = ({handleClose}:Proptype) => {
       const departement = direction.departements[Math.floor(Math.random()*(direction.departements.length-1))];
       console.log("random departement",departement)
       setSelectedDepartement({label:departement?.title , value:departement.id as string})
-      console.log(res.data)
+      console.log(res.data,"t2")
     })
     .catch(err=>{
-      console.error(err)
+      console.error(err,"t2")
+      if(err.code !== "ERR_CANCELED"){
+
+        dispatch(showSnackbar({message:"verifiez si vous etes en ligne"}))
+      }
+     
     })
     return ()=>{
       abortController.abort();
@@ -190,10 +199,13 @@ const CreateUser = ({handleClose}:Proptype) => {
 
 
 
+
       }catch(err){
-        console.error(err)
+        console.error("t4",err)
         setLoading(false)
         setIsImageUploading(false);
+         //@ts-ignore
+         dispatch(showSnackbar({message:err?.response?.data?.error ?? "erreur iconu"}))
       }
     
     
@@ -385,6 +397,7 @@ const CreateUser = ({handleClose}:Proptype) => {
                                   </>
                                     
                                 ):(
+                                  done?(
                                     <>
                                       <Typography>Compte cree !</Typography>
                                       <Fab
@@ -393,9 +406,23 @@ const CreateUser = ({handleClose}:Proptype) => {
                                       size="small"
                                       sx={{boxShadow:"none"}}
                                       >
-                                       <CheckIcon sx={{ color:"white"}}/> 
-                                    </Fab>
+                                      <CheckIcon sx={{ color:"white"}}/> 
+                                     </Fab>
                                     </>
+                                  ):(
+                                    <>
+                                    <Typography>Erreur!</Typography>
+                                    <Fab
+                                    aria-label="save"
+                                    color="secondary"
+                                    size="small"
+                                    sx={{boxShadow:"none"}}
+                                    >
+                                    <ErrorIcon sx={{ color:"white"}}/> 
+                                   </Fab>
+                                  </>
+                                  )
+                                   
                                 )
                                )
                               
@@ -411,8 +438,8 @@ const CreateUser = ({handleClose}:Proptype) => {
       <Stack direction="row" className={styles.actionButtons}>
         <Button disabled={activeStep === 0 || done}>Precedent</Button>
         <Button disabled={nextBtnshouldBeDisabled() }
-          onClick={()=>!done?handleNextStep():handleClose()}
-          >{done?"Fermer":"Suivant"}</Button>
+          onClick={()=>activeStep !== 3?handleNextStep():handleClose()}
+          >{activeStep === 3 ?"Fermer":"Suivant"}</Button>
       </Stack>
       
     </div>

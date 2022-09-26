@@ -15,8 +15,20 @@ export class VendorService{
     ){}
     
     async createVendor(vendor:CreateVendorDTO):Promise<VendorEntity>{
-        const {...vendorData} = vendor;
-        return this.vendorRepository.save({...vendorData});
+        const {address,home_phone_number,mobile_phone_number,...uniques} = vendor;
+        let condition = '';
+        const uniquesKeys = Object.keys(uniques);
+        uniquesKeys.forEach((k,index)=>{
+            if(!uniques[k]) delete uniques[k];
+            if(uniques[k]) condition += `v.${k} = :${k} ${(index !==uniquesKeys.length-1)?"or ":""}`
+        })
+
+        const vendorDb = await this.vendorRepository.createQueryBuilder('v')
+        .where(condition,{...uniques})
+        .getOne();
+
+        if(vendorDb) throw new ForbiddenException("nif , nrc , company_name  ,num doit etre unique")
+        return this.vendorRepository.save({address,home_phone_number,mobile_phone_number,...uniques});
         
     }
     async findBy(options:FindOptionsWhere<VendorEntity>){
@@ -57,11 +69,16 @@ export class VendorService{
     }
     async updateVendor(id:string,newVendor:UpdateVendorDTO):Promise<UpdateResult>{
             const {address,home_phone_number,mobile_phone_number,...uniques} = newVendor;
-            Object.keys(uniques).forEach(key=>{
-                if(!uniques[key]) delete uniques[key];
+            let condition = '';
+            const uniquesKeys = Object.keys(uniques);
+            uniquesKeys.forEach((k,index)=>{
+                if(!uniques[k]) delete uniques[k];
+                if(uniques[k]) condition += `v.${k} = :${k} ${(index !==uniquesKeys.length-1)?"or ":""}`
             })
-            const vendorDb = await this.vendorRepository.findOneBy({...uniques})
-            if(vendorDb && vendorDb.id !== id ) throw new ForbiddenException("nif , nrc , company_name  ,num should be unique")
+            const vendorDb = await this.vendorRepository.createQueryBuilder("v")
+            .where(condition,{...uniques})
+            .getOne();
+            if(vendorDb && vendorDb.id !== id ) throw new ForbiddenException("nif , nrc , company_name  ,num doit etre unique")
             
         return this.vendorRepository.update(id,newVendor)
     }

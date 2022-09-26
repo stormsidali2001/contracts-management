@@ -191,7 +191,7 @@ const handleSearch = (e:any)=>{
             aria-labelledby="modal-modal-title"
             aria-describedby="modal-modal-description"
       >
-        <CreateVendor/>
+        <CreateVendor handleClose={handleClose}/>
       </Modal>
 
      

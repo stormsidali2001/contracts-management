@@ -13,11 +13,14 @@ import CheckIcon from '@mui/icons-material/Check';
 import CircularProgress from '@mui/material/CircularProgress';
 import axios from 'axios';
 import { Vendor } from '../../models/vendor.interface';
+import { useAppDispatch } from '../../../../hooks/redux/hooks';
+import { showSnackbar } from '../../../ui/UiSlice';
  interface PropType{
+  handleClose:()=>void
 }
 
 
-const CreateVendor = ({}:PropType) => {
+const CreateVendor = ({handleClose}:PropType) => {
     const steps = [
         'identifiants',
         'Localisation',
@@ -84,8 +87,8 @@ const CreateVendor = ({}:PropType) => {
 
     
       } = useInput(validateMobilePhoneNumber);
+      const dispatch = useAppDispatch()
       const [loading,setLoading] = useState(false);
-      const [isError,setIsError] = useState(false)
       const [done,setDone] = useState(false)
       function nextBtnshouldBeDisabled():boolean{
         const bl =   Boolean(
@@ -130,15 +133,15 @@ const CreateVendor = ({}:PropType) => {
                 console.log(res)
                 handleRestForm();
                 setLoading(false) 
-                setIsError(false)
                 setDone(true)
 
             })
             .catch(err=>{
                 console.log(err)
                 setLoading(false) 
-                setIsError(true)
-
+                setDone(false)
+                  //@ts-ignore
+                 dispatch(showSnackbar({message:err?.response?.data?.error ?? "erreur iconu"}))
             })
 
        
@@ -299,7 +302,7 @@ const CreateVendor = ({}:PropType) => {
             <Button disabled={activeStep === 0 || (activeStep === 2 && done ) }>Precedent</Button>
             <Button 
             disabled={nextBtnshouldBeDisabled()}
-              onClick={()=>{handleNextStep()}}
+              onClick={()=>{activeStep !== 2 ?handleNextStep():handleClose()}}
               >{activeStep === 2 ?"Fermer":"Suivant"}</Button>
           </Stack>
           </form>

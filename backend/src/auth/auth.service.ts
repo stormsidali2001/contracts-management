@@ -1,4 +1,4 @@
-import { HttpStatus, Injectable, InternalServerErrorException, Logger, UnauthorizedException } from "@nestjs/common";
+import { BadRequestException, ForbiddenException, HttpStatus, Injectable, InternalServerErrorException, Logger, UnauthorizedException } from "@nestjs/common";
 import * as bcrypt from 'bcrypt';
 import { CreateUserDTO, LoginUserDTO } from "src/core/dtos/user.dto";
 import { UserEntity } from "src/core/entities/User.entity";
@@ -49,19 +49,19 @@ export class AuthService{
          await this.userService.findAndUpdate(userId,{refresh_token_hash})
     }
     async register(newUser:CreateUserDTO):Promise<UserEntity>{
-        try{
+       
             const userDb = await this.userService.findByEmailOrUsername({email:newUser.email,username:newUser.username});
             if(userDb){
                 let msg = '';
                 const emailsMatch = (userDb.email === newUser.email);
                 if(emailsMatch){
-                    msg += "email already taken";
+                    msg += "le email est deja pris";
                 }
                 if(newUser.username &&(userDb.username === newUser.username)){
                     if(emailsMatch) msg += ',\n';
-                    msg += "username already taken";
+                    msg += "le nom d'utilisateur est deja pris";
                 }
-                throw new UnauthorizedException(msg);
+                throw new BadRequestException(msg);
             }
             if(!newUser.username){
                 newUser.username =  newUser.firstName + uuidv4();
@@ -77,9 +77,7 @@ export class AuthService{
                 }) 
             }
             return this.userService.create(newUser);
-        }catch(err){    
-            throw new InternalServerErrorException(err);
-        }
+      
     }
 
     async login(user:LoginUserDTO){
@@ -100,7 +98,7 @@ export class AuthService{
            await this.#updateRefreshTokenHash(userDb.id,tokens.refresh_token);
            return tokens;
        }catch(err){
-           throw new InternalServerErrorException(err);
+           throw new ForbiddenException(err);
        }
 
     }

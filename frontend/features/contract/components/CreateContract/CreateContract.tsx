@@ -1,5 +1,5 @@
 import styles from './CreateContract.module.css';
-import { Avatar, Button, CircularProgress, Fab, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Step, StepLabel, Stepper, TextField, Typography ,Modal} from '@mui/material';
+import { Avatar, Button, CircularProgress, Fab, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Step, StepLabel, Stepper, TextField, Typography ,Modal, Snackbar, Alert} from '@mui/material';
 import LinearProgress from '@mui/material/LinearProgress';
 import { useEffect, useState } from 'react';
 import { Stack } from '@mui/system';
@@ -13,6 +13,10 @@ import dayjs, { Dayjs } from 'dayjs';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import SelectVendor from '../SelectVendor/SelectVendor';
 import { CreateAgreement } from '../../models/CreateAgreement.interface';
+import { useAppDispatch } from '../../../../hooks/redux/hooks';
+import { showSnackbar } from '../../../ui/UiSlice';
+import ErrorIcon from '@mui/icons-material/Error';
+
 
 
 
@@ -32,7 +36,6 @@ interface Proptype{
     const [directions,setDirections] = useState<Direction[]>([]);
     const [selectedDirection,setSelectedDirection] = useState<{label:string,value:string}>({label:"",value:""})
     const [selectedDepartement,setSelectedDepartement] = useState<{label:string,value:string}>({label:"",value:""});
-  
     const [agreementDocumentFile,setAgreementDocumentFile] = useState<any>(null);
     const [loading,setLoading] = useState(false);
     const [done,setDone] = useState(false);
@@ -45,6 +48,7 @@ interface Proptype{
     const [expirationDate, setExpirationDate] = useState<Dayjs>(
         dayjs('2014-08-18'),
       );
+    const dispatch = useAppDispatch();
     const [fileUploadProgress,setFileUploadProgress] = useState(0)
     const [vendorModalOpen,setVendorModalOpen] = useState(false)
     const handleVendorModalOpen = ()=>setVendorModalOpen(true)
@@ -136,6 +140,11 @@ interface Proptype{
       })
       .catch(err=>{
         console.error(err)
+        if(err.code !== "ERR_CANCELED"){
+
+          dispatch(showSnackbar({message:"verifiez si vous etes en ligne"}))
+        }
+     
       })
       return ()=>{
         abortController.abort();
@@ -203,6 +212,7 @@ interface Proptype{
           console.error(err)
           setLoading(false)
           setIsAgreementDocumentFileUploading(false);
+          setDone(false)
         }
       
       
@@ -231,6 +241,7 @@ interface Proptype{
       if(directionIndex < 0 ) return [];
       return directions[directionIndex].departements;
     }
+  
     return (
       <div className={styles.container}>
         <Stack direction="row">
@@ -393,10 +404,32 @@ interface Proptype{
                                  
                                  </>):(
                                     loading?(
-                                      <>
-                                      <Typography>Creation de  Contrat...</Typography>
-                                      <CircularProgress/>
-                                    </>
+                                      done?(
+                                        <>
+                                          <Typography>Contrat cree !</Typography>
+                                          <Fab
+                                          aria-label="save"
+                                          color="secondary"
+                                          size="small"
+                                          sx={{boxShadow:"none"}}
+                                          >
+                                          <CheckIcon sx={{ color:"white"}}/> 
+                                         </Fab>
+                                        </>
+                                      ):(
+                                        <>
+                                        <Typography>Erreur!</Typography>
+                                        <Fab
+                                        aria-label="save"
+                                        color="secondary"
+                                        size="small"
+                                        sx={{boxShadow:"none"}}
+                                        >
+                                        <ErrorIcon sx={{ color:"white"}}/> 
+                                       </Fab>
+                                      </>
+                                      )
+                                       
                                       
                                   ):(
                                       <>
@@ -425,8 +458,8 @@ interface Proptype{
         <Stack direction="row" className={styles.actionButtons}>
           <Button disabled={activeStep === 0 || done}>Precedent</Button>
           <Button disabled={nextBtnshouldBeDisabled() }
-            onClick={()=>!done?handleNextStep():handleClose()}
-            >{done?"Fermer":"Suivant"}</Button>
+            onClick={()=>activeStep !== 3?handleNextStep():handleClose()}
+            >{activeStep === 3?"Fermer":"Suivant"}</Button>
         </Stack>
         
 
@@ -440,6 +473,7 @@ interface Proptype{
             selectVendor={(vendor:any)=>setVendor(vendor)}
           />
         </Modal>
+       
       </div>
     )
   }

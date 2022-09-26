@@ -54,9 +54,9 @@ export class UserService{
 
         if(searchQuery && searchQuery.length >= 2){
             query = query.where(`MATCH(user.username) AGAINST ('${searchQuery}' IN BOOLEAN MODE)`)
-            .orWhere(`MATCH(user.firstName) AGAINST ('${searchQuery}' IN BOOLEAN MODE)`)
-            .orWhere(`MATCH(user.lastName) AGAINST ('${searchQuery}' IN BOOLEAN MODE)`)
-            .orWhere(`MATCH(user.email) AGAINST ('${searchQuery}' IN BOOLEAN MODE)`)
+            .andWhere(`MATCH(user.email) AGAINST ('${searchQuery}' IN BOOLEAN MODE)`)
+            .andWhere(`MATCH(user.firstName) AGAINST ('${searchQuery}' IN BOOLEAN MODE)`)
+            .andWhere(`MATCH(user.lastName) AGAINST ('${searchQuery}' IN BOOLEAN MODE)`)
            
         }
         if(orderBy){
