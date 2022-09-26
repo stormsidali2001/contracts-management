@@ -6,12 +6,18 @@ import { AgreementEntity } from "./Agreement.entity";
 @Index('vendor-fulltext-num-idx', ['num'], { fulltext: true })
 @Index('vendor-fulltext-nif-idx', ['nif'], { fulltext: true })
 @Index('vendor-fulltext-nrc-idx', ['nrc'], { fulltext: true })
+@Index('vendor-fulltext-company_name-idx', ['company_name'], { fulltext: true })
 @Index('vendor-fulltext-address-idx', ['address'], { fulltext: true })
+@Index('vendor-fulltext-mobile_phone_number-idx', ['mobile_phone_number'], { fulltext: true })
+@Index('vendor-fulltext-home_phone_number-idx', ['home_phone_number'], { fulltext: true })
 //
 @Index('vendor-fulltext-num-idx', { synchronize: false })
 @Index('vendor-fulltext-nif-idx', { synchronize: false })
 @Index('vendor-fulltext-nrc-idx', { synchronize: false })
+@Index('vendor-fulltext-company_name-idx', { synchronize: false })
 @Index('vendor-fulltext-address-idx', { synchronize: false })
+@Index('vendor-fulltext-mobile_phone_number-idx', { synchronize: false })
+@Index('vendor-fulltext-home_phone_number-idx', { synchronize: false })
 //unique
 @Index('vendor-num-unique-idx', ['num'], { unique: true })
 @Index('vendor-company_name-unique-idx', ['company_name'], { unique: true })

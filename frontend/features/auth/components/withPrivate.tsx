@@ -1,19 +1,21 @@
 import { NextPage } from "next"
 import { useRouter } from "next/router";
 import { useEffect } from "react";
+import useRefreshToken from "../../../hooks/auth/useRefreshToken";
 import { useAppDispatch, useAppSelector } from "../../../hooks/redux/hooks"
 import Signin from "../../../pages/signin";
-import { verifyAccessToken } from "../authSlice";
+import { refresh_token } from "../authSlice";
 
 function WithPrivate({children}:any) {
-    const dispatch = useAppDispatch();
+    const refresh = useRefreshToken();
     const { isSuccess , isAuthenticated , jwt} = useAppSelector(state=>state.auth);
     const router = useRouter();
+    const dispatch = useAppDispatch()
     const {pathname} = router;
     useEffect(()=>{
-        if(!jwt || !jwt.access_token ) return;
+      if(jwt || isAuthenticated) return;
+      dispatch(refresh_token())
 
-        dispatch(verifyAccessToken(jwt.access_token));
     },[jwt , isAuthenticated])
 
   return isAuthenticated ?children : <Signin/>;

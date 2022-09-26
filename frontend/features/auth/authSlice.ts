@@ -1,7 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { RootState } from "../../store";
 import { DisplayUser } from "./models/DisplayUser.interface";
-import { Jwt } from "./models/Jwt.interface";
 import { LoginUser } from "./models/login-user.interface";
 import authService from "./services/auth.service";
 //getting an item from local storage when the we are in the browser
@@ -22,7 +21,7 @@ export interface AsyncState{
 
 export interface AuthState extends AsyncState{
     user?:DisplayUser | null;
-    jwt?:Jwt | null;
+    jwt?:string | null;
     isAuthenticated?:boolean;
 
 }
@@ -46,13 +45,11 @@ export const login = createAsyncThunk(
         }
     }
 )
-export const verifyAccessToken = createAsyncThunk(
-    'auth/verify-access-token',
-    async (access_token:string,thunkAPI)=>{
+export const refresh_token = createAsyncThunk(
+    'auth/refresh_token',
+    async (_,thunkAPI)=>{
         try{
-            console.log("trying with ",access_token)
-            const role =  await authService.verifyAccessToken(access_token)
-            return role;
+           return   await authService.refresh();
         }catch(err){
             console.log(err);
             return  thunkAPI.rejectWithValue("invalide or expired access token")
@@ -79,6 +76,9 @@ export const authSlice = createSlice({
             state.isLoading = false;
             state.isSuccess = false;
             state.isError = false;
+        },
+        setJwt: (state,action)=>{
+            state.jwt = action.payload;
         }
     },
     extraReducers:(builder)=>{
@@ -101,20 +101,18 @@ export const authSlice = createSlice({
             state.user = null;
             state.isAuthenticated = false;
         })
-        //verify-access-token
-        .addCase(verifyAccessToken.pending,(state)=>{
+        //refresh_token
+        .addCase(refresh_token.pending,(state)=>{
             state.isLoading = true;
         })
-        .addCase(verifyAccessToken.fulfilled,(state,action)=>{
+        .addCase(refresh_token.fulfilled,(state,action)=>{
             state.isSuccess = true;
             state.isLoading = false;
             state.isAuthenticated = true;
-            if(state.user){
-                state.user.role = action.payload.role;
-            }
-            
+            state.jwt =  action.payload.jwt;
+            state.user = action.payload.user;
         })
-        .addCase(verifyAccessToken.rejected,(state)=>{
+        .addCase(refresh_token.rejected,(state)=>{
             state.isLoading = false;
             state.isError = true;
             state.isAuthenticated = false;
@@ -131,4 +129,4 @@ export const authSlice = createSlice({
 })
 
 export const selectedUser = (state:RootState)=>state.auth;
-export const {reset} = authSlice.actions;
+export const {reset,setJwt} = authSlice.actions;

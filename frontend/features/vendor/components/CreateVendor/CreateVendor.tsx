@@ -15,6 +15,8 @@ import axios from 'axios';
 import { Vendor } from '../../models/vendor.interface';
 import { useAppDispatch } from '../../../../hooks/redux/hooks';
 import { showSnackbar } from '../../../ui/UiSlice';
+import ErrorIcon from '@mui/icons-material/Error';
+
  interface PropType{
   handleClose:()=>void
 }
@@ -275,17 +277,32 @@ const CreateVendor = ({handleClose}:PropType) => {
                                   </>
                                     
                                 ):(
+                                  done?(
                                     <>
-                                      <Typography>Founisseur cree !</Typography>
+                                      <Typography>Fournisseur cree !</Typography>
                                       <Fab
                                       aria-label="save"
                                       color="secondary"
                                       size="small"
                                       sx={{boxShadow:"none"}}
                                       >
-                                       <CheckIcon sx={{ color:"white"}}/> 
-                                    </Fab>
+                                      <CheckIcon sx={{ color:"white"}}/> 
+                                     </Fab>
                                     </>
+                                  ):(
+                                    <>
+                                    <Typography>Erreur!</Typography>
+                                    <Fab
+                                    aria-label="save"
+                                    color="secondary"
+                                    size="small"
+                                    sx={{boxShadow:"none"}}
+                                    >
+                                    <ErrorIcon sx={{ color:"white"}}/> 
+                                   </Fab>
+                                  </>
+                                  )
+                                   
                                 )
                             }
                            

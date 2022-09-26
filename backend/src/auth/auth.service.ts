@@ -94,8 +94,9 @@ export class AuthService{
            if(!matches){
                 throw new UnauthorizedException("wrong credentials")
            }
-           const tokens = await this.#generateTokens({email:userDb.email , username:userDb.username, sub:userDb.id,firstName:userDb.firstName ,lastName:userDb.lastName,imageUrl:userDb.imageUrl});
+           const tokens = await this.#generateTokens({email:userDb.email , username:userDb.username, sub:userDb.id,firstName:userDb.firstName ,lastName:userDb.lastName,imageUrl:userDb.imageUrl,role:userDb.role});
            await this.#updateRefreshTokenHash(userDb.id,tokens.refresh_token);
+
            return tokens;
        }catch(err){
            throw new ForbiddenException(err);
@@ -111,5 +112,19 @@ export class AuthService{
         }catch(err){
             throw new InternalServerErrorException(err);
         }
+    }
+
+    async refresh_token(id:string,refresh_token:string){
+            try{
+                const userDb = await this.userService.findBy({id})
+                if(!userDb || !userDb?.refresh_token_hash){
+                    throw new ForbiddenException("user deleted or loged out")
+                }
+                const tokens = await this.#generateTokens({email:userDb.email , username:userDb.username, sub:userDb.id,firstName:userDb.firstName ,lastName:userDb.lastName,imageUrl:userDb.imageUrl,role:userDb.role});
+                await this.#updateRefreshTokenHash(userDb.id,tokens.refresh_token);
+                return tokens;
+            }catch(err){
+                throw new InternalServerErrorException(err);
+            }
     }
 }

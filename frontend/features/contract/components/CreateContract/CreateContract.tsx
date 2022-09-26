@@ -404,34 +404,14 @@ interface Proptype{
                                  
                                  </>):(
                                     loading?(
-                                      done?(
-                                        <>
-                                          <Typography>Contrat cree !</Typography>
-                                          <Fab
-                                          aria-label="save"
-                                          color="secondary"
-                                          size="small"
-                                          sx={{boxShadow:"none"}}
-                                          >
-                                          <CheckIcon sx={{ color:"white"}}/> 
-                                         </Fab>
-                                        </>
-                                      ):(
-                                        <>
-                                        <Typography>Erreur!</Typography>
-                                        <Fab
-                                        aria-label="save"
-                                        color="secondary"
-                                        size="small"
-                                        sx={{boxShadow:"none"}}
-                                        >
-                                        <ErrorIcon sx={{ color:"white"}}/> 
-                                       </Fab>
+                                      <>
+                                      <Typography>Creation de  Contrat...</Typography>
+                                      <CircularProgress/>
                                       </>
-                                      )
                                        
                                       
                                   ):(
+                                    done?(
                                       <>
                                         <Typography>Contrat cree !</Typography>
                                         <Fab
@@ -440,9 +420,22 @@ interface Proptype{
                                         size="small"
                                         sx={{boxShadow:"none"}}
                                         >
-                                         <CheckIcon sx={{ color:"white"}}/> 
-                                      </Fab>
+                                        <CheckIcon sx={{ color:"white"}}/> 
+                                       </Fab>
                                       </>
+                                    ):(
+                                      <>
+                                      <Typography>Erreur!</Typography>
+                                      <Fab
+                                      aria-label="save"
+                                      color="secondary"
+                                      size="small"
+                                      sx={{boxShadow:"none"}}
+                                      >
+                                      <ErrorIcon sx={{ color:"white"}}/> 
+                                     </Fab>
+                                    </>
+                                    )
                                   )
                                  )
                                 

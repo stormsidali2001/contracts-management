@@ -37,7 +37,7 @@ export class UserService{
     async findByEmailOrUsername({email,username}:{email:string,username:string}):Promise<UserEntity>{
         try{
             return this.userRepository.createQueryBuilder('user')
-            .select(['user.password','user.email','user.username','user.id','user.firstName','user.lastName','user.imageUrl'])
+            .select(['user.password','user.email','user.username','user.id','user.firstName','user.lastName','user.imageUrl','user.role'])
             .where('user.username = :username or user.email = :email',{username,email})
             .getOne();
         }catch(err){

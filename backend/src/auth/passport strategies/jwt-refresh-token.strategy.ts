@@ -10,12 +10,15 @@ export class JwtRefreshTokenStrategy extends PassportStrategy(Strategy,'jwt-refr
     constructor(configService:ConfigService){
         super({
             secretOrKey:configService.get<string>("JWT_REFRESH_TOKEN_SECRET"),
-            jwtFromRequest:ExtractJwt.fromAuthHeaderAsBearerToken(),
+            jwtFromRequest:(request:Request)=>{
+                const refresh_token = request.cookies['refresh_token'];
+                return refresh_token;
+            },
             ignoreExpiration:false,
         })
     }
     validate({user}:{user:JwtPayload},request:Request){
-        const refresh_token = request.headers.authorization?.replace('Bearer','')
+        const refresh_token = request.cookies['refresh_token'];
         if(!refresh_token){
             throw new UnauthorizedException("Unauthorized")
             

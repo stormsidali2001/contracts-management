@@ -7,11 +7,27 @@ import { VendorEntity } from "./Vendor.entity";
 
 
 @Entity('agreements')
+//fulltext
+@Index('vendor-fulltext-object-idx', ['object'], { fulltext: true })
+@Index('vendor-fulltext-number-idx', ['number'], { fulltext: true })
+@Index('vendor-fulltext-observation-idx', ['observation'], { fulltext: true })
+
+//
+@Index('vendor-fulltext-object-idx', { synchronize: false })
+@Index('vendor-fulltext-number-idx', { synchronize: false })
+@Index('vendor-fulltext-observation-idx', { synchronize: false })
+
+//unique
+@Index('vendor-number-unique-idx', ['number'], { unique: true })
+
+//
+@Index('vendor-number-unique-idx', { synchronize: false })
+
+
 export class AgreementEntity{
     @PrimaryGeneratedColumn('uuid')
     id:string;
 
-    @Index({fulltext:true})
     @Column()
     number:string;
 
@@ -22,7 +38,6 @@ export class AgreementEntity{
     })
     type:AgreementType;
 
-    @Index({fulltext:true})
     @Column()
     object:string;
 
@@ -39,7 +54,6 @@ export class AgreementEntity{
     })
     signature_date:Date;
 
-    @Index({fulltext:true})
     @Column({nullable:true})
     observation?:string;
 
