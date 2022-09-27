@@ -1,4 +1,4 @@
-import { Body, Controller, InternalServerErrorException, Post ,Req,UseGuards , Get, Res} from "@nestjs/common";
+import { Body, Controller, InternalServerErrorException, Post ,Req,UseGuards , Get, Res, Logger} from "@nestjs/common";
 import { CreateUserDTO, LoginUserDTO } from "src/core/dtos/user.dto";
 import { AuthService } from "./auth.service";
 import {ApiTags} from '@nestjs/swagger';
@@ -21,14 +21,16 @@ export class AuthController{
     }   
 
     @Post("login")
-     async login(@Body() user:LoginUserDTO , @Res() res:Response){
+     async login(@Body() user:LoginUserDTO , @Res({passthrough:true}) res:Response){
      
         const tokens =  await this.authService.login(user);
         res.cookie("refresh_token",tokens.refresh_token,{
-            expires:new Date(+this.configService.get("JWT_REFRESH_TOKEN_EXPIRES_IN")),
-            httpOnly:true
+            maxAge:+this.configService.get("JWT_REFRESH_TOKEN_EXPIRES_IN"),
+            // httpOnly:true,
+            sameSite: 'strict',
+            secure:false
         })
-
+        console.log("returning the token")
         return {access_token:tokens.access_token};
 
 
@@ -44,15 +46,18 @@ export class AuthController{
 
     @UseGuards(JwtRefreshTokenGuard)
     @Get("refresh_token")
-    async refresh_token(@Req() request , @Res() res){
+    async refresh_token(@Req() request , @Res({passthrough:true}) res){
         const refresh_token = request.refresh_token;
+        Logger.warn("token: "+refresh_token,"debuuuuuuuuuug")
         const userId = request.user.sub;
         const tokens =  await this.authService.refresh_token(userId,refresh_token);
+        Logger.warn("cookie"+request.cookies['refresh_token'],"debbbb")
         res.cookie("refresh_token",tokens.refresh_token,{
-            expires:new Date(+this.configService.get("JWT_REFRESH_TOKEN_EXPIRES_IN")),
-            httpOnly:true
+            maxAge:new Date(+this.configService.get("JWT_REFRESH_TOKEN_EXPIRES_IN")),
+            // httpOnly:true,
+            sameSite: 'strict',
         })
 
-        return {access_token:tokens.access_token};
+        return {access_token:tokens.access_token} ;
     }
 }

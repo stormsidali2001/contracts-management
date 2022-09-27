@@ -3,15 +3,7 @@ import { RootState } from "../../store";
 import { DisplayUser } from "./models/DisplayUser.interface";
 import { LoginUser } from "./models/login-user.interface";
 import authService from "./services/auth.service";
-//getting an item from local storage when the we are in the browser
-const getFromLocalStorage = (key:string)=>{
-    const itemStr = typeof window !== "undefined" && localStorage.getItem(key) ? 
-    localStorage.getItem(key) : null;
-    return itemStr && JSON.parse(itemStr);
-}
 
-const jwt = getFromLocalStorage("jwt");
-const user =   getFromLocalStorage("user");
 
 export interface AsyncState{
     isLoading:boolean;
@@ -29,8 +21,8 @@ const initialState:AuthState = {
    isLoading:false,
    isSuccess:false,
    isError:false,
-   user,
-   jwt,
+   user:null,
+   jwt:null,
    isAuthenticated:false
 }
 
@@ -77,9 +69,7 @@ export const authSlice = createSlice({
             state.isSuccess = false;
             state.isError = false;
         },
-        setJwt: (state,action)=>{
-            state.jwt = action.payload;
-        }
+      
     },
     extraReducers:(builder)=>{
         builder
@@ -129,4 +119,4 @@ export const authSlice = createSlice({
 })
 
 export const selectedUser = (state:RootState)=>state.auth;
-export const {reset,setJwt} = authSlice.actions;
+export const {reset} = authSlice.actions;
