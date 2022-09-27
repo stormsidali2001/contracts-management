@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Notification } from "./models/Notification.interface";
 
 export enum NotificationEvents{
-    RequestAllNotifications = 'request_all_notification',
+    RequestAllNotifications = 'request_all_notifications',
     RecieveNotification = 'recieve_notification'
 }
 
@@ -22,8 +22,9 @@ export const initialState:NotificationState = {
     isConnected:false,
 }
 
+
 export const notificationSlice = createSlice({
-    name:"notifications",
+    name:"notification",
     initialState,
     reducers:{
         startConnecting:(state)=>{
@@ -41,5 +42,8 @@ export const notificationSlice = createSlice({
         },
     }
 })
+
+
+
 
 export const {startConnecting,connectionEstablished,recieveNotification,recieveNotifications} = notificationSlice.actions;

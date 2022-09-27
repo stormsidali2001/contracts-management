@@ -120,12 +120,8 @@ export class AuthService{
                 if(!userDb || !userDb?.refresh_token_hash){
                     throw new ForbiddenException("user deleted or loged out")
                 }
-                Logger.warn(`
-                useDb.refresh_token_hash: ${userDb.refresh_token_hash} 
-                    refresh token : ${refresh_token}
-                `,"refresh token debug");
+              
                 const equal = await bcrypt.compare(refresh_token,userDb.refresh_token_hash)
-                console.log("equal",equal,userDb.refresh_token_hash)
 
                 if(!equal){
                     throw new ForbiddenException("old token")

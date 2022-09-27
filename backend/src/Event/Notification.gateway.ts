@@ -1,6 +1,7 @@
 import { Logger } from "@nestjs/common";
-import { OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit, WebSocketGateway, WebSocketServer } from "@nestjs/websockets";
+import { ConnectedSocket, OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit, SubscribeMessage, WebSocketGateway, WebSocketServer } from "@nestjs/websockets";
 import { Namespace ,Socket} from "socket.io";
+import { SocketWithJwtPayload } from "src/auth/types/JwtPayload.interface";
 
 
 @WebSocketGateway({
@@ -12,16 +13,20 @@ export class NotificationsGateWay implements OnGatewayInit , OnGatewayConnection
     afterInit(server: any) {
         this.logger.log("notification gatway initialized !!!");
     }
-    handleConnection(client: Socket, ...args: any[]) {
+    handleConnection(client: SocketWithJwtPayload, ...args: any[]) {
         const sockets = this.io.sockets;
-        console.log(client)
-        this.logger.log(`Client connected: ${client.id}`);
+        // console.log(client)
+        this.logger.log(`Client connected: socketid: ${client.id} `);
         this.logger.debug(`Number of connected sockets is : ${sockets.size}`);
     }
     handleDisconnect(client: any) {
         const sockets = this.io.sockets;
         this.logger.log(`Client disconnected: ${client.id}`);
         this.logger.debug(`Number of connected sockets is : ${sockets.size}`);
+    }
+
+    @SubscribeMessage('request_all_notifications')
+    async getNotifications(@ConnectedSocket() client:SocketWithJwtPayload){
     }
    
 }

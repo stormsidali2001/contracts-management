@@ -12,7 +12,6 @@ async function bootstrap() {
   app.setGlobalPrefix('api')
   app.useGlobalPipes(new ValidationPipe({transform:true,disableErrorMessages:false}))
   app.enableCors({credentials:true,origin:["http://localhost:3000"],methods:['POST','GET','PUT']});
-  app.useWebSocketAdapter(new SocketIoAdapter(app));
   app.use(cookieParser()) // to parse the cookie  in the request
   const config = new DocumentBuilder().setTitle('Contracts Management')
   .setDescription("description")
@@ -24,6 +23,8 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
  
   SwaggerModule.setup('docs', app, document); 
+  app.useWebSocketAdapter(new SocketIoAdapter(app));
+
   await app.listen(8080);
 }
 bootstrap();

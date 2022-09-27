@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { RootState } from "../../store";
+import { startConnecting } from "../notification/notificationSlice";
 import { DisplayUser } from "./models/DisplayUser.interface";
 import { LoginUser } from "./models/login-user.interface";
 import authService from "./services/auth.service";
@@ -41,7 +42,8 @@ export const refresh_token = createAsyncThunk(
     'auth/refresh_token',
     async (_,thunkAPI)=>{
         try{
-           return   await authService.refresh();
+            const res =    await authService.refresh();
+           return res;
         }catch(err){
             console.log(err);
             return  thunkAPI.rejectWithValue("invalide or expired access token")
@@ -112,6 +114,7 @@ export const authSlice = createSlice({
             state.user = null;
             state.jwt = null;
             state.isAuthenticated = false;
+
         })
 
     }

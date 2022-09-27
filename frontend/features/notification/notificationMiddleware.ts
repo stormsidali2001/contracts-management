@@ -5,18 +5,22 @@ import { connectionEstablished, NotificationEvents, recieveNotification, recieve
 
 
 
+
 const notificationMiddleware:Middleware = store=>{
+    
     let socket:Socket;
-   
+    
     return next =>action=>{
         const notificationState = store.getState().notification;
-        const isConnected = socket && notificationState.isConnected;
-        if(startConnecting.match(action)){
-            socket = io("http://localhost:8080/api",{
+        const isConnected =  notificationState.isConnected;
+        if(startConnecting.match(action) && !socket){
+            socket = io("http://localhost:8080/notifications",{
                 extraHeaders:{
                     'Authorization':`Bearer ${notificationState.jwt}`
                 }
+                
             })
+
             socket.on('connect',()=>{
                 store.dispatch(connectionEstablished())
                 socket.emit(NotificationEvents.RequestAllNotifications)
