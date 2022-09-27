@@ -33,7 +33,7 @@ const Topbar = () => {
             </IconButton>
             <Button  onClick={handleClick} aria-describedby={popoverId}>
               <div  className={styles.profilImgContainer} >
-                  <img src={user?.imageUrl?`http://localhost:8080/api/users/image/${user?.imageUrl}`:"blank-profile-picture.png"} alt="profile picture"/>
+                  <img src={user?.imageUrl?`http://localhost:8080/api/users/image/${user?.imageUrl}`:"/blank-profile-picture.png"} alt="profile picture"/>
                   <LittleChevronIcon className={styles.chevron}/>
               </div>
             </Button>

@@ -26,9 +26,7 @@ export class AuthService{
     async #comparePassword(password:string,passwordDb:string):Promise<boolean>{
         return bcrypt.compare(password,passwordDb);
     }
-    async #compareTokens(token:string,hash:string){
-        return argon2.verify(hash,token)
-    }
+  
     async #generateTokens(jwtPayload:JwtPayload):Promise<Tokens>{
         const [access_token , refresh_token] = await Promise.all([
             this.jwtService.signAsync({user:jwtPayload},{
@@ -48,7 +46,7 @@ export class AuthService{
         }
     }
     async #updateRefreshTokenHash(userId:string,refresh_token:string):Promise<void>{
-        const refresh_token_hash = await argon2.hash(refresh_token)
+        const refresh_token_hash = await bcrypt.hash(refresh_token,12)
          await this.userService.findAndUpdate(userId,{refresh_token_hash})
     }
     async register(newUser:CreateUserDTO):Promise<UserEntity>{
@@ -87,7 +85,6 @@ export class AuthService{
        try{
 
            const userDb = await this.userService.findByEmailOrUsername({email:user.email,username:user.username});
-           console.log(userDb,'login ...........')
            
            if(!userDb){
                 throw new UnauthorizedException("wrong credentials")
@@ -123,8 +120,13 @@ export class AuthService{
                 if(!userDb || !userDb?.refresh_token_hash){
                     throw new ForbiddenException("user deleted or loged out")
                 }
+                Logger.warn(`
+                useDb.refresh_token_hash: ${userDb.refresh_token_hash} 
+                    refresh token : ${refresh_token}
+                `,"refresh token debug");
+                const equal = await bcrypt.compare(refresh_token,userDb.refresh_token_hash)
+                console.log("equal",equal,userDb.refresh_token_hash)
 
-                const equal = this.#compareTokens(refresh_token,userDb.refresh_token_hash)
                 if(!equal){
                     throw new ForbiddenException("old token")
                 }

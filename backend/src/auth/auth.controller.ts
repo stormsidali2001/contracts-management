@@ -24,6 +24,7 @@ export class AuthController{
      async login(@Body() user:LoginUserDTO , @Res({passthrough:true}) res:Response){
      
         const tokens =  await this.authService.login(user);
+        Logger.warn(`refresh_token: ${tokens.refresh_token}`)
         res.cookie("refresh_token",tokens.refresh_token,{
             maxAge:+this.configService.get("JWT_REFRESH_TOKEN_EXPIRES_IN"),
             // httpOnly:true,
@@ -47,16 +48,16 @@ export class AuthController{
     @UseGuards(JwtRefreshTokenGuard)
     @Get("refresh_token")
     async refresh_token(@Req() request , @Res({passthrough:true}) res){
-        const refresh_token = request.refresh_token;
+        const refresh_token = request.user.refresh_token;
         Logger.warn("token: "+refresh_token,"debuuuuuuuuuug")
         const userId = request.user.sub;
         const tokens =  await this.authService.refresh_token(userId,refresh_token);
         Logger.warn("cookie"+request.cookies['refresh_token'],"debbbb")
-        res.cookie("refresh_token",tokens.refresh_token,{
-            maxAge:new Date(+this.configService.get("JWT_REFRESH_TOKEN_EXPIRES_IN")),
-            // httpOnly:true,
-            sameSite: 'strict',
-        })
+        // res.cookie("refresh_token",tokens.refresh_token,{
+        //     maxAge:new Date(+this.configService.get("JWT_REFRESH_TOKEN_EXPIRES_IN")),
+        //     // httpOnly:true,
+        //     sameSite: 'strict',
+        // })
 
         return {access_token:tokens.access_token} ;
     }
