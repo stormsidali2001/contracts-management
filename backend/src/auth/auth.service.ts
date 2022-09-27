@@ -138,4 +138,8 @@ export class AuthService{
                 throw new InternalServerErrorException(err);
             }
     }
+
+    async logout(userId:string):Promise<void>{
+        this.userService.findAndUpdate(userId,{refresh_token_hash:null})
+    }
 }

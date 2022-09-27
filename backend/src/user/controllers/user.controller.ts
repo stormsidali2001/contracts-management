@@ -1,5 +1,6 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Put, Query } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Put, Query, UseGuards } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
+import { JwtAccessTokenGuard } from "src/auth/guards/jwt-access-token.guard";
 import { UserEntity } from "src/core/entities/User.entity";
 import { PaginationResponse } from "src/core/types/paginationResponse.interface";
 import { UpdateResult } from "typeorm";
@@ -27,6 +28,7 @@ export class UserController{
     // async deleteUser(@Param('id') id:string): Promise<string>{
        
     // }
+    @UseGuards(JwtAccessTokenGuard)
     @Put(':id')
     async updateUser(@Param('id') id:string,@Body() user:UpdateUserDTO):Promise<UpdateResult>{
         return this.userService.updateUser(id,user)

@@ -6,6 +6,7 @@ import { useAppSelector } from '../../../../hooks/redux/hooks';
 import styles from './UserProfile.module.css';
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
+import useAxiosPrivate from '../../../../hooks/auth/useAxiosPrivate';
 const UserProfile = () => {
     const router = useRouter();
     const [user,setUser] = useState<any>(null)
@@ -13,13 +14,13 @@ const UserProfile = () => {
     const {userId} = query;
     const [edit,setEdit] = useState(false);
     const [loading,setLoading] = useState(false)
+    const privateAxios = useAxiosPrivate();
     useEffect(()=>{
         if(!userId) return;
-        axios.get(`http://localhost:8080/api/users/${userId}`)
+        privateAxios.get(`http://localhost:8080/api/users/${userId}`)
         .then(res=>{
             console.log(res)
             setUser(res.data)
-           
         })
         .catch(err=>{
             console.error(err);
@@ -31,7 +32,7 @@ const UserProfile = () => {
   const setUserProperty = (key:string,value:any)=>setUser((u:Object)=>({...u,[key]:value}))
   const handleSubmit = ()=>{
     setLoading(true)
-    axios.put(`http://localhost:8080/api/users/${user.id}`,{
+    privateAxios.put(`http://localhost:8080/api/users/${user.id}`,{
         email:user.email,
         username:user.username,
         firstName:user.firstName,
