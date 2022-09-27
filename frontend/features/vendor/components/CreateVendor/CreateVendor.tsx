@@ -11,11 +11,11 @@ import { validateHomePhoneNumber } from '../../../../shared/utils/validation/val
 import { validateNrc } from '../../../../shared/utils/validation/validateNrc';
 import CheckIcon from '@mui/icons-material/Check';
 import CircularProgress from '@mui/material/CircularProgress';
-import axios from 'axios';
 import { Vendor } from '../../models/vendor.interface';
 import { useAppDispatch } from '../../../../hooks/redux/hooks';
 import { showSnackbar } from '../../../ui/UiSlice';
 import ErrorIcon from '@mui/icons-material/Error';
+import useAxiosPrivate from '../../../../hooks/auth/useAxiosPrivate';
 
  interface PropType{
   handleClose:()=>void
@@ -23,6 +23,7 @@ import ErrorIcon from '@mui/icons-material/Error';
 
 
 const CreateVendor = ({handleClose}:PropType) => {
+    const axiosPrivate = useAxiosPrivate();
     const steps = [
         'identifiants',
         'Localisation',
@@ -130,7 +131,7 @@ const CreateVendor = ({handleClose}:PropType) => {
           }
 
             setLoading(true) 
-            axios.post("http://localhost:8080/api/vendors",vendor)
+            axiosPrivate.post("http://localhost:8080/api/vendors",vendor)
             .then(res =>{
                 console.log(res)
                 handleRestForm();

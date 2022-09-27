@@ -5,6 +5,7 @@ import { validateDepartementAbriviationLength, validateDepartementTitleLength } 
 import styles from './CreateDepartement.module.css';
 import axios from 'axios';
 import { Departement } from '../../models/departement.interface';
+import useAxiosPrivate from '../../../../hooks/auth/useAxiosPrivate';
 const CreateDepartement = ({
     selectedDirectionId,
     handleCloseDepartementModal,
@@ -15,6 +16,7 @@ const CreateDepartement = ({
     pushDepartementToDirection:(departement:Departement ,selectedDirectionId?:string,)=>void,
     linkToDirectionAsync?:boolean 
 }) => {
+    const axiosPrivate = useAxiosPrivate();
     const {
         text:title ,
         inputBlurHandler:titleBlurHandler,inputClearHandler:titleClearHandler,textChangeHandler:titleChangeHandler,
@@ -38,7 +40,7 @@ const CreateDepartement = ({
        
         if(linkToDirectionAsync && selectedDirectionId){
 
-            axios.post('http://localhost:8080/api/departements',{
+            axiosPrivate.post('http://localhost:8080/api/departements',{
                ...departement
             })
             .then(res=>{    

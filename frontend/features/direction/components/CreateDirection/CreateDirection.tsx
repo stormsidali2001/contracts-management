@@ -9,6 +9,7 @@ import { Departement } from '../../models/departement.interface';
 import CreateDepartement from '../CreateDepartement/CreateDepartement';
 import axios from 'axios';
 import { Direction } from '../../models/direction.interface';
+import useAxiosPrivate from '../../../../hooks/auth/useAxiosPrivate';
 
 interface PropTypes{
   pushDirection:(direction:Direction)=>void,
@@ -18,6 +19,7 @@ const CreateDirection = ({
   pushDirection,
   handleDirectionModalClose
 }:PropTypes) => {
+  const axiosPrivate = useAxiosPrivate();
   const [openDepartementModal, setOpenDepartementModal] = useState(false);
   const [departements,setDepartements]= useState<Departement[]>([])
   
@@ -42,7 +44,7 @@ const {
     e.preventDefault();
     if(!title || !abriviation || !departements) return;
     try{
-      axios.post("http://localhost:8080/api/directions",{
+      axiosPrivate.post("http://localhost:8080/api/directions",{
         title,
         abriviation,
         departements

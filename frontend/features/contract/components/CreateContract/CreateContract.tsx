@@ -16,6 +16,7 @@ import { CreateAgreement } from '../../models/CreateAgreement.interface';
 import { useAppDispatch } from '../../../../hooks/redux/hooks';
 import { showSnackbar } from '../../../ui/UiSlice';
 import ErrorIcon from '@mui/icons-material/Error';
+import useAxiosPrivate from '../../../../hooks/auth/useAxiosPrivate';
 
 
 
@@ -26,6 +27,7 @@ interface Proptype{
     type?: 'contract' | 'convension'
   }
   const CreateContract = ({handleClose,type = "contract"}:Proptype) => {
+    const axiosPrivate = useAxiosPrivate();
     const steps = [
       'identifiants',
       'direction , departement',
@@ -123,7 +125,7 @@ interface Proptype{
   
     useEffect(()=>{
       const abortController = new AbortController();
-      axios.get("http://localhost:8080/api/directions",{
+      axiosPrivate.get("http://localhost:8080/api/directions",{
         signal:abortController.signal
       }).then(res=>{
         const newDirections = res.data;
@@ -163,7 +165,7 @@ interface Proptype{
           let res;
           if(agreementDocumentFile){
             setIsAgreementDocumentFileUploading(true);
-            res = await axios.post("http://localhost:8080/api/agreements/files/upload",formData,
+            res = await axiosPrivate.post("http://localhost:8080/api/agreements/files/upload",formData,
            {
              onUploadProgress:(e)=>{
                  const {loaded,total} = e;
@@ -199,7 +201,7 @@ interface Proptype{
               expiration_date:format(expirationDate.toDate()),
           }
           setLoading(true)
-          await axios.post("http://localhost:8080/api/Agreements?agreementType=contract",{
+          await axiosPrivate.post("http://localhost:8080/api/Agreements?agreementType=contract",{
             ...newAgreement
           })
   

@@ -14,11 +14,13 @@ import { Direction } from '../../../direction/models/direction.interface';
 import { useAppDispatch } from '../../../../hooks/redux/hooks';
 import { showSnackbar } from '../../../ui/UiSlice';
 import ErrorIcon from '@mui/icons-material/Error';
+import useAxiosPrivate from '../../../../hooks/auth/useAxiosPrivate';
 
 interface Proptype{
   handleClose:()=>void
 }
 const CreateUser = ({handleClose}:Proptype) => {
+  const axiosPrivate = useAxiosPrivate();
   const steps = [
     'identifiants',
     'direction , departement',
@@ -120,7 +122,7 @@ const CreateUser = ({handleClose}:Proptype) => {
 
   useEffect(()=>{
     const abortController = new AbortController();
-    axios.get("http://localhost:8080/api/directions",{
+    axiosPrivate.get("http://localhost:8080/api/directions",{
       signal:abortController.signal
     }).then(res=>{
       const newDirections = res.data;
@@ -159,7 +161,7 @@ const CreateUser = ({handleClose}:Proptype) => {
       try{
         let res;
         if(profilImgFile){
-          res = await axios.post("http://localhost:8080/api/users/image/upload",formData,
+          res = await axiosPrivate.post("http://localhost:8080/api/users/image/upload",formData,
          {
            onUploadProgress:(e)=>{
                const {loaded,total} = e;
@@ -190,7 +192,7 @@ const CreateUser = ({handleClose}:Proptype) => {
            
         }
         setLoading(true)
-        await axios.post("http://localhost:8080/api/auth/register",{
+        await axiosPrivate.post("http://localhost:8080/api/auth/register",{
           ...newUser
         })
 

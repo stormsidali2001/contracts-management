@@ -10,9 +10,11 @@ import CreateUser from '../CreateUser/CreateUser';
 import { useDebounce } from '../../../../hooks/useDebounce.hook';
 import UserActions from '../UserActions/UserActions';
 import Link from 'next/link';
+import useAxiosPrivate from '../../../../hooks/auth/useAxiosPrivate';
 
 
 const UsersContent = () => {
+    const axiosPrivate = useAxiosPrivate();
     const [pageState,setPageState] = useState<any>({
         isLoading:false,
         data:[],
@@ -125,7 +127,7 @@ const UsersContent = () => {
             params+= `&searchQuery=${searchQuery}`;
           }
         setPageState((old:any)=>({...old,isLoading:true}))
-             axios.get(`http://localhost:8080/api/users?offset=${pageState.page}&limit=${pageState.pageSize}${params}`)
+            axiosPrivate.get(`http://localhost:8080/api/users?offset=${pageState.page}&limit=${pageState.pageSize}${params}`)
             .then((res:any)=>{
                 const {data:d} = res;
                 console.log(1,d)

@@ -11,9 +11,11 @@ import { Direction, DisplayDirection } from '../../models/direction.interface';
 import CreateDepartement from '../CreateDepartement/CreateDepartement';
 import { Departement } from '../../models/departement.interface';
 import CreateDirection from '../CreateDirection/CreateDirection';
+import useAxiosPrivate from '../../../../hooks/auth/useAxiosPrivate';
 
 
 const DirectionContent = () => {
+  const axiosPrivate = useAxiosPrivate();
   const [directions,setDirections] = useState<Direction[]>([]);
   //departement modal state ----------------
   const [openDepartementModal, setOpenDepartementModal] = useState(false);
@@ -40,7 +42,7 @@ const DirectionContent = () => {
   }
   useEffect(()=>{
     const abortController = new AbortController()
-    axios.get("http://localhost:8080/api/directions?offset=0&limit=10",{
+    axiosPrivate.get("http://localhost:8080/api/directions?offset=0&limit=10",{
         signal:abortController.signal
     })
     .then(res=>{

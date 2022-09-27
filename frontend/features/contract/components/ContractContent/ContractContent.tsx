@@ -4,8 +4,10 @@ import { useEffect, useState } from 'react';
 import styles from './ContractContent.module.css'
 import {Button, Modal} from '@mui/material';
 import PlayCircleFilledWhiteIcon from '@mui/icons-material/PlayCircleFilledWhite';
+import useAxiosPrivate from '../../../../hooks/auth/useAxiosPrivate';
 
 const ContractContent = () => {
+  const axiosPrivate = useAxiosPrivate();
   const router = useRouter();
   const [contract,setContract] = useState<any>(null);
   const [openExecutionModal,setOpenExecutionModal] = useState(false)
@@ -16,7 +18,7 @@ const ContractContent = () => {
   const handelCloseExecutionModal = ()=>setOpenExecutionModal(false)
   useEffect(()=>{
     if(!contractId) return;
-    axios.get(`http://localhost:8080/api/Agreements/${contractId}`)
+    axiosPrivate.get(`http://localhost:8080/api/Agreements/${contractId}`)
     .then(res=>{
         console.log(res,"contract")
         setContract(res.data)

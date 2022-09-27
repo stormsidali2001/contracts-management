@@ -3,7 +3,9 @@ import {useEffect , useState} from 'react';
 import { useRouter } from 'next/router';
 import axios from 'axios';
 import { Button } from '@mui/material';
+import useAxiosPrivate from '../../../../hooks/auth/useAxiosPrivate';
 const VendorContent = () => {
+    const axiosPrivate = useAxiosPrivate();
     const router = useRouter();
     const [vendor,setVendor] = useState<any>(null)
     const {query} = router;
@@ -11,7 +13,7 @@ const VendorContent = () => {
     
     useEffect(()=>{
       if(!vendorId) return;
-      axios.get(`http://localhost:8080/api/vendors/${vendorId}`)
+      axiosPrivate.get(`http://localhost:8080/api/vendors/${vendorId}`)
       .then(res=>{
           console.log(res,"contract")
           setVendor(res.data)
