@@ -5,7 +5,7 @@ import { IoAdapter } from "@nestjs/platform-socket.io";
 import { WsException } from "@nestjs/websockets";
 import { Server, ServerOptions } from "socket.io";
 import { SocketWithJwtPayload } from "src/auth/types/JwtPayload.interface";
-import { SocketStateService } from "./SocketState.service";
+import { SocketStateService } from "../socket/SocketState.service";
 
 export class SocketIoAdapter extends IoAdapter  implements WebSocketAdapter {
     private readonly logger = new Logger(SocketIoAdapter.name);
@@ -52,7 +52,7 @@ export class SocketIoAdapter extends IoAdapter  implements WebSocketAdapter {
           socket.on('disconnect', () => {
             this.socketStateService.remove(socket.user.sub, socket);
             Logger.warn(`user: ${socket.user.sub} have now : ${this.socketStateService.get(socket.user.sub).length} connected socket`)
-            
+
           });
         }
    
@@ -73,7 +73,7 @@ function tokenMiddlewareWrapper(jwtService:JwtService,logger:Logger,configServic
               
           });
 
-          socket.user = payload;
+          socket.user = payload.user;
          
           logger.log(`socket ${socket.id} authenticated`);
           next()

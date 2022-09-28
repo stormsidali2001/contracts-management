@@ -5,7 +5,7 @@ import { AppModule } from './app.module';
 import {SwaggerModule} from '@nestjs/swagger'
 import { SocketIoAdapter } from './shared/Socket-io.adapter';
 import * as cookieParser from 'cookie-parser'
-import { SocketStateService } from './shared/SocketState.service';
+import { SocketStateService } from './socket/SocketState.service';
 
 
 async function bootstrap() {

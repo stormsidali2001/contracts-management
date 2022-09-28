@@ -1,10 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Notification } from "./models/Notification.interface";
 
-export enum NotificationEvents{
-    RequestAllNotifications = 'request_all_notifications',
-    RecieveNotification = 'recieve_notification'
-}
+
 
 interface AsyncState{
     isEstablishingConnection:boolean;

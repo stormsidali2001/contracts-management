@@ -3,7 +3,8 @@ import { Socket ,io} from "socket.io-client";
 import { refresh_token, setCredentials } from "../auth/authSlice";
 import authService from "../auth/services/auth.service";
 import { Notification } from "./models/Notification.interface";
-import { connectionEstablished, NotificationEvents, recieveNotification, recieveNotifications, startConnecting } from "./notificationSlice";
+import { NotificationEvents } from "./models/NotificationEvents";
+import { connectionEstablished, recieveNotification, recieveNotifications, startConnecting } from "./notificationSlice";
 
 
 
@@ -45,7 +46,7 @@ const notificationMiddleware:Middleware = store=>{
                 }
             });
 
-            socket.on(NotificationEvents.RequestAllNotifications,(notifications:Notification[])=>{
+            socket.on(NotificationEvents.SendAllNotifications,(notifications:Notification[])=>{
                 store.dispatch(recieveNotifications({notifications}))
             })
             socket.on(NotificationEvents.RecieveNotification,(notification:Notification)=>{

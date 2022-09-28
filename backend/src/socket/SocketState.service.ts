@@ -1,9 +1,10 @@
 import { Injectable } from "@nestjs/common";
-import { Socket } from "socket.io";
+import { Server, Socket } from "socket.io";
 
 @Injectable()
 export class SocketStateService{
-    private socketState = new Map<string,Socket[]>()
+    private socketState = new Map<string,Socket[]>();
+    public notificationServer:Server;
 
     add(userId:string, socket:Socket){
         const sockets:Socket[] = this.socketState.get(userId) || [];

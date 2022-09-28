@@ -5,11 +5,10 @@ import { EventService } from "./services/Event.service";
 import { NotificationService } from "./services/Notification.service";
 import {UserModule} from '../user/user.module'
 import { NotificationsGateWay } from "./Notification.gateway";
-import { SocketStateService } from "src/shared/SocketState.service";
 
 @Module({
     imports:[UserModule],
     controllers:[EventController,NotificationController],
-    providers:[NotificationService,EventService,NotificationsGateWay,SocketStateService]
+    providers:[NotificationService,EventService,NotificationsGateWay]
 })
 export class EventModule{}
