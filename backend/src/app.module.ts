@@ -9,7 +9,7 @@ import { EventModule } from './Event/Event.module';
 import { HttpExceptionFilter } from './shared/HttpException.filter';
 import { HttpLoggingInteceptor } from './shared/HttpLogging.interceptor';
 import { UserModule } from './user/user.module';
-
+import {SocketStateModule} from './socket/SocketState.module'
 
 @Module({
   imports: [
@@ -30,7 +30,8 @@ import { UserModule } from './user/user.module';
 
     }),
    AgreementModule,
-   DirectionModule
+   DirectionModule,
+   SocketStateModule
    
 ],
   controllers: [],

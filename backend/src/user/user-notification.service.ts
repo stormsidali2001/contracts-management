@@ -12,4 +12,7 @@ export class UserNotificationService{
     getUserNotifications(userId:string){
         return this.notificationRepository.findBy({user:{id:userId}})
     }
+    sendNotification(){
+        
+    }
 }
