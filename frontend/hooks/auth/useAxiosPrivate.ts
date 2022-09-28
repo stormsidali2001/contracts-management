@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import axios, { axiosPrivate } from "../../api/axios";
+import axios  from "../../api/axios";
 import { refresh_token } from "../../features/auth/authSlice";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 
@@ -17,7 +17,7 @@ const useAxiosPrivate  = ()=>{
             },
             error => Promise.reject(error)
         )
-        const responseInterceptor = axiosPrivate.interceptors.response.use(
+        const responseInterceptor = axios.interceptors.response.use(
             response => response, // normal case
             async (error)=>{
                 const previousRequest = error?.config;
@@ -27,16 +27,16 @@ const useAxiosPrivate  = ()=>{
                     const data = await dispatch(refresh_token());
                     //@ts-ignore
                     previousRequest.headers['Authorization'] = `Bearer ${data.payload.jwt}`
-                    return axiosPrivate(previousRequest);
+                    return axios(previousRequest);
             }
         )
 
         return ()=>{
-            axiosPrivate.interceptors.request.eject(requestInterceptor);
-            axiosPrivate.interceptors.response.eject(responseInterceptor);
+            axios.interceptors.request.eject(requestInterceptor);
+            axios.interceptors.response.eject(responseInterceptor);
         }
     },[])
-    return axiosPrivate;
+    return axios;
 }
 
 export default useAxiosPrivate;

@@ -1,23 +1,27 @@
 import { Middleware } from "redux";
 import { Socket ,io} from "socket.io-client";
+import { refresh_token, setCredentials } from "../auth/authSlice";
+import authService from "../auth/services/auth.service";
 import { Notification } from "./models/Notification.interface";
 import { connectionEstablished, NotificationEvents, recieveNotification, recieveNotifications, startConnecting } from "./notificationSlice";
-
 
 
 
 const notificationMiddleware:Middleware = store=>{
     
     let socket:Socket;
-    
+    let attempts = 0;
     return next =>action=>{
+        const auth = store.getState().auth;
         const notificationState = store.getState().notification;
         const isConnected =  notificationState.isConnected;
         if(startConnecting.match(action) && !socket){
+            console.log("t10",notificationState)
             socket = io("http://localhost:8080/notifications",{
-                extraHeaders:{
-                    'Authorization':`Bearer ${notificationState.jwt}`
-                }
+                auth: {
+                    token: auth.jwt 
+                }, 
+                transports:['websocket']
                 
             })
 
@@ -25,6 +29,21 @@ const notificationMiddleware:Middleware = store=>{
                 store.dispatch(connectionEstablished())
                 socket.emit(NotificationEvents.RequestAllNotifications)
             })
+            socket.on("connect_error", async (err) => {
+                console.log("t11",err?.message)
+                if(err?.message === 'unauthorized' && attempts <2){
+                  attempts++;
+                  try{
+                    const data = await authService.refresh()
+                    setCredentials(data)
+                    socket.connect()
+
+                  }catch(err){
+                    console.error(err)
+                  }
+             
+                }
+            });
 
             socket.on(NotificationEvents.RequestAllNotifications,(notifications:Notification[])=>{
                 store.dispatch(recieveNotifications({notifications}))

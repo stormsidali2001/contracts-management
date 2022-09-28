@@ -215,6 +215,8 @@ interface Proptype{
           setLoading(false)
           setIsAgreementDocumentFileUploading(false);
           setDone(false)
+          //@ts-ignore
+          dispatch(showSnackbar({message:err?.response?.data?.error ?? "erreur iconu"}))
         }
       
       

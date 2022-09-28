@@ -5,6 +5,7 @@ import { AppModule } from './app.module';
 import {SwaggerModule} from '@nestjs/swagger'
 import { SocketIoAdapter } from './shared/Socket-io.adapter';
 import * as cookieParser from 'cookie-parser'
+import { SocketStateService } from './shared/SocketState.service';
 
 
 async function bootstrap() {
@@ -23,7 +24,7 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
  
   SwaggerModule.setup('docs', app, document); 
-  app.useWebSocketAdapter(new SocketIoAdapter(app));
+  app.useWebSocketAdapter(new SocketIoAdapter(app,new SocketStateService()));
 
   await app.listen(8080);
 }

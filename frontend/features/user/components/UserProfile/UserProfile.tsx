@@ -2,11 +2,12 @@ import { Avatar, Button, CircularProgress } from '@mui/material';
 import axios from 'axios';
 import { useRouter } from 'next/router';
 import { useEffect ,useState } from 'react';
-import { useAppSelector } from '../../../../hooks/redux/hooks';
+import { useAppDispatch, useAppSelector } from '../../../../hooks/redux/hooks';
 import styles from './UserProfile.module.css';
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
 import useAxiosPrivate from '../../../../hooks/auth/useAxiosPrivate';
+import { showSnackbar } from '../../../ui/UiSlice';
 const UserProfile = () => {
     const router = useRouter();
     const [user,setUser] = useState<any>(null)
@@ -15,6 +16,7 @@ const UserProfile = () => {
     const [edit,setEdit] = useState(false);
     const [loading,setLoading] = useState(false)
     const privateAxios = useAxiosPrivate();
+    const dispatch = useAppDispatch();
     useEffect(()=>{
         if(!userId) return;
         privateAxios.get(`http://localhost:8080/api/users/${userId}`)
@@ -44,6 +46,7 @@ const UserProfile = () => {
 
     })
     .catch(err=>{
+        dispatch(showSnackbar({message:err?.response?.data?.error ?? "erreur iconu"}))
         setLoading(false)
 
     });

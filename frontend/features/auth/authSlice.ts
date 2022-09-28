@@ -71,6 +71,10 @@ export const authSlice = createSlice({
             state.isSuccess = false;
             state.isError = false;
         },
+        setCredentials:(state,action)=>{
+            state.user = action.payload.user;
+            state.jwt = action.payload.jwt;
+        }
       
     },
     extraReducers:(builder)=>{
@@ -122,4 +126,4 @@ export const authSlice = createSlice({
 })
 
 export const selectedUser = (state:RootState)=>state.auth;
-export const {reset} = authSlice.actions;
+export const {reset,setCredentials} = authSlice.actions;
