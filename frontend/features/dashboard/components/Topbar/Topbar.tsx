@@ -9,13 +9,22 @@ import styles from './Topbar.module.css'
 const Topbar = () => {
   const popoverId = useId();
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+  const popoverIdNotification = useId();
+  const [anchorElNotification, setAnchorElNotification] = useState<HTMLButtonElement | null>(null);
   const {user} = useAppSelector(state=>state.auth)
   const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
+  const handleClickNotification = (event: MouseEvent<HTMLButtonElement>) => {
+    setAnchorElNotification(event.currentTarget);
+  };
   const open = Boolean(anchorEl);
+  const openNotification = Boolean(anchorElNotification);
   const handleClose = () => {
     setAnchorEl(null);
+  };
+  const handleCloseNotification = () => {
+    setAnchorElNotification(null);
   };
 
   return (
@@ -26,7 +35,7 @@ const Topbar = () => {
        </div>
        <div className={styles.rightButtons}>
 
-            <IconButton  aria-label={notificationsLabel(100)}> 
+            <IconButton onClick={handleClickNotification}  aria-label={notificationsLabel(100)}> 
                 <Badge badgeContent={9} sx={{padding:0}}  className={styles.notificationBdge}>
                     <NotificationIcon/>
                 </Badge>
@@ -42,6 +51,26 @@ const Topbar = () => {
               open={open}
               anchorEl={anchorEl}
               onClose={handleClose}
+              anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'left',
+              }}
+              PaperProps={
+                {
+                  className:styles.popoverStyles,
+                  
+                }
+              }
+
+            >
+               <PopoverContent/>
+            </Popover>
+
+            <Popover
+              id={popoverIdNotification}
+              open={openNotification}
+              anchorEl={anchorElNotification}
+              onClose={handleCloseNotification}
               anchorOrigin={{
                 vertical: 'bottom',
                 horizontal: 'left',

@@ -49,7 +49,7 @@ const notificationMiddleware:Middleware = store=>{
             socket.on(NotificationEvents.SendAllNotifications,(notifications:Notification[])=>{
                 store.dispatch(recieveNotifications({notifications}))
             })
-            socket.on(NotificationEvents.RecieveNotification,(notification:Notification)=>{
+            socket.on(NotificationEvents.sendNotification,(notification:Notification)=>{
                 store.dispatch(recieveNotification({notification}))
             })
         }

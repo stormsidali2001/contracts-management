@@ -38,4 +38,19 @@ export class SocketStateService{
         this.socketState.forEach(sockets => all.push(sockets))
         return all;
       }
+    
+     emitConnected(userData:{userId:string,data:any}[],eventName:string){
+      userData.forEach(({data,userId})=>{
+        if(this.socketState.has(userId)){
+          const sockets = this.socketState.get(userId)
+          sockets.forEach(socket=>{
+            this.notificationServer.to(socket.id).emit(eventName,data);
+          })
+          
+        }
+      })
+        const keys = this.socketState.has;
+       
+     }
+
 }

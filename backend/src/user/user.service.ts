@@ -6,7 +6,7 @@ import { DirectionEntity } from "src/core/entities/Direction.entity";
 import { UserEntity } from "src/core/entities/User.entity";
 import { PaginationResponse } from "src/core/types/paginationResponse.interface";
 import { DirectionService } from "src/direction/services/direction.service";
-import { FindOptionsWhere, Repository, UpdateResult } from "typeorm";
+import { FindManyOptions, FindOptionsWhere, Repository, UpdateResult } from "typeorm";
 import { QueryDeepPartialEntity } from "typeorm/query-builder/QueryPartialEntity";
 
 @Injectable()
@@ -87,5 +87,8 @@ export class UserService{
         .leftJoinAndSelect("u.departement","dp")
         .leftJoinAndSelect("u.direction","dr")
         .getOne()
+    }
+    async findAllBy(options:FindOptionsWhere<UserEntity> | FindOptionsWhere<UserEntity>[]){
+        return this.userRepository.find({where:options})
     }
 }

@@ -8,20 +8,20 @@ import { VendorEntity } from "./Vendor.entity";
 
 @Entity('agreements')
 //fulltext
-@Index('vendor-fulltext-object-idx', ['object'], { fulltext: true })
-@Index('vendor-fulltext-number-idx', ['number'], { fulltext: true })
-@Index('vendor-fulltext-observation-idx', ['observation'], { fulltext: true })
+@Index('agreement-fulltext-object-idx', ['object'], { fulltext: true })
+@Index('agreement-fulltext-number-idx', ['number'], { fulltext: true })
+@Index('agreement-fulltext-observation-idx', ['observation'], { fulltext: true })
 
 //
-@Index('vendor-fulltext-object-idx', { synchronize: false })
-@Index('vendor-fulltext-number-idx', { synchronize: false })
-@Index('vendor-fulltext-observation-idx', { synchronize: false })
+@Index('agreement-fulltext-object-idx', { synchronize: false })
+@Index('agreement-fulltext-number-idx', { synchronize: false })
+@Index('agreement-fulltext-observation-idx', { synchronize: false })
 
 //unique
-@Index('vendor-number-unique-idx', ['number'], { unique: true })
+@Index('agreement-number-unique-idx', ['number'], { unique: true })
 
 //
-@Index('vendor-number-unique-idx', { synchronize: false })
+@Index('agreement-number-unique-idx', { synchronize: false })
 
 
 export class AgreementEntity{
