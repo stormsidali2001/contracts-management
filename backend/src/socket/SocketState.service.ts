@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, Logger } from "@nestjs/common";
 import { Server, Socket } from "socket.io";
 
 @Injectable()
@@ -8,7 +8,7 @@ export class SocketStateService{
 
     add(userId:string, socket:Socket){
         const sockets:Socket[] = this.socketState.get(userId) || [];
-
+        Logger.debug( JSON.stringify([...sockets,socket]) ,'SocketStateService/add')
         this.socketState.set(userId,[...sockets,socket]);
         return true;
 
@@ -40,10 +40,14 @@ export class SocketStateService{
       }
     
      emitConnected(userData:{userId:string,data:any}[],eventName:string){
+      Logger.warn(JSON.stringify(userData),eventName)
       userData.forEach(({data,userId})=>{
-        if(this.socketState.has(userId)){
-          const sockets = this.socketState.get(userId)
+        const sockets = this.get(userId)
+              Logger.warn(`user: ${userId} sockets ${JSON.stringify(sockets)} `,eventName)
+
+        if(sockets.length > 0){
           sockets.forEach(socket=>{
+            Logger.warn(`socket ${socket.id} of ${userId} revieved ${data}`,eventName)
             this.notificationServer.to(socket.id).emit(eventName,data);
           })
           

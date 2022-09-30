@@ -11,7 +11,6 @@ import { connectionEstablished, recieveNotification, recieveNotifications, start
 const notificationMiddleware:Middleware = store=>{
     
     let socket:Socket;
-    let attempts = 0;
     return next =>action=>{
         const auth = store.getState().auth;
         const notificationState = store.getState().notification;
@@ -32,8 +31,7 @@ const notificationMiddleware:Middleware = store=>{
             })
             socket.on("connect_error", async (err) => {
                 console.log("t11",err?.message)
-                if(err?.message === 'unauthorized' && attempts <2){
-                  attempts++;
+                if(err?.message === 'unauthorized' ){
                   try{
                     const data = await authService.refresh()
                     setCredentials(data)
@@ -51,6 +49,7 @@ const notificationMiddleware:Middleware = store=>{
             })
             socket.on(NotificationEvents.sendNotification,(notification:Notification)=>{
                 store.dispatch(recieveNotification({notification}))
+                alert("ss")
             })
         }
         

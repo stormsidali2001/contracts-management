@@ -1,0 +1,16 @@
+.container{
+    width: 250px;
+    padding: 10px;
+    overflow-y: auto;
+    height: 200px;
+}
+.item{
+    padding: 10px;
+    background-color: #17498e3b;
+    border-radius: 5px;
+
+}
+.itemText{
+    font-size: 12px;
+    word-break: break-all;
+}

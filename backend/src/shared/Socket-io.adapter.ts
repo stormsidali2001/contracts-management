@@ -44,14 +44,13 @@ export class SocketIoAdapter extends IoAdapter  implements WebSocketAdapter {
     }
      bindClientConnect(server:Server, callback: Function): void {
       server.on('connection', (socket: SocketWithJwtPayload) => {
-        console.log("bindClientConnect",socket)
         if (socket.user) {
           this.socketStateService.add(socket.user.sub, socket);
-          Logger.warn(`user: ${socket.user.sub} have now : ${this.socketStateService.get(socket.user.sub).length} connected socket`)
+          Logger.debug(`user: ${socket.user.sub} have now : ${this.socketStateService.get(socket.user.sub).length} connected socket`)
    
           socket.on('disconnect', () => {
             this.socketStateService.remove(socket.user.sub, socket);
-            Logger.warn(`user: ${socket.user.sub} have now : ${this.socketStateService.get(socket.user.sub).length} connected socket`)
+            Logger.debug(`user: ${socket.user.sub} have now : ${this.socketStateService.get(socket.user.sub).length} connected socket`)
 
           });
         }
@@ -75,7 +74,7 @@ function tokenMiddlewareWrapper(jwtService:JwtService,logger:Logger,configServic
 
           socket.user = payload.user;
          
-          logger.log(`socket ${socket.id} authenticated`);
+          logger.debug(`socket ${socket.id} of user: ${socket.user.sub} authenticated`);
           next()
 
       }catch(e){

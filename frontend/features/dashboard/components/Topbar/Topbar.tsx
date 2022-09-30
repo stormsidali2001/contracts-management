@@ -3,10 +3,12 @@ import { MouseEvent, useId ,useState } from 'react'
 import { useAppSelector } from '../../../../hooks/redux/hooks'
 import LittleChevronIcon from '../../../../icons/LittleChevronIcon'
 import NotificationIcon from '../../../../icons/NotificationIcon'
+import Notifications from './Notifications/Notifications'
 import PopoverContent from './PopoverContent/PopoverContent'
 import styles from './Topbar.module.css'
 
 const Topbar = () => {
+  const {notifications} = useAppSelector(state=>state.notification)
   const popoverId = useId();
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const popoverIdNotification = useId();
@@ -36,7 +38,7 @@ const Topbar = () => {
        <div className={styles.rightButtons}>
 
             <IconButton onClick={handleClickNotification}  aria-label={notificationsLabel(100)}> 
-                <Badge badgeContent={9} sx={{padding:0}}  className={styles.notificationBdge}>
+                <Badge badgeContent={notifications.length} sx={{padding:0}}  className={styles.notificationBdge}>
                     <NotificationIcon/>
                 </Badge>
             </IconButton>
@@ -83,7 +85,7 @@ const Topbar = () => {
               }
 
             >
-               <PopoverContent/>
+               <Notifications/>
             </Popover>
           
            
