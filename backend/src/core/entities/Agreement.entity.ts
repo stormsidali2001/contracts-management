@@ -54,6 +54,20 @@ export class AgreementEntity{
     })
     signature_date:Date;
 
+    @Column({
+        type:'date',
+        nullable:true
+    })
+    execution_start_date:Date;
+
+    @Column({
+        type:'date',
+        nullable:true
+    })
+    execution_end_date:Date;
+
+=
+
     @Column({nullable:true})
     observation?:string;
 
