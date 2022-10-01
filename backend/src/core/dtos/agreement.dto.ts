@@ -1,4 +1,4 @@
-import { IsArray, IsDate, IsDateString, IsEnum, IsISO8601, IsNotEmpty, IsNumber, IsOptional, IsPositive, IsString, IsUUID } from "class-validator";
+import { IsArray, IsDate, IsDateString, IsEnum, IsISO8601, IsNotEmpty, IsNumber, IsOptional, IsPositive, isString, IsString, IsUUID } from "class-validator";
 import { AgreementStatus } from "../types/agreement-status.enum";
 import { AgreementType } from "../types/agreement-type.enum";
 import {ApiProperty ,ApiPropertyOptional} from '@nestjs/swagger'
@@ -48,4 +48,24 @@ export class CreateAgreementDTO{
     @IsUUID()
     vendorId:string;
 
+}
+
+export class ExecuteAgreementDTO{
+    @ApiProperty({  example:"2023-01-05" ,required:true})
+    @IsDateString({strict:true})
+    execution_start_date:Date;
+
+    @ApiProperty({  example:"2023-01-05" ,required:true})
+    @IsDateString({strict:true})
+    execution_end_date:Date;
+
+    @ApiProperty({  example:"" ,required:true})
+    @IsUUID()
+    agreementId:string;
+
+
+    @IsOptional()
+    @ApiPropertyOptional({  example:"observation..." ,required:true})
+    @IsString()
+    observation:string;
 }

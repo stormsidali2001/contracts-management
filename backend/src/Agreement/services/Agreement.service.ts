@@ -1,10 +1,11 @@
-import {Injectable , BadRequestException} from '@nestjs/common';
+import {Injectable , BadRequestException, NotFoundException} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CreateAgreementDTO } from 'src/core/dtos/agreement.dto';
+import { CreateAgreementDTO, ExecuteAgreementDTO } from 'src/core/dtos/agreement.dto';
 import { AgreementEntity } from 'src/core/entities/Agreement.entity';
 import { DepartementEntity } from 'src/core/entities/Departement.entity';
 import { DirectionEntity } from 'src/core/entities/Direction.entity';
 import { VendorEntity } from 'src/core/entities/Vendor.entity';
+import { AgreementStatus } from 'src/core/types/agreement-status.enum';
 import { AgreementType } from 'src/core/types/agreement-type.enum';
 import { PaginationResponse } from 'src/core/types/paginationResponse.interface';
 import { DirectionService } from 'src/direction/services/direction.service';
@@ -76,5 +77,27 @@ export class AgreementService{
         .leftJoinAndSelect("ag.departement","departement")
         .leftJoinAndSelect("ag.vendor","vendor")
         .getOne();
+    }
+    async executeAgreement(execData:ExecuteAgreementDTO){
+        const {observation = '',execution_start_date,execution_end_date,agreementId} = execData;
+        const agreement = await this.agreementRepository.findOneBy({id:agreementId});
+        if(!agreement){
+            throw new NotFoundException("l'accord specifiee n'es pas touvee")
+        }
+        if(new Date(execution_start_date) <= new Date(execution_end_date) ){
+            throw new  BadRequestException("l'intervalle d'execution est non valide")
+        }
+        if(new Date(execution_start_date) < new Date(agreement.signature_date) ){
+            throw new  BadRequestException("la date de debut d'execution dout etre supperieur ou rgale a la date de signature");
+        }
+        if(new Date(execution_start_date) >= new Date(agreement.expiration_date)){
+            agreement.status = AgreementStatus.EXECUTED_WITH_DELAY;
+        }else{
+            agreement.status = AgreementStatus.EXECUTED;
+        }
+        agreement.execution_start_date = execution_start_date;
+        agreement.execution_end_date = execution_end_date;
+        agreement.observation = observation;
+        return this.agreementRepository.save(agreement)
     }
 }

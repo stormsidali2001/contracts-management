@@ -66,7 +66,7 @@ export class AgreementEntity{
     })
     execution_end_date:Date;
 
-=
+
 
     @Column({nullable:true})
     observation?:string;

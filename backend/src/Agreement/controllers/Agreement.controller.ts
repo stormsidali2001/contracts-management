@@ -1,8 +1,8 @@
-import { Controller , Post , Body ,UseGuards , Query , Get, Param} from "@nestjs/common";
+import { Controller , Post , Body ,UseGuards , Query , Get, Param, Patch} from "@nestjs/common";
 import { RequiredRoles } from "src/auth/decorators/RequiredRoles.decorator";
 import { JwtAccessTokenGuard } from "src/auth/guards/jwt-access-token.guard";
 import { RoleGuard } from "src/auth/guards/Role.guard";
-import { CreateAgreementDTO } from "../../core/dtos/agreement.dto";
+import { CreateAgreementDTO, ExecuteAgreementDTO } from "../../core/dtos/agreement.dto";
 import { AgreementService } from "../services/Agreement.service";
 import {ApiProperty, ApiQuery, ApiTags} from '@nestjs/swagger';
 import { AgreementEntity } from "src/core/entities/Agreement.entity";
@@ -35,5 +35,10 @@ export class AgreementController{
     async findAll(@Query('offset') offset:number = 0 ,@Query('limit') limit:number = 10 ,@Query('orderBy') orderBy:string  = undefined,@Query('agreementType') agreementType:AgreementType ,@Query("searchQuery") searchQuery:string):Promise<PaginationResponse<AgreementEntity>>{
         return await  this.AgreementService.findAll(offset,limit,orderBy,agreementType,searchQuery);
     }   
+
+    @Patch('exec')
+    async executeAgreement(@Body() execAg:ExecuteAgreementDTO){
+        return await this.executeAgreement(execAg)
+    }
 
 }
