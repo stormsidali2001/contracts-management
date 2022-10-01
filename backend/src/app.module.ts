@@ -25,7 +25,7 @@ import {SocketStateModule} from './socket/SocketState.module'
     port:+process.env.MYSQL_DATABASE_PORT,
     database:process.env.MYSQL_DATABASE_NAME,
     synchronize:true,
-    logging:true,
+    logging:false,
     autoLoadEntities:true,
 
     }),

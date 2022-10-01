@@ -5,6 +5,7 @@ import { UserEntity } from "src/core/entities/User.entity";
 import { DirectionModule } from "src/direction/direction.module";
 import { UserImageController } from "./controllers/user-image.controller";
 import { UserController } from "./controllers/user.controller";
+import { NotificationsGateWay } from "./Notification.gateway";
 import { UserNotificationService } from "./user-notification.service";
 import { UserService } from "./user.service";
 
@@ -14,7 +15,7 @@ import { UserService } from "./user.service";
         UserController,
         UserImageController
     ],
-    providers:[UserService,UserNotificationService],
+    providers:[UserService,UserNotificationService,NotificationsGateWay],
     exports:[UserService,UserNotificationService]
 })
 export class UserModule{}

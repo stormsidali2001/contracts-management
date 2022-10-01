@@ -5,14 +5,13 @@ import { IoAdapter } from "@nestjs/platform-socket.io";
 import { WsException } from "@nestjs/websockets";
 import { Server, ServerOptions } from "socket.io";
 import { SocketWithJwtPayload } from "src/auth/types/JwtPayload.interface";
-import { SocketStateService } from "../socket/SocketState.service";
+import { SocketStateService } from "src/socket/SocketState.service";
 
 export class SocketIoAdapter extends IoAdapter  implements WebSocketAdapter {
     private readonly logger = new Logger(SocketIoAdapter.name);
     private server:Server;
     constructor(
       private app:INestApplicationContext,
-      private readonly socketStateService: SocketStateService,   
         ) {
       super(app)
     }
@@ -43,14 +42,15 @@ export class SocketIoAdapter extends IoAdapter  implements WebSocketAdapter {
 
     }
      bindClientConnect(server:Server, callback: Function): void {
+      const socketStateService = this.app.get(SocketStateService)
       server.on('connection', (socket: SocketWithJwtPayload) => {
         if (socket.user) {
-          this.socketStateService.add(socket.user.sub, socket);
-          Logger.debug(`user: ${socket.user.sub} have now : ${this.socketStateService.get(socket.user.sub).length} connected socket`)
+          socketStateService.add(socket.user.sub, socket);
+          Logger.debug(`user: ${socket.user.sub} has now : ${socketStateService.get(socket.user.sub).length} connected socket`,'connection')
    
           socket.on('disconnect', () => {
-            this.socketStateService.remove(socket.user.sub, socket);
-            Logger.debug(`user: ${socket.user.sub} have now : ${this.socketStateService.get(socket.user.sub).length} connected socket`)
+            socketStateService.remove(socket.user.sub, socket);
+            Logger.debug(`user: ${socket.user.sub} has now : ${socketStateService.get(socket.user.sub).length} connected socket`,'disconnect')
 
           });
         }

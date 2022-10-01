@@ -1,17 +1,18 @@
 import { Injectable, Logger } from "@nestjs/common";
-import { Server, Socket } from "socket.io";
+import { Namespace, Server, Socket } from "socket.io";
 
 @Injectable()
 export class SocketStateService{
     private socketState = new Map<string,Socket[]>();
-    public notificationServer:Server;
-
+    public notificationServer:Namespace = null;
+    constructor(){
+      Logger.debug(`initialized`,'SocketStateService')
+    }
     add(userId:string, socket:Socket){
         const sockets:Socket[] = this.socketState.get(userId) || [];
-        Logger.debug( JSON.stringify([...sockets,socket]) ,'SocketStateService/add')
         this.socketState.set(userId,[...sockets,socket]);
+        Logger.debug( `socket :${socket.id} was added to user: ${userId} total sockets:${this.get(userId).length}`,'SocketStateService/add')
         return true;
-
     }
      remove(userId: string, socket: Socket): boolean {
         const sockets = this.socketState.get(userId)
@@ -27,6 +28,8 @@ export class SocketStateService{
         } else {
           this.socketState.set(userId, newSockets)
         }
+
+        Logger.debug( `socket :${socket.id} was removed from  user: ${userId}`,'SocketStateService/remove')
      
         return true
     }
@@ -43,17 +46,17 @@ export class SocketStateService{
       Logger.warn(JSON.stringify(userData),eventName)
       userData.forEach(({data,userId})=>{
         const sockets = this.get(userId)
-              Logger.warn(`user: ${userId} sockets ${JSON.stringify(sockets)} `,eventName)
+              Logger.debug(`user: ${userId} sockets ${sockets.length} `,eventName)
 
-        if(sockets.length > 0){
-          sockets.forEach(socket=>{
-            Logger.warn(`socket ${socket.id} of ${userId} revieved ${data}`,eventName)
+       
+          sockets.forEach((socket,index)=>{
+            Logger.debug(`socket ${index+1} of ${userId} revieved ${data}`,eventName)
             this.notificationServer.to(socket.id).emit(eventName,data);
           })
           
-        }
+        
       })
-        const keys = this.socketState.has;
+        
        
      }
 

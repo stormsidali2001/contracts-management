@@ -24,7 +24,7 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
  
   SwaggerModule.setup('docs', app, document); 
-  app.useWebSocketAdapter(new SocketIoAdapter(app,new SocketStateService()));
+  app.useWebSocketAdapter(new SocketIoAdapter(app));
 
   await app.listen(8080);
 }
