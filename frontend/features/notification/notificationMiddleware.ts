@@ -55,7 +55,6 @@ const notificationMiddleware:Middleware = store=>{
             })
             socket.on(NotificationEvents.sendNotification,(notification:Notification)=>{
                 store.dispatch(recieveNotification({notification}))
-                alert("ss")
             })
         }
         

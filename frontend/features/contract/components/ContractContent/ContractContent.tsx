@@ -5,8 +5,10 @@ import styles from './ContractContent.module.css'
 import {Button, Modal} from '@mui/material';
 import PlayCircleFilledWhiteIcon from '@mui/icons-material/PlayCircleFilledWhite';
 import useAxiosPrivate from '../../../../hooks/auth/useAxiosPrivate';
+import ExecutionModal from '../ExecutionModal/ExecutionModal';
 
 const ContractContent = () => {
+
   const axiosPrivate = useAxiosPrivate();
   const router = useRouter();
   const [contract,setContract] = useState<any>(null);
@@ -135,7 +137,7 @@ const ContractContent = () => {
           open={openExecutionModal}
           onClose={handelCloseExecutionModal}
         >
-          <div></div>
+               <ExecutionModal/>
         </Modal>
     </div>
   )
