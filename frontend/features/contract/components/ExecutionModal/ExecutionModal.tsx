@@ -2,11 +2,46 @@ import { Button, TextField, Typography } from '@mui/material';
 import { Stack } from '@mui/system';
 import { useState } from 'react'
 import styles from './ExecutionModal.module.css'
+import axios from '../../../../api/axios'
+import { ExecuteAgreement } from '../../models/ExecuteAgreement.interface';
+import { useAppDispatch } from '../../../../hooks/redux/hooks';
+import { showSnackbar } from '../../../ui/UiSlice';
+const format = (d:Date)=>{
+    const newD = new Date(d);
+    return newD.toISOString().replace(/T[0-9:.Z]*/g,"");
 
-const ExecutionModal = () => {
-    const [startDate,setStartDate] = useState<any>('2022-04-20')
-    const [endDate,setEndDate] = useState<any>('2022-04-20');
-    const [observation,setObservation] = useState<any>('')
+}
+function getTomorrow(d:Date){
+    d.setHours(0,0,0,0)
+    d.setDate(d.getDate()+1)
+    return d;
+}
+interface PropType{
+    agreementId:string;
+    handleClose:()=>void
+}
+const ExecutionModal = ({agreementId,handleClose}:PropType) => {
+    const [startDate,setStartDate] = useState<any>(format(new Date(Date.now())))
+    const [endDate,setEndDate] = useState<any>(format(getTomorrow(new Date(Date.now()))));
+    const [observation,setObservation] = useState<any>('');
+    const dispatch = useAppDispatch();
+    const handleAgreementExecution = ()=>{
+        const newExecAgreement:ExecuteAgreement = {
+            execution_start_date:format(startDate),
+            execution_end_date:format(endDate),
+            agreementId,
+            observation
+        }
+         axios.patch('/Agreements/exec',{...newExecAgreement})
+         .then(res=>{
+            handleClose()
+         })
+         .catch(err=>{
+             //@ts-ignore
+            dispatch(showSnackbar({message:err?.response?.data?.error ?? "erreur iconu"}))
+         })
+
+    }
   return (
     <div className={styles.container}>
         <Stack gap={4}>
@@ -27,8 +62,8 @@ const ExecutionModal = () => {
           
          
             <Stack direction="row" gap={4} justifyContent="center">
-                <Button size='small' variant="contained">Executer</Button>
-                <Button size='small'>Annuller</Button>
+                <Button size='small' variant="contained" onClick={()=>handleAgreementExecution()}>Executer</Button>
+                <Button size='small' onClick={()=>handleClose()}>Annuller</Button>
             </Stack>
 
         </Stack>

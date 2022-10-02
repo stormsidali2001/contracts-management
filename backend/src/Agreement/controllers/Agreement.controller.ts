@@ -1,10 +1,7 @@
 import { Controller , Post , Body ,UseGuards , Query , Get, Param, Patch} from "@nestjs/common";
-import { RequiredRoles } from "src/auth/decorators/RequiredRoles.decorator";
-import { JwtAccessTokenGuard } from "src/auth/guards/jwt-access-token.guard";
-import { RoleGuard } from "src/auth/guards/Role.guard";
 import { CreateAgreementDTO, ExecuteAgreementDTO } from "../../core/dtos/agreement.dto";
 import { AgreementService } from "../services/Agreement.service";
-import {ApiProperty, ApiQuery, ApiTags} from '@nestjs/swagger';
+import { ApiQuery, ApiTags} from '@nestjs/swagger';
 import { AgreementEntity } from "src/core/entities/Agreement.entity";
 import { PaginationResponse } from "src/core/types/paginationResponse.interface";
 import { AgreementType } from "src/core/types/agreement-type.enum";
@@ -38,7 +35,7 @@ export class AgreementController{
 
     @Patch('exec')
     async executeAgreement(@Body() execAg:ExecuteAgreementDTO){
-        return await this.executeAgreement(execAg)
+        return await this.AgreementService.executeAgreement(execAg)
     }
 
 }

@@ -12,7 +12,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.setGlobalPrefix('api')
   app.useGlobalPipes(new ValidationPipe({transform:true,disableErrorMessages:false}))
-  app.enableCors({credentials:true,origin:["http://localhost:3000"],methods:['POST','GET','PUT']});
+  app.enableCors({credentials:true,origin:["http://localhost:3000"],methods:['POST','GET','PUT','PATCH']});
   app.use(cookieParser()) // to parse the cookie  in the request
   const config = new DocumentBuilder().setTitle('Contracts Management')
   .setDescription("description")

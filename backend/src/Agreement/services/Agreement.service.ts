@@ -24,6 +24,9 @@ export class AgreementService{
     ){}
     async createAgreement(agreement:CreateAgreementDTO):Promise<AgreementEntity>{
         const {directionId , departementId , vendorId, ...agreementData} = agreement;
+        if(agreementData.signature_date > agreementData.expiration_date){
+            throw new BadRequestException("la date d'expiration de contrat doit etre apres la date de la signature");
+        }
         const [direction,vendor] = await Promise.all([
                         this.directionService.findDirectionWithDepartement(directionId,departementId),
                         this.vendorService.findBy({id:vendorId})
@@ -84,7 +87,7 @@ export class AgreementService{
         if(!agreement){
             throw new NotFoundException("l'accord specifiee n'es pas touvee")
         }
-        if(new Date(execution_start_date) <= new Date(execution_end_date) ){
+        if(new Date(execution_start_date) >= new Date(execution_end_date) ){
             throw new  BadRequestException("l'intervalle d'execution est non valide")
         }
         if(new Date(execution_start_date) < new Date(agreement.signature_date) ){

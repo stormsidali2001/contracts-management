@@ -98,6 +98,7 @@ const ContractContent = () => {
         <div className={styles.wrapperBox}>
            <Button
             className={styles.executionButton}
+            disabled = {!(contract.status === 'not executed')}
             onClick={()=>handelOpenExecutionModal()}
            >
                 <PlayCircleFilledWhiteIcon/>
@@ -117,7 +118,7 @@ const ContractContent = () => {
                 </div>
                 <div className={styles.observationContainer}>
                   <div className={styles.observationTitle}>Observation:</div>
-                  <textarea className={styles.observationTextArea} value={contract?.observation}/>
+                  <textarea readOnly={true} className={styles.observationTextArea} value={contract?.observation}/>
                 </div>
             </div>
 
@@ -137,7 +138,7 @@ const ContractContent = () => {
           open={openExecutionModal}
           onClose={handelCloseExecutionModal}
         >
-               <ExecutionModal/>
+               <ExecutionModal handleClose={handelCloseExecutionModal} agreementId = {contract.id}/>
         </Modal>
     </div>
   )

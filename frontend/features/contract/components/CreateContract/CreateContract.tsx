@@ -143,8 +143,8 @@ interface Proptype{
       .catch(err=>{
         console.error(err)
         if(err.code !== "ERR_CANCELED"){
-
           dispatch(showSnackbar({message:"verifiez si vous etes en ligne"}))
+          
         }
      
       })
