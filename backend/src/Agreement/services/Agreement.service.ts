@@ -5,9 +5,6 @@ import { CronJob } from 'cron';
 import { CreateAgreementDTO, ExecuteAgreementDTO } from 'src/core/dtos/agreement.dto';
 import { AgreementEntity } from 'src/core/entities/Agreement.entity';
 import { AgreementExecJobsEntity } from 'src/core/entities/agreementExecJobs';
-import { DepartementEntity } from 'src/core/entities/Departement.entity';
-import { DirectionEntity } from 'src/core/entities/Direction.entity';
-import { VendorEntity } from 'src/core/entities/Vendor.entity';
 import { AgreementStatus } from 'src/core/types/agreement-status.enum';
 import { AgreementType } from 'src/core/types/agreement-type.enum';
 import { PaginationResponse } from 'src/core/types/paginationResponse.interface';
@@ -145,7 +142,7 @@ export class AgreementService implements OnModuleInit{
         .groupBy('ag.status')
         .addSelect('ag.status','status')
         .getRawMany();
-        
+
         const statusReponse = {}
         Object.values(AgreementStatus).forEach(v=>{
             statusReponse[v] = 0;
