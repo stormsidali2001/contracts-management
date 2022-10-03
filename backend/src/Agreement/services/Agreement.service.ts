@@ -145,18 +145,34 @@ export class AgreementService implements OnModuleInit{
         .groupBy('ag.status')
         .addSelect('ag.status','status')
         .getRawMany();
+        
+        const statusReponse = {}
+        Object.values(AgreementStatus).forEach(v=>{
+            statusReponse[v] = 0;
+        })
+        status.forEach(st=>{
+            statusReponse[st.status] =parseInt(st.total);
+        })
 
         const types = await this.agreementRepository.createQueryBuilder('ag')
         .select('count(ag.id)','total')
         .groupBy('ag.type')
         .addSelect('ag.type','type')
         .getRawMany();
+        
+        const typesResponse = {}
+        Object.values(AgreementType).forEach(v=>{
+            typesResponse[v] = 0;
+        })
+        types.forEach(t=>{
+            typesResponse[t.type] = parseInt(t.total);
+        })
+
 
         const topDirections = await this.directionService.getTopDirection();
-       
         return {
-            status:status.map(st=>({...st,total:parseInt(st.total)})),
-            types:types.map(t=>({...t,total:parseInt(t.total)})),
+            status:statusReponse,
+            types:typesResponse,
             topDirections
         }
 
