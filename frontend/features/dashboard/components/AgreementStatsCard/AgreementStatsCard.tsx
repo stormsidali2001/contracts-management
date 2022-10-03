@@ -5,7 +5,10 @@ import ConvensionIcon from '../../../../icons/ConvensionIcon';
 import styles from './AgreementStatsCard.module.css';
 import { CircularProgressbar } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
-const AgreementStatsCard = () => {
+interface PropTypes{
+  stats:Object | null
+}
+const AgreementStatsCard = ({stats}:PropTypes) => {
   return (
     <div className={styles.container}>
           <div className={styles.title}>Accords</div>
