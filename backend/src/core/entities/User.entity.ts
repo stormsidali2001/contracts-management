@@ -69,4 +69,6 @@ export class UserEntity{
 
     @OneToMany(type=>NotificationEntity,n=>n.user)
     notifications:NotificationEntity[];
+
+    
 }

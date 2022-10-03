@@ -91,4 +91,23 @@ export class UserService{
     async findAllBy(options:FindOptionsWhere<UserEntity> | FindOptionsWhere<UserEntity>[]){
         return this.userRepository.find({where:options})
     }
+    async getUserTypesStats(){
+        console.log("imak")
+        const stats =  await this.userRepository.createQueryBuilder('u')
+        .select('count(u.id)','total')
+        .addSelect('u.role','role')
+        .groupBy('u.role')
+        .getRawMany()
+        const response:any = {
+            juridical:0,
+            employee:0,
+            admin:0,
+            total:0
+        }
+        stats.forEach(st=>{
+            response[st.role] = parseInt(st.total);
+        })
+        response.total = response.juridical + response.admin + response.employee;
+        return response;
+    }
 }

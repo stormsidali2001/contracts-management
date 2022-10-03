@@ -13,6 +13,12 @@ export class UserController{
     constructor(
         private readonly userService:UserService
     ){}
+
+    @UseGuards(JwtAccessTokenGuard)
+    @Get('types-stats')
+    async getUserTypesStats(){
+        return await  this.userService.getUserTypesStats()
+    }
     
     @Get('')
     async findAll(@Query('offset') offset:number = 0 ,@Query('limit') limit:number = 10 ,@Query('orderBy') orderBy:string  = undefined , @Query('searchQuery') searchQuery:string):Promise<PaginationResponse<UserEntity>>{
@@ -33,4 +39,6 @@ export class UserController{
     async updateUser(@Param('id') id:string,@Body() user:UpdateUserDTO):Promise<UpdateResult>{
         return this.userService.updateUser(id,user)
     }
+
+   
 }

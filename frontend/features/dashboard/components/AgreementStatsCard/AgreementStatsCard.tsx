@@ -18,6 +18,10 @@ const AgreementStatsCard = () => {
               </li>
               <li className={styles.statusItem}>
                  <div className={styles.statusCircle}></div>
+                 <div className={styles.text}>execute: <span>10</span></div>
+              </li>
+              <li className={styles.statusItem}>
+                 <div className={styles.statusCircle}></div>
                  <div className={styles.text}>en cours d{'’'}execution: <span>10</span></div>
               </li>
               <li className={`${styles.statusItem} ${styles.statusSubItem}`}>

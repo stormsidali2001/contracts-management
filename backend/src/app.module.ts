@@ -10,6 +10,7 @@ import { HttpExceptionFilter } from './shared/HttpException.filter';
 import { HttpLoggingInteceptor } from './shared/HttpLogging.interceptor';
 import { UserModule } from './user/user.module';
 import {SocketStateModule} from './socket/SocketState.module'
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
@@ -25,14 +26,14 @@ import {SocketStateModule} from './socket/SocketState.module'
     port:+process.env.MYSQL_DATABASE_PORT,
     database:process.env.MYSQL_DATABASE_NAME,
     synchronize:true,
-    logging:false,
+    logging:true,
     autoLoadEntities:true,
 
     }),
    AgreementModule,
    DirectionModule,
-   SocketStateModule
-   
+   SocketStateModule,
+   ScheduleModule.forRoot()
 ],
   controllers: [],
   providers: [

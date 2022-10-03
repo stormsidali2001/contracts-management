@@ -1,7 +1,10 @@
-import {Injectable , BadRequestException, NotFoundException} from '@nestjs/common';
+import {Injectable , BadRequestException, NotFoundException, Logger, OnModuleInit} from '@nestjs/common';
+import { SchedulerRegistry } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
+import { CronJob } from 'cron';
 import { CreateAgreementDTO, ExecuteAgreementDTO } from 'src/core/dtos/agreement.dto';
 import { AgreementEntity } from 'src/core/entities/Agreement.entity';
+import { AgreementExecJobsEntity } from 'src/core/entities/agreementExecJobs';
 import { DepartementEntity } from 'src/core/entities/Departement.entity';
 import { DirectionEntity } from 'src/core/entities/Direction.entity';
 import { VendorEntity } from 'src/core/entities/Vendor.entity';
@@ -15,13 +18,32 @@ import { VendorService } from './vendor.service';
 
 
 @Injectable()
-export class AgreementService{
+export class AgreementService implements OnModuleInit{
+    private readonly logger = new Logger(AgreementService.name)
     constructor(
         @InjectRepository(AgreementEntity) private readonly agreementRepository:Repository<AgreementEntity>,
+        @InjectRepository(AgreementExecJobsEntity) private readonly agreementExecJobsEntity:Repository<AgreementExecJobsEntity>,
         private readonly vendorService:VendorService,
         private readonly directionService:DirectionService,
-        private readonly userNotificationService:UserNotificationService
+        private readonly userNotificationService:UserNotificationService,
+        private readonly schdulerRegistry:SchedulerRegistry
     ){}
+    async onModuleInit() {
+        this.logger.log('initializing the percisted agreement related cron jobs:')
+        const percistedJobs = await this.agreementExecJobsEntity.find();
+        for( let pJob of percistedJobs){
+          
+                if(pJob.date > new Date(Date.now())){
+                    await this.agreementExecJobsEntity.delete({name:pJob.name})
+                    continue;
+                }
+                this.#addAgreementCronJob(pJob.name,pJob.date,async ()=>{
+                    await this.agreementRepository.update({id:pJob.agreementId},{status:pJob.newStatus})
+                    await this.agreementExecJobsEntity.delete({name:pJob.name});
+                })
+            
+        }
+    }
     async createAgreement(agreement:CreateAgreementDTO):Promise<AgreementEntity>{
         const {directionId , departementId , vendorId, ...agreementData} = agreement;
         if(agreementData.signature_date > agreementData.expiration_date){
@@ -94,13 +116,36 @@ export class AgreementService{
             throw new  BadRequestException("la date de debut d'execution dout etre supperieur ou rgale a la date de signature");
         }
         if(new Date(execution_start_date) >= new Date(agreement.expiration_date)){
-            agreement.status = AgreementStatus.EXECUTED_WITH_DELAY;
+            agreement.status = AgreementStatus.IN_EXECUTION_WITH_DELAY;
+            const cronJobName = `agreement:${agreement.type}:${agreement.id}`;
+            await this.agreementExecJobsEntity.save({name:cronJobName,agreementId:agreement.id,date:agreement.execution_end_date,newStatus:AgreementStatus.EXECUTED_WITH_DELAY})
+            this.#addAgreementCronJob(cronJobName,agreement.execution_end_date, async()=>{
+                await this.agreementRepository.update({id:agreement.id},{status:AgreementStatus.EXECUTED_WITH_DELAY})
+                await this.agreementExecJobsEntity.delete({name:cronJobName});
+            })
         }else{
-            agreement.status = AgreementStatus.EXECUTED;
+            agreement.status = AgreementStatus.IN_EXECUTION;
+            const cronJobName = `agreement:${agreement.type}:${agreement.id}`;
+            await this.agreementExecJobsEntity.save({name:cronJobName,agreementId:agreement.id,date:agreement.execution_end_date,newStatus:AgreementStatus.EXECUTED})
+            this.#addAgreementCronJob(cronJobName,agreement.execution_end_date, async()=>{
+                await this.agreementRepository.update({id:agreement.id},{status:AgreementStatus.EXECUTED})
+                await this.agreementExecJobsEntity.delete({name:cronJobName});
+            })
         }
         agreement.execution_start_date = execution_start_date;
         agreement.execution_end_date = execution_end_date;
         agreement.observation = observation;
         return this.agreementRepository.save(agreement)
+    }
+    async getAgreementsStats(){
+        
+    }
+    async #addAgreementCronJob(name:string,date:Date, cb:()=>void){
+        const job = new CronJob(date,()=>{
+            cb();
+        })
+        this.schdulerRegistry.addCronJob(name,job);
+        job.start();
+        this.logger.warn(`the job : ${name} is running`);
     }
 }

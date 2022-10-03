@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CreateVendorDTO, UpdateVendorDTO } from 'src/core/dtos/vendor.dto';
 import { AgreementEntity } from 'src/core/entities/Agreement.entity';
 import { VendorEntity } from 'src/core/entities/Vendor.entity';
+import { VendorStatsEntity } from 'src/core/entities/VendorStats.entity';
 import { AgreementType } from 'src/core/types/agreement-type.enum';
 import { PaginationResponse } from 'src/core/types/paginationResponse.interface';
 import { FindOptionsWhere, Repository, UpdateResult } from 'typeorm';
@@ -11,7 +12,7 @@ import { FindOptionsWhere, Repository, UpdateResult } from 'typeorm';
 export class VendorService{
     constructor(
         @InjectRepository(VendorEntity) private readonly vendorRepository:Repository<VendorEntity>,
-        @InjectRepository(AgreementEntity) private readonly agreementRepository:Repository<AgreementEntity>
+        @InjectRepository(VendorStatsEntity) private readonly vendorStatsRepository:Repository<VendorStatsEntity>
     ){}
     
     async createVendor(vendor:CreateVendorDTO):Promise<VendorEntity>{
@@ -28,8 +29,14 @@ export class VendorService{
         .getOne();
 
         if(vendorDb) throw new ForbiddenException("nif , nrc , company_name  ,num doit etre unique")
-        return this.vendorRepository.save({address,home_phone_number,mobile_phone_number,...uniques});
-        
+        const createdVendor = await this.vendorRepository.save({address,home_phone_number,mobile_phone_number,...uniques});
+        const vendorStatsDb = await this.vendorStatsRepository.findOneBy({date:new Date(Date.now())})
+        if(vendorStatsDb){
+            await this.vendorStatsRepository.update({id:vendorStatsDb.id},{nb_vendors:()=>"nb_vendors + 1"})
+        }else{
+            await this.vendorStatsRepository.save({date:new Date(Date.now()),nb_vendors:1})
+        }
+        return createdVendor;
     }
     async findBy(options:FindOptionsWhere<VendorEntity>){
         return this.vendorRepository.findOneBy(options);
