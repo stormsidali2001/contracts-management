@@ -26,4 +26,6 @@ export class DirectionEntity{
 
     @OneToMany(type=>UserEntity,u=>u.direction)
     employees:UserEntity[];
+
+    
 }

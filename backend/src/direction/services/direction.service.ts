@@ -70,6 +70,12 @@ export class DirectionService{
     async updateDirection(id:string,direction:updateDirectionDTO):Promise<UpdateResult>{
         return this.directionRepository.update(id,direction);
     }
+
+    async getTopDirection(){
+        return this.directionRepository.createQueryBuilder('dr')
+        .loadRelationCountAndMap('dr.agreementCount','dr.agreements')
+        .getMany();
+    }
     
   
 }

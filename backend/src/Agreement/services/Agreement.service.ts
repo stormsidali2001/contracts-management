@@ -26,7 +26,8 @@ export class AgreementService implements OnModuleInit{
         private readonly vendorService:VendorService,
         private readonly directionService:DirectionService,
         private readonly userNotificationService:UserNotificationService,
-        private readonly schdulerRegistry:SchedulerRegistry
+        private readonly schdulerRegistry:SchedulerRegistry,
+
     ){}
     async onModuleInit() {
         this.logger.log('initializing the percisted agreement related cron jobs:')
@@ -43,6 +44,7 @@ export class AgreementService implements OnModuleInit{
                 })
             
         }
+        this.logger.log(`${percistedJobs.length} percisted jobs are running`)
     }
     async createAgreement(agreement:CreateAgreementDTO):Promise<AgreementEntity>{
         const {directionId , departementId , vendorId, ...agreementData} = agreement;
@@ -138,7 +140,26 @@ export class AgreementService implements OnModuleInit{
         return this.agreementRepository.save(agreement)
     }
     async getAgreementsStats(){
-        
+        const status = await this.agreementRepository.createQueryBuilder('ag')
+        .select('count(ag.id)','total')
+        .groupBy('ag.status')
+        .addSelect('ag.status','status')
+        .getRawMany();
+
+        const types = await this.agreementRepository.createQueryBuilder('ag')
+        .select('count(ag.id)','total')
+        .groupBy('ag.type')
+        .addSelect('ag.type','type')
+        .getRawMany();
+
+        const topDirections = await this.directionService.getTopDirection();
+       
+        return {
+            status:status.map(st=>({...st,total:parseInt(st.total)})),
+            types:types.map(t=>({...t,total:parseInt(t.total)})),
+            topDirections
+        }
+
     }
     async #addAgreementCronJob(name:string,date:Date, cb:()=>void){
         const job = new CronJob(date,()=>{

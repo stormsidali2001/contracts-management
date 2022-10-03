@@ -24,6 +24,12 @@ export class AgreementController{
         name:'agreementType',
         enumName:'agreementType'
     })
+
+    @Get("stats")
+    async getAgreementsStats(){
+        return await this.AgreementService.getAgreementsStats();
+    }
+    
     @Get(':id')
     async findById(@Param("id") id:string ,@Query("agreementType") agreementType:AgreementType){
         return await this.AgreementService.findById(id,agreementType)
@@ -37,5 +43,7 @@ export class AgreementController{
     async executeAgreement(@Body() execAg:ExecuteAgreementDTO){
         return await this.AgreementService.executeAgreement(execAg)
     }
+
+  
 
 }
