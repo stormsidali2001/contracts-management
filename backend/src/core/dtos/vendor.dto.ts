@@ -31,7 +31,7 @@ export class CreateVendorDTO{
     @ApiProperty({type:'string',example:'0663737507'})
     mobile_phone_number:string;
 
-    @ApiProperty({type:'string',example:'0663737507'})
+    @ApiProperty({type:'string',example:'0363737507'})
     home_phone_number:string;
 
     @ApiPropertyOptional({  example:"2023-01-05"})
