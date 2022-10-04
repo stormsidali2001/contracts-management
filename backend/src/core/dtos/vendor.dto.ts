@@ -1,4 +1,4 @@
-import { IsArray, IsMobilePhone, IsNotEmpty, IsOptional, IsPhoneNumber, IsString, IsUUID } from "class-validator";
+import { IsArray, IsDateString, IsMobilePhone, IsNotEmpty, IsOptional, IsPhoneNumber, IsString, IsUUID } from "class-validator";
 import { ApiProperty ,ApiPropertyOptional} from "@nestjs/swagger";
 export class CreateVendorDTO{
 
@@ -33,6 +33,11 @@ export class CreateVendorDTO{
 
     @ApiProperty({type:'string',example:'0663737507'})
     home_phone_number:string;
+
+    @ApiPropertyOptional({  example:"2023-01-05"})
+    @IsDateString({strict:true})
+    createdAt:Date;
+
    
 }
 

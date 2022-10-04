@@ -16,7 +16,7 @@ export class VendorService{
     ){}
     
     async createVendor(vendor:CreateVendorDTO):Promise<VendorEntity>{
-        const {address,home_phone_number,mobile_phone_number,...uniques} = vendor;
+        const {address,home_phone_number,mobile_phone_number,createdAt = new Date(Date.now()),...uniques} = vendor;
         let condition = '';
         const uniquesKeys = Object.keys(uniques);
         uniquesKeys.forEach((k,index)=>{
@@ -29,7 +29,7 @@ export class VendorService{
         .getOne();
 
         if(vendorDb) throw new ForbiddenException("nif , nrc , company_name  ,num doit etre unique")
-        const createdVendor = await this.vendorRepository.save({address,home_phone_number,mobile_phone_number,...uniques});
+        const createdVendor = await this.vendorRepository.save({address,createdAt,home_phone_number,mobile_phone_number,...uniques});
         const vendorStatsDb = await this.vendorStatsRepository.findOneBy({date:new Date(Date.now())})
         if(vendorStatsDb){
             await this.vendorStatsRepository.update({id:vendorStatsDb.id},{nb_vendors:()=>"nb_vendors + 1"})
