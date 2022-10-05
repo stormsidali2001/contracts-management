@@ -1,22 +1,30 @@
 import {Injectable,BadRequestException, ForbiddenException} from '@nestjs/common'
-import { InjectRepository } from '@nestjs/typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { CreateVendorDTO, UpdateVendorDTO } from 'src/core/dtos/vendor.dto';
 import { AgreementEntity } from 'src/core/entities/Agreement.entity';
 import { VendorEntity } from 'src/core/entities/Vendor.entity';
 import { VendorStatsEntity } from 'src/core/entities/VendorStats.entity';
 import { AgreementType } from 'src/core/types/agreement-type.enum';
 import { PaginationResponse } from 'src/core/types/paginationResponse.interface';
-import { FindOptionsWhere, Repository, UpdateResult } from 'typeorm';
+import { DataSource, FindOptionsWhere, Repository, UpdateResult } from 'typeorm';
 
 @Injectable()
 export class VendorService{
+    
     constructor(
         @InjectRepository(VendorEntity) private readonly vendorRepository:Repository<VendorEntity>,
-        @InjectRepository(VendorStatsEntity) private readonly vendorStatsRepository:Repository<VendorStatsEntity>
+        @InjectRepository(VendorStatsEntity) private readonly vendorStatsRepository:Repository<VendorStatsEntity>,
+
+        @InjectDataSource() private dataSource:DataSource
     ){}
+    #format(d:Date){
+        const newD = new Date(d);
+        return newD.toISOString().replace(/T[0-9:.Z]*/g,"");
+    
+    }
     
     async createVendor(vendor:CreateVendorDTO):Promise<VendorEntity>{
-        const {address,home_phone_number,mobile_phone_number,createdAt = new Date(Date.now()),...uniques} = vendor;
+        const {address,home_phone_number,mobile_phone_number,createdAt,...uniques} = vendor;
         let condition = '';
         const uniquesKeys = Object.keys(uniques);
         uniquesKeys.forEach((k,index)=>{
@@ -29,13 +37,21 @@ export class VendorService{
         .getOne();
 
         if(vendorDb) throw new ForbiddenException("nif , nrc , company_name  ,num doit etre unique")
-        const createdVendor = await this.vendorRepository.save({address,createdAt,home_phone_number,mobile_phone_number,...uniques});
-        const vendorStatsDb = await this.vendorStatsRepository.findOneBy({date:new Date(Date.now())})
-        if(vendorStatsDb){
-            await this.vendorStatsRepository.update({id:vendorStatsDb.id},{nb_vendors:()=>"nb_vendors + 1"})
-        }else{
-            await this.vendorStatsRepository.save({date:new Date(Date.now()),nb_vendors:1})
-        }
+        const createdVendor = await this.dataSource.transaction(async manager =>{
+            const vendorRepository = manager.getRepository(VendorEntity);
+            const vendorStatsRepository = manager.getRepository(VendorStatsEntity)
+
+            const createdVendor = await vendorRepository.save({address,createdAt,home_phone_number,mobile_phone_number,...uniques});
+      
+            const vendorStatsDb = await vendorStatsRepository.findOneBy({date:createdAt})
+            if(vendorStatsDb){
+                await vendorStatsRepository.update({id:vendorStatsDb.id},{nb_vendors:()=>"nb_vendors + 1"})
+            }else{
+                await vendorStatsRepository.save({date:createdAt,nb_vendors:1})
+            }
+            return createdVendor;
+        })
+       
         return createdVendor;
     }
     async findBy(options:FindOptionsWhere<VendorEntity>){

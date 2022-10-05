@@ -1,6 +1,10 @@
 const axios = require("axios")
 const faker = require("@faker-js/faker").faker;
- 
+const mysql = require('mysql2/promise');
+const bluebird = require('bluebird');
+faker.locale = 'fr';
+
+
 function randomChar(){
     const randomCharCodeLowerCase = ()=>Math.floor(Math.random()*('Z'.charCodeAt(0) -'A'.charCodeAt(0)) +'A'.charCodeAt(0) );
     const randomChar = Math.random() > 0.5 ?String.fromCharCode(randomCharCodeLowerCase()):String.fromCharCode(randomCharCodeLowerCase()).toUpperCase();
@@ -9,19 +13,20 @@ function randomChar(){
 
 }
 function addMonth(d,months){
-    const day = d.getDate();
-    d.setMonth(d.getMonth() + +months)
-    if(day!== d.getDate()){
-        d.setDate(0)
+    const date = new Date(d)
+    const day = date.getDate();
+    date.setMonth(date.getMonth() + +months)
+    if(day!== date.getDate()){
+        date.setDate(0)
     }
-    return d;
+    return date;
 }
 const format = (d)=>{
     const newD = new Date(d);
     return newD.toISOString().replace(/T[0-9:.Z]*/g,"");
 
 }
-function createVendor() {
+function createRandomVendor() {
     const generateNif = ()=>{
         const nif = randomChar()+new Array(7).fill(0).map(()=>(Math.floor(Math.random()*9))).join('') +randomChar();
 
@@ -30,6 +35,7 @@ function createVendor() {
     
     const date = new Date();
     const afterOnMonthDate = addMonth(date,2);
+    console.log(`date between ${format(date.toISOString())} -----> ${format(afterOnMonthDate.toISOString())}`)
     const vendor = {
         nif:generateNif(),
         company_name:faker.company.name(),
@@ -41,26 +47,16 @@ function createVendor() {
         createdAt:format(faker.date.between(date.toISOString(), afterOnMonthDate.toISOString()))
 
     }
+
+    return vendor;
 }
-function createRandomUser(directionId,departementId) {
-    return {
-      username: faker.internet.userName(),
-      firstName:faker.name.firstName(),
-      lastName:faker.name.lastName(),
-      email: faker.internet.email(),
-      departementId,
-      directionId,
-      password: '123456',
-    };
-  }
-  faker.locale = 'fr';
- 
-async function generateUsers(){
+
+async function generateVendors(num){
     const arr = [];
-    for(let i=0;i<500;i++){
-        const user = createRandomUser("a7f5efa3-a163-41cf-9607-3b613e8f1554","5d31c451-bd3d-47cf-b612-8d020eb452f0")
-        console.log(user)
-        arr.push(axios.post("http://localhost:8080/api/auth/register",{...user},{headers:{'Authorization':'application/json'}}))
+    for(let i=0;i<num;i++){
+        const vendor = createRandomVendor()
+        console.log(vendor)
+        arr.push(axios.post("http://localhost:8080/api/vendors",{...vendor},{headers:{'Content-Type':'application/json'}}))
     }
     try{
 
@@ -69,20 +65,4 @@ async function generateUsers(){
         console.error(err.message);    
     }
 }
- 
-generate()
-
-async function generateDirections(){
-    const arr = [];
-    for(let i=0;i<500;i++){
-        const user = createRandomUser("a7f5efa3-a163-41cf-9607-3b613e8f1554","5d31c451-bd3d-47cf-b612-8d020eb452f0")
-        console.log(user)
-        arr.push(axios.post("http://localhost:8080/api/auth/register",{...user},{headers:{'Authorization':'application/json'}}))
-    }
-    try{
-
-        await Promise.all(arr)
-    }catch(err){
-        console.error(err.message)    
-    }
-}
+generateVendors(1)

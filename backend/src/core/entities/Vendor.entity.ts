@@ -53,9 +53,9 @@ export class VendorEntity{
     @Column()
     home_phone_number:string;
 
-    @Column({type:"date",default:new Date(Date.now())})
+    @Column({type:"date"})
     createdAt:Date;
-    
+
     @OneToMany(type=>AgreementEntity,ag=>ag.vendor) 
     agreements:AgreementEntity[];
     
