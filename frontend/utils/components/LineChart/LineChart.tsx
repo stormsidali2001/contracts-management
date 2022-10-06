@@ -1,9 +1,13 @@
 import { Chart , registerables ,LineController,LineElement,PointElement,LinearScale,Title} from 'chart.js';
 import { useEffect, useId, useRef } from 'react';
 import styles from './LineChart.module.css';
-const LineChart = () => {
+interface PropType{
+    stats:any
+}
+const LineChart = ({stats}:PropType) => {
     const chartRef =useRef(null);
     const canvasId = useId();
+
     useEffect(()=>{
         const canvas = chartRef.current as unknown as HTMLCanvasElement;
         const myChartRef = canvas.getContext('2d');
@@ -15,13 +19,13 @@ const LineChart = () => {
                 type: "line",
                 data: {
                     //Bring in data
-                    labels: ["19 sep", "20 sep", "21 sep","22 sep","23 sep","24 sep","25 sep"],
+                    labels: stats?.map((el:any)=>(new Date(el.date).getDay())) ?? [],
                     datasets: [
                         {
                             label: 'nombre de fournisseur',
                             backgroundColor: '#17498E',
                             borderColor: 'rgba(23, 73, 142, 0.5)',
-                            data: [0, 10, 5, 2, 20, 30, 45],
+                            data: stats?.map((el:any)=>(el.nb_vendors)) ?? [],
                             tension: 0.1
                         }
                     ],
@@ -55,7 +59,8 @@ const LineChart = () => {
            
         
 
-    },[])
+    },[stats])
+
   return (
     <div className={styles.container} >
          <canvas

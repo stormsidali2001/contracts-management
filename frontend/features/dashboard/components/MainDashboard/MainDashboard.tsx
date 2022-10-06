@@ -13,7 +13,8 @@ import styles from './MainDashboard.module.css';
 const MainDashboard = () => {
   const [agreementStats,setAgreementStats]  = useState(null);
   const [usersStats,setUsersStats] = useState(null) 
-  const dispatch = useAppDispatch();
+  const [vendorsStats,setVendorsStats] = useState(null)
+  const dispatch = useAppDispatch(); 
   const axiosPrivate = useAxiosPrivate();
   useEffect(()=>{
     const abortController = new AbortController();
@@ -46,6 +47,21 @@ const MainDashboard = () => {
         }
       }
     )
+
+    axiosPrivate.get("/vendors/stats",{
+      signal:abortController.signal
+    })
+    .then(res=>{
+      setVendorsStats(res.data)
+    })
+    .catch(err=>{
+      console.error(err)
+        if(err.code !== "ERR_CANCELED"){
+          //@ts-ignore
+          dispatch(showSnackbar({message:err?.response?.data?.error ?? "erreur iconu"}))
+        }
+      }
+    )
    
 
     return ()=>{
@@ -59,7 +75,7 @@ const MainDashboard = () => {
         <div className={styles.contentWrapper}>
             <AgreementStatsCard stats={agreementStats}/>
             <div className={styles.middleCard}>
-                <VendorsCard/>
+                <VendorsCard stats={vendorsStats}/>
                 <UsersCard stats={usersStats}/>
             </div>
             <LastEventsCard/>

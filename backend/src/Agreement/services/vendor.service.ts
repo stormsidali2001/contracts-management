@@ -105,4 +105,9 @@ export class VendorService{
             
         return this.vendorRepository.update(id,newVendor)
     }
+
+    async getVendorsStats(){
+        return await this.vendorStatsRepository.createQueryBuilder('v')
+        .getMany()
+    }
 }
