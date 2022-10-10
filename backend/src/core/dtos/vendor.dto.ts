@@ -90,10 +90,12 @@ export class UpdateVendorDTO{
 
 export class VendotrStats{
   
+    @IsOptional()
     @ApiPropertyOptional({  example:"2023-01-05"})
     @IsDateString({strict:true})
     startDate:Date;
 
+    @IsOptional()
     @ApiPropertyOptional({  example:"2023-01-05"})
     @IsDateString({strict:true})
     endDate:Date;

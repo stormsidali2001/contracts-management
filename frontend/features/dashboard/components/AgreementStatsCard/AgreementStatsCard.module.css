@@ -10,6 +10,18 @@
     row-gap: 10px;
     overflow-y:auto;
 }
+.container::-webkit-scrollbar{
+    width: 4px;
+   
+}
+.container::-webkit-scrollbar-track{
+    background-color: rgba(23, 73, 142, 0.1);
+    border-radius: 10px;
+}
+.container::-webkit-scrollbar-thumb{
+    background-color: rgba(23, 73, 142, 0.4);
+    border-radius: 10px;
+}
 .type,.status ,.direction{
     display: flex;
     flex-direction: column;
