@@ -65,4 +65,4 @@ async function generateVendors(num){
         console.error(err.message);    
     }
 }
-generateVendors(100)
+generateVendors(100dto)
