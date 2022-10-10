@@ -2,7 +2,7 @@ import {Controller ,Post ,Get , Body , Param, Put,UseGuards , Query} from '@nest
 import { RequiredRoles } from 'src/auth/decorators/RequiredRoles.decorator';
 import { JwtAccessTokenGuard } from 'src/auth/guards/jwt-access-token.guard';
 import { RoleGuard } from 'src/auth/guards/Role.guard';
-import { CreateVendorDTO, UpdateVendorDTO } from 'src/core/dtos/vendor.dto';
+import { CreateVendorDTO, UpdateVendorDTO, VendotrStats } from 'src/core/dtos/vendor.dto';
 import { UserRole } from 'src/core/types/UserRole.enum';
 import { VendorService } from '../services/vendor.service';
 import {ApiTags} from '@nestjs/swagger';
@@ -22,8 +22,8 @@ export class VendorController{
         return await this.vendorService.createVendor(vendor);
     }
     @Get('stats')
-    async getVendorStats(){
-        return await this.vendorService.getVendorsStats()
+    async getVendorStats(@Query() query:VendotrStats){
+        return await this.vendorService.getVendorsStats(query.startDate , query.endDate)
     }
     @Get(":id")
     async findById(@Param("id") id:string ){

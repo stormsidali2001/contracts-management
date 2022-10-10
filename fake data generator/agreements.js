@@ -78,7 +78,7 @@ async function generateAgreements(directions,vendorIds){
             host:'localhost',
             user:'root',
             database:'contracts_management',
-            password:'12345678',
+            password:'123456',
             Promise:bluebird
         });
 

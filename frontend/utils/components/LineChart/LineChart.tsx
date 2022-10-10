@@ -19,14 +19,13 @@ const LineChart = ({stats}:PropType) => {
                 type: "line",
                 data: {
                     //Bring in data
-                    labels: stats?.map((el:any)=>(new Date(el.date).getDay())) ?? [],
+                    labels: stats?.slice(0,7)?.map((el:any)=>(new Date(el.date).getMonth()+'/'+new Date(el.date).getDate())) ?? [],
                     datasets: [
                         {
                             label: 'nombre de fournisseur',
                             backgroundColor: '#17498E',
                             borderColor: 'rgba(23, 73, 142, 0.5)',
-                            data: stats?.map((el:any)=>(el.nb_vendors)) ?? [],
-                            tension: 0.1
+                            data: stats?.slice(0,7).map((el:any)=>(el.nb_vendors)) ?? [],
                         }
                     ],
                 
@@ -34,10 +33,10 @@ const LineChart = ({stats}:PropType) => {
                 options: {
                     //Customize chart options
                     scales:{
-                        x:{
-                            beginAtZero:true,
-
-                        },
+                    
+                        
+                      
+                        
                        
                     },
                     responsive:true,

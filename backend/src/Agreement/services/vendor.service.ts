@@ -106,8 +106,20 @@ export class VendorService{
         return this.vendorRepository.update(id,newVendor)
     }
 
-    async getVendorsStats(){
-        return await this.vendorStatsRepository.createQueryBuilder('v')
-        .getMany()
+    async getVendorsStats(startDate:Date , endDate:Date){
+        let  query =   this.vendorStatsRepository.createQueryBuilder('v')
+        .orderBy('v.date')
+       
+
+        if(startDate ){
+            query = query 
+            .where("v.date >= :startDate",{startDate})
+            
+        }
+        if(endDate){
+            query = query.andWhere('v.date <= :endDate',{endDate});
+        }
+
+        return query.getMany();
     }
 }

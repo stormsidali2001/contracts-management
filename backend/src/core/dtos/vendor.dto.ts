@@ -1,5 +1,6 @@
 import { IsArray, IsDateString, IsMobilePhone, IsNotEmpty, IsOptional, IsPhoneNumber, IsString, IsUUID } from "class-validator";
 import { ApiProperty ,ApiPropertyOptional} from "@nestjs/swagger";
+import { Query } from "@nestjs/common";
 export class CreateVendorDTO{
 
     @ApiProperty({type:'string',example:'safkjasfjs54'})
@@ -83,4 +84,17 @@ export class UpdateVendorDTO{
     @IsNotEmpty()
     home_phone_number:string;
    
+}
+
+
+
+export class VendotrStats{
+  
+    @ApiPropertyOptional({  example:"2023-01-05"})
+    @IsDateString({strict:true})
+    startDate:Date;
+
+    @ApiPropertyOptional({  example:"2023-01-05"})
+    @IsDateString({strict:true})
+    endDate:Date;
 }

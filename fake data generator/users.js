@@ -25,7 +25,7 @@ async function generateUsers(directions){
     if(directions.length === 0 ) return ;
     const arr = [];
     const randomElemenetFromArray = (arr)=>arr[Math.floor(Math.random()*(arr.length - 1))]
-    for(let i=0;i<500;i++){
+    for(let i=0;i<100;i++){
         const randomDirection = randomElemenetFromArray(directions)
         if(randomDirection.departements.length ===0) continue;
         const randomDepartement = randomElemenetFromArray(randomDirection.departements);
@@ -52,7 +52,7 @@ async function generateUsers(directions){
             host:'localhost',
             user:'root',
             database:'contracts_management',
-            password:'12345678',
+            password:'123456',
             Promise:bluebird
         });
 
