@@ -1,5 +1,4 @@
 import styles from './VendorsCard.module.css';
-import {Line } from 'react-chartjs-2'
 import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
 import { useEffect, useId, useState } from 'react';
 // import {} from 'chartjs-adapter-date-fns'
@@ -15,7 +14,7 @@ import {
   TimeScale,
   registerables
 } from "chart.js";
-import { Chart } from "react-chartjs-2";
+import {Line } from 'react-chartjs-2'
 import 'chartjs-adapter-date-fns';
 import {fr} from 'date-fns/locale';
 import { AnimateSharedLayout,motion } from 'framer-motion';
@@ -30,7 +29,7 @@ ChartJS.register(
   Tooltip,
   Legend,
   TimeScale,
-  ...registerables
+ 
 );
 
 interface PropType{
@@ -38,7 +37,7 @@ interface PropType{
 }
 
 const VendorsCard = ({stats}:PropType) => {
-  const [expanded , setExpanded] = useState(true);
+  const [expanded , setExpanded] = useState(false);
   const cardId = useId();
 
  
@@ -135,7 +134,7 @@ export function ExpandedCard({stats,cardId,setExpanded}:any){
     <motion.div layoutId={`expandableCard-${cardId}`} className={styles.expandedCard}>
       <div onClick={()=>setExpanded(false)} className={styles.closeButton}>
                 <CloseOutlinedIcon />
-            </div>
+      </div>
             <div className={styles.title}>Fournisseurs</div>
     
     <div className={styles.chartContainer}>

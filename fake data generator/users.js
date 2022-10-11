@@ -6,14 +6,15 @@ faker.locale = 'fr';
  
 
 
-
-
+const randomElemenetFromArray = (arr)=>arr[Math.floor(Math.random()*(arr.length - 1))]
+const ROLES = ['juridical','employee','admin',];
 function createRandomUser(directionId,departementId) {
     return {
       username: faker.internet.userName(),
       firstName:faker.name.firstName(),
       lastName:faker.name.lastName(),
       email: faker.internet.email(),
+      role:randomElemenetFromArray(ROLES),
       departementId,
       directionId,
       password: '123456',
@@ -24,7 +25,7 @@ function createRandomUser(directionId,departementId) {
 async function generateUsers(directions){
     if(directions.length === 0 ) return ;
     const arr = [];
-    const randomElemenetFromArray = (arr)=>arr[Math.floor(Math.random()*(arr.length - 1))]
+   
     for(let i=0;i<100;i++){
         const randomDirection = randomElemenetFromArray(directions)
         if(randomDirection.departements.length ===0) continue;
