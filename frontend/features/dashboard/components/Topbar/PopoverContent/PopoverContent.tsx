@@ -13,7 +13,7 @@ const PopoverContent = () => {
     const {user} = useAppSelector(state=>state.auth)
     const links = useMemo(()=>[
         {text:"Profile" , link:`/users/${user?.sub ?? ""}`,icon:AccountCircleIcon},
-        {text:"Parametres" , link:"",icon:SettingsIcon},
+        {text:"Parametres" , link:"/settings",icon:SettingsIcon},
     ],[user?.sub])
     
     function handleLogout(e:any){
