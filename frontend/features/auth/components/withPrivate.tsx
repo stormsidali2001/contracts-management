@@ -10,13 +10,14 @@ function WithPrivate({children}:any) {
     const router = useRouter();
     const dispatch = useAppDispatch()
     const {pathname} = router;
+    const exceptionPaths = ['/forgot-password']
     useEffect(()=>{
       if(jwt || isAuthenticated) return;
        dispatch(refresh_token())
 
     },[jwt , isAuthenticated])
 
-  return isAuthenticated ?children : <Signin/>;
+  return isAuthenticated || exceptionPaths.includes(pathname) ?children : <Signin/>;
 }
 
 export default WithPrivate

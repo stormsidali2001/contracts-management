@@ -38,6 +38,17 @@ export const login = createAsyncThunk(
         }
     }
 )
+export const forgotPassword = createAsyncThunk(
+    'auth/forgot-password',
+    async (email:string,thunkAPI)=>{
+        try{
+            return await authService.forgotPassword(email);
+        }catch(err){
+            return thunkAPI.rejectWithValue("failed to reset password");
+        }
+    }
+)
+
 export const refresh_token = createAsyncThunk(
     'auth/refresh_token',
     async (_,thunkAPI)=>{
@@ -120,6 +131,21 @@ export const authSlice = createSlice({
             state.isAuthenticated = false;
 
         })
+
+        //forgot password
+        .addCase(forgotPassword.fulfilled,(state)=>{
+            state.isSuccess = true;
+            state.isLoading = false;
+        })
+        .addCase(forgotPassword.pending,(state)=>{
+            state.isSuccess = false;
+            state.isLoading = true;
+        })
+        .addCase(forgotPassword.rejected,(state)=>{
+            state.isSuccess = false;
+            state.isLoading = true;
+        })
+
 
     }
 

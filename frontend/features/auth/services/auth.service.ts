@@ -25,11 +25,15 @@ const refresh = async ()=>{
         return {jwt:access_token , user:decodedJwt.user};
   
 }
+const forgotPassword = async (email:string)=>{
+    await  axiosPrivate.post('/auth/forget-password',{email});
+}
 
 const authService ={
     login,
     logout,
-    refresh
+    refresh,
+    forgotPassword
 }
 
 
