@@ -1,26 +1,89 @@
 .container{
-    width: 436px;
-    min-height: 450px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    height: calc(100% - 60px);
+}
+
+.card{
     background: #FFFFFF;
     box-shadow: 0px 1.52532px 6.86392px rgba(23, 73, 142, 0.6);
     border-radius: 15.2532px;
-    padding: 10px 20px;
-    margin: 40px auto;
-    position: relative;
-
+    width: 413px;
+    height: 340px;
+    display: flex;
+    flex-direction: column;
 }
-.title{
-    margin-top: 10px;
+.imageContainer{
+    border-top-right-radius: 15.25px;
+    border-top-left-radius: 15.25px;
+    width:100%;
+    height:190px;
+    position:relative;
+}
+.imageContainer > img{
+    border-top-right-radius: inherit;
+    border-top-left-radius: inherit;
+    width: inherit;
+    position: absolute;
+  
+}
+
+.box{
+   
+    background: rgba(255, 255, 255, 0.99);
+    box-shadow: 0px 1.89286px 3.78571px rgba(0, 0, 0, 0.25);
+    border-radius: 14.433px;
+    width: 265px;
+    height: 46.38px;
+    margin: 0 auto 0 auto;
+    z-index: 5000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    bottom:0;
+    left:50%;
+    transform: translate(-50%,50%);
+    column-gap: 10px;
+}
+
+.box span{
     font-family: 'Poppins';
     font-style: normal;
     font-weight: 500;
-    font-size: 28.9198px;
-    line-height: 43px;
-    
+    font-size: 22.1357px;
     color: #1E1D1D;
-    text-align: center;
 }
 .content{
+    margin-top: 35px;
     display: flex;
+    align-items: center;
+    padding: 0 20px;
     flex-direction: column;
+}
+.card p{
+    font-family: 'Poppins';
+    font-style: normal;
+    font-weight: 300;
+    font-size: 16px;
+    color: #807D7D;
+   
+    padding: 0 auto;
+    text-align: left;
+}
+
+.checkboxContainer{
+    display: flex;
+    align-items: center;
+    column-gap: 10px;
+    margin-top: 15px;
+}
+.checkboxContainer label{
+    font-family: 'Poppins';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 15.6224px;
+    line-height: 23px;
+    color: #1E1D1D;
 }
