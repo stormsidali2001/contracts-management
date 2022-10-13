@@ -10,7 +10,7 @@ function WithPrivate({children}:any) {
     const router = useRouter();
     const dispatch = useAppDispatch()
     const {pathname} = router;
-    const exceptionPaths = ['/forgot-password']
+    const exceptionPaths = ['/forgot-password','/reset-password']
     useEffect(()=>{
       if(jwt || isAuthenticated) return;
        dispatch(refresh_token())
