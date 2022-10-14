@@ -1,8 +1,9 @@
-import {Entity , PrimaryGeneratedColumn , Column, ManyToOne, Index, CreateDateColumn, OneToMany} from 'typeorm';
+import {Entity , PrimaryGeneratedColumn , Column, ManyToOne, Index, CreateDateColumn, OneToMany, OneToOne, JoinColumn} from 'typeorm';
 import { UserRole } from '../types/UserRole.enum';
 import { DepartementEntity } from './Departement.entity';
 import { DirectionEntity } from './Direction.entity';
 import { NotificationEntity } from './Notification.entity';
+import { PasswordTokenEntity } from './PasswordToken';
 
 @Entity('users')
 //fulltext
@@ -51,12 +52,16 @@ export class UserEntity{
     @Column({nullable:true})
     refresh_token_hash:string;
 
+   
+
     @Column({
         type:'enum',
         enum:UserRole,
         default:UserRole.EMPLOYEE
     })
     role:UserRole
+
+
 
     @CreateDateColumn({type:'datetime'})
     created_at:Date;
@@ -71,4 +76,6 @@ export class UserEntity{
     notifications:NotificationEntity[];
 
     
+    @OneToOne(type=>PasswordTokenEntity) @JoinColumn()
+    password_token:PasswordTokenEntity;
 }

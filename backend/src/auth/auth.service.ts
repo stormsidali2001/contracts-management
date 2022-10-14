@@ -1,4 +1,4 @@
-import { BadRequestException, ForbiddenException, HttpStatus, Injectable, InternalServerErrorException, Logger, UnauthorizedException } from "@nestjs/common";
+import { BadRequestException, ForbiddenException, HttpStatus, Injectable, InternalServerErrorException, Logger, NotFoundException, UnauthorizedException } from "@nestjs/common";
 import * as bcrypt from 'bcrypt';
 import { CreateUserDTO, LoginUserDTO } from "src/core/dtos/user.dto";
 import { UserEntity } from "src/core/entities/User.entity";
@@ -11,6 +11,8 @@ import * as argon2 from 'argon2';
 import { UserRole } from "src/core/types/UserRole.enum";
 import { randomBytes } from "crypto";
 import {v4 as uuidv4} from 'uuid';
+import * as nodemailer from 'nodemailer';
+
 
 @Injectable()
 export class AuthService{
@@ -18,7 +20,7 @@ export class AuthService{
     constructor(
         private userService:UserService,
         private jwtService:JwtService,
-        private configService:ConfigService
+        private configService:ConfigService,
     ){}
     async #hashPassword(password:string):Promise<string>{
         return bcrypt.hash(password,12);
@@ -137,5 +139,68 @@ export class AuthService{
 
     async logout(userId:string):Promise<void>{
         this.userService.findAndUpdate(userId,{refresh_token_hash:null})
+    }
+    async forgotPassword(email:string){
+        const userDb = await this.userService.findByEmailWithToken(email);
+        if(!userDb){
+            throw new NotFoundException("l'utilisateur associe a ce email n'est pas touvee ");
+        }
+        const token:string =await new Promise((resolve,reject)=>{
+            randomBytes(32,(err,buf)=>{
+                if(err) reject(err);
+                resolve(buf.toString('hex'))
+            })
+        });
+        if(userDb.password_token){
+            this.userService.deleteUserPasswordToken(userDb.id)
+        }
+        const hashed_token = await this.#hashPassword(token);
+        await this.userService.updateUserPasswordToken(hashed_token,userDb.id)
+        await this.#sendEmail(userDb.email,userDb.id,token)
+
+        return "sent"
+
+
+       
+
+    }
+    async resetPassword(password:string,token:string,userId:string){
+        const userDb = await this.userService.findByIdWithToken(userId)
+        if(!userDb){
+            throw new NotFoundException("l'utilisateur associe a ce email n'est pas touvee ");
+        }
+        const hashed_token = userDb.password_token;
+        if(!hashed_token){
+            throw new UnauthorizedException("access denied");
+        }
+        const matches = await bcrypt.compare(token,hashed_token.token);
+        if(!matches){
+            throw new UnauthorizedException("access denied");
+        }
+
+        if( new Date(Date.now()) > hashed_token.expiresIn){
+            throw new UnauthorizedException("votre demande de re-initialization a expiré");
+        }
+        const hashed_password = await this.#hashPassword(password);
+        await this.userService.updateUserPassword(userDb.id,hashed_password);
+
+        return "done";
+    }
+
+    async #sendEmail(email:string,userId,token:string){
+        let transporter = nodemailer.createTransport({
+            service:'Gmail',
+            auth: {
+              user: this.configService.get('ethereal_user'), // generated ethereal user
+              pass: this.configService.get('ethereal_password'), // generated ethereal password
+            },
+          });
+
+          let info = await transporter.sendMail({
+            from: '"bmt" <assoulsidali@gmail.com>', // sender address
+            to: email, // list of receivers separated by ,
+            subject: "Mot de pasee oublié", // Subject line
+            html: `<b>vous avez envoyer une demmande de réinitialisation de mot de passe.</b><br/> presser sur le lien si il s'agit bien de vous </b><br/> le lien:  http://localhost:3000/resetpassword/${token}?uid=${userId}`, // html body
+          });
     }
 }

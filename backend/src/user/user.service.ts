@@ -3,6 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { CreateUserDTO, UpdateUserDTO } from "src/core/dtos/user.dto";
 import { DepartementEntity } from "src/core/entities/Departement.entity";
 import { DirectionEntity } from "src/core/entities/Direction.entity";
+import { PasswordTokenEntity } from "src/core/entities/PasswordToken";
 import { UserEntity } from "src/core/entities/User.entity";
 import { PaginationResponse } from "src/core/types/paginationResponse.interface";
 import { DirectionService } from "src/direction/services/direction.service";
@@ -15,6 +16,8 @@ export class UserService{
     constructor(
         @InjectRepository(UserEntity) private userRepository:Repository<UserEntity>,
         private readonly directionService:DirectionService,
+        @InjectRepository(PasswordTokenEntity) private readonly passwordTokenRepository:Repository<PasswordTokenEntity>
+
         ){}
     async create(newUser:CreateUserDTO):Promise<UserEntity>{
         const {departementId = null,directionId = null,...userData} = newUser;  
@@ -33,6 +36,18 @@ export class UserService{
     }
     async findBy(options:FindOptionsWhere<UserEntity>):Promise<UserEntity>{
         return this.userRepository.findOneBy(options)
+    }
+    async findByEmailWithToken(email:string):Promise<UserEntity>{
+        return this.userRepository.createQueryBuilder('u')
+        .where('u.email = :email',{email})
+        .leftJoinAndSelect('u.password_token','password_token')
+        .getOne();
+    }
+    async findByIdWithToken(userId:string):Promise<UserEntity>{
+        return this.userRepository.createQueryBuilder('u')
+        .where('u.userId = :userId',{userId})
+        .leftJoinAndSelect('u.password_token','password_token')
+        .getOne();
     }
     async findByEmailOrUsername({email,username}:{email:string,username:string}):Promise<UserEntity>{
         try{
@@ -81,6 +96,10 @@ export class UserService{
         return this.userRepository.update(id,newUser)
     }
 
+    async updateUserPassword(userId:string,password:string){
+        return this.userRepository.update(userId,{password})
+    }
+
     async findByIdWithDepartementAndDirection(id:string){
         return this.userRepository.createQueryBuilder("u")
         .where('u.id = :id',{id})
@@ -109,5 +128,19 @@ export class UserService{
         })
         response.total = response.juridical + response.admin + response.employee;
         return response;
+    }
+
+    async updateUserPasswordToken(token:string,userId:string){
+        return await this.passwordTokenRepository.createQueryBuilder('password_token')
+        .where('password_token.userId = :userId',{userId})
+        .update()
+        .set({token,expiresIn:new Date(Date.now()+1000*60*15)})
+        .execute()
+    }
+    async deleteUserPasswordToken(userId:string){
+        return await this.passwordTokenRepository.createQueryBuilder()
+        .where('password_token.userId = :userId',{userId})
+        .delete()
+        .execute();
     }
 }
