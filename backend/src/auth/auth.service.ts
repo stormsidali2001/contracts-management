@@ -1,6 +1,6 @@
 import { BadRequestException, ForbiddenException, HttpStatus, Injectable, InternalServerErrorException, Logger, NotFoundException, UnauthorizedException } from "@nestjs/common";
 import * as bcrypt from 'bcrypt';
-import { CreateUserDTO, LoginUserDTO } from "src/core/dtos/user.dto";
+import { CreateUserDTO, ForgotPasswordDTO, LoginUserDTO, ResetPasswordDTO } from "src/core/dtos/user.dto";
 import { UserEntity } from "src/core/entities/User.entity";
 import { UserService } from "src/user/user.service";
 import { JwtCompletePayload, JwtPayload } from "./types/JwtPayload.interface";
@@ -138,9 +138,9 @@ export class AuthService{
     }
 
     async logout(userId:string):Promise<void>{
-        this.userService.findAndUpdate(userId,{refresh_token_hash:null})
+         this.userService.findAndUpdate(userId,{refresh_token_hash:null})
     }
-    async forgotPassword(email:string){
+    async forgotPassword({email}:ForgotPasswordDTO){
         const userDb = await this.userService.findByEmailWithToken(email);
         if(!userDb){
             throw new NotFoundException("l'utilisateur associe a ce email n'est pas touvee ");
@@ -152,38 +152,37 @@ export class AuthService{
             })
         });
         if(userDb.password_token){
-            this.userService.deleteUserPasswordToken(userDb.id)
+            await this.userService.deleteUserPasswordToken(userDb.password_token.id,userDb.id)
         }
         const hashed_token = await this.#hashPassword(token);
         await this.userService.updateUserPasswordToken(hashed_token,userDb.id)
         await this.#sendEmail(userDb.email,userDb.id,token)
 
         return "sent"
-
-
+    
        
 
     }
-    async resetPassword(password:string,token:string,userId:string){
+    async resetPassword({password,token,userId}:ResetPasswordDTO){
         const userDb = await this.userService.findByIdWithToken(userId)
         if(!userDb){
             throw new NotFoundException("l'utilisateur associe a ce email n'est pas touvee ");
         }
+        console.log(userDb)
         const hashed_token = userDb.password_token;
         if(!hashed_token){
-            throw new UnauthorizedException("access denied");
+            throw new UnauthorizedException("access denied (token absence)");
         }
         const matches = await bcrypt.compare(token,hashed_token.token);
         if(!matches){
-            throw new UnauthorizedException("access denied");
+            throw new UnauthorizedException("access denied (compare))");
         }
 
         if( new Date(Date.now()) > hashed_token.expiresIn){
             throw new UnauthorizedException("votre demande de re-initialization a expiré");
         }
         const hashed_password = await this.#hashPassword(password);
-        await this.userService.updateUserPassword(userDb.id,hashed_password);
-
+        await this.userService.deleteUserPasswordTokenAndUpdatePassword(userDb.password_token.id,userDb.id,hashed_password)
         return "done";
     }
 
@@ -195,6 +194,7 @@ export class AuthService{
               pass: this.configService.get('ethereal_password'), // generated ethereal password
             },
           });
+
 
           let info = await transporter.sendMail({
             from: '"bmt" <assoulsidali@gmail.com>', // sender address

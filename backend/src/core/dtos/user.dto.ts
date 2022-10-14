@@ -97,3 +97,27 @@ export class UpdateUserDTO{
 
    
 }
+
+
+export class ForgotPasswordDTO{
+    @ApiProperty({example:"assoulsidali@gmail.com"})
+    @IsEmail()
+    email:string;
+
+}
+
+export class ResetPasswordDTO{
+
+    @ApiProperty({example:"123456"})
+    @IsNotEmpty()
+    password:string;
+
+    
+    @ApiProperty({example:"token"})
+    @IsNotEmpty()
+    token:string;
+
+    @ApiProperty({example:"userId"})
+    @IsUUID()
+    userId:string;
+}
