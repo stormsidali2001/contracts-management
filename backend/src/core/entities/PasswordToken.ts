@@ -1,4 +1,5 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { UserEntity } from "./User.entity";
 
 @Entity('password_token')
 export class PasswordTokenEntity{
@@ -13,5 +14,7 @@ export class PasswordTokenEntity{
 
     @Column()
     expiresIn:Date;
+
+   
 
 }

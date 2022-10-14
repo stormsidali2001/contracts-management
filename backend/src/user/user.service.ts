@@ -1,5 +1,5 @@
 import { Injectable, InternalServerErrorException, Logger,BadRequestException, ForbiddenException } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
+import { InjectDataSource, InjectRepository } from "@nestjs/typeorm";
 import { CreateUserDTO, UpdateUserDTO } from "src/core/dtos/user.dto";
 import { DepartementEntity } from "src/core/entities/Departement.entity";
 import { DirectionEntity } from "src/core/entities/Direction.entity";
@@ -7,7 +7,7 @@ import { PasswordTokenEntity } from "src/core/entities/PasswordToken";
 import { UserEntity } from "src/core/entities/User.entity";
 import { PaginationResponse } from "src/core/types/paginationResponse.interface";
 import { DirectionService } from "src/direction/services/direction.service";
-import { FindManyOptions, FindOptionsWhere, Repository, UpdateResult } from "typeorm";
+import { DataSource, FindManyOptions, FindOptionsWhere, Repository, UpdateResult } from "typeorm";
 import { QueryDeepPartialEntity } from "typeorm/query-builder/QueryPartialEntity";
 
 @Injectable()
@@ -16,7 +16,8 @@ export class UserService{
     constructor(
         @InjectRepository(UserEntity) private userRepository:Repository<UserEntity>,
         private readonly directionService:DirectionService,
-        @InjectRepository(PasswordTokenEntity) private readonly passwordTokenRepository:Repository<PasswordTokenEntity>
+        @InjectRepository(PasswordTokenEntity) private readonly passwordTokenRepository:Repository<PasswordTokenEntity>,
+        @InjectDataSource() private readonly dataSource:DataSource
 
         ){}
     async create(newUser:CreateUserDTO):Promise<UserEntity>{
@@ -45,7 +46,7 @@ export class UserService{
     }
     async findByIdWithToken(userId:string):Promise<UserEntity>{
         return this.userRepository.createQueryBuilder('u')
-        .where('u.userId = :userId',{userId})
+        .where('u.id = :userId',{userId})
         .leftJoinAndSelect('u.password_token','password_token')
         .getOne();
     }
@@ -84,9 +85,7 @@ export class UserService{
             data:res[0]
         }
     }   
-    // async deleteUser(id:string): Promise<string>{
-       
-    // }
+  
     async updateUser(id:string,newUser:UpdateUserDTO):Promise<UpdateResult>{
        
             const userDb = await this.userRepository.findOneBy({username:newUser.username,email:newUser.email})
@@ -96,8 +95,8 @@ export class UserService{
         return this.userRepository.update(id,newUser)
     }
 
-    async updateUserPassword(userId:string,password:string){
-        return this.userRepository.update(userId,{password})
+    async updateUserData(userId:string,partialUser:QueryDeepPartialEntity<UserEntity>){
+        return this.userRepository.update(userId,partialUser)
     }
 
     async findByIdWithDepartementAndDirection(id:string){
@@ -111,7 +110,6 @@ export class UserService{
         return this.userRepository.find({where:options})
     }
     async getUserTypesStats(){
-        console.log("imak")
         const stats =  await this.userRepository.createQueryBuilder('u')
         .select('count(u.id)','total')
         .addSelect('u.role','role')
@@ -131,16 +129,37 @@ export class UserService{
     }
 
     async updateUserPasswordToken(token:string,userId:string){
-        return await this.passwordTokenRepository.createQueryBuilder('password_token')
-        .where('password_token.userId = :userId',{userId})
-        .update()
-        .set({token,expiresIn:new Date(Date.now()+1000*60*15)})
-        .execute()
+        await this.dataSource.transaction(async manager =>{
+            const userRepository = manager.getRepository(UserEntity);
+            const passwordTokenRepository = manager.getRepository(PasswordTokenEntity);
+            const tokenDb = await passwordTokenRepository.save({token,expiresIn:new Date(Date.now()+1000*60*15)});
+           await userRepository.update(userId,{password_token:tokenDb})
+        })
     }
-    async deleteUserPasswordToken(userId:string){
-        return await this.passwordTokenRepository.createQueryBuilder()
-        .where('password_token.userId = :userId',{userId})
-        .delete()
-        .execute();
+    async deleteUserPasswordToken(id:string,userId:string){
+         await this.dataSource.transaction(async manager =>{
+
+             const userRepository = manager.getRepository(UserEntity);
+             const passwordTokenRepository = manager.getRepository(PasswordTokenEntity);
+             await userRepository.update(userId,{password_token:null})
+             await  passwordTokenRepository.delete(id)
+
+         }
+         )
+        
+
+    }
+    async deleteUserPasswordTokenAndUpdatePassword(id:string,userId:string,password:string){
+         await this.dataSource.transaction(async manager =>{
+
+             const userRepository = manager.getRepository(UserEntity);
+             const passwordTokenRepository = manager.getRepository(PasswordTokenEntity);
+             await userRepository.update(userId,{password_token:null,password})
+             await  passwordTokenRepository.delete(id)
+
+         }
+         )
+        
+
     }
 }
