@@ -1,12 +1,22 @@
 import { Button, CircularProgress, TextField } from '@mui/material';
+import { useRouter } from 'next/router';
+import { useEffect } from 'react';
 import useInput from '../../../../hooks/input/use-input';
-import { useAppSelector } from '../../../../hooks/redux/hooks';
+import { useAppDispatch, useAppSelector } from '../../../../hooks/redux/hooks';
 import { validateEmail } from '../../../../shared/utils/validation/email';
 import { validatePasswordLength } from '../../../../shared/utils/validation/length';
 import { BMT_LOGO_URL } from '../../../dashboard/data';
 import styles from './ResetPassword.module.css'
+import { resetPassword } from '../../../auth/authSlice';
+import { showSnackbar } from '../../../ui/UiSlice';
 
 const ResetPassword = () => {
+  const router  = useRouter();
+  const {query} = router;
+  const {userId,token} = router.query;
+
+ 
+  const {isSuccess , isError , isLoading} = useAppSelector(state=>state.auth)
   const {
     text:newPassword,
     textChangeHandler:newPasswordChangeHandler,
@@ -24,11 +34,22 @@ const ResetPassword = () => {
 } = useInput(validatePasswordLength);
 
 
-  const {isLoading,isSuccess} = useAppSelector(state=>state.auth);
+  const dispatch = useAppDispatch();
 
   const handleSubmit = ()=>{
+    dispatch(resetPassword({password:newPassword,token:token as string,userId:userId as string}));
 
   }
+
+  useEffect(()=>{
+    if(!isError) return;
+    dispatch(showSnackbar({message:"erreur"}))
+},[isError])
+
+useEffect(()=>{
+  if(!isSuccess) return;
+    dispatch(showSnackbar({message:"votre mot de passe a etee re-intializee",severty:"success"}))
+},[isSuccess])
   return (
     <div className={styles.container}>
     <div className={styles.leftWrapper}>

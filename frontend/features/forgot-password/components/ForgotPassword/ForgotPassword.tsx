@@ -1,18 +1,33 @@
 import { Button, CircularProgress, TextField } from '@mui/material';
 import useInput from '../../../../hooks/input/use-input';
-import { useAppSelector } from '../../../../hooks/redux/hooks';
+import { useAppSelector , useAppDispatch } from '../../../../hooks/redux/hooks';
 import { validateEmail } from '../../../../shared/utils/validation/email';
 import { BMT_LOGO_URL } from '../../../dashboard/data';
 import styles from './ForgotPassword.module.css'
+import {forgotPassword} from '../../../auth/authSlice'
+import { useEffect } from 'react';
+import { showSnackbar } from '../../../ui/UiSlice';
 
 const ForgotPassword = () => {
   const {text:email,textChangeHandler:emailChangeHandler,shouldDisplayError,inputBlurHandler:emailBlurHandler,inputClearHandler:emailClearHandler} = useInput(validateEmail);
+  const dispatch = useAppDispatch()
+  const {isLoading,isSuccess,isError} = useAppSelector(state=>state.auth);
 
-  const {isLoading,isSuccess} = useAppSelector(state=>state.auth);
-
-  const handleSubmit = ()=>{
-
+  const handleSubmit = (e:any)=>{
+    e.preventDefault();
+    dispatch(forgotPassword(email))
   }
+
+  useEffect(()=>{
+      if(!isError) return;
+      dispatch(showSnackbar({message:"pas de compte relier a cette addresse email"}))
+  },[isError])
+
+  useEffect(()=>{
+    if(!isSuccess) return;
+      dispatch(showSnackbar({message:"demande de re-intialization est envoyee",severty:"success"}))
+  },[isSuccess])
+
   return (
     <div className={styles.container}>
     <div className={styles.leftWrapper}>
