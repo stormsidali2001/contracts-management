@@ -42,7 +42,7 @@ export class SocketStateService{
         return all;
       }
     
-     emitConnected(userData:{userId:string,data:any}[],eventName:string){
+     emitIfConnected(userData:{userId:string,data:any}[],eventName:string){
       Logger.warn(JSON.stringify(userData),eventName)
       userData.forEach(({data,userId})=>{
         const sockets = this.get(userId)
@@ -56,6 +56,13 @@ export class SocketStateService{
           
         
       })
+        
+       
+     }
+     emitConnected(data:any,eventName:string){
+       this.getAll().forEach(socket=>{
+          socket.emit(eventName,data)
+       })
         
        
      }

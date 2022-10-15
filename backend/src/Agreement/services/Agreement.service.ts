@@ -7,6 +7,8 @@ import { AgreementEntity } from 'src/core/entities/Agreement.entity';
 import { AgreementExecJobsEntity } from 'src/core/entities/agreementExecJobs';
 import { AgreementStatus } from 'src/core/types/agreement-status.enum';
 import { AgreementType } from 'src/core/types/agreement-type.enum';
+import { Entity } from 'src/core/types/entity.enum';
+import { Operation } from 'src/core/types/operation.enum';
 import { PaginationResponse } from 'src/core/types/paginationResponse.interface';
 import { DirectionService } from 'src/direction/services/direction.service';
 import {  Repository } from 'typeorm';
@@ -67,6 +69,7 @@ export class AgreementService implements OnModuleInit{
 
         const res= await  this.agreementRepository.save({...agreementData,direction,departement,vendor});
         await this.userNotificationService.sendToUsersInDepartement(departement.id,`${agreement.type === AgreementType.CONTRACT ? "un nouveau contrat est ajoute a votre departement":"une nouvelle convension a etee ajoutee a votre departement"} avec le fournisseur: ${vendor.company_name}`)
+        await this.userNotificationService.sendNewEventToAuthenticatedUsers({entity:res.type as unknown as Entity,operation:Operation.INSERT,entityId:res.id,departementId,directionId})
         return res;
     }
 
@@ -134,7 +137,9 @@ export class AgreementService implements OnModuleInit{
         agreement.execution_start_date = execution_start_date;
         agreement.execution_end_date = execution_end_date;
         agreement.observation = observation;
+        
         return this.agreementRepository.save(agreement)
+
     }
     async getAgreementsStats(){
         const status = await this.agreementRepository.createQueryBuilder('ag')

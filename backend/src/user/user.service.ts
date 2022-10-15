@@ -1,14 +1,17 @@
-import { Injectable, InternalServerErrorException, Logger,BadRequestException, ForbiddenException } from "@nestjs/common";
+import { Injectable, InternalServerErrorException, Logger,BadRequestException, ForbiddenException, forwardRef, Inject } from "@nestjs/common";
 import { InjectDataSource, InjectRepository } from "@nestjs/typeorm";
 import { CreateUserDTO, UpdateUserDTO } from "src/core/dtos/user.dto";
 import { DepartementEntity } from "src/core/entities/Departement.entity";
 import { DirectionEntity } from "src/core/entities/Direction.entity";
 import { PasswordTokenEntity } from "src/core/entities/PasswordToken";
 import { UserEntity } from "src/core/entities/User.entity";
+import { Entity } from "src/core/types/entity.enum";
+import { Operation } from "src/core/types/operation.enum";
 import { PaginationResponse } from "src/core/types/paginationResponse.interface";
 import { DirectionService } from "src/direction/services/direction.service";
 import { DataSource, FindManyOptions, FindOptionsWhere, Repository, UpdateResult } from "typeorm";
 import { QueryDeepPartialEntity } from "typeorm/query-builder/QueryPartialEntity";
+import { UserNotificationService } from "./user-notification.service";
 
 @Injectable()
 export class UserService{
@@ -16,9 +19,8 @@ export class UserService{
     constructor(
         @InjectRepository(UserEntity) private userRepository:Repository<UserEntity>,
         private readonly directionService:DirectionService,
-        @InjectRepository(PasswordTokenEntity) private readonly passwordTokenRepository:Repository<PasswordTokenEntity>,
-        @InjectDataSource() private readonly dataSource:DataSource
-
+        @InjectDataSource() private readonly dataSource:DataSource,
+        @Inject(forwardRef(()=>UserNotificationService)) private readonly notificationService:UserNotificationService
         ){}
     async create(newUser:CreateUserDTO):Promise<UserEntity>{
         const {departementId = null,directionId = null,...userData} = newUser;  
@@ -33,7 +35,9 @@ export class UserService{
                 throw new  BadRequestException("departement is not in direction");
             }
         }
-        return this.userRepository.save({...userData,direction,departement});
+        const res = await  this.userRepository.save({...userData,direction,departement});
+        await this.notificationService.sendNewEventToAuthenticatedUsers({entity:Entity.USER,operation:Operation.INSERT,departementId,directionId,entityId:res.id})
+        return res;
     }
     async findBy(options:FindOptionsWhere<UserEntity>):Promise<UserEntity>{
         return this.userRepository.findOneBy(options)
@@ -159,7 +163,6 @@ export class UserService{
 
          }
          )
-        
-
     }
+
 }

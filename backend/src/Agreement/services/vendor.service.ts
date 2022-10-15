@@ -5,7 +5,10 @@ import { AgreementEntity } from 'src/core/entities/Agreement.entity';
 import { VendorEntity } from 'src/core/entities/Vendor.entity';
 import { VendorStatsEntity } from 'src/core/entities/VendorStats.entity';
 import { AgreementType } from 'src/core/types/agreement-type.enum';
+import { Entity } from 'src/core/types/entity.enum';
+import { Operation } from 'src/core/types/operation.enum';
 import { PaginationResponse } from 'src/core/types/paginationResponse.interface';
+import { UserNotificationService } from 'src/user/user-notification.service';
 import { DataSource, FindOptionsWhere, Repository, UpdateResult } from 'typeorm';
 
 @Injectable()
@@ -15,7 +18,8 @@ export class VendorService{
         @InjectRepository(VendorEntity) private readonly vendorRepository:Repository<VendorEntity>,
         @InjectRepository(VendorStatsEntity) private readonly vendorStatsRepository:Repository<VendorStatsEntity>,
 
-        @InjectDataSource() private dataSource:DataSource
+        @InjectDataSource() private dataSource:DataSource,
+        private notificationService:UserNotificationService
     ){}
     #format(d:Date){
         const newD = new Date(d);
@@ -49,6 +53,8 @@ export class VendorService{
             }else{
                 await vendorStatsRepository.save({date:createdAt,nb_vendors:1})
             }
+
+            await this.notificationService.sendNewEventToAuthenticatedUsers({entity:Entity.VENDOR,operation:Operation.INSERT,entityId:createdVendor.id})
             return createdVendor;
         })
        
