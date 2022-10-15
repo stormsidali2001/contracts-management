@@ -17,7 +17,7 @@ function MyApp({ Component, pageProps }: AppProps) {
      <ThemeProvider theme={theme}>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
           <WithPrivate>
-          <Component {...pageProps}  />
+            <Component {...pageProps}  />
           </WithPrivate>
         </LocalizationProvider>
       </ThemeProvider>

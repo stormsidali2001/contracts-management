@@ -200,7 +200,7 @@ export class AuthService{
             from: '"bmt" <assoulsidali@gmail.com>', // sender address
             to: email, // list of receivers separated by ,
             subject: "Mot de pasee oublié", // Subject line
-            html: `<b>vous avez envoyer une demmande de réinitialisation de mot de passe.</b><br/> presser sur le lien si il s'agit bien de vous </b><br/> le lien:  http://localhost:3000/resetpassword/${token}?uid=${userId}`, // html body
+            html: `<b>vous avez envoyer une demmande de réinitialisation de mot de passe.</b><br/> presser sur le lien si il s'agit bien de vous </b><br/> le lien:  http://localhost:3000/reset-password?token=${token}&userId=${userId}`, // html body
           });
     }
 }

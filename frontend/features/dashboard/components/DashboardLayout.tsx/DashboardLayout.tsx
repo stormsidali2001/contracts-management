@@ -1,5 +1,6 @@
 import { Alert, Snackbar } from '@mui/material';
 import { useEffect, useState } from 'react';
+import WithSnackbar from '../../../../global/withSnackbar';
 import { useAppDispatch, useAppSelector } from '../../../../hooks/redux/hooks';
 import { startConnecting } from '../../../notification/notificationSlice';
 import { clear } from '../../../ui/UiSlice';
@@ -27,12 +28,10 @@ const DashboardLayout = ({children}:any) => {
     <Sidebar/>
     <div>
         <Topbar/>
-        {children}
-        <Snackbar anchorOrigin={{horizontal:'center',vertical:"top"}} open={open} autoHideDuration={3000} onClose={handleClose}>
-            <Alert onClose={handleClose} severity={severty} sx={{ width: '100%' }}>
-              {message}
-            </Alert>
-        </Snackbar>
+        <WithSnackbar>
+          {children}
+        </WithSnackbar>
+        
     </div>
   </div>
   )

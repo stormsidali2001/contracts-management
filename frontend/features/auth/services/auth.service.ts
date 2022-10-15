@@ -26,14 +26,19 @@ const refresh = async ()=>{
   
 }
 const forgotPassword = async (email:string)=>{
-    await  axiosPrivate.post('/auth/forget-password',{email});
+    await  axiosPrivate.post('/auth/forgot-password',{email});
+}
+
+const resetPassword = async ({password,userId,token}:{password:string,userId:string,token:string})=>{
+    await  axiosPrivate.post('/auth/reset-password',{password,userId,token});
 }
 
 const authService ={
     login,
     logout,
     refresh,
-    forgotPassword
+    forgotPassword,
+    resetPassword
 }
 
 
