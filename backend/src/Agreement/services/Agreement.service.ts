@@ -69,7 +69,7 @@ export class AgreementService implements OnModuleInit{
 
         const res= await  this.agreementRepository.save({...agreementData,direction,departement,vendor});
         await this.userNotificationService.sendToUsersInDepartement(departement.id,`${agreement.type === AgreementType.CONTRACT ? "un nouveau contrat est ajoute a votre departement":"une nouvelle convension a etee ajoutee a votre departement"} avec le fournisseur: ${vendor.company_name}`)
-        await this.userNotificationService.sendNewEventToAuthenticatedUsers({entity:res.type as unknown as Entity,operation:Operation.INSERT,entityId:res.id,departementId,directionId})
+        await this.userNotificationService.sendNewEventToAuthenticatedUsers({entity:res.type as unknown as Entity,operation:Operation.INSERT,entityId:res.id,departementId:departement.id,directionId:direction.id})
         return res;
     }
 
