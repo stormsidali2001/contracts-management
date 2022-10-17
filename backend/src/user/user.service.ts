@@ -57,7 +57,7 @@ export class UserService{
     async findByEmailOrUsername({email,username}:{email:string,username:string}):Promise<UserEntity>{
         try{
             return this.userRepository.createQueryBuilder('user')
-            .select(['user.password','user.email','user.username','user.id','user.firstName','user.lastName','user.imageUrl','user.role'])
+            .select(['user.password','user.email','user.username','user.id','user.firstName','user.lastName','user.imageUrl','user.role','user.departementId','user.directionId'])
             .where('user.username = :username or user.email = :email',{username,email})
             .getOne();
         }catch(err){
@@ -90,18 +90,24 @@ export class UserService{
         }
     }   
   
-    async updateUser(id:string,newUser:UpdateUserDTO):Promise<UpdateResult>{
+    async updateUserUniqueCheck(id:string,newUser:UpdateUserDTO):Promise<UpdateResult>{
        
-            const userDb = await this.userRepository.findOneBy({username:newUser.username,email:newUser.email})
+            const userDb = await this.findByEmailOrUsername({email:newUser.email,username:newUser.username})
             if(userDb && userDb.id !== id) throw new ForbiddenException("username et l'email   exists deja")
-            
    
-        return this.userRepository.update(id,newUser)
+             const res = await  this.userRepository.update(id,newUser)
+             await this.notificationService.sendNewEventToAuthenticatedUsers({
+                entity:Entity.USER,
+                entityId:id,
+                operation:Operation.UPDATE,
+                departementId:userDb.departementId,
+                directionId:userDb.directionId
+             })
+
+             return res;
     }
 
-    async updateUserData(userId:string,partialUser:QueryDeepPartialEntity<UserEntity>){
-        return this.userRepository.update(userId,partialUser)
-    }
+   
 
     async findByIdWithDepartementAndDirection(id:string){
         return this.userRepository.createQueryBuilder("u")
@@ -138,6 +144,7 @@ export class UserService{
             const passwordTokenRepository = manager.getRepository(PasswordTokenEntity);
             const tokenDb = await passwordTokenRepository.save({token,expiresIn:new Date(Date.now()+1000*60*15)});
            await userRepository.update(userId,{password_token:tokenDb})
+         
         })
     }
     async deleteUserPasswordToken(id:string,userId:string){
@@ -150,19 +157,32 @@ export class UserService{
 
          }
          )
+
+      
         
 
     }
-    async deleteUserPasswordTokenAndUpdatePassword(id:string,userId:string,password:string){
+    async deleteUserPasswordTokenAndUpdatePassword(id:string,userId:string,password:string,directionId:string,departementId:string){
          await this.dataSource.transaction(async manager =>{
 
              const userRepository = manager.getRepository(UserEntity);
              const passwordTokenRepository = manager.getRepository(PasswordTokenEntity);
              await userRepository.update(userId,{password_token:null,password})
-             await  passwordTokenRepository.delete(id)
+             await  passwordTokenRepository.delete(id);
 
+             await this.notificationService.sendNewEventToAuthenticatedUsers({
+                entity:Entity.USER,
+                entityId:userId,
+                operation:Operation.UPDATE,
+                directionId,
+                departementId
+             })
          }
+
          )
+
+           
+
     }
 
 }
