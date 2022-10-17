@@ -36,7 +36,7 @@ export class UserService{
             }
         }
         const res = await  this.userRepository.save({...userData,direction,departement});
-        await this.notificationService.sendNewEventToAuthenticatedUsers({entity:Entity.USER,operation:Operation.INSERT,departementId,directionId,entityId:res.id})
+        await this.notificationService.sendNewEventToAuthenticatedUsers({entity:Entity.USER,operation:Operation.INSERT,departementId:departement.id,directionId:direction.id,entityId:res.id})
         return res;
     }
     async findBy(options:FindOptionsWhere<UserEntity>):Promise<UserEntity>{
