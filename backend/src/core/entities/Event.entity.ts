@@ -31,12 +31,12 @@ export class EventEntity{
     @Column()
     entityId:string;
 
-    @Column({name:"departementId"})
+    @Column({name:"departementId",nullable:true})
     departementId:string;
     @ManyToOne(type=>DepartementEntity,dp=>dp.employees) @JoinColumn({name:"departementId"})
     departement:DepartementEntity;
 
-    @Column({name:"directionId"})
+    @Column({name:"directionId",nullable:true})
     directionId:string;
 
     @ManyToOne(type=>DirectionEntity,dr=>dr.employees) @JoinColumn({name:"directionId"})
