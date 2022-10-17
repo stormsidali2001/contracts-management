@@ -66,10 +66,15 @@ export class UserEntity{
     @CreateDateColumn({type:'datetime'})
     created_at:Date;
     //relations
-    @ManyToOne(type=>DepartementEntity,dp=>dp.employees)
+    @Column({name:"departementId"})
+    departementId:string;
+    @ManyToOne(type=>DepartementEntity,dp=>dp.employees) @JoinColumn({name:"departementId"})
     departement:DepartementEntity;
 
-    @ManyToOne(type=>DirectionEntity,dr=>dr.employees)
+    @Column({name:"directionId"})
+    directionId:string;
+
+    @ManyToOne(type=>DirectionEntity,dr=>dr.employees) @JoinColumn({name:"directionId"})
     direction:DirectionEntity;
 
     @OneToMany(type=>NotificationEntity,n=>n.user)

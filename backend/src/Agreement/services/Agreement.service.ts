@@ -107,7 +107,9 @@ export class AgreementService implements OnModuleInit{
     }
     async executeAgreement(execData:ExecuteAgreementDTO){
         const {observation = '',execution_start_date,execution_end_date,agreementId} = execData;
-        const agreement = await this.agreementRepository.findOneBy({id:agreementId});
+        const agreement = await this.agreementRepository.createQueryBuilder('ag')
+        .where("ag.id = :agreementId",{agreementId})
+        .getOne();
         if(!agreement){
             throw new NotFoundException("l'accord specifiee n'es pas touvee")
         }
@@ -138,6 +140,7 @@ export class AgreementService implements OnModuleInit{
         agreement.execution_end_date = execution_end_date;
         agreement.observation = observation;
         
+        await this.userNotificationService.sendNewEventToAuthenticatedUsers({entity:agreement.type as unknown as Entity,operation:Operation.INSERT,entityId:agreement.id,departementId:agreement.departementId,directionId:agreement.directionId})
         return this.agreementRepository.save(agreement)
 
     }
