@@ -37,7 +37,7 @@ export class UserController{
     @UseGuards(JwtAccessTokenGuard)
     @Put(':id')
     async updateUser(@Param('id') id:string,@Body() user:UpdateUserDTO):Promise<UpdateResult>{
-        return this.userService.updateUser(id,user)
+        return await this.userService.updateUserUniqueCheck(id,user)
     }
 
    
