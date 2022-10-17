@@ -1,6 +1,8 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Entity as ET } from "../types/entity.enum";
 import { Operation } from "../types/operation.enum";
+import { DepartementEntity } from "./Departement.entity";
+import { DirectionEntity } from "./Direction.entity";
 
 
 @Entity('event')
@@ -29,14 +31,15 @@ export class EventEntity{
     @Column()
     entityId:string;
 
-    @Column({
-        nullable:true
-    })
+    @Column({name:"departementId"})
     departementId:string;
+    @ManyToOne(type=>DepartementEntity,dp=>dp.employees) @JoinColumn({name:"departementId"})
+    departement:DepartementEntity;
 
-    @Column({
-        nullable:true
-    })
+    @Column({name:"directionId"})
     directionId:string;
+
+    @ManyToOne(type=>DirectionEntity,dr=>dr.employees) @JoinColumn({name:"directionId"})
+    direction:DirectionEntity;
 
 }

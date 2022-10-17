@@ -1,6 +1,7 @@
 import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { AgreementEntity } from "./Agreement.entity";
 import { DepartementEntity } from "./Departement.entity";
+import { EventEntity } from "./Event.entity";
 import { UserEntity } from "./User.entity";
 
 @Entity('directions')
@@ -26,6 +27,9 @@ export class DirectionEntity{
 
     @OneToMany(type=>UserEntity,u=>u.direction)
     employees:UserEntity[];
+
+    @OneToMany(type=>EventEntity , e=>e.direction)
+    events:EventEntity[];
 
     
 }
