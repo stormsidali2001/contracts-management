@@ -140,7 +140,7 @@ export class AgreementService implements OnModuleInit{
         agreement.execution_end_date = execution_end_date;
         agreement.observation = observation;
         
-        await this.userNotificationService.sendNewEventToAuthenticatedUsers({entity:agreement.type as unknown as Entity,operation:Operation.INSERT,entityId:agreement.id,departementId:agreement.departementId,directionId:agreement.directionId})
+        await this.userNotificationService.sendNewEventToAuthenticatedUsers({entity:agreement.type as unknown as Entity,operation:Operation.EXECUTE,entityId:agreement.id,departementId:agreement.departementId,directionId:agreement.directionId})
         return this.agreementRepository.save(agreement)
 
     }
