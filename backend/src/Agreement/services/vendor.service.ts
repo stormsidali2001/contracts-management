@@ -54,7 +54,7 @@ export class VendorService{
                 await vendorStatsRepository.save({date:createdAt,nb_vendors:1})
             }
 
-            await this.notificationService.sendNewEventToAuthenticatedUsers({entity:Entity.VENDOR,operation:Operation.INSERT,entityId:createdVendor.id})
+            await this.notificationService.sendNewEventToAuthenticatedUsers({entity:Entity.VENDOR,operation:Operation.INSERT,entityId:createdVendor.id,createdAt:new Date()})
             return createdVendor;
         })
        

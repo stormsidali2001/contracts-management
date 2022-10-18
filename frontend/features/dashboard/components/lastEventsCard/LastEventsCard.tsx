@@ -1,7 +1,12 @@
+import moment   from 'moment'
+import 'moment-locale-fr'
+moment.locale("fr")
 import { useAppDispatch, useAppSelector } from '../../../../hooks/redux/hooks'
 import { Entity } from '../../../notification/models/Entity.enum'
 import { Operation } from '../../../notification/models/Operation.enum'
 import styles from './LastEventsCard.module.css'
+
+
 const getTextFromOperation = (operation:Operation)=>{
   switch(operation){
     case Operation.INSERT: return "creation"
@@ -23,12 +28,14 @@ const getEntityText = (entityType:Entity)=>{
 
 const getElementStyle = (entity:Entity)=>{
   switch(entity){
-    case Entity.EMPLOYEE , Entity.JURIDICAL , Entity.ADMIN: return "UsersCircle";
-    case Entity.CONTRACT , Entity.CONVENSION : return "AgreementsCircle";
+    case Entity.EMPLOYEE: return "UsersCircle";
+    case Entity.JURIDICAL: return "UsersCircle";
+    case Entity.ADMIN: return "UsersCircle";
+    case Entity.CONTRACT  : return "AgreementsCircle";
+    case Entity.CONVENSION  : return "AgreementsCircle";
     case Entity.VENDOR : return "VendorCircle";
   }
 
-  return "";
 }
 const LastEventsCard = () => {
  
@@ -44,9 +51,11 @@ const LastEventsCard = () => {
             const extra =  ev.departementId && ev.departementId ?`dans : ${ev.directionAbriviation} , ${ev.departementAbriviation}`:"";
             return (
               <li className={styles.event}>
-                <span  className={`${styles.circle} ${styles[getElementStyle(ev.entity)]}`}></span>
+                <span  className={`${styles.circle} ${styles[getElementStyle(ev.entity)]} `}></span>
                 <p className={styles.body}>{operation}: {entity} {extra}</p>
+                <span className={styles.eventDate}>{moment(ev.createdAt).fromNow()}</span>
               </li>
+
             )
           })
         }
