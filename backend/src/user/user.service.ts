@@ -8,6 +8,7 @@ import { UserEntity } from "src/core/entities/User.entity";
 import { Entity } from "src/core/types/entity.enum";
 import { Operation } from "src/core/types/operation.enum";
 import { PaginationResponse } from "src/core/types/paginationResponse.interface";
+import { UserRole } from "src/core/types/UserRole.enum";
 import { DirectionService } from "src/direction/services/direction.service";
 import { DataSource, FindManyOptions, FindOptionsWhere, Repository, UpdateResult } from "typeorm";
 import { QueryDeepPartialEntity } from "typeorm/query-builder/QueryPartialEntity";
@@ -36,7 +37,8 @@ export class UserService{
             }
         }
         const res = await  this.userRepository.save({...userData,direction,departement});
-        await this.notificationService.sendNewEventToAuthenticatedUsers({entity:Entity.USER,operation:Operation.INSERT,departementId:departement.id,directionId:direction.id,entityId:res.id})
+
+        await this.notificationService.sendNewEventToAuthenticatedUsers({entity:res.role as unknown as Entity,operation:Operation.INSERT,departementId:departement.id,directionId:direction.id,entityId:res.id})
         return res;
     }
     async findBy(options:FindOptionsWhere<UserEntity>):Promise<UserEntity>{
@@ -97,7 +99,7 @@ export class UserService{
    
              const res = await  this.userRepository.update(id,newUser)
              await this.notificationService.sendNewEventToAuthenticatedUsers({
-                entity:Entity.USER,
+                entity:userDb.role as unknown as Entity,
                 entityId:id,
                 operation:Operation.UPDATE,
                 departementId:userDb.departementId,
@@ -162,7 +164,7 @@ export class UserService{
         
 
     }
-    async deleteUserPasswordTokenAndUpdatePassword(id:string,userId:string,password:string,directionId:string,departementId:string){
+    async deleteUserPasswordTokenAndUpdatePassword(id:string,userId:string,password:string,directionId:string,departementId:string,userRole:UserRole){
          await this.dataSource.transaction(async manager =>{
 
              const userRepository = manager.getRepository(UserEntity);
@@ -171,7 +173,7 @@ export class UserService{
              await  passwordTokenRepository.delete(id);
 
              await this.notificationService.sendNewEventToAuthenticatedUsers({
-                entity:Entity.USER,
+                entity:userRole as unknown as Entity ,
                 entityId:userId,
                 operation:Operation.UPDATE,
                 directionId,

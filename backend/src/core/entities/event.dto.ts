@@ -19,4 +19,10 @@ export class CreateEventDTO{
     @IsOptional()
     @IsUUID()
     directionId?:string;
+
+    @IsOptional()
+    departementAbrivation?:string;
+
+    @IsOptional()
+    directionAbriviation?:string;
 }

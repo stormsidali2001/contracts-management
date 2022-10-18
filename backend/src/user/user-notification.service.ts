@@ -36,7 +36,7 @@ export class UserNotificationService{
 
     async sendNewEventToAuthenticatedUsers(params:CreateEventDTO){
          await this.eventService.addEvent(params)
-         this.socketStateService.emitConnected({...params},"new-event");
+         this.socketStateService.emitConnected({...params},"SEND_EVENT");
 
     }
 }

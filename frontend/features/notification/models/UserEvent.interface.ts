@@ -9,4 +9,7 @@ export interface UserEvent{
     createAt:Date;
     departementId:string;
     directionId:string;
+    departementAbriviation:string;
+    directionAbriviation:string;
+    
 }
