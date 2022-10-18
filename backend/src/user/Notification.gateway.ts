@@ -50,11 +50,13 @@ export class NotificationsGateWay implements OnGatewayInit , OnGatewayConnection
         client.emit("send_all_notifications",notifications)
     }
 
-    @SubscribeMessage('get_last_events')
+    @SubscribeMessage('REQUEST_ALL_EVENTS')
     async getLastEvents(@ConnectedSocket() client:SocketWithJwtPayload){
+        this.logger.debug(`request all events user : ${client.user.email}`);
         const events =  await this.eventService.getEvents(20);
 
-        client.emit("send_last_events",events)
+
+        client.emit("SEND_EVENTS",events)
     }
    
 }

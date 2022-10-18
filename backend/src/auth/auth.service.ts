@@ -182,7 +182,7 @@ export class AuthService{
             throw new UnauthorizedException("votre demande de re-initialization a expiré");
         }
         const hashed_password = await this.#hashPassword(password);
-        await this.userService.deleteUserPasswordTokenAndUpdatePassword(userDb.password_token.id,userDb.id,hashed_password,userDb.directionId,userDb.departementId)
+        await this.userService.deleteUserPasswordTokenAndUpdatePassword(userDb.password_token.id,userDb.id,hashed_password,userDb.directionId,userDb.departementId,userDb.role)
         return "done";
     }
 

@@ -42,4 +42,11 @@ export class EventEntity{
     @ManyToOne(type=>DirectionEntity,dr=>dr.employees) @JoinColumn({name:"directionId"})
     direction:DirectionEntity;
 
+    @Column()
+    departementAbriviation:string;
+
+    @Column()
+    directionAbriviation:string;
+    
+
 }
