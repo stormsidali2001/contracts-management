@@ -45,6 +45,7 @@
     border-radius: 5px;
     padding: 8px;
     column-gap: 4px;
+    position: relative;
 
 }
 .event .body{
@@ -53,6 +54,7 @@
     font-weight: 400;
     font-size: 12px;
     color: #1E1D1D;
+    margin-bottom: 10px;
 }
 .circle{
     width: 6px;
@@ -72,4 +74,14 @@
 
 .VendorCircle{
     background: #59FF91;
+}
+.eventDate{
+    position: absolute;
+    bottom: 4px;
+    right:4px;
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 10px;
+    color: #1E1D1D;
 }

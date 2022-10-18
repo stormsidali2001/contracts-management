@@ -23,7 +23,7 @@ export class EventService{
     async getEvents(limit:number){
         return this.eventRepository.createQueryBuilder("e")
         .limit(limit)
-        .orderBy("e.createdAt",'ASC')
+        .orderBy("e.createdAt",'DESC')
         .getMany()
     }
     

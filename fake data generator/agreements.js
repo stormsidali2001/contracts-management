@@ -50,7 +50,7 @@ async function generateAgreements(directions,vendorIds){
     if(directions.length === 0 ) return ;
     const arr = [];
     const randomElemenetFromArray = (arr)=>arr[Math.floor(Math.random()*(arr.length - 1))]
-    for(let i=0;i<500;i++){
+    for(let i=0;i<(process.argv.at(2) ?? 1);i++){
         const randomVendorId = randomElemenetFromArray(vendorIds)
         const randomDirection = randomElemenetFromArray(directions)
         if(randomDirection.departements.length ===0) continue;

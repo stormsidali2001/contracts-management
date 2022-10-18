@@ -6,7 +6,7 @@ export interface UserEvent{
     entityId:string;
     entity:Entity;
     operation:Operation;
-    createAt:Date;
+    createdAt:Date;
     departementId:string;
     directionId:string;
     departementAbriviation:string;

@@ -26,7 +26,7 @@ async function generateUsers(directions){
     if(directions.length === 0 ) return ;
     const arr = [];
    
-    for(let i=0;i<5;i++){
+    for(let i=0;i<(process.argv.at(2) ?? 1);i++){
         const randomDirection = randomElemenetFromArray(directions)
         if(randomDirection.departements.length ===0) continue;
         const randomDepartement = randomElemenetFromArray(randomDirection.departements);

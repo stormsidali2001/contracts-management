@@ -65,4 +65,5 @@ async function generateVendors(num){
         console.error(err.message);    
     }
 }
-generateVendors(100)
+console.log(process.argv[2])
+generateVendors(process.argv.at(2) ?? 1)

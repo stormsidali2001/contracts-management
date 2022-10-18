@@ -25,4 +25,7 @@ export class CreateEventDTO{
 
     @IsOptional()
     directionAbriviation?:string;
+
+    @IsOptional()
+    createdAt?:Date;
 }

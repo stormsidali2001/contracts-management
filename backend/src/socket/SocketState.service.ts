@@ -37,8 +37,11 @@ export class SocketStateService{
         return this.socketState.get(userId) ||[];
     }
     public getAll(): Socket[] {
-        const all = []
-        this.socketState.forEach(sockets => all.push(sockets))
+        let all = []
+        this.socketState.forEach(sockets => {
+          all = [...all,...sockets]
+        
+        })
         return all;
       }
     
@@ -62,6 +65,7 @@ export class SocketStateService{
      emitConnected(data:any,eventName:string){
        this.getAll().forEach(socket=>{
           socket.emit(eventName,data)
+          Logger.debug(`${socket.id} recieved ${JSON.stringify(data)}`,eventName)
        })
         
        

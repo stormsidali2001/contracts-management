@@ -2102,6 +2102,11 @@ minimist@^1.2.0, minimist@^1.2.6:
   resolved "https://registry.yarnpkg.com/minimist/-/minimist-1.2.6.tgz#8637a5b759ea0d6e98702cfb3a9283323c93af44"
   integrity sha512-Jsjnk4bw3YJqYzbdyBiNsPWHPfO++UGG749Cxs6peCu5Xg4nrena6OVxOYxrQTqww0Jmwt+Ref8rggumkTLz9Q==
 
+moment-locale-fr@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/moment-locale-fr/-/moment-locale-fr-1.0.0.tgz#cfbad79ac29cbe6d5bb022ea4cfd483bfb3ae2bd"
+  integrity sha512-qDcq2GDmLJLVTFkt8f+uyQj+PCKxbqbJ5hRQvRhMqMrVS4HwO0n//51b8xFS/5VE1PfMzXAolx1U41gcQZXyfw==
+
 moment@^2.29.4:
   version "2.29.4"
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.29.4.tgz#3dbe052889fe7c1b2ed966fcb3a77328964ef108"
