@@ -13,5 +13,12 @@ export class EventService{
     async addEvent({entity,entityId,operation,departementId = null,directionId = null}:CreateEventDTO){
         await this.eventRepository.save({entity,entityId,operation,departementId,directionId});
     }
+    async getEvents(limit:number){
+        return this.eventRepository.createQueryBuilder("e")
+        .limit(limit)
+        .orderBy("e.createdAt",'ASC')
+        .getMany()
+    }
+    
 
 }

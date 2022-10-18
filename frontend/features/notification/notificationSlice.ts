@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Notification } from "./models/Notification.interface";
+import { UserEvent } from "./models/UserEvent.interface";
 
 
 
@@ -10,13 +11,16 @@ interface AsyncState{
 interface NotificationState extends AsyncState{
     notifications:Notification[],
     isEstablishingConnection:boolean,
-    isConnected:boolean
+    isConnected:boolean,
+    events:UserEvent[]
 }
 
 export const initialState:NotificationState = {
     notifications:[],
     isEstablishingConnection:false,
     isConnected:false,
+    events:[]
+
 }
 
 
@@ -32,15 +36,28 @@ export const notificationSlice = createSlice({
             state.isEstablishingConnection = false;
         },
         recieveNotification:(state,action:PayloadAction<{notification:Notification}>)=>{
-            state.notifications.push(action.payload.notification);
+            state.notifications.unshift(action.payload.notification);
         },
         recieveNotifications:(state,action:PayloadAction<{notifications:Notification[]}>)=>{
             state.notifications = action.payload.notifications;
         },
+        recieveUserEvents(state,action:PayloadAction<{events:UserEvent[]}>){
+            state.events = action.payload.events;
+        },
+        recieveUserEvent(state,action:PayloadAction<{event:UserEvent}>){
+            state.events.unshift(action.payload.event)
+        }
     }
 })
 
 
 
 
-export const {startConnecting,connectionEstablished,recieveNotification,recieveNotifications} = notificationSlice.actions;
+export const {
+    startConnecting,
+    connectionEstablished,
+    recieveNotification,
+    recieveNotifications,
+    recieveUserEvents,
+    recieveUserEvent
+} = notificationSlice.actions;
