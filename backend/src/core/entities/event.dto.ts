@@ -21,7 +21,7 @@ export class CreateEventDTO{
     directionId?:string;
 
     @IsOptional()
-    departementAbrivation?:string;
+    departementAbriviation?:string;
 
     @IsOptional()
     directionAbriviation?:string;

@@ -36,9 +36,11 @@ export class UserService{
                 throw new  BadRequestException("departement is not in direction");
             }
         }
-        const res = await  this.userRepository.save({...userData,direction,departement});
 
-        await this.notificationService.sendNewEventToAuthenticatedUsers({entity:res.role as unknown as Entity,operation:Operation.INSERT,departementId:departement.id,directionId:direction.id,entityId:res.id})
+
+        const res = await  this.userRepository.save({...userData,direction,departement});
+        console.log('testoooooooo',direction)
+        await this.notificationService.sendNewEventToAuthenticatedUsers({entity:res.role as unknown as Entity,operation:Operation.INSERT,departementId:departement.id,directionId:direction.id,entityId:res.id,departementAbriviation:departement.abriviation,directionAbriviation:direction.abriviation})
         return res;
     }
     async findBy(options:FindOptionsWhere<UserEntity>):Promise<UserEntity>{
@@ -94,7 +96,12 @@ export class UserService{
   
     async updateUserUniqueCheck(id:string,newUser:UpdateUserDTO):Promise<UpdateResult>{
        
-            const userDb = await this.findByEmailOrUsername({email:newUser.email,username:newUser.username})
+            const userDb = await this.userRepository.createQueryBuilder('user')
+            .select(['user.password','user.email','user.username','user.id','user.firstName','user.lastName','user.imageUrl','user.role','user.departementId','user.directionId'])
+            .where('user.username = :username or user.email = :email',{username:newUser.username,email:newUser.email})
+            .leftJoinAndSelect('user.departement','dp')
+            .leftJoinAndSelect("user.direction",'dr')
+            .getOne();
             if(userDb && userDb.id !== id) throw new ForbiddenException("username et l'email   exists deja")
    
              const res = await  this.userRepository.update(id,newUser)
@@ -103,7 +110,9 @@ export class UserService{
                 entityId:id,
                 operation:Operation.UPDATE,
                 departementId:userDb.departementId,
-                directionId:userDb.directionId
+                directionId:userDb.directionId,
+                departementAbriviation:userDb.departement.abriviation,
+                directionAbriviation:userDb.direction.abriviation
              })
 
              return res;
