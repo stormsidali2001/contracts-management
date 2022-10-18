@@ -42,10 +42,10 @@ export class EventEntity{
     @ManyToOne(type=>DirectionEntity,dr=>dr.employees) @JoinColumn({name:"directionId"})
     direction:DirectionEntity;
 
-    @Column()
+    @Column({nullable:true})
     departementAbriviation:string;
 
-    @Column()
+    @Column({nullable:true})
     directionAbriviation:string;
     
 

@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, Logger } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { CreateEventDTO } from "src/core/entities/event.dto";
 import { EventEntity } from "src/core/entities/Event.entity";
@@ -10,9 +10,10 @@ export class EventService{
     constructor(
         @InjectRepository(EventEntity) private readonly eventRepository:Repository<EventEntity> 
     ){}
-    async addEvent({entity,entityId,operation,departementId = null,directionId = null , departementAbrivation = '',directionAbriviation = ''}:CreateEventDTO){
+    async addEvent({entity,entityId,operation,departementId = null,directionId = null , departementAbriviation,directionAbriviation }:CreateEventDTO){
+        Logger.debug('yooooooooow'+directionAbriviation+" "+departementAbriviation)
         if(directionId && departementId){
-            await this.eventRepository.save({entity,entityId,operation,departementId,directionId,departementAbrivation, directionAbriviation });
+            await this.eventRepository.save({entity,entityId,operation,departementId,directionId,departementAbriviation, directionAbriviation });
             return;
         }
 
