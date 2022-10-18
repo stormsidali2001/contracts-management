@@ -2,6 +2,7 @@ import { Logger } from "@nestjs/common";
 import { ConnectedSocket, OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit, SubscribeMessage, WebSocketGateway, WebSocketServer } from "@nestjs/websockets";
 import { Namespace ,Socket} from "socket.io";
 import { SocketWithJwtPayload } from "src/auth/types/JwtPayload.interface";
+import { EventService } from "src/Event/services/Event.service";
 import { SocketStateService } from "src/socket/SocketState.service";
 import { UserNotificationService } from "src/user/user-notification.service";
 
@@ -14,7 +15,9 @@ import { UserNotificationService } from "src/user/user-notification.service";
 export class NotificationsGateWay implements OnGatewayInit , OnGatewayConnection , OnGatewayDisconnect{
     constructor(
         private socketStateService:SocketStateService,
-        private notificationService:UserNotificationService
+        private notificationService:UserNotificationService,
+        private readonly eventService:EventService
+
     ){}
     private readonly logger = new Logger(NotificationsGateWay.name);
     @WebSocketServer() io:Namespace;
@@ -44,10 +47,14 @@ export class NotificationsGateWay implements OnGatewayInit , OnGatewayConnection
         const userId = client.user.sub;
         const notifications = await this.notificationService.getUserNotifications(userId)
         this.logger.debug(`request all notifications user : ${client.user.email}`);
-
         client.emit("send_all_notifications",notifications)
+    }
 
+    @SubscribeMessage('get_last_events')
+    async getLastEvents(@ConnectedSocket() client:SocketWithJwtPayload){
+        const events =  await this.eventService.getEvents(20);
 
+        client.emit("send_last_events",events)
     }
    
 }

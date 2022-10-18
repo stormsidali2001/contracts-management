@@ -4,7 +4,9 @@ import { refresh_token, setCredentials } from "../auth/authSlice";
 import authService from "../auth/services/auth.service";
 import { Notification } from "./models/Notification.interface";
 import { NotificationEvents } from "./models/NotificationEvents";
-import { connectionEstablished, recieveNotification, recieveNotifications, startConnecting } from "./notificationSlice";
+import { UserEvent } from "./models/UserEvent.interface";
+import { UserEventsTypes } from "./models/UserEventTypes.enum";
+import { connectionEstablished, recieveNotification, recieveNotifications, recieveUserEvent, recieveUserEvents, startConnecting } from "./notificationSlice";
 
 
 
@@ -31,6 +33,7 @@ const notificationMiddleware:Middleware = store=>{
             socket.on('connect',()=>{
                 store.dispatch(connectionEstablished())
                 socket.emit(NotificationEvents.RequestAllNotifications)
+                socket.emit(UserEventsTypes.REQUEST_ALL_EVENTS);
             })
             socket.on("connect_error", async (err) => {
                
@@ -55,6 +58,12 @@ const notificationMiddleware:Middleware = store=>{
             })
             socket.on(NotificationEvents.sendNotification,(notification:Notification)=>{
                 store.dispatch(recieveNotification({notification}))
+            })
+            socket.on(UserEventsTypes.SEND_EVENTS,(events:UserEvent[])=>{
+                store.dispatch(recieveUserEvents({events}))
+            })
+            socket.on(UserEventsTypes.SEND_EVENT,(event:UserEvent)=>{
+                store.dispatch(recieveUserEvent({event}))
             })
         }
         
