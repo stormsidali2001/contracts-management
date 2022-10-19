@@ -15,6 +15,7 @@ import {
   ArcElement,
   BarElement
 } from "chart.js";
+import { useAppSelector } from '../../../../hooks/redux/hooks';
 ChartJS.register(
   ArcElement,
   BarElement
@@ -22,9 +23,10 @@ ChartJS.register(
 interface PropTypes{
   stats:any
 }
-const AgreementStatsCard = ({stats}:PropTypes)=> {
+const AgreementStatsCard = ()=> {
   const [expanded,setExpanded] = useState(false);
   const cardId = useId();
+  const {agreementsStats:stats} = useAppSelector(state=>state.StatisticsSlice)
  
   if(!stats) return <div className={styles.container}>Loading...</div>;
   return (

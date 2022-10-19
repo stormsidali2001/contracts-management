@@ -18,6 +18,7 @@ import {Line } from 'react-chartjs-2'
 import 'chartjs-adapter-date-fns';
 import {fr} from 'date-fns/locale';
 import { AnimateSharedLayout,motion } from 'framer-motion';
+import { useAppSelector } from '../../../../hooks/redux/hooks';
 
 
 ChartJS.register(
@@ -32,13 +33,11 @@ ChartJS.register(
  
 );
 
-interface PropType{
-  stats:any
-}
 
-const VendorsCard = ({stats}:PropType) => {
+const VendorsCard = () => {
   const [expanded , setExpanded] = useState(false);
   const cardId = useId();
+  const {vendorStats:stats} = useAppSelector(state=>state.StatisticsSlice)
 
  
   return (

@@ -19,15 +19,16 @@ import {
   registerables,
   ArcElement
 } from "chart.js";
+import { useAppSelector } from '../../../../hooks/redux/hooks';
 
 ChartJS.register(
   ArcElement
 )
-interface PropTypes{
-  stats:any;
-}
 
-const UsersCard = ({stats}:PropTypes) => {
+
+const UsersCard = () => {
+  const {userTypes:stats} = useAppSelector(state=>state.StatisticsSlice)
+  
   const [expanded,setExpanded] = useState(false)
   const cardId = useId();
   if(!stats) return <div className={styles.container}>Loading...</div>
