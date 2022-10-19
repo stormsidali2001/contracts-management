@@ -20,7 +20,7 @@ export interface StatisticsSlice extends AsyncState{
         types:AgreementTypes
    } | null,
    userTypes:UserTypes | null,
-   vendorStats:VendorStats | null
+   vendorsStats:VendorStats | null
 }
 
 const initialState:StatisticsSlice = {
@@ -29,7 +29,7 @@ const initialState:StatisticsSlice = {
     isSuccess:false,
     agreementsStats:null,
     userTypes:null,
-    vendorStats:null
+    vendorsStats:null
     
 }
 
@@ -61,10 +61,10 @@ const StatisticsSlice = createSlice(
                 state.isLoading = false;
                 state.isError = false;
                 state.isSuccess = true;
-                
+
                 state.userTypes = action.payload.userTypes;
-                state.vendorStats = action.payload.vendorStats;
-                state.agreementsStats = action.payload.vendorStats;
+                state.vendorsStats = action.payload.vendorsStats;
+                state.agreementsStats = action.payload.agreementsStats;
             })
         }
     }
