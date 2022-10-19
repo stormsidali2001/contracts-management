@@ -1,9 +1,14 @@
 import { Middleware } from "redux";
 import { Socket ,io} from "socket.io-client";
 import { refresh_token, setCredentials } from "../auth/authSlice";
+import { UserRole } from "../auth/models/user-role.enum";
 import authService from "../auth/services/auth.service";
+import { newCreatedUserEvent, newCreatedVendorEvent } from "../statistics/StatisticsSlice";
+import { Entity } from "./models/Entity.enum";
 import { Notification } from "./models/Notification.interface";
 import { NotificationEvents } from "./models/NotificationEvents";
+import { Operation } from "./models/Operation.enum";
+import { StatsEvents } from "./models/StatsEvents.interface";
 import { UserEvent } from "./models/UserEvent.interface";
 import { UserEventsTypes } from "./models/UserEventTypes.enum";
 import { connectionEstablished, recieveNotification, recieveNotifications, recieveUserEvent, recieveUserEvents, startConnecting } from "./notificationSlice";
@@ -36,7 +41,7 @@ const notificationMiddleware:Middleware = store=>{
                 socket.emit(UserEventsTypes.REQUEST_ALL_EVENTS);
             })
             socket.on("connect_error", async (err) => {
-               
+               alert("connection error")
                 console.log("t11",err?.message)
                 if(err?.message === 'unauthorized' && dt > 2000){
                      dt = Date.now() - then;
@@ -44,6 +49,9 @@ const notificationMiddleware:Middleware = store=>{
                   try{
                     const data = await authService.refresh()
                     setCredentials(data)
+                    socket.auth = {
+                        token:data.jwt
+                    };
                     socket.connect()
 
                   }catch(err){
@@ -64,7 +72,19 @@ const notificationMiddleware:Middleware = store=>{
             })
             socket.on(UserEventsTypes.SEND_EVENT,(event:UserEvent)=>{
                 store.dispatch(recieveUserEvent({event}))
+                
+                const options = [Entity.JURIDICAL , Entity.EMPLOYEE , Entity.ADMIN];
+                // if(options.includes(event.entity)){
+
+                //     store.dispatch(newCreatedUserEvent({type:event.entity,operation:event.operation}))
+                // }
+                // else
+                 if(event.entity === Entity.VENDOR){
+                    alert("")
+                    store.dispatch(newCreatedVendorEvent({date:event.createdAt,operation:event.operation}))
+                }
             })
+          
         }
         
         next(action);

@@ -36,8 +36,6 @@ export class UserService{
                 throw new  BadRequestException("departement is not in direction");
             }
         }
-
-
         const res = await  this.userRepository.save({...userData,direction,departement});
         console.log('testoooooooo',direction)
         await this.notificationService.sendNewEventToAuthenticatedUsers({entity:res.role as unknown as Entity,operation:Operation.INSERT,departementId:departement.id,directionId:direction.id,entityId:res.id,departementAbriviation:departement.abriviation,directionAbriviation:direction.abriviation})
