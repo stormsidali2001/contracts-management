@@ -2,6 +2,7 @@ import { forwardRef, Inject, Injectable, Logger } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { CreateEventDTO } from "src/core/entities/event.dto";
 import { NotificationEntity } from "src/core/entities/Notification.entity";
+import { UserRole } from "src/core/types/UserRole.enum";
 import { EventService } from "src/Event/services/Event.service";
 import { SocketStateService } from "src/socket/SocketState.service";
 import { Repository } from "typeorm";
@@ -39,4 +40,5 @@ export class UserNotificationService{
          this.socketStateService.emitConnected({...params},"SEND_EVENT");
 
     }
+   
 }

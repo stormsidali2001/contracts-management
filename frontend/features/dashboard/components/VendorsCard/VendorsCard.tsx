@@ -60,7 +60,7 @@ export default VendorsCard;
 
 export function CompactCard({stats,cardId,setExpanded}:any){
   const data = {
-    labels: stats?.map((el:any)=>(new Date(el.date) ))?? [],
+    labels: stats?.map((el:any)=>(el.date ))?? [],
     datasets: [
       {
         label: 'nombre de fournisseurs',
@@ -116,7 +116,7 @@ export function CompactCard({stats,cardId,setExpanded}:any){
 }
 export function ExpandedCard({stats,cardId,setExpanded}:any){
   const data = {
-    labels: stats?.map((el:any)=>(new Date(el.date) ))?? [],
+    labels: stats?.map((el:any)=>(el.date))?? [],
     datasets: [
       {
         label: 'nombre de fournisseurs',

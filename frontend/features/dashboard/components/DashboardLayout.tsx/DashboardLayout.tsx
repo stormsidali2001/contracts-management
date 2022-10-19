@@ -17,11 +17,11 @@ const DashboardLayout = ({children}:any) => {
   const [runOnce,setRunOnce] = useState(false)
   useEffect(()=>{
     if(!jwt) return;
-    if(!runOnce){
-
+    if(!runOnce ){
       dispatch(startConnecting())
       setRunOnce(true)
     }
+
   },[jwt])
   return (
     <div className={styles.container}>
