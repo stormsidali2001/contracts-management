@@ -18,6 +18,7 @@ import { VendorService } from './services/vendor.service';
 @Module({
     imports:[TypeOrmModule.forFeature([AgreementEntity,VendorEntity,DirectionEntity,DepartementEntity,VendorStatsEntity,AgreementExecJobsEntity]),AuthModule,DirectionModule],
     providers:[AgreementService,VendorService],
+    exports:[AgreementService,VendorService],
     controllers:[AgreementController,VendorController,AgreementFileController]
 })
 export class AgreementModule{}

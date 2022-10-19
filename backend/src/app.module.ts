@@ -11,6 +11,7 @@ import { HttpLoggingInteceptor } from './shared/HttpLogging.interceptor';
 import { UserModule } from './user/user.module';
 import {SocketStateModule} from './socket/SocketState.module'
 import { ScheduleModule } from '@nestjs/schedule';
+import { StatisticsModule } from './statistics/statistics.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { ScheduleModule } from '@nestjs/schedule';
     AuthModule,
     UserModule,
     EventModule,
+    StatisticsModule,
     TypeOrmModule.forRoot({
     username:process.env.MYSQL_USERNAME,
     password:process.env.MYSQL_PASSWORD,
