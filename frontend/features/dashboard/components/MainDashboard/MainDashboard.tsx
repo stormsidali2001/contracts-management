@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import axios from '../../../../api/axios';
 import useAxiosPrivate from '../../../../hooks/auth/useAxiosPrivate';
 import { useAppDispatch } from '../../../../hooks/redux/hooks';
+import { getStatistics } from '../../../statistics/StatisticsSlice';
 import { showSnackbar } from '../../../ui/UiSlice';
 import AgreementStatsCard from '../AgreementStatsCard/AgreementStatsCard';
 import DateRangePicker from '../date-range-picker/DateRangePicker';
@@ -17,56 +18,7 @@ const MainDashboard = () => {
   const dispatch = useAppDispatch(); 
   const axiosPrivate = useAxiosPrivate();
   useEffect(()=>{
-    const abortController = new AbortController();
-    axiosPrivate.get("/Agreements/stats",{
-      signal:abortController.signal
-    })
-    .then(res=>{
-      setAgreementStats(res.data)
-    })
-    .catch(err=>{
-      console.error(err)
-        if(err.code !== "ERR_CANCELED"){
-          //@ts-ignore
-          dispatch(showSnackbar({message:err?.response?.data?.error ?? "erreur iconu"}))
-        }
-      }
-    )
-   
-    axiosPrivate.get("/users/types-stats",{
-      signal:abortController.signal
-    })
-    .then(res=>{
-      setUsersStats(res.data)
-    })
-    .catch(err=>{
-      console.error(err)
-        if(err.code !== "ERR_CANCELED"){
-          //@ts-ignore
-          dispatch(showSnackbar({message:err?.response?.data?.error ?? "erreur iconu"}))
-        }
-      }
-    )
-
-    axiosPrivate.get("/vendors/stats",{
-      signal:abortController.signal
-    })
-    .then(res=>{
-      setVendorsStats(res.data)
-    })
-    .catch(err=>{
-      console.error(err)
-        if(err.code !== "ERR_CANCELED"){
-          //@ts-ignore
-          dispatch(showSnackbar({message:err?.response?.data?.error ?? "erreur iconu"}))
-        }
-      }
-    )
-   
-
-    return ()=>{
-      abortController.abort();
-    }
+      dispatch(getStatistics({axiosInstance})
   },[])
   return (
     <div className={styles.container}>
