@@ -12,16 +12,16 @@ export class StatisticsService{
         private readonly vendorService:VendorService
     ){}
     async getStats(startDate:Date , endDate:Date){
-        const [userStats,vendorsStats,agreementStats]= await Promise.all([
+        const [userTypes,vendorsStats,agreementsStats]= await Promise.all([
             this.userService.getUserTypesStats(),
             this.vendorService.getVendorsStats(startDate,endDate),
             this.agreeementService.getAgreementsStats()
         ])
 
         return {
-            userStats,
+            userTypes,
             vendorsStats,
-            agreementStats
+            agreementsStats
         }
     }
 }

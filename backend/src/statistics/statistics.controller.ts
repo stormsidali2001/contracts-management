@@ -1,4 +1,5 @@
 import { Body, Controller, Get } from "@nestjs/common";
+import { StatsParamsDTO } from "./models/statsPramsDTO.interface";
 import { StatisticsService } from "./statistics.service";
 
 
@@ -9,7 +10,7 @@ export class StatisticsController{
     ){}
 
     @Get('')
-    async getStats(@Body('startDate') startDate:Date, @Body('endDate')endDate:Date){
+    async getStats({startDate = null,endDate = null}:StatsParamsDTO){
         return await this.statisticsService.getStats(startDate,endDate);
     }
 
