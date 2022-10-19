@@ -37,7 +37,7 @@ ChartJS.register(
 const VendorsCard = () => {
   const [expanded , setExpanded] = useState(false);
   const cardId = useId();
-  const {vendorStats:stats} = useAppSelector(state=>state.StatisticsSlice)
+  const {vendorsStats:stats} = useAppSelector(state=>state.StatisticsSlice)
 
  
   return (
