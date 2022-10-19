@@ -143,7 +143,7 @@ export class UserService{
             total:0
         }
         stats.forEach(st=>{
-            response[st.role] = parseInt(st.total);
+            response[(st.role as unknown as String).toLowerCase()] = parseInt(st.total);
         })
         response.total = response.juridical + response.admin + response.employee;
         return response;
