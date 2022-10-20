@@ -51,7 +51,7 @@ const notificationMiddleware:Middleware = store=>{
         const notificationState = store.getState().notification;
         const isConnected =  notificationState.isConnected;
         
-        if(startConnecting.match(action) && !socket){
+        if(startConnecting.match(action) ){
             console.log("t10",notificationState)
             socket = SocketConnection.getInstance(auth.jwt)
 
@@ -99,8 +99,10 @@ const notificationMiddleware:Middleware = store=>{
                 const options = [Entity.JURIDICAL , Entity.EMPLOYEE , Entity.ADMIN];
                 if(options.includes(event.entity)){
 
-                    store.dispatch(newCreatedUserEvent({type:event.entity,operation:event.operation}))
+                     store.dispatch(newCreatedUserEvent({type:event.entity,operation:event.operation}))
                 }
+                
+
               
             })
           
