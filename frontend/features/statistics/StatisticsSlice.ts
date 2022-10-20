@@ -42,6 +42,12 @@ export const getStatistics = createAsyncThunk(
         return await statisticsService.getStatistics({axiosInstance})
     }
 )
+const format = (d:Date)=>{
+    const newD = new Date(d);
+    return newD.toISOString().replace(/T[0-9:.Z]*/g,"");
+
+}
+
 const StatisticsSlice = createSlice(
     {
         name:"StatisticsSlice",
@@ -61,38 +67,10 @@ const StatisticsSlice = createSlice(
                     }
                 }
             },
-            newCreatedVendorEvent:(state,action:PayloadAction<{date:Date,operation:Operation}>)=>{
-                if(!state.vendorsStats) return;
-                const index = state.vendorsStats.findIndex(v=>{
-
-                    v.date === action.payload.date
-
-                    const a_d = v.date;
-                    const b_d = action.payload.date;
-                    a_d.setHours(0,0,0,0)
-                    b_d.setHours(0,0,0,0)
-
-                    return Number(a_d) === Number(b_d);
-                })
-                // if(index > 0){
-                    
-                //     if(action.payload.operation === Operation.DELETE){
-                //         state.vendorsStats[index].nb_vendors -= 1;
-                //     }else if(action.payload.operation === Operation.INSERT){
-                //         state.vendorsStats[index].nb_vendors += 1;
-                //     }
-                    
-                // }else{
-                //     state.vendorsStats.unshift({date:action.payload.date,nb_vendors:1,id:new Date().toString()})
-                //     state.vendorsStats = state.vendorsStats.sort((a,b)=>{
-                //         const a_d = a.date;
-                //         const b_d = b.date;
-                //         a_d.setHours(0,0,0,0)
-                //         b_d.setHours(0,0,0,0)
-                //        return  Number(b_d) - Number(a_d)
-                //     })
-                // }
+            newVendorStats:(state,action:PayloadAction<{vendorsStats:VendorStats}>)=>{
+                state.vendorsStats = action.payload.vendorsStats;
             }
+           
         },
         extraReducers:(builder)=>{
             builder.addCase(getStatistics.pending,(state,action)=>{
@@ -118,6 +96,6 @@ const StatisticsSlice = createSlice(
     }
 )
 
-export const {newCreatedUserEvent,newCreatedVendorEvent} = StatisticsSlice.actions;
+export const {newCreatedUserEvent,newVendorStats} = StatisticsSlice.actions;
 
 export default StatisticsSlice;
