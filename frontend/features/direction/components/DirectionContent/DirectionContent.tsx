@@ -77,9 +77,7 @@ const DirectionContent = () => {
                           <div className={styles.accordingContainer}>
                             <Typography>{direction?.title}</Typography>
                             <div className={styles.actionButtons}>
-                                <Button onClick={(e)=>e.stopPropagation()}>
-                                    <ModeEditIcon/>
-                                </Button>
+                               
                                 <Button onClick={(e)=>e.stopPropagation()}>
                                     <DeleteIcon />
                                 </Button>

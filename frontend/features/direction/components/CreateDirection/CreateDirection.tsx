@@ -69,6 +69,9 @@ const CreateDirection = ({
           id:Date.now().toString()
         })
         handleDirectionModalClose()
+
+        dispatch(showSnackbar({message:"la direction a été creé avec success." ,severty:"success"}))
+
       })
       .catch(err=>{
         console.error(err)
@@ -107,51 +110,55 @@ const CreateDirection = ({
                     </Fab>
                     </>
                   ):(
-                    <Stack className={styles.formElementsWrapper}>
-                    <Typography className={styles.title} variant='h4' sx={{fontWeight:'400'}}>Nouvelle direction</Typography>
-                    <TextField 
-                        value={title} 
-                        onChange={titleChangeHandler} 
-                        onBlur={titleBlurHandler}
-                        size='small' 
-                        label = "Titre"
-                        error={titleShouldDisplayError}
-                        helperText = {titleShouldDisplayError && "min caracteres: 5 , max caracteres: 15"}
-                    />
-                    <TextField 
-                        value={abriviation} 
-                        onChange={abriviationChangeHandler} 
-                        onBlur={abriviationBlurHandler}
-                        size='small' 
-                        label = "Mnemonique"
-                        error={abriviationShouldDisplayError}
-                        helperText = {abriviationShouldDisplayError && "min caracteres: 2 , max caracteres: 5"}
-                    />
-                </Stack>
+                    <>
+                      <Stack className={styles.formElementsWrapper}>
+                            <Typography className={styles.title} variant='h4' sx={{fontWeight:'400'}}>Nouvelle direction</Typography>
+                            <TextField 
+                                value={title} 
+                                onChange={titleChangeHandler} 
+                                onBlur={titleBlurHandler}
+                                size='small' 
+                                label = "Titre"
+                                error={titleShouldDisplayError}
+                                helperText = {titleShouldDisplayError && "min caracteres: 5 , max caracteres: 15"}
+                            />
+                            <TextField 
+                                value={abriviation} 
+                                onChange={abriviationChangeHandler} 
+                                onBlur={abriviationBlurHandler}
+                                size='small' 
+                                label = "Mnemonique"
+                                error={abriviationShouldDisplayError}
+                                helperText = {abriviationShouldDisplayError && "min caracteres: 2 , max caracteres: 5"}
+                            />
+                        </Stack>
+                     
+                        <Stack className={styles.departementsContainer}>
+                            <Stack direction="row" className={styles.departementsTitleWrapper}>
+                            <Typography sx={{color:"#807D7D",paddingLeft:"10px"}}>Departements</Typography>
+                                        <Button><AddCircleIcon onClick={()=>handleOpenDepartementModal()}/></Button>
+                            </Stack>
+                            <Stack className={styles.departements}>
+                              {
+                                departements.map((d,index)=>{
+                                  return (
+                                    <Stack direction="row" gap={2}>
+                                      <Typography>{`${index+1}- ${d?.title}`}</Typography>
+                                      <Typography sx={{fontSize:"500"}}>{`(${d?.abriviation})`}</Typography>
+                                    </Stack>
+                                  )
+                                })
+                              }
+                            </Stack>
+                        </Stack>
+            
+                    </>
+                 
                   )
 
                 )
               }
-         
-            <Stack className={styles.departementsContainer}>
-                <Stack direction="row" className={styles.departementsTitleWrapper}>
-                <Typography sx={{color:"#807D7D",paddingLeft:"10px"}}>Departements</Typography>
-                            <Button><AddCircleIcon onClick={()=>handleOpenDepartementModal()}/></Button>
-                </Stack>
-                <Stack className={styles.departements}>
-                  {
-                    departements.map((d,index)=>{
-                      return (
-                        <Stack direction="row" gap={2}>
-                          <Typography>{`${index+1}- ${d?.title}`}</Typography>
-                          <Typography sx={{fontSize:"500"}}>{`(${d?.abriviation})`}</Typography>
-                        </Stack>
-                      )
-                    })
-                  }
-                </Stack>
-            </Stack>
-            
+        
 
             <Stack direction="row" className={styles.actionButtonsContainer}>
                 <Button 

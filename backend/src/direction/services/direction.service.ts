@@ -11,8 +11,12 @@ export class DirectionService{
         private dataSource:DataSource
     ){}
     async createDirection(direction:CreateDirectionDTO):Promise<InsertResult>{
+      
       const {departements,...otherDirectionData} = direction;
       return  await this.dataSource.manager.transaction(async (entityManger:EntityManager)=>{
+        const directionDb = await entityManger.getRepository(DirectionEntity).createQueryBuilder("d")
+        .where('d.title = :title or d.abriviation = :abriviation',{title:otherDirectionData.title,abriviation:otherDirectionData.abriviation}).getOne() 
+        if(directionDb) throw new BadRequestException("l'abriviation ou le nom de la direction exist deja") 
         const newDirection = await entityManger.getRepository(DirectionEntity).save({...otherDirectionData});
         const departementRepository = entityManger.getRepository(DepartementEntity);
         return departementRepository.insert(direction.departements.map(dp=>{
