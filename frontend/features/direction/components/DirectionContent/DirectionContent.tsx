@@ -93,7 +93,7 @@ const DirectionContent = () => {
                                     <Typography >Departements</Typography>
                                     <Button onClick={()=>handleOpenDepartementModal(direction.id)}><AddCircleIcon/></Button>
                                 </Stack>
-                                <TableContainer sx={{overflowY:"scroll",height:'200px'}}>
+                                <TableContainer className={styles.departementsWrapper} >
                                     <Table  aria-label="simple table" >
                                         <TableHead>
                                         <TableRow>
