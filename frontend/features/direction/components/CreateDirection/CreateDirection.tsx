@@ -1,4 +1,4 @@
-import { Button, Modal, TextField, Typography } from '@mui/material';
+import { Button, CircularProgress, Fab, Modal, TextField, Typography } from '@mui/material';
 import { Stack } from '@mui/system';
 import useInput from '../../../../hooks/input/use-input';
 import { validateDepartementAbriviationLength, validateDepartementTitleLength } from '../../../../shared/utils/validation/length';
@@ -10,6 +10,10 @@ import CreateDepartement from '../CreateDepartement/CreateDepartement';
 import axios from 'axios';
 import { Direction } from '../../models/direction.interface';
 import useAxiosPrivate from '../../../../hooks/auth/useAxiosPrivate';
+import CheckIcon from '@mui/icons-material/Check';
+import { useAppDispatch } from '../../../../hooks/redux/hooks';
+import { showSnackbar } from '../../../ui/UiSlice';
+
 
 interface PropTypes{
   pushDirection:(direction:Direction)=>void,
@@ -19,37 +23,45 @@ const CreateDirection = ({
   pushDirection,
   handleDirectionModalClose
 }:PropTypes) => {
-  const axiosPrivate = useAxiosPrivate();
-  const [openDepartementModal, setOpenDepartementModal] = useState(false);
-  const [departements,setDepartements]= useState<Departement[]>([])
-  
-  const handleCloseDepartementModal = () => setOpenDepartementModal(false);
-  const handleOpenDepartementModal = ()=>setOpenDepartementModal(true)
-  const pushDepartementToDirection = (departement:Departement,selectedDirectionId?:string)=>{
-    setDepartements(dpts=>[...dpts,departement])
-  }
+    const axiosPrivate = useAxiosPrivate();
+    const [openDepartementModal, setOpenDepartementModal] = useState(false);
+    const [departements,setDepartements]= useState<Departement[]>([])
+    
+    const handleCloseDepartementModal = () => setOpenDepartementModal(false);
+    const handleOpenDepartementModal = ()=>setOpenDepartementModal(true)
+    const pushDepartementToDirection = (departement:Departement,selectedDirectionId?:string)=>{
+      setDepartements(dpts=>[...dpts,departement])
+    }
+    const {
+      text:title ,
+      inputBlurHandler:titleBlurHandler,inputClearHandler:titleClearHandler,textChangeHandler:titleChangeHandler,
+      shouldDisplayError:titleShouldDisplayError
+  } = useInput(validateDepartementTitleLength);
   const {
-    text:title ,
-    inputBlurHandler:titleBlurHandler,inputClearHandler:titleClearHandler,textChangeHandler:titleChangeHandler,
-    shouldDisplayError:titleShouldDisplayError
-} = useInput(validateDepartementTitleLength);
-const {
-    text:abriviation ,
-    inputBlurHandler:abriviationBlurHandler,inputClearHandler:abriviationClearHandler,textChangeHandler:abriviationChangeHandler,
-    shouldDisplayError:abriviationShouldDisplayError
-} = useInput(validateDepartementAbriviationLength);
+      text:abriviation ,
+      inputBlurHandler:abriviationBlurHandler,inputClearHandler:abriviationClearHandler,textChangeHandler:abriviationChangeHandler,
+      shouldDisplayError:abriviationShouldDisplayError
+  } = useInput(validateDepartementAbriviationLength);
+
+  const dispatch = useAppDispatch();
+
+  const [isLoading,setIsLoading]  = useState(false);
+  const [isSuccess,setIsSuccess] = useState(false);
 
 
   const handleSubmit = (e:any)=>{
     e.preventDefault();
     if(!title || !abriviation || !departements) return;
     try{
+      setIsLoading(true)
       axiosPrivate.post("http://localhost:8080/api/directions",{
         title,
         abriviation,
         departements
       })
       .then(res=>{
+        setIsLoading(false)
+        setIsSuccess(true)
         pushDirection({
           title,
           abriviation,
@@ -60,6 +72,9 @@ const {
       })
       .catch(err=>{
         console.error(err)
+        setIsSuccess(false)
+        setIsLoading(false)
+        dispatch(showSnackbar({message:err?.response?.data?.error ?? "erreur iconu"}))
       })
       
     }catch(err){
@@ -69,27 +84,55 @@ const {
   return (
     <div className={styles.container}>
           <form onSubmit={handleSubmit}>
-            <Stack className={styles.formElementsWrapper}>
-                <Typography className={styles.title} variant='h4' sx={{fontWeight:'400'}}>Nouvelle direction</Typography>
-                <TextField 
-                    value={title} 
-                    onChange={titleChangeHandler} 
-                    onBlur={titleBlurHandler}
-                    size='small' 
-                    label = "Titre"
-                    error={titleShouldDisplayError}
-                    helperText = {titleShouldDisplayError && "min caracteres: 5 , max caracteres: 15"}
-                />
-                <TextField 
-                    value={abriviation} 
-                    onChange={abriviationChangeHandler} 
-                    onBlur={abriviationBlurHandler}
-                    size='small' 
-                    label = "Mnemonique"
-                    error={abriviationShouldDisplayError}
-                    helperText = {abriviationShouldDisplayError && "min caracteres: 2 , max caracteres: 5"}
-                />
-            </Stack>
+            {
+                isLoading?(
+                    <>
+                    <Stack alignItems = "center" gap={2}>
+                      <Typography>Creation de  Direction...</Typography>
+                      <CircularProgress/>
+                    </Stack>
+                  </>
+                    
+                ):(
+                  isSuccess?(
+                    <>
+                      <Typography>Direction cree</Typography>
+                      <Fab
+                      aria-label="save"
+                      color="secondary"
+                      size="small"
+                      sx={{boxShadow:"none"}}
+                      >
+                      <CheckIcon sx={{ color:"white"}}/> 
+                    </Fab>
+                    </>
+                  ):(
+                    <Stack className={styles.formElementsWrapper}>
+                    <Typography className={styles.title} variant='h4' sx={{fontWeight:'400'}}>Nouvelle direction</Typography>
+                    <TextField 
+                        value={title} 
+                        onChange={titleChangeHandler} 
+                        onBlur={titleBlurHandler}
+                        size='small' 
+                        label = "Titre"
+                        error={titleShouldDisplayError}
+                        helperText = {titleShouldDisplayError && "min caracteres: 5 , max caracteres: 15"}
+                    />
+                    <TextField 
+                        value={abriviation} 
+                        onChange={abriviationChangeHandler} 
+                        onBlur={abriviationBlurHandler}
+                        size='small' 
+                        label = "Mnemonique"
+                        error={abriviationShouldDisplayError}
+                        helperText = {abriviationShouldDisplayError && "min caracteres: 2 , max caracteres: 5"}
+                    />
+                </Stack>
+                  )
+
+                )
+              }
+         
             <Stack className={styles.departementsContainer}>
                 <Stack direction="row" className={styles.departementsTitleWrapper}>
                 <Typography sx={{color:"#807D7D",paddingLeft:"10px"}}>Departements</Typography>
@@ -121,6 +164,9 @@ const {
                         || titleShouldDisplayError 
                         || abriviationShouldDisplayError}
                 >Creer</Button>
+                {
+                  
+                }
                 <Button onClick={()=>{handleDirectionModalClose()}}>Annuler</Button>
             </Stack>
         </form>
