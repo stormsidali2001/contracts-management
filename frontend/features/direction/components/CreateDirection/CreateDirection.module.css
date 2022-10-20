@@ -30,6 +30,20 @@
 
 .departements{
     padding-left: 10px;
-    height: 100px;
+    height: fit-content;
+    max-height: 100px;
     overflow-y: auto;
+}
+
+.departements::-webkit-scrollbar{
+    width: 4px;
+   
+}
+.departements::-webkit-scrollbar-track{
+    background-color: rgba(23, 73, 142, 0.1);
+    border-radius: 10px;
+}
+.departements::-webkit-scrollbar-thumb{
+    background-color: rgba(23, 73, 142, 0.4);
+    border-radius: 10px;
 }
