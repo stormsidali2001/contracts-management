@@ -1,6 +1,6 @@
 interface VendorStat{
     id:string;
-    date:Date;
+    date:string;
     nb_vendors:number;
 }
 

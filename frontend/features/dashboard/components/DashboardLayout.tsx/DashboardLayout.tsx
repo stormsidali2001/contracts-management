@@ -8,9 +8,9 @@ import Sidebar from '../Sidebar/Sidebar';
 import Topbar from '../Topbar/Topbar';
 import styles from './DashboardLayout.module.css';
 const DashboardLayout = ({children}:any) => {
-  const {message,open,severty} = useAppSelector(state=>state.uiSlice);
   const dispatch = useAppDispatch();
   const {jwt} = useAppSelector(state=>state.auth)
+  const {isConnected} = useAppSelector(state=>state.notification)
   const handleClose = ()=>{
     dispatch(clear())
   }
@@ -18,7 +18,7 @@ const DashboardLayout = ({children}:any) => {
   useEffect(()=>{
     if(!jwt) return;
     if(!runOnce ){
-      dispatch(startConnecting())
+      if(!isConnected) dispatch(startConnecting())
       setRunOnce(true)
     }
 
