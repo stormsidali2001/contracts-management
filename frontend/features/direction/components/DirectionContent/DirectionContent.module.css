@@ -39,5 +39,35 @@
 .directionsWrapper{
     height: 400px;
     overflow-y: auto;
+    
     padding-top: 10px;
+}
+.directionsWrapper::-webkit-scrollbar{
+    width: 4px;
+   
+}
+.directionsWrapper::-webkit-scrollbar-track{
+    background-color: rgba(23, 73, 142, 0.1);
+    border-radius: 10px;
+}
+.directionsWrapper::-webkit-scrollbar-thumb{
+    background-color: rgba(23, 73, 142, 0.4);
+    border-radius: 10px;
+}
+
+.departementsWrapper{
+    overflow-y:scroll;
+    height:200px;
+}
+.departementsWrapper::-webkit-scrollbar{
+    width: 4px;
+   
+}
+.departementsWrapper::-webkit-scrollbar-track{
+    background-color: rgba(23, 73, 142, 0.1);
+    border-radius: 10px;
+}
+.departementsWrapper::-webkit-scrollbar-thumb{
+    background-color: rgba(23, 73, 142, 0.4);
+    border-radius: 10px;
 }
