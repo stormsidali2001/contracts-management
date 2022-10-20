@@ -33,7 +33,7 @@ export class DepartementService{
     }
     async findAll(offset:number = 0,limit:number = 10):Promise<DepartementEntity[]>{
         return this.departementRepository.createQueryBuilder('departement')
-        .loadRelationCountAndMap('departement.users','departements.users')
+        .loadRelationCountAndMap('departement.users','departements.employees')
         .take(limit)
         .skip(offset)
         .getMany();

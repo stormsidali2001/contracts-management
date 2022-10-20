@@ -26,6 +26,7 @@ export class DirectionService{
         console.log(offset, limit,"limit offset")
         let q =  this.directionRepository.createQueryBuilder('direction')
         .leftJoinAndSelect('direction.departements','departements')
+        .loadRelationCountAndMap('departements.users','departements.employees')
        
         console.log(".........",offset,limit,typeof offset , typeof limit)
         if(Number.isInteger(offset)  && Number.isInteger(limit)){
