@@ -58,14 +58,20 @@ export class DirectionService{
             const direction = await directionRepository.createQueryBuilder('direction')
             .where('direction.id = :id',{id})
             .leftJoinAndSelect('direction.departements','departements')
+            .loadRelationCountAndMap('departements.users','departements.employees')
             .getOne();
             if(!direction){
-                throw new BadRequestException("could not find direction");
+                throw new BadRequestException("la direction éxiste pas");
             }
-            await departementRepository.createQueryBuilder()
-            .delete()
-            .where('departements.id in (:...ids)',{ids:direction.departements.map(dp=>dp.id)})
-            .execute();
+            //@ts-ignore
+            if(direction.departements.some(d=>d.users > 0)) throw new BadRequestException("l'un des departement de la direction contient des utilisateurs");
+            if(direction.departements.length > 0){
+                await departementRepository.createQueryBuilder()
+                .delete()
+                .where('departements.id in (:...ids)',{ids:direction.departements.map(dp=>dp.id)})
+                .execute();
+
+            }
 
             await directionRepository.delete(id);
             return "done";

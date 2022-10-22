@@ -1,5 +1,5 @@
 export interface Departement{
-    id?:string;
+    id:string;
     title:string;
     abriviation:string;
     users?:number;

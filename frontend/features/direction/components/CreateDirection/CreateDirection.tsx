@@ -7,7 +7,6 @@ import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { useState } from 'react';
 import { Departement } from '../../models/departement.interface';
 import CreateDepartement from '../CreateDepartement/CreateDepartement';
-import axios from 'axios';
 import { Direction } from '../../models/direction.interface';
 import useAxiosPrivate from '../../../../hooks/auth/useAxiosPrivate';
 import CheckIcon from '@mui/icons-material/Check';
@@ -169,12 +168,20 @@ const CreateDirection = ({
                         title.length === 0 
                         || abriviation.length === 0 
                         || titleShouldDisplayError 
-                        || abriviationShouldDisplayError}
+                        || abriviationShouldDisplayError
+                        || isSuccess
+                        || isLoading
+                      }
                 >Creer</Button>
                 {
                   
                 }
-                <Button onClick={()=>{handleDirectionModalClose()}}>Annuler</Button>
+                <Button 
+                  disabled={  
+                    isSuccess
+                    || isLoading
+                  } 
+                  onClick={()=>{handleDirectionModalClose()}}>Fermer</Button>
             </Stack>
         </form>
         <Modal

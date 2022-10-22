@@ -12,34 +12,21 @@ import CreateDepartement from '../CreateDepartement/CreateDepartement';
 import { Departement } from '../../models/departement.interface';
 import CreateDirection from '../CreateDirection/CreateDirection';
 import useAxiosPrivate from '../../../../hooks/auth/useAxiosPrivate';
+import { useAppDispatch } from '../../../../hooks/redux/hooks';
+import { showSnackbar } from '../../../ui/UiSlice';
 
 
 const DirectionContent = () => {
   const axiosPrivate = useAxiosPrivate();
   const [directions,setDirections] = useState<Direction[]>([]);
+  const dispatch = useAppDispatch();
   //departement modal state ----------------
   const [openDepartementModal, setOpenDepartementModal] = useState(false);
   const [selectedDirectionId , setSelectedDirectionId] = useState<string | null>(null);
-  const handleCloseDepartementModal = () => setOpenDepartementModal(false);
-  const pushDepartementToDirection = (departement:Departement,selectedDirectionId?:string)=>{
-    const newDirections = [...directions];
-    const index = newDirections.findIndex(d=>d.id === selectedDirectionId)
-    newDirections[index].departements.push({...departement})
-
-    setDirections(newDirections)
-  }
-  const handleOpenDepartementModal = (directionId:string)=>{
-    setOpenDepartementModal(true)
-    setSelectedDirectionId(directionId)
-
-  }
+  
   //direction modal state ----------------
   const [openDirectionModal, setOpenDirectionModal] = useState(false);
-  const handleDirectionModalOpen = ()=>setOpenDirectionModal(true)
-  const handleDirectionModalClose = ()=>setOpenDirectionModal(false)
-  const pushDirection = (direction:Direction)=>{
-      setDirections(d=>[...d,direction])
-  }
+
   useEffect(()=>{
     const abortController = new AbortController()
     axiosPrivate.get("http://localhost:8080/api/directions?offset=0&limit=10",{
@@ -56,6 +43,59 @@ const DirectionContent = () => {
         abortController.abort();
     }
   },[])
+
+  const handleDirectionModalOpen = ()=>setOpenDirectionModal(true)
+  const handleDirectionModalClose = ()=>setOpenDirectionModal(false)
+  const pushDirection = (direction:Direction)=>{
+      setDirections(d=>[...d,direction])
+  }
+
+  const handleCloseDepartementModal = () => setOpenDepartementModal(false);
+  const pushDepartementToDirection = (departement:Departement,selectedDirectionId?:string)=>{
+    const newDirections = [...directions];
+    const index = newDirections.findIndex(d=>d.id === selectedDirectionId)
+    newDirections[index].departements.push({...departement})
+
+    setDirections(newDirections)
+  }
+  const handleOpenDepartementModal = (directionId:string)=>{
+    setOpenDepartementModal(true)
+    setSelectedDirectionId(directionId)
+
+  }
+  const handleDeleteDepartement =  (id:string,directionId:string)=>{
+    alert("fired with id "+id)
+     
+     axiosPrivate.delete("/departements/"+id)
+     .then(res=>{
+        const directionIndex = directions.findIndex(d=>d.id === directionId);
+        if(directionIndex < 0) return;
+        const newDirections = [...directions];
+        newDirections[directionIndex].departements = newDirections[directionIndex].departements.filter(d=>d.id !== id);
+        setDirections(newDirections);
+        dispatch(showSnackbar({message:"la suppression de departement a reusi",severty:"success"}))
+     })
+     .catch(err=>{
+      dispatch(showSnackbar({message:err?.response?.data?.error ?? "erreur iconu"}))
+     })
+
+  }
+  const handleDeleteDirection =  (directionId:string)=>{
+    alert("fired with id "+directionId)
+     
+     axiosPrivate.delete("/directions/"+directionId)
+     .then(res=>{
+        
+        const newDirections = directions.filter(d=>d.id != directionId);
+        setDirections(newDirections);
+        dispatch(showSnackbar({message:"la suppression de la direction a reusi",severty:"success"}))
+     })
+     .catch(err=>{
+      dispatch(showSnackbar({message:err?.response?.data?.error ?? "erreur iconu"}))
+     })
+
+  }
+
   
   return (
     <div className={styles.container}>
@@ -79,7 +119,7 @@ const DirectionContent = () => {
                             <div className={styles.actionButtons}>
                                
                                 <Button onClick={(e)=>e.stopPropagation()}>
-                                    <DeleteIcon />
+                                    <DeleteIcon onClick={()=>handleDeleteDirection(direction?.id ?? "")}/>
                                 </Button>
                             </div>
                           </div>
@@ -99,7 +139,7 @@ const DirectionContent = () => {
                                             <TableCell align="left">Mnemonique</TableCell>
                                             <TableCell align="left">utilisateurs</TableCell>
                                             <TableCell align="center">details</TableCell>
-                                            <TableCell align="center">delete</TableCell>
+                                            <TableCell align="center" >delete</TableCell>
                                         </TableRow>
                                         </TableHead>
                                         <TableBody>
@@ -112,7 +152,7 @@ const DirectionContent = () => {
                                             <TableCell align="left">{row.abriviation}</TableCell>
                                             <TableCell align="left">{row.users}</TableCell>
                                             <TableCell align="center"><Button>Details</Button></TableCell>
-                                            <TableCell align="center"><Button><DeleteIcon/></Button></TableCell>
+                                            <TableCell align="center"><Button onClick={()=>handleDeleteDepartement(row?.id ?? "",direction?.id ?? "")}><DeleteIcon/></Button></TableCell>
                                             </TableRow>
                                         ))}
                                         </TableBody>
