@@ -12,11 +12,13 @@ import CreateDepartement from '../CreateDepartement/CreateDepartement';
 import { Departement } from '../../models/departement.interface';
 import CreateDirection from '../CreateDirection/CreateDirection';
 import useAxiosPrivate from '../../../../hooks/auth/useAxiosPrivate';
-import { useAppDispatch } from '../../../../hooks/redux/hooks';
+import { useAppDispatch, useAppSelector } from '../../../../hooks/redux/hooks';
 import { showSnackbar } from '../../../ui/UiSlice';
+import { UserRole } from '../../../auth/models/user-role.enum';
 
 
 const DirectionContent = () => {
+  const {user} = useAppSelector(state=>state.auth)
   const axiosPrivate = useAxiosPrivate();
   const [directions,setDirections] = useState<Direction[]>([]);
   const dispatch = useAppDispatch();
@@ -96,6 +98,11 @@ const DirectionContent = () => {
 
   }
 
+  const dispalayIfAdmin = ()=>{
+    if(!user) return false;
+    return user.role === UserRole.ADMIN;
+  }
+
   
   return (
     <div className={styles.container}>
@@ -118,9 +125,13 @@ const DirectionContent = () => {
                             <Typography>{direction?.title}</Typography>
                             <div className={styles.actionButtons}>
                                
+                               {
+                                dispalayIfAdmin()&&(
                                 <Button onClick={(e)=>e.stopPropagation()}>
                                     <DeleteIcon onClick={()=>handleDeleteDirection(direction?.id ?? "")}/>
                                 </Button>
+                                )
+                               }
                             </div>
                           </div>
                         </AccordionSummary>
@@ -129,7 +140,9 @@ const DirectionContent = () => {
                                 
                                 <Stack direction="row" className={styles.departementsTitleWrapper}>
                                     <Typography >Departements</Typography>
-                                    <Button onClick={()=>handleOpenDepartementModal(direction.id)}><AddCircleIcon/></Button>
+                                    
+                                        <Button onClick={()=>handleOpenDepartementModal(direction.id)}><AddCircleIcon/></Button>
+                                      
                                 </Stack>
                                 <TableContainer className={styles.departementsWrapper} >
                                     <Table  aria-label="simple table" >
@@ -139,7 +152,11 @@ const DirectionContent = () => {
                                             <TableCell align="left">Mnemonique</TableCell>
                                             <TableCell align="left">utilisateurs</TableCell>
                                             <TableCell align="center">details</TableCell>
-                                            <TableCell align="center" >delete</TableCell>
+                                            {
+                                              dispalayIfAdmin()&&(
+                                                <TableCell align="center" >delete</TableCell>
+                                              )
+                                            }
                                         </TableRow>
                                         </TableHead>
                                         <TableBody>
@@ -152,8 +169,15 @@ const DirectionContent = () => {
                                             <TableCell align="left">{row.abriviation}</TableCell>
                                             <TableCell align="left">{row.users}</TableCell>
                                             <TableCell align="center"><Button>Details</Button></TableCell>
-                                            <TableCell align="center"><Button onClick={()=>handleDeleteDepartement(row?.id ?? "",direction?.id ?? "")}><DeleteIcon/></Button></TableCell>
-                                            </TableRow>
+                                            {
+                                              dispalayIfAdmin()&&(
+                                                <TableCell align="center">
+                                                  <Button onClick={()=>handleDeleteDepartement(row?.id ?? "",direction?.id ?? "")}><DeleteIcon/></Button>
+                                                  </TableCell>
+                                               
+                                              )
+                                            }
+                                          </TableRow>
                                         ))}
                                         </TableBody>
                                     </Table>
