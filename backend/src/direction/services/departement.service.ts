@@ -15,10 +15,18 @@ export class DepartementService{
 
     async createDepartement(departement:CreateDepartementDTO):Promise<DepartementEntity>{
         const {directionId,...otherDepartementData} = departement;
+       
+        
         const direction = await this.directionRepository.findOneBy({id:directionId});
+        
         if(!direction){
-            throw new BadRequestException("direction not found")
+            throw new BadRequestException("une erreur lors de la creation de departement")
         }
+        const departementDb = await this.departementRepository.createQueryBuilder('d')
+        .where('d.title = :title or d.abriviation = :abriviation',{title:otherDepartementData.title,abriviation:otherDepartementData.abriviation})
+        .andWhere("d.directionId = :directionId",{directionId:directionId})
+        .getOne();
+        if(departementDb) throw new BadRequestException("un departement avec les memes identifiant exist deja dans cette direction");
         const departementEntity =  this.departementRepository.create({...otherDepartementData,direction});
         return this.departementRepository.save(departementEntity);
     }
@@ -26,6 +34,14 @@ export class DepartementService{
         return this.departementRepository.update(id,departement)
     }
     async deleteDepartement(id:string):Promise<DeleteResult>{
+        const departementDb = await this.departementRepository.createQueryBuilder('dp')
+        .where('dp.id = :departementId',{departementId:id})
+        .loadRelationCountAndMap('dp.users','dp.employees','users')
+        .getOne();
+
+        if(!departementDb) throw new BadRequestException("le departement n'existe pas.")
+        //@ts-ignore
+        if(departementDb.users > 0 ) throw new BadRequestException("vous ne pouvez pas supprimer le departement car il contient des utilisateur");
         return this.departementRepository.delete(id);
     }
     async findById(id:string):Promise<DepartementEntity>{
