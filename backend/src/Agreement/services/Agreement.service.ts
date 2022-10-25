@@ -120,20 +120,19 @@ export class AgreementService implements OnModuleInit{
         if(new Date(execution_start_date) < new Date(agreement.signature_date) ){
             throw new  BadRequestException("la date de debut d'execution dout etre supperieur ou rgale a la date de signature");
         }
-        await this.agreementRepository.update(agreementId,{execution_start_date,execution_end_date,observation})
         if(new Date(execution_start_date) >= new Date(agreement.expiration_date)){
             agreement.status = AgreementStatus.IN_EXECUTION_WITH_DELAY;
             const cronJobName = `agreement:${agreement.type}:${agreement.id}`;
             await this.agreementExecJobsEntity.save({name:cronJobName,agreementId:agreement.id,date:execution_end_date,newStatus:AgreementStatus.EXECUTED_WITH_DELAY})
-            this.#addAgreementCronJob(cronJobName,agreement.execution_end_date, async()=>{
+            this.#addAgreementCronJob(cronJobName,execution_end_date, async()=>{
                 await this.agreementRepository.update({id:agreement.id},{status:AgreementStatus.EXECUTED_WITH_DELAY})
                 await this.agreementExecJobsEntity.delete({name:cronJobName});
             })
         }else{
             agreement.status = AgreementStatus.IN_EXECUTION;
             const cronJobName = `agreement:${agreement.type}:${agreement.id}`;
-            await this.agreementExecJobsEntity.save({name:cronJobName,agreementId:agreement.id,date:agreement.execution_end_date,newStatus:AgreementStatus.EXECUTED})
-            this.#addAgreementCronJob(cronJobName,agreement.execution_end_date, async()=>{
+            await this.agreementExecJobsEntity.save({name:cronJobName,agreementId:agreement.id,date:execution_end_date,newStatus:AgreementStatus.EXECUTED})
+            this.#addAgreementCronJob(cronJobName,execution_end_date, async()=>{
                 await this.agreementRepository.update({id:agreement.id},{status:AgreementStatus.EXECUTED})
                 await this.agreementExecJobsEntity.delete({name:cronJobName});
             })

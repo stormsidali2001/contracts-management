@@ -29,17 +29,26 @@ const ContractContent = () => {
   },[contractId])
   if(!contract) return "Loading"
   const getStatus = (str:string)=>{
+  
    switch (str) {
-    case "not executed":
-      return "non executee"
-    case "executed":
-      return "executee"
+    case "not_executed":
+      return "non executé"
+      
+    case "in_execution_with_delay":
+      return "en execution avec retard"
+    case "in_execution":
+      return "en execution"
+
     case "executed_with_delay":
-      return "executee avec retard"
+      return "executé avec retard"
+
+    case "executed":
+      return "executé"
     default:
       return "";
    }
   }
+
   return (
     <div className={styles.container}>
         <div className={styles.wrapperBox}>
@@ -125,11 +134,11 @@ const ContractContent = () => {
             <div className={styles.bottomContainer}>
               <div className={styles.dateContainer}>
                 <div className={styles.dateTitle}>Debut</div>
-                <div className={styles.date}>{contract?.signature_date}</div>
+                <div className={styles.date}>{contract?.execution_start_date ?? "xxxx-xx-xx"}</div>
               </div>
               <div className={styles.dateContainer}>
                 <div className={styles.dateTitle}>Fin</div>
-                <div className={styles.date}>{contract?.expiration_date}</div>
+                <div className={styles.date}>{contract?.execution_end_date ?? "xxxx-xx-xx"}</div>
               </div>
             </div>
            
