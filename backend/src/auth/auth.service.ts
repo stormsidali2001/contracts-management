@@ -53,8 +53,8 @@ export class AuthService{
     }
     async register(newUser:CreateUserDTO):Promise<UserEntity>{
        
-            const userDb = await this.userService.findByEmailOrUsername({email:newUser.email,username:newUser.username});
-            Logger.debug(userDb,'kkkkkkkk')
+            const userDb = await this.userService.findByEmailOrUsername({email:newUser.email ?? undefined,username:newUser.username ?? undefined});
+            Logger.debug(JSON.stringify(userDb),'kkkkkkkk')
             if(userDb){
                 let msg = '';
                 const emailsMatch = (userDb.email === newUser.email);

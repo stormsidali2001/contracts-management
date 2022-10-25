@@ -38,7 +38,7 @@ export class UserService{
         }
         const res = await  this.userRepository.save({...userData,direction,departement});
         console.log('testoooooooo',direction)
-        await this.notificationService.sendNewEventToAuthenticatedUsers({entity:res.role as unknown as Entity,operation:Operation.INSERT,departementId:departement.id,directionId:direction.id,entityId:res.id,departementAbriviation:departement.abriviation,directionAbriviation:direction.abriviation})
+        await this.notificationService.sendNewEventToAuthenticatedUsers({entity:res.role as unknown as Entity,operation:Operation.INSERT,departementId:departementId,directionId,entityId:res.id,departementAbriviation:departement?.abriviation,directionAbriviation:direction?.abriviation})
         return res;
     }
     async findBy(options:FindOptionsWhere<UserEntity>):Promise<UserEntity>{
