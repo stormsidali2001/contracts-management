@@ -1,24 +1,32 @@
-import { Avatar, Button, CircularProgress } from '@mui/material';
+import { Avatar, Button, CircularProgress, LinearProgress } from '@mui/material';
 import axios from 'axios';
 import { useRouter } from 'next/router';
-import { useEffect ,useState } from 'react';
+import { ChangeEvent, useEffect ,useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../../../hooks/redux/hooks';
 import styles from './UserProfile.module.css';
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
 import useAxiosPrivate from '../../../../hooks/auth/useAxiosPrivate';
 import { showSnackbar } from '../../../ui/UiSlice';
+import { Stack } from '@mui/system';
+import { setImageUrl } from '../../../auth/authSlice';
 const UserProfile = () => {
+    const {user:currentUser} = useAppSelector(state=>state.auth)
     const router = useRouter();
     const [user,setUser] = useState<any>(null)
     const {query} = router;
     const {userId} = query;
     const [edit,setEdit] = useState(false);
     const [loading,setLoading] = useState(false)
+    const [imagePreview,setImagePreview] = useState(user?.imageUrl?`http://localhost:8080/api/users/image/${user?.imageUrl}`:"blank-profile-picture.png");
+    const [isImageUploading,setIsImageUploading] = useState(false)
+    const [imageFile,setImageFile] = useState<any>(null)
+    const [imageUploadProgress,setImageUploadProgress] = useState(0)
     const privateAxios = useAxiosPrivate();
     const dispatch = useAppDispatch();
-    useEffect(()=>{
-        if(!userId) return;
+
+
+    const fetchUser = ()=>{
         privateAxios.get(`http://localhost:8080/api/users/${userId}`)
         .then(res=>{
             console.log(res)
@@ -28,19 +36,63 @@ const UserProfile = () => {
             console.error(err);
 
         })
+    }
+
+    useEffect(()=>{
+        if(!userId) return;
+        fetchUser();
+      
     },[userId])
 
     
   const setUserProperty = (key:string,value:any)=>setUser((u:Object)=>({...u,[key]:value}))
-  const handleSubmit = ()=>{
+  const handleSubmit = async()=>{
+    //image upload section
+    
+    if(imageFile) setIsImageUploading(true)
+    const formData = new FormData();
+    formData.append("file",imageFile)
+      let res;
+      if(imageFile){
+        res = await privateAxios.post("http://localhost:8080/api/users/image/upload",
+            formData,
+            {
+                onUploadProgress:(e)=>{
+                    const {loaded,total} = e;
+                    console.log(`${loaded} kbof ${total}`)
+                    setImageUploadProgress(Math.floor((loaded/total)*100))
+                },
+               
+            }
+        );
+
+      }
+      let imageUrl =""
+     if( res){
+       console.log(res)
+       setIsImageUploading(false);
+       imageUrl = res.data.filename
+     }
+
+   
     setLoading(true)
     privateAxios.put(`http://localhost:8080/api/users/${user.id}`,{
         email:user.email,
         username:user.username,
         firstName:user.firstName,
-        lastName:user.lastName
+        lastName:user.lastName,
+        imageUrl
     })
     .then(res=>{
+        if(imageUrl.length > 0 ){
+            if(currentUser?.sub === user.id){
+                dispatch(setImageUrl({imageUrl}))
+            }
+            setUser({...user,imageUrl})
+            
+            
+         }
+    
         setEdit(false)
         setLoading(false)
 
@@ -51,6 +103,21 @@ const UserProfile = () => {
 
     });
   }
+  const handleFileChange = (e:any)=>{
+    if(!e.target.files ) return;
+    if(e.target.files.length === 0 ) return;
+    setImageFile(e.target.files[0])
+
+  }
+  useEffect(()=>{
+    if(!imageFile) return;
+    const objectUrl = URL.createObjectURL(imageFile)
+    setImagePreview(objectUrl)
+
+    return ()=>{
+        URL.revokeObjectURL(objectUrl)
+    }
+  },[imageFile])
   return (
     <div className={styles.userCard}>
     {
@@ -81,18 +148,35 @@ const UserProfile = () => {
     <div>
     <div className={styles.imageContainer}>
                     <div className={styles.imageItem}>
-                        <span className={styles.imageText}>{user?.departement?.abriviation}</span>
+                        <span className={styles.imageText}>{user?.departement?.abriviation ?? "..."}</span>
                         <span className={styles.imageLabel}>dp</span>
                     </div>
-
-                    <Avatar className={styles.profileImg} src={user?.imageUrl?`http://localhost:8080/api/users/image/${user?.imageUrl}`:"blank-profile-picture.png"}/>
+                    {
+                        !edit?(
+                            <Avatar className={styles.profileImg} src={user?.imageUrl?`http://localhost:8080/api/users/image/${user?.imageUrl}`:"/blank-profile-picture.png"}/>
+                        ):(
+                            <label htmlFor='input1' style={{cursor:"pointer"}}>
+                                <Avatar className={styles.profileImg} src={imagePreview}/>
+                                <input onChange={handleFileChange} type='file' id='input1' style={{display:'none'}}/>
+                           </label>
+                        )
+                    }
+                            
 
                     <div className={styles.imageItem}>
                         <span className={styles.imageLabel}>dr</span>
-                        <span className={styles.imageText}>{user?.direction?.abriviation}</span>
+                        <span className={styles.imageText}>{user?.direction?.abriviation ?? "..."}</span>
                     </div>
                 </div>
     </div>
+     {  
+       isImageUploading && 
+      ( <Stack  sx={{marginTop:"10px"}} alignItems="center">
+            <span >{imageUploadProgress}</span>
+            <LinearProgress   variant="buffer"  valueBuffer={imageUploadProgress} value={imageUploadProgress} color="primary" sx={{width:"100%"}} />
+        </Stack>)
+     }
+   
     <div className={styles.content}>
       <div className={styles.userContentItem}>
         <span>nom:</span>

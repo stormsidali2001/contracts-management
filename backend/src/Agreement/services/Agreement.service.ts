@@ -70,11 +70,26 @@ export class AgreementService implements OnModuleInit{
 
         const res= await  this.agreementRepository.save({...agreementData,direction,departement,vendor});
         await this.userNotificationService.sendToUsersInDepartement(departement.id,`${agreement.type === AgreementType.CONTRACT ? "un nouveau contrat est ajoute a votre departement":"une nouvelle convension a etee ajoutee a votre departement"} avec le fournisseur: ${vendor.company_name}`)
-        await this.userNotificationService.sendNewEventToAuthenticatedUsers({entity:res.type as unknown as Entity,operation:Operation.INSERT,entityId:res.id,departementId:departement.id,directionId:direction.id,departementAbriviation:departement.abriviation,directionAbriviation:direction.abriviation,createdAt:new Date()})
+        await this.userNotificationService.sendNewEventToAuthenticatedUsers({
+            entity:res.type as unknown as Entity,
+            operation:Operation.INSERT,entityId:res.id,
+            departementId:departement.id,
+            directionId:direction.id,
+            departementAbriviation:departement.abriviation,
+            directionAbriviation:direction.abriviation,
+            createdAt:new Date()
+        })
         return res;
     }
 
-    async findAll(offset:number = 0 ,limit:number = 10 ,orderBy:string = undefined,agreementType:AgreementType,searchQuery:string = undefined):Promise<PaginationResponse<AgreementEntity>>{
+    async findAll(
+            offset:number = 0 ,
+            limit:number = 10 ,
+            orderBy:string = undefined,
+            agreementType:AgreementType,
+            searchQuery:string = undefined
+        ):Promise<PaginationResponse<AgreementEntity>>{
+            
         let query =    this.agreementRepository.createQueryBuilder('ag')
         .where("ag.type = :type",{type:agreementType})
         .skip(offset)
