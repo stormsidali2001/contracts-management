@@ -96,6 +96,10 @@ export const authSlice = createSlice({
         setCredentials:(state,action)=>{
             state.user = action.payload.user;
             state.jwt = action.payload.jwt;
+        },
+        setImageUrl:(state,action)=>{
+            if(!state.user) return;
+            state.user.imageUrl = action.payload.imageUrl
         }
       
     },
@@ -183,4 +187,4 @@ export const authSlice = createSlice({
 })
 
 export const selectedUser = (state:RootState)=>state.auth;
-export const {reset,setCredentials} = authSlice.actions;
+export const {reset,setCredentials,setImageUrl} = authSlice.actions;
