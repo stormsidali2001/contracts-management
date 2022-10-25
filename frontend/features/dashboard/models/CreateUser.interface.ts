@@ -6,6 +6,6 @@ export interface CreateUser{
     lastName:string;
     role:string;
     imageUrl?:string;
-    directionId:string;
-    departementId:string;
+    directionId:string |null;
+    departementId:string| null;
 }

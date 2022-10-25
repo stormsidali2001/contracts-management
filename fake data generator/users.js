@@ -14,7 +14,7 @@ function createRandomUser(directionId,departementId) {
       firstName:faker.name.firstName(),
       lastName:faker.name.lastName(),
       email: faker.internet.email(),
-      role:randomElemenetFromArray(ROLES),
+      role:randomElemenetFromArray(ROLES.sort(()=>Math.random() > 0.5)),
       departementId,
       directionId,
       password: '123456',
