@@ -11,9 +11,11 @@ import { useDebounce } from '../../../../hooks/useDebounce.hook';
 import UserActions from '../UserActions/UserActions';
 import Link from 'next/link';
 import useAxiosPrivate from '../../../../hooks/auth/useAxiosPrivate';
+import UsersFilter from '../UsersFilter/UsersFilter';
 
 
 const UsersContent = () => {
+    const [filterModalOpen,setFilterModalOPen] = useState(false)
     const axiosPrivate = useAxiosPrivate();
     const [pageState,setPageState] = useState<any>({
         isLoading:false,
@@ -37,6 +39,8 @@ const UsersContent = () => {
             setQueryOptions({ sortModel: [...sortModel] });
         }
       }
+    const handleOpenFilterModal = ()=>setFilterModalOPen(true)
+    const handleCloseFilterModal = ()=>setFilterModalOPen(false)
       const columns:GridColumns<any> = useMemo(()=>(
         [
             {
@@ -149,12 +153,14 @@ const UsersContent = () => {
   return (
     <div className={styles.container}>
         <div className={styles.wrapperBox}>
+
             <div className={styles.searchContainer}>
                 <Button 
                     startIcon ={<FilterIcon/>}  
                     size='small' 
                     color='secondary' 
                     variant="contained" 
+                    onClick={()=>handleOpenFilterModal()}
                     className={styles.advancedButton}>Avancée</Button>
               
           
@@ -174,6 +180,7 @@ const UsersContent = () => {
                 />
                 
             </div>
+        
             <div className={styles.tableContainer}>
             <DataGrid
                 autoHeight
@@ -208,6 +215,16 @@ const UsersContent = () => {
             aria-describedby="modal-modal-description"
       >
         <CreateUser handleClose={handleClose}/>
+      </Modal>
+
+
+      <Modal
+        open={filterModalOpen}
+        onClose={handleCloseFilterModal}
+        aria-labelledby="modal-filter-modal-title"
+        aria-describedby="modal-filter-modal-description"
+      >
+        <UsersFilter handleClose={handleClose}/>
       </Modal>
 
      

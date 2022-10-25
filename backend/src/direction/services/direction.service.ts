@@ -10,6 +10,7 @@ export class DirectionService{
         @InjectRepository(DirectionEntity) private readonly directionRepository:Repository<DirectionEntity>,
         private dataSource:DataSource
     ){}
+    
     async createDirection(direction:CreateDirectionDTO):Promise<InsertResult>{
       
       const {departements,...otherDirectionData} = direction;

@@ -21,8 +21,8 @@ export class UserController{
     }
     
     @Get('')
-    async findAll(@Query('offset') offset:number = 0 ,@Query('limit') limit:number = 10 ,@Query('orderBy') orderBy:string  = undefined , @Query('searchQuery') searchQuery:string):Promise<PaginationResponse<UserEntity>>{
-        return await  this.userService.findAll(offset,limit,orderBy,searchQuery);
+    async findAll(@Query('offset') offset:number = 0 ,@Query('limit') limit:number = 10 ,@Query('orderBy') orderBy:string  = undefined , @Query('searchQuery') searchQuery:string , @Query('departementId') departementId:string , @Query('directionId') directionId:string):Promise<PaginationResponse<UserEntity>>{
+        return await  this.userService.findAll(offset,limit,orderBy,searchQuery,departementId,directionId);
     }   
 
     @Get(":id")

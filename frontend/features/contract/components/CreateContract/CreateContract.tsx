@@ -45,10 +45,10 @@ interface Proptype{
     const [amount,setAmount] = useState(0)
     const [vendor,setVendor] = useState<any>(null);
     const [signatureDate, setSignatureDate] = useState<Dayjs>(
-        dayjs('2014-08-18'),
+        dayjs(new Date()),
       );
     const [expirationDate, setExpirationDate] = useState<Dayjs>(
-        dayjs('2014-08-18'),
+        dayjs(new Date()),
       );
     const dispatch = useAppDispatch();
     const [fileUploadProgress,setFileUploadProgress] = useState(0)
