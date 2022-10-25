@@ -70,7 +70,7 @@ export class AgreementService implements OnModuleInit{
 
         const res= await  this.agreementRepository.save({...agreementData,direction,departement,vendor});
         await this.userNotificationService.sendToUsersInDepartement(departement.id,`${agreement.type === AgreementType.CONTRACT ? "un nouveau contrat est ajoute a votre departement":"une nouvelle convension a etee ajoutee a votre departement"} avec le fournisseur: ${vendor.company_name}`)
-        await this.userNotificationService.sendNewEventToAuthenticatedUsers({entity:res.type as unknown as Entity,operation:Operation.INSERT,entityId:res.id,departementId:departement.id,directionId:direction.id})
+        await this.userNotificationService.sendNewEventToAuthenticatedUsers({entity:res.type as unknown as Entity,operation:Operation.INSERT,entityId:res.id,departementId:departement.id,directionId:direction.id,departementAbriviation:departement.abriviation,directionAbriviation:direction.abriviation,createdAt:new Date()})
         return res;
     }
 
@@ -110,6 +110,8 @@ export class AgreementService implements OnModuleInit{
         const {observation = '',execution_start_date,execution_end_date,agreementId} = execData;
         const agreement = await this.agreementRepository.createQueryBuilder('ag')
         .where("ag.id = :agreementId",{agreementId})
+        .leftJoinAndSelect('ag.direction','dr')
+        .leftJoinAndSelect('ag.departement','dp')
         .getOne();
         if(!agreement){
             throw new NotFoundException("l'accord specifiee n'es pas touvee")
@@ -141,7 +143,7 @@ export class AgreementService implements OnModuleInit{
         agreement.execution_end_date = execution_end_date;
         agreement.observation = observation;
         
-        await this.userNotificationService.sendNewEventToAuthenticatedUsers({entity:agreement.type as unknown as Entity,operation:Operation.EXECUTE,entityId:agreement.id,departementId:agreement.departementId,directionId:agreement.directionId})
+        await this.userNotificationService.sendNewEventToAuthenticatedUsers({entity:agreement.type as unknown as Entity,operation:Operation.EXECUTE,entityId:agreement.id,departementId:agreement.departementId,directionId:agreement.directionId,createdAt:new Date(),departementAbriviation:agreement.departement.abriviation,directionAbriviation:agreement.direction.abriviation})
         return this.agreementRepository.save(agreement)
 
     }
