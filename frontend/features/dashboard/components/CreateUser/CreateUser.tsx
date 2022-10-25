@@ -169,9 +169,7 @@ const CreateUser = ({handleClose}:Proptype) => {
                console.log(`${loaded} kbof ${total}`)
                setImageUploadProgress(Math.floor((loaded/total)*100))
            },
-           headers:{
-             'Authorization':"Bearer "+JSON.parse(localStorage.getItem("jwt") ?? "" )?.access_token
-           }
+         
          })
 
         }
@@ -200,6 +198,7 @@ const CreateUser = ({handleClose}:Proptype) => {
 
         setLoading(false);
         setDone(true);
+        dispatch(showSnackbar({message:"l'utilisateur a eté creé avec success.",severty:"success"}))
 
 
 
