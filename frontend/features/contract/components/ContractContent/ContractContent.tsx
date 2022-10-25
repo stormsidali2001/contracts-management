@@ -98,7 +98,7 @@ const ContractContent = () => {
         <div className={styles.wrapperBox}>
            <Button
             className={styles.executionButton}
-            disabled = {!(contract.status === 'not executed')}
+            disabled = {!(contract.status === 'not_executed')}
             onClick={()=>handelOpenExecutionModal()}
            >
                 <PlayCircleFilledWhiteIcon/>

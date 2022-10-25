@@ -32,12 +32,13 @@ export class AgreementService implements OnModuleInit{
         this.logger.log('initializing the percisted agreement related cron jobs:')
         const percistedJobs = await this.agreementExecJobsEntity.find();
         for( let pJob of percistedJobs){
-          
+                this.logger.log(`trying to refresh the job: ${pJob.name} date: ${JSON.stringify(pJob.date)}`)
                 if(pJob.date > new Date(Date.now())){
                     await this.agreementExecJobsEntity.delete({name:pJob.name})
+                    this.logger.log(`the job  ${pJob.name} expired hence deleted.`)
                     continue;
                 }
-                this.#addAgreementCronJob(pJob.name,pJob.date,async ()=>{
+                await this.#addAgreementCronJob(pJob.name,pJob.date,async ()=>{
                     await this.agreementRepository.update({id:pJob.agreementId},{status:pJob.newStatus})
                     await this.agreementExecJobsEntity.delete({name:pJob.name});
                 })
@@ -119,10 +120,11 @@ export class AgreementService implements OnModuleInit{
         if(new Date(execution_start_date) < new Date(agreement.signature_date) ){
             throw new  BadRequestException("la date de debut d'execution dout etre supperieur ou rgale a la date de signature");
         }
+        await this.agreementRepository.update(agreementId,{execution_start_date,execution_end_date,observation})
         if(new Date(execution_start_date) >= new Date(agreement.expiration_date)){
             agreement.status = AgreementStatus.IN_EXECUTION_WITH_DELAY;
             const cronJobName = `agreement:${agreement.type}:${agreement.id}`;
-            await this.agreementExecJobsEntity.save({name:cronJobName,agreementId:agreement.id,date:agreement.execution_end_date,newStatus:AgreementStatus.EXECUTED_WITH_DELAY})
+            await this.agreementExecJobsEntity.save({name:cronJobName,agreementId:agreement.id,date:execution_end_date,newStatus:AgreementStatus.EXECUTED_WITH_DELAY})
             this.#addAgreementCronJob(cronJobName,agreement.execution_end_date, async()=>{
                 await this.agreementRepository.update({id:agreement.id},{status:AgreementStatus.EXECUTED_WITH_DELAY})
                 await this.agreementExecJobsEntity.delete({name:cronJobName});
@@ -183,7 +185,8 @@ export class AgreementService implements OnModuleInit{
 
     }
     async #addAgreementCronJob(name:string,date:Date, cb:()=>void){
-        const job = new CronJob(date,()=>{
+     
+        const job = new CronJob(new Date(date),()=>{
             cb();
         })
         this.schdulerRegistry.addCronJob(name,job);
