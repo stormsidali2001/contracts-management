@@ -23,8 +23,8 @@ const CreateUser = ({handleClose}:Proptype) => {
   const axiosPrivate = useAxiosPrivate();
   const steps = [
     'identifiants',
-    'direction , departement',
     'role et photo de profile',
+    'direction , departement',
     'validation',
   ];
   const [activeStep,setActiveStep] = useState(0);
@@ -37,7 +37,7 @@ const CreateUser = ({handleClose}:Proptype) => {
   const [loading,setLoading] = useState(false);
   const [done,setDone] = useState(false);
   const [isImageUploading,setIsImageUploading] = useState(false)
-  const [role,setRole] = useState<string>("employee");
+  const [role,setRole] = useState<string>("EMPLOYEE");
 
   const {
     text:firstName ,
@@ -149,6 +149,7 @@ const CreateUser = ({handleClose}:Proptype) => {
       abortController.abort();
     }
   },[])
+
   const handleFileChange = (e:any)=>{
     e.preventDefault();
     setProfileImageFile(e.target.files[0])
@@ -180,6 +181,7 @@ const CreateUser = ({handleClose}:Proptype) => {
          setIsImageUploading(false);
          imageUrl = res.data.filename
        }
+       const isExeptionRoles = (value:string)=> ['ADMIN','JURIDICAL'].some(el=>el === value)
 
         const newUser:CreateUser = {
             email,
@@ -187,8 +189,8 @@ const CreateUser = ({handleClose}:Proptype) => {
             lastName,
             imageUrl,
             role,
-            directionId:selectedDirection.value,
-            departementId:selectedDepartement.value,
+            directionId:isExeptionRoles(role)?null:selectedDirection.value,
+            departementId:isExeptionRoles(role)?null:selectedDepartement.value,
            
         }
         setLoading(true)
@@ -214,10 +216,16 @@ const CreateUser = ({handleClose}:Proptype) => {
    }
   const handleNextStep = ()=>{
     if(done) return;
+    if(activeStep === 1 && role==='ADMIN' || role === 'JURIDICAL' ){
+      handleSubmit();
+      setActiveStep(s=>(s+2)%4)
+      return
+    }
     if(activeStep === 2){
 
         handleSubmit();
     }
+    
     setActiveStep(s=>(s+1)%4)
   }
   const handleStepLabel = (index:number)=>{
@@ -282,7 +290,7 @@ const CreateUser = ({handleClose}:Proptype) => {
         </>)
         }
         {
-          activeStep === 1&& (
+          activeStep === 2&& (
             <>
             <Stack direction="row" justifyContent="center" gap={3}>
               <FormControl className={styles.selectFormControl}>
@@ -333,7 +341,7 @@ const CreateUser = ({handleClose}:Proptype) => {
         }
 
         {
-          activeStep === 2 && (
+          activeStep === 1 && (
             <>
               <Typography></Typography>
               <Stack direction="row" className={styles.headerContainer}>
@@ -371,9 +379,9 @@ const CreateUser = ({handleClose}:Proptype) => {
                   onChange={handleRoleChange}
                   fullWidth
                 >
-                  <MenuItem value={'employee'}>Employee</MenuItem>
-                  <MenuItem value={'admin'}>Admin</MenuItem>
-                  <MenuItem value={'juridical'}>Juridique</MenuItem>
+                  <MenuItem value={'EMPLOYEE'}>Employee</MenuItem>
+                  <MenuItem value={'ADMIN'}>Admin</MenuItem>
+                  <MenuItem value={'JURIDICAL'}>Juridique</MenuItem>
                 </Select>
               </FormControl>
             </Stack>

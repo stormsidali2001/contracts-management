@@ -66,7 +66,7 @@ const UsersContent = () => {
                 field:"role",
                 headerName:"role",
                 width:100,
-                valueOptions:['admin','juridical','employee'],
+                valueOptions:['ADMIN','JURIDICAL','EMPLOYEE'],
                 type: "singleSelect",
                 editable:true,
         
@@ -94,28 +94,28 @@ const UsersContent = () => {
                 editable:true,
                 width:200
             },
-            {
-                field:"actions",
-                headerName:"actions",
-                type:"actions",
-                renderCell:(params)=>{
+            // {
+            //     field:"actions",
+            //     headerName:"actions",
+            //     type:"actions",
+            //     renderCell:(params)=>{
         
-                    return (
-                      <UserActions {...{params,rowId,setRowId}}/>
-                    )
-                }
-            },
-            {
-                field:"details",
-                headerName:"Details",
-                type:"actions",
-                renderCell:(params)=>{
+            //         return (
+            //           <UserActions {...{params,rowId,setRowId}}/>
+            //         )
+            //     }
+            // },
+            // {
+            //     field:"details",
+            //     headerName:"Details",
+            //     type:"actions",
+            //     renderCell:(params)=>{
               
-                    return (
-                     <Button><Link href={`/users/${params.id}`}>Details</Link></Button>
-                    )
-                }
-            }
+            //         return (
+            //          <Button><Link href={`/users/${params.id}`}>Details</Link></Button>
+            //         )
+            //     }
+            // }
         ]
     ),[rowId])
     useEffect( ()=>{

@@ -109,7 +109,9 @@ const DirectionContent = () => {
         <div className={styles.wrapperBox}>
              <Stack direction="row" className={styles.departementsTitleWrapper}>
              <Typography sx={{color:"#807D7D",paddingLeft:"10px"}}>Directions</Typography>
-                        <Button onClick={()=>handleDirectionModalOpen()}><AddCircleIcon /></Button>
+                       { 
+                       dispalayIfAdmin() &&<Button onClick={()=>handleDirectionModalOpen()}><AddCircleIcon /></Button>
+                       }
             </Stack>
             <div className={styles.directionsWrapper}>
             {
@@ -141,7 +143,7 @@ const DirectionContent = () => {
                                 <Stack direction="row" className={styles.departementsTitleWrapper}>
                                     <Typography >Departements</Typography>
                                     
-                                        <Button onClick={()=>handleOpenDepartementModal(direction.id)}><AddCircleIcon/></Button>
+                                   { dispalayIfAdmin() &&<Button onClick={()=>handleOpenDepartementModal(direction.id)}><AddCircleIcon/></Button>}
                                       
                                 </Stack>
                                 <TableContainer className={styles.departementsWrapper} >
