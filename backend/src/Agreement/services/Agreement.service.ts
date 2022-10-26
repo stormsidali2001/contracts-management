@@ -29,16 +29,35 @@ export class AgreementService implements OnModuleInit{
 
     ){}
     async onModuleInit() {
+        const format = (d:Date)=>{
+            const newD = new Date(d);
+            return newD.toISOString().replace(/T[0-9:.Z]*/g,"");
+        
+        }
         this.logger.log('initializing the percisted agreement related cron jobs:')
         const percistedJobs = await this.agreementExecJobsEntity.find();
         for( let pJob of percistedJobs){
-                this.logger.log(`trying to refresh the job: ${pJob.name} date: ${JSON.stringify(pJob.date)}`)
-                if(pJob.date > new Date(Date.now())){
+            const d1 =new Date(pJob.date) ;
+            const d2 = new Date(format(new Date()));
+           
+            this.logger.log(`trying to refresh the job: ${pJob.name} date: ${JSON.stringify(pJob.date)} d1 ${JSON.stringify(d1)} d2 ${JSON.stringify(d2)}`)
+            if(d1.getUTCMilliseconds() < d2.getUTCMilliseconds()){
+
                     await this.agreementExecJobsEntity.delete({name:pJob.name})
                     this.logger.log(`the job  ${pJob.name} expired hence deleted.`)
                     continue;
                 }
-                await this.#addAgreementCronJob(pJob.name,pJob.date,async ()=>{
+                if(d1.getUTCMilliseconds() === d2.getUTCMilliseconds()){
+                    
+
+                    d1.setHours(d1.getHours(),d1.getMinutes()+5,d1.getSeconds()+5,d1.getMilliseconds())
+                    await this.agreementRepository.update({id:pJob.agreementId},{status:pJob.newStatus})
+                    await this.agreementExecJobsEntity.delete({name:pJob.name});
+                    this.logger.log(`the job  ${pJob.name} expired hence deleted.`)
+                    continue;
+                }
+               
+                await this.#addAgreementCronJob(pJob.name,d1,async ()=>{
                     await this.agreementRepository.update({id:pJob.agreementId},{status:pJob.newStatus})
                     await this.agreementExecJobsEntity.delete({name:pJob.name});
                 })
