@@ -1,4 +1,4 @@
-import { FormControl, InputLabel, MenuItem, Select, SelectChangeEvent } from '@mui/material';
+import { Button, FormControl, Input, InputLabel, MenuItem, Select, SelectChangeEvent } from '@mui/material';
 import { Stack } from '@mui/system';
 import { useEffect, useState } from 'react';
 import useAxiosPrivate from '../../../../hooks/auth/useAxiosPrivate';
@@ -76,7 +76,16 @@ const UsersFilter = (props:PropType) => {
   },[])
   return (
     <div className={styles.container}>
-           <Stack direction="row" justifyContent="center" gap={3}>
+        <div className={styles.filtersContainer}>
+        <div className={styles.filterContainer} >
+              <span>etat compte:</span>
+              <Input type='checkbox' value={false}/>
+
+          </div>
+            <div className={styles.filterContainer} >
+              <span>Par direction</span>
+              <Input type='checkbox' value={false}/>
+              <Stack direction="row" justifyContent="center" gap={5}>
               <FormControl className={styles.selectFormControl}>
                 <InputLabel id="direction-input-label">Direction</InputLabel>
                 <Select
@@ -119,6 +128,14 @@ const UsersFilter = (props:PropType) => {
               
                 </Select>
             </FormControl>
+            </Stack>
+            </div>
+        </div>
+        
+            <Stack direction="row" className={styles.actionButtons}>
+              <Button>Appliquer</Button>
+              
+                <Button>Fermer</Button>
             </Stack>
     </div>
   )
