@@ -15,6 +15,7 @@
 .actionButtons{
     justify-content: center;
     column-gap: 30px;
+    margin-top: 10px;
 }
 .filtersContainer{
     display: flex;

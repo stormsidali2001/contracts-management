@@ -16,9 +16,10 @@ interface Filters{
 }
 interface PropType{
     handleClose:Function,
-    handleSetFilters:(filters:Filters)=>void
+    handleSetFilters:(filters:Filters)=>void,
+    initialFilters:Filters
 }
-const UsersFilter = ({handleSetFilters,handleClose}:PropType) => {
+const UsersFilter = ({handleSetFilters,handleClose,initialFilters}:PropType) => {
   const axiosPrivate = useAxiosPrivate();
   const dispatch = useAppDispatch();
 
@@ -115,6 +116,26 @@ const UsersFilter = ({handleSetFilters,handleClose}:PropType) => {
     handleClose();
 
  }
+
+ useEffect(()=>{
+    if(initialFilters.role){
+        setIsByRole(true)
+        setRole(initialFilters.role)
+    }
+
+    if(initialFilters.active){
+      setAccountState(true)
+      setIsActive(true)
+    }
+    if(initialFilters.directionId && initialFilters.departementId){
+      setIsByDirection(true)
+      const selectedDirection = directions.find(d=>d.id === initialFilters.directionId);
+      setSelectedDirection({label:selectedDirection?.abriviation ?? "",value:initialFilters.directionId});
+      const selectedDepartement = selectedDirection?.departements.find(dp=>dp.id === initialFilters.departementId);
+      setSelectedDepartement({value:initialFilters.departementId , label:selectedDepartement?.abriviation ?? ""})
+    }
+ 
+ },[])
   return (
     <div className={styles.container}>
         <span className={styles.title}>Filtre</span>
@@ -218,7 +239,7 @@ const UsersFilter = ({handleSetFilters,handleClose}:PropType) => {
         </div>
         
             <Stack direction="row" className={styles.actionButtons}>
-              <Button onClick={()=>handleSubmitFilters()}>Appliquer</Button>
+              <Button  onClick={()=>handleSubmitFilters()}>Appliquer</Button>
               
                 <Button onClick={()=>handleClose()}>Fermer</Button>
             </Stack>

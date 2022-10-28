@@ -1,5 +1,5 @@
 import styles from './UserContent.module.css';
-import {Avatar, Button, Modal} from '@mui/material';
+import {Avatar, Badge, Button, Modal} from '@mui/material';
 import FilterIcon from '../../../../icons/FilterIcon';
 import TextField from '@mui/material/TextField';
 import { DataGrid, GridColumns, GridRenderCellParams, GridSortItem, GridSortModel } from '@mui/x-data-grid';
@@ -167,18 +167,33 @@ const UsersContent = () => {
         const {value} = e.target;
         debounce(()=>setSearchQuery(value),1000)
     }
+
+ const countFilters = ()=>{
+     if(filters == null) return 0;
+     let count = 0;
+    Object.keys(filters).forEach(f=>{
+        if(f !== 'departementId'){
+            count++;
+        }
+     })
+
+     return count;
+ }
   return (
     <div className={styles.container}>
         <div className={styles.wrapperBox}>
 
             <div className={styles.searchContainer}>
-                <Button 
+            <Badge badgeContent={countFilters()}  sx={{padding:0}}  className={styles.searchBadge}>
+            <Button 
                     startIcon ={<FilterIcon/>}  
                     size='small' 
                     color='secondary' 
                     variant="contained" 
                     onClick={()=>handleOpenFilterModal()}
                     className={styles.advancedButton}>Avancée</Button>
+            </Badge>
+              
               
           
                 <TextField 
@@ -241,7 +256,7 @@ const UsersContent = () => {
         aria-labelledby="modal-filter-modal-title"
         aria-describedby="modal-filter-modal-description"
       >
-        <UsersFilter handleClose={()=>setFilterModalOPen(false)} handleSetFilters={handleSetFilter}/>
+        <UsersFilter initialFilters={filters ?? {} as Filters } handleClose={()=>setFilterModalOPen(false)} handleSetFilters={handleSetFilter}/>
       </Modal>
 
      

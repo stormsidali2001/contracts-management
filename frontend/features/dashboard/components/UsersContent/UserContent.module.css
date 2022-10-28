@@ -55,3 +55,9 @@
     right:5px;
 
 }
+.searchBadge > span{
+    right:5px ;
+    bottom:5px;
+    color:white;
+    background-color: #17498ed2;
+}
