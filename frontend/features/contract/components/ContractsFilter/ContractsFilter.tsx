@@ -153,7 +153,30 @@ const [endDate, setEndDate] = useState<Dayjs>(
 
  }
 
+ useEffect(()=>{
+  if(initialFilters.directionId && initialFilters.departementId){
+    setIsByDirection(true)
+    const selectedDirection = directions.find(d=>d.id === initialFilters.directionId);
+    setSelectedDirection({label:selectedDirection?.abriviation ?? "",value:initialFilters.directionId});
+    const selectedDepartement = selectedDirection?.departements.find(dp=>dp.id === initialFilters.departementId);
+    setSelectedDepartement({value:initialFilters.departementId , label:selectedDepartement?.abriviation ?? ""})
+  }
 
+  if(initialFilters.amount_min!== undefined && initialFilters.amount_max !== undefined){
+      setIsByAmount(true)
+      setMinAmount(initialFilters.amount_min)
+      setMaxAmount(initialFilters.amount_max)
+  }
+  if(initialFilters.start_date && initialFilters.end_date){
+    setIsByDate(true)
+    setStartDate( dayjs(initialFilters.start_date) )
+    setEndDate(  dayjs(initialFilters.end_date))
+  }
+  if(initialFilters.status){
+    setIsByStatus(true)
+    setSelectedStatus({label:initialFilters.status,value:initialFilters.status})
+  }
+ },[])
   return (
     <div className={styles.container}>
         <span className={styles.title}>Filtre</span>
