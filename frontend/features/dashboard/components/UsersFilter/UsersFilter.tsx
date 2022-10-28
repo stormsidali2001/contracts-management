@@ -11,7 +11,7 @@ import styles from './UsersFilter.module.css';
 interface Filters{
   directionId?:string;
   departementId?:string;
-  active?:string;
+  active?:"active"| "not_active";
   role?:UserRole;
 }
 interface PropType{
@@ -25,6 +25,7 @@ const UsersFilter = ({handleSetFilters,handleClose}:PropType) => {
   const [isByRole,setIsByRole] = useState(false);
   const [isByDirection,setIsByDirection] = useState(false);
   const [accountState,setAccountState] = useState(false);
+  const [isActive,setIsActive] = useState(false)
 
   const [role,setRole] = useState('EMPLOYEE')
   const [directions,setDirections] = useState<Direction[]>([]);
@@ -109,8 +110,9 @@ const UsersFilter = ({handleSetFilters,handleClose}:PropType) => {
       filters.directionId = selectedDirection.value;
       filters.departementId = selectedDepartement.value;
     }
-    filters.active = accountState;
+    if(accountState) filters.active = isActive?"active":"not_active";
     handleSetFilters({...filters})
+    handleClose();
 
  }
   return (
@@ -205,6 +207,11 @@ const UsersFilter = ({handleSetFilters,handleClose}:PropType) => {
                   <label htmlFor='check-box-etat-compte'>Par Etat compte:</label>
                   <Input type='checkbox' value={accountState} inputProps={{checked:accountState}} onChange={()=>setAccountState(a=>!a)}/>
                </div>
+               <Stack direction="row" gap={2}>
+               <label htmlFor='check-box-etat-compte'>Active:</label>
+                  <Input type='checkbox' disabled={!accountState} value={isActive} inputProps={{checked:isActive}} onChange={()=>setIsActive(a=>!a)}/>
+
+               </Stack>
               
          
             </div>
