@@ -9,12 +9,13 @@ import { UserRole } from '../../../auth/models/user-role.enum';
 import { Direction } from '../../../direction/models/direction.interface';
 import { showSnackbar } from '../../../ui/UiSlice';
 import styles from './ContractsFilter.module.css';
-interface AgreementStatus{
-    executed:number;
-    executed_with_delay:number;
-    in_execution:number;
-    in_execution_with_delay:number;
-    not_executed:number;
+enum  AgreementStatus{
+    executed = 'executed' ,
+    executed_with_delay = 'executed_with_delay',
+    in_execution = 'in_execution',
+    in_execution_with_delay = 'in_execution_with_delay',
+    not_executed = 'in_execution_with_delay'
+
 }
 /*
     filter by :
@@ -43,6 +44,11 @@ const ContractsFilter = ({handleSetFilters,handleClose,initialFilters}:PropType)
   const axiosPrivate = useAxiosPrivate();
   const dispatch = useAppDispatch();
 
+  const [isByAmount,setIsByAmount] = useState(false)
+  const [minAmount,setMinAmount] = useState(0)
+  const [maxAmount,setMaxAmount] = useState(0)
+  const [selectedStatus,setSelectedStatus] = useState({label:'not_executed',value:'not_executed'})
+  const [isByStatus,setIsByStatus] = useState(false)
   const [signatureDate, setSignatureDate] = useState<Dayjs>(
     dayjs(new Date()),
   );
@@ -128,7 +134,8 @@ const [expirationDate, setExpirationDate] = useState<Dayjs>(
  }
 
  const handleSubmitFilters = ()=>{
-   
+    const filters:Filters = {};
+    if(isByDirection) filters.
     handleClose();
 
  }
@@ -206,6 +213,7 @@ const [expirationDate, setExpirationDate] = useState<Dayjs>(
                label="date de signature"
                inputFormat="MM/DD/YYYY"
                value={signatureDate}
+               disabled={!isByDate}
                onChange={(value)=>setSignatureDate(value ?? dayjs(""))}
                renderInput={(params) => <TextField size="small" {...params} />}
                />
@@ -214,6 +222,7 @@ const [expirationDate, setExpirationDate] = useState<Dayjs>(
                label="date d'expiration"
                inputFormat="MM/DD/YYYY"
                value={expirationDate}
+               disabled={!isByDate}
                onChange={(value)=>setExpirationDate(value ?? dayjs(""))}
                renderInput={(params) => <TextField size="small"  {...params} />}
                />
@@ -221,21 +230,88 @@ const [expirationDate, setExpirationDate] = useState<Dayjs>(
 
            </Stack>
             </div>
-      
          
             <div className={styles.filterContainer} >
                <div className={styles.titleContainer}>
-                  <label htmlFor='check-box-etat-compte'>Par Etat compte:</label>
-                  <Input type='checkbox' value={accountState} inputProps={{checked:accountState}} onChange={()=>setAccountState(a=>!a)}/>
+                  <label htmlFor='check-box-direction'>Par Status:</label>
+                  <Input id='check-box-direction' type='checkbox' value={isByStatus} inputProps={{checked:isByStatus,}}  onChange={()=>setIsByStatus(s=>!s)}/>
                </div>
-               <Stack direction="row" gap={2}>
-               <label htmlFor='check-box-etat-compte'>Active:</label>
-                  <Input type='checkbox' disabled={!accountState} value={isActive} inputProps={{checked:isActive}} onChange={()=>setIsActive(a=>!a)}/>
-
-               </Stack>
               
-         
+              <Stack direction="row" justifyContent="center" gap={5}>
+              <FormControl className={styles.selectFormControl}>
+                <InputLabel id="direction-input-label">Status</InputLabel>
+                <Select
+                  labelId="status-label"
+                  id="status-id"
+                  value={selectedStatus?.value ??""}
+                  label="status"
+                  size="small"
+                  onChange={(e:any)=>setSelectedStatus({value:e.target.value,label:e.target.value})}
+                  disabled = {!isByStatus}
+                  fullWidth
+                >
+                   
+
+                  {
+                    Object.keys(AgreementStatus).map((k,index)=>{
+                        return (
+                            <MenuItem key={index} value={k} >{k}</MenuItem>
+                        )
+                    })
+                  }
+                       
+                     
+              
+                </Select>
+            </FormControl>
+           
+            </Stack>
             </div>
+
+            <div className={styles.filterContainer} >
+               <div className={styles.titleContainer}>
+                  <label htmlFor='check-box-direction'>Par Montant:</label>
+                  <Input id='check-box-direction' type='checkbox' value={isByAmount} inputProps={{checked:isByAmount,}}  onChange={()=>setIsByAmount(d=>!d)}/>
+               </div>
+              
+               <Stack direction="row" justifyContent="center" gap={3} sx={{marginTop:"10px"}}>
+               
+   
+       
+                <TextField 
+                    value={minAmount} 
+                    sx={{width:"200px"}}
+                    size="small" 
+                    label="min montant"
+                    type="number"
+                    onChange={(e)=>setMinAmount(parseInt(e.target.value))}
+                    inputProps={{
+                        min:0,
+                        max:maxAmount
+                    }}
+                    disabled={!isByAmount}
+                />
+                <TextField 
+                    value={maxAmount}
+                    sx={{width:"200px"}}
+                    onChange={(e)=>setMaxAmount(parseInt(e.target.value))}
+                    size="small" 
+                    label="max montant"
+                    type="number"
+                    inputProps={{
+                        min:minAmount,
+                        max:6000
+                    }}
+                    disabled={!isByAmount}
+                />
+
+
+           </Stack>
+            </div>
+
+      
+         
+          
         </div>
         
             <Stack direction="row" className={styles.actionButtons}>
