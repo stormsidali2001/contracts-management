@@ -3,17 +3,30 @@ import { Stack } from '@mui/system';
 import { useEffect, useState } from 'react';
 import useAxiosPrivate from '../../../../hooks/auth/useAxiosPrivate';
 import { useAppDispatch } from '../../../../hooks/redux/hooks';
+import { UserRole } from '../../../auth/models/user-role.enum';
 import { Direction } from '../../../direction/models/direction.interface';
 import { showSnackbar } from '../../../ui/UiSlice';
 import styles from './UsersFilter.module.css';
 
-
-interface PropType{
-    handleClose:Function
+interface Filters{
+  directionId?:string;
+  departementId?:string;
+  active?:string;
+  role?:UserRole;
 }
-const UsersFilter = (props:PropType) => {
+interface PropType{
+    handleClose:Function,
+    handleSetFilters:(filters:Filters)=>void
+}
+const UsersFilter = ({handleSetFilters,handleClose}:PropType) => {
   const axiosPrivate = useAxiosPrivate();
   const dispatch = useAppDispatch();
+
+  const [isByRole,setIsByRole] = useState(false);
+  const [isByDirection,setIsByDirection] = useState(false);
+  const [accountState,setAccountState] = useState(false);
+
+  const [role,setRole] = useState('EMPLOYEE')
   const [directions,setDirections] = useState<Direction[]>([]);
   const [selectedDirection,setSelectedDirection] = useState<{label:string,value:string}>({label:"",value:""})
   const [selectedDepartement,setSelectedDepartement] = useState<{label:string,value:string}>({label:"",value:""});
@@ -45,6 +58,12 @@ const UsersFilter = (props:PropType) => {
     if(directionIndex < 0 ) return [];
     return directions[directionIndex].departements;
   }
+  const handleRoleChange = (event: SelectChangeEvent) => {
+    if(event.target.value === 'ADMIN' || event.target.value === 'JURIDICAL'){
+      setIsByDirection(false)
+    }
+    setRole(event.target.value as string);
+  };
   useEffect(()=>{
     const abortController = new AbortController();
     axiosPrivate.get("http://localhost:8080/api/directions",{
@@ -74,17 +93,37 @@ const UsersFilter = (props:PropType) => {
       abortController.abort();
     }
   },[])
+
+ const handleByDirectionChange = ()=>{
+  if(isByRole &&(role === 'ADMIN' || role === 'JURIDICAL')) {
+    setIsByDirection(false);
+    return;
+  }
+  setIsByDirection(d=>!d)
+ }
+
+ const handleSubmitFilters = ()=>{
+    const filters:any = {};
+    if(isByRole) filters.role = role;
+    if(isByDirection){
+      filters.directionId = selectedDirection.value;
+      filters.departementId = selectedDepartement.value;
+    }
+    filters.active = accountState;
+    handleSetFilters({...filters})
+
+ }
   return (
     <div className={styles.container}>
+        <span className={styles.title}>Filtre</span>
         <div className={styles.filtersContainer}>
-        <div className={styles.filterContainer} >
-              <span>etat compte:</span>
-              <Input type='checkbox' value={false}/>
-
-          </div>
+      
             <div className={styles.filterContainer} >
-              <span>Par direction</span>
-              <Input type='checkbox' value={false}/>
+               <div className={styles.titleContainer}>
+                  <label htmlFor='check-box-direction'>Par direction:</label>
+                  <Input id='check-box-direction' type='checkbox' value={isByDirection} inputProps={{checked:isByDirection,}}  onChange={()=>handleByDirectionChange()}/>
+               </div>
+              
               <Stack direction="row" justifyContent="center" gap={5}>
               <FormControl className={styles.selectFormControl}>
                 <InputLabel id="direction-input-label">Direction</InputLabel>
@@ -95,6 +134,7 @@ const UsersFilter = (props:PropType) => {
                   label="direction"
                   size="small"
                   onChange={handleDirectionChange}
+                  disabled = {!isByDirection}
                   fullWidth
                 >
                   {
@@ -116,6 +156,7 @@ const UsersFilter = (props:PropType) => {
                   label="direction"
                   size="small"
                   onChange={handleChangeDepartement}
+                  disabled = {!isByDirection}
                   fullWidth
                 >
                   {
@@ -130,12 +171,49 @@ const UsersFilter = (props:PropType) => {
             </FormControl>
             </Stack>
             </div>
+      
+            <div className={styles.filterContainer} >
+               <div className={styles.titleContainer}>
+                  <label htmlFor='check-box-role'>Par Role:</label>
+                  <Input id='check-box-role' type='checkbox' value={isByRole} inputProps={{checked:isByRole}} onChange={()=>setIsByRole(r=>!r)}/>
+               </div>
+              
+              <Stack direction="row" justifyContent="center" gap={5}>
+              <FormControl className={styles.selectFormControl}>
+                <InputLabel id="role-input-label">Role</InputLabel>
+                <Select
+                  labelId="role-label"
+                  id="role-id"
+                  value={role}
+                  label="role"
+                  size="small"
+                  onChange={handleRoleChange}
+                  disabled = {!isByRole}
+                  fullWidth
+                >
+                  <MenuItem value={'EMPLOYEE'}>Employee</MenuItem>
+                  <MenuItem value={'ADMIN'}>Admin</MenuItem>
+                  <MenuItem value={'JURIDICAL'}>Juridique</MenuItem>
+                </Select>
+              </FormControl>
+      
+            </Stack>
+            </div>
+
+            <div className={styles.filterContainer} >
+               <div className={styles.titleContainer}>
+                  <label htmlFor='check-box-etat-compte'>Par Etat compte:</label>
+                  <Input type='checkbox' value={accountState} inputProps={{checked:accountState}} onChange={()=>setAccountState(a=>!a)}/>
+               </div>
+              
+         
+            </div>
         </div>
         
             <Stack direction="row" className={styles.actionButtons}>
-              <Button>Appliquer</Button>
+              <Button onClick={()=>handleSubmitFilters()}>Appliquer</Button>
               
-                <Button>Fermer</Button>
+                <Button onClick={()=>handleClose()}>Fermer</Button>
             </Stack>
     </div>
   )

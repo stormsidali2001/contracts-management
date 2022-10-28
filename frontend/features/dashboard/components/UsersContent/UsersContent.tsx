@@ -12,6 +12,7 @@ import UserActions from '../UserActions/UserActions';
 import Link from 'next/link';
 import useAxiosPrivate from '../../../../hooks/auth/useAxiosPrivate';
 import UsersFilter from '../UsersFilter/UsersFilter';
+import { UserRole } from '../../../auth/models/user-role.enum';
 
 
 const UsersContent = () => {
@@ -26,6 +27,16 @@ const UsersContent = () => {
 
 
     });
+    interface Filters{
+        directionId?:string;
+        departementId?:string;
+        active?:string;
+        role?:UserRole;
+    }
+    const [filters,setFilters] = useState<Filters | null>(null);
+    const handleSetFilter = (filters:Filters)=>{
+        setFilters(filters)
+    }
     const [rowId,setRowId] = useState<any>(null)
     const [searchQuery,setSearchQuery] = useState('');
     const {debounce} = useDebounce();
@@ -224,7 +235,7 @@ const UsersContent = () => {
         aria-labelledby="modal-filter-modal-title"
         aria-describedby="modal-filter-modal-description"
       >
-        <UsersFilter handleClose={handleClose}/>
+        <UsersFilter handleClose={handleClose} handleSetFilters={handleSetFilter}/>
       </Modal>
 
      

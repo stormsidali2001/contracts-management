@@ -16,19 +16,30 @@
     justify-content: center;
     column-gap: 30px;
 }
+.filtersContainer{
+    display: flex;
+    flex-direction: column;
+    row-gap: 20px;
+}
 .filterContainer{
     display: flex;
     flex-direction: column;
-    column-gap: 20px;
+    row-gap: 15px;
+    border-bottom: 1px solid #17498e70;
+    padding-bottom: 20px;
 }
 .selectFormControl{
     width: 200px;
 }
+.titleContainer{
+    display: flex;
+    column-gap: 20px;
+}
 .title{
     font-style: normal;
     font-weight: 500;
-    font-size: 13.3333px;
+    font-size: 15.3333px;
     color: #807D7D;
-    margin-top: 5px;
+    margin-top: -6px;
     margin-left: 8px;
 }
