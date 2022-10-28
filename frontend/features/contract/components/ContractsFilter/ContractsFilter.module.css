@@ -1,0 +1,46 @@
+.container{
+    width: fit-content;
+    background-color: white;
+    color: #171717;
+    box-shadow: 0px 1.52532px 6.86392px rgba(23, 73, 142, 0.6);
+    border-radius: 15.2532px;
+    position: absolute;
+    top:50%;
+    left:50%;
+    transform: translate(-50%,-50%);
+    display: flex;
+    flex-direction: column;
+    padding: 15px;
+}
+.actionButtons{
+    justify-content: center;
+    column-gap: 30px;
+    margin-top: 10px;
+}
+.filtersContainer{
+    display: flex;
+    flex-direction: column;
+    row-gap: 20px;
+}
+.filterContainer{
+    display: flex;
+    flex-direction: column;
+    row-gap: 15px;
+    border-bottom: 1px solid #17498e70;
+    padding-bottom: 20px;
+}
+.selectFormControl{
+    width: 200px;
+}
+.titleContainer{
+    display: flex;
+    column-gap: 20px;
+}
+.title{
+    font-style: normal;
+    font-weight: 500;
+    font-size: 15.3333px;
+    color: #807D7D;
+    margin-top: -6px;
+    margin-left: 8px;
+}
