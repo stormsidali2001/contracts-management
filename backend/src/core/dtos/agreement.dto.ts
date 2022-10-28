@@ -69,3 +69,60 @@ export class ExecuteAgreementDTO{
     @IsString()
     observation:string;
 }
+
+
+
+
+export class FindAllAgreementsDTO{
+    @IsOptional()
+    offset:number = 0;
+
+    @IsOptional()
+    limit:number = 10;
+
+    @ApiProperty({example:AgreementType.CONTRACT , enum:AgreementType , default:AgreementType.CONTRACT})
+    @IsEnum(AgreementType)
+    agreementType:AgreementType;
+
+    @IsOptional()
+    @IsString()
+    searchQuery:string;
+
+    @IsOptional()
+    @IsString()
+    orderBy:string;
+
+    @IsOptional()
+    @ApiPropertyOptional({  example:"" })
+    @IsUUID()
+    directionId:string;
+
+    @IsOptional()
+    @ApiPropertyOptional({  example:"" })
+    @IsUUID()
+    departementId:string;
+
+    @IsOptional()
+    @ApiPropertyOptional({  example:0 })
+    amount_min:number;
+
+    @IsOptional()
+    @ApiPropertyOptional({  example:6000 })
+    amount_max:number;
+
+    @IsOptional()
+    @ApiPropertyOptional({  example:"2023-01-05" })
+    @IsDateString({strict:true})
+    start_date:Date;
+
+
+    @IsOptional()
+    @ApiPropertyOptional({  example:"2023-01-05" })
+    @IsDateString({strict:true})
+    end_date:Date;
+
+    @IsOptional()
+    @ApiPropertyOptional({example:AgreementStatus.NOT_EXECUTED , enum:AgreementStatus , default:AgreementStatus.NOT_EXECUTED})
+    @IsEnum(AgreementStatus)
+    status:AgreementStatus;
+}

@@ -109,12 +109,18 @@ const ContractsContent = () => {
  
     useEffect( ()=>{
         let params = '';
-        if(queryOptions.sortModel){
+        if(queryOptions.sortModel && queryOptions.sortModel.length >0){
             params+= '&orderBy='+queryOptions.sortModel[0].field
         }
         if(searchQuery.length > 0 ){
             params+= `&searchQuery=${searchQuery}`;
           }
+        if(filters && Object.keys(filters).length > 0){
+            Object.entries(filters).forEach(([key,value])=>{
+                params +=`&${key}=${value}`
+            })
+           
+        }
         setPageState((old:any)=>({...old,isLoading:true}))
              axios.get(`http://localhost:8080/api/agreements?offset=${pageState.page}&limit=${pageState.pageSize}${params}&agreementType=contract`)
             .then((res:any)=>{
@@ -126,17 +132,29 @@ const ContractsContent = () => {
                 console.error(err);
             })
        
-    },[pageState?.page,pageState?.pageSize,queryOptions.sortModel,searchQuery])
+    },[pageState?.page,pageState?.pageSize,queryOptions.sortModel,searchQuery,filters])
  
     const handleSearch = (e:any)=>{
         const {value} = e.target;
         debounce(()=>setSearchQuery(value),1000)
       }
+
+      const countFilters = ()=>{
+        if(filters == null) return 0;
+        let count = 0;
+        Object.keys(filters).forEach(f=>{
+           if(!['departementId','amount_min','start_date'].includes(f)){
+               count++;
+           }
+        })
+   
+        return count;
+    }
     return (
         <div className={styles.container}>
             <div className={styles.wrapperBox}>
                 <div className={styles.searchContainer}>
-                <Badge badgeContent={3}  sx={{padding:0}}  className={styles.searchBadge}>
+                <Badge badgeContent={countFilters()}  sx={{padding:0}}  className={styles.searchBadge}>
                     <Button 
                             startIcon ={<FilterIcon/>}  
                             size='small' 

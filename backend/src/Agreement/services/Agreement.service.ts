@@ -2,7 +2,7 @@ import {Injectable , BadRequestException, NotFoundException, Logger, OnModuleIni
 import { SchedulerRegistry } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CronJob } from 'cron';
-import { CreateAgreementDTO, ExecuteAgreementDTO } from 'src/core/dtos/agreement.dto';
+import { CreateAgreementDTO, ExecuteAgreementDTO, FindAllAgreementsDTO } from 'src/core/dtos/agreement.dto';
 import { AgreementEntity } from 'src/core/entities/Agreement.entity';
 import { AgreementExecJobsEntity } from 'src/core/entities/agreementExecJobs';
 import { AgreementStatus } from 'src/core/types/agreement-status.enum';
@@ -101,27 +101,45 @@ export class AgreementService implements OnModuleInit{
         return res;
     }
 
-    async findAll(
-            offset:number = 0 ,
-            limit:number = 10 ,
-            orderBy:string = undefined,
-            agreementType:AgreementType,
-            searchQuery:string = undefined,
-            directionId:string = undefined,
-            departementId:string = undefined,
-            amount_min:number = undefined,
-            amount_max:number = undefined,
-            start_date:Date,
-            end_date:Date,
-            status:AgreementStatus,
-            
-        ):Promise<PaginationResponse<AgreementEntity>>{
+    async findAll({
+            agreementType,
+            amount_max,
+            amount_min,
+            departementId,
+            directionId,
+            end_date,
+            limit,
+            offset,
+            orderBy,
+            searchQuery,
+            start_date,
+            status
+        }:FindAllAgreementsDTO):Promise<PaginationResponse<AgreementEntity>>{
             
         let query =    this.agreementRepository.createQueryBuilder('ag')
         .where("ag.type = :type",{type:agreementType})
         .skip(offset)
         .take(limit);
 
+        if(departementId && directionId){
+            query = query 
+            .andWhere('ag.departementId = :departementId',{departementId})
+            .andWhere('ag.directionId = :directionId',{directionId})
+            
+        }
+        Logger.debug(`start date m end date ${JSON.stringify({a:!!start_date,b:!!end_date,c: !!start_date && !!end_date})}`,'kkkkkkkkkkkkaaaaaaaa')
+        if(start_date && end_date){
+            query = query
+            .andWhere('ag.createdAt >= :start_date and ag.createdAt <= :end_date',{start_date,end_date});
+        }
+        if(amount_min && amount_max){
+            query = query
+            .andWhere('ag.amount >= :amount_min and ag.amount <= :amount_max',{amount_min,amount_max});
+        }
+        if(status){
+            query = query
+            .andWhere('ag.status = :status',{status});
+        }
         if(searchQuery && searchQuery.length >= 2){
             query = query.where(`MATCH(ag.number) AGAINST ('${searchQuery}' IN BOOLEAN MODE)`)
             .orWhere(`MATCH(ag.object) AGAINST ('${searchQuery}' IN BOOLEAN MODE)`)

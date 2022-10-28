@@ -1,4 +1,4 @@
-import { Column, Entity, Index, JoinColumn, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, Index, JoinColumn, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { AgreementStatus } from "../types/agreement-status.enum";
 import { AgreementType } from "../types/agreement-type.enum";
 import { DepartementEntity } from "./Departement.entity";
@@ -53,6 +53,9 @@ export class AgreementEntity{
         type:'date'
     })
     signature_date:Date;
+
+    @CreateDateColumn()
+    createdAt:Date;
 
     @Column({
         type:'date',
