@@ -69,7 +69,16 @@ export class UserService{
     async findAndUpdate(userId:string,partialEntity: QueryDeepPartialEntity<UserEntity>):Promise<UpdateResult>{
         return this.userRepository.update({id:userId},partialEntity);
     }
-    async findAll(offset:number = 0 ,limit:number = 10 ,orderBy:string = undefined ,searchQuery:string = undefined , departementId:string = undefined,directionId:string = undefined):Promise<PaginationResponse<UserEntity>>{
+    async findAll(
+            offset:number = 0 ,
+            limit:number = 10 ,
+            orderBy:string = undefined ,
+            searchQuery:string = undefined , 
+            departementId:string = undefined,
+            directionId:string = undefined ,
+            active:"active" | "not_active" = undefined , 
+            role:UserRole = undefined
+        ):Promise<PaginationResponse<UserEntity>>{
         let query =    this.userRepository.createQueryBuilder('user')
         .skip(offset)
         .take(limit);
@@ -87,6 +96,15 @@ export class UserService{
             .andWhere('user.directionId = :directionId',{directionId})
             
         }
+        if(active){
+            query = query 
+            .andWhere('user.active = :active',{active:active === "active"?true:false})
+        }
+        if(role){
+            query = query 
+            .andWhere('user.role = :role',{role})
+        }
+
         if(orderBy){
             query = query.orderBy(`${orderBy}`);
         }

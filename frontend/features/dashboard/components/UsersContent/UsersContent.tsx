@@ -30,7 +30,7 @@ const UsersContent = () => {
     interface Filters{
         directionId?:string;
         departementId?:string;
-        active?:string;
+        active?:"active"| "not_active";
         role?:UserRole;
     }
     const [filters,setFilters] = useState<Filters | null>(null);
@@ -135,12 +135,18 @@ const UsersContent = () => {
     ),[rowId])
     useEffect( ()=>{
         let params = '';
-        if(queryOptions.sortModel){
+        if(queryOptions.sortModel && queryOptions.sortModel.length > 0){
             params+= '&orderBy='+queryOptions.sortModel[0].field
         }
         if(searchQuery.length > 0 ){
             params+= `&searchQuery=${searchQuery}`;
           }
+        if(filters && Object.keys(filters).length > 0){
+            Object.entries(filters).forEach(([key,value])=>{
+                params +=`&${key}=${value}`
+            })
+           
+        }
         setPageState((old:any)=>({...old,isLoading:true}))
             axiosPrivate.get(`http://localhost:8080/api/users?offset=${pageState.page}&limit=${pageState.pageSize}${params}`)
             .then((res:any)=>{
@@ -152,7 +158,7 @@ const UsersContent = () => {
                 console.error(err);
             })
        
-    },[pageState?.page,pageState?.pageSize,queryOptions.sortModel,searchQuery])
+    },[pageState?.page,pageState?.pageSize,queryOptions.sortModel,searchQuery,filters])
     // const obj = <InputAdornment position="start">
     // <SearchRounded />
     // </InputAdornment>;
@@ -235,7 +241,7 @@ const UsersContent = () => {
         aria-labelledby="modal-filter-modal-title"
         aria-describedby="modal-filter-modal-description"
       >
-        <UsersFilter handleClose={handleClose} handleSetFilters={handleSetFilter}/>
+        <UsersFilter handleClose={()=>setFilterModalOPen(false)} handleSetFilters={handleSetFilter}/>
       </Modal>
 
      

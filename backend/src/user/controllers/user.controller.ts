@@ -1,8 +1,10 @@
 import { Body, Controller, Delete, Get, Param, ParseIntPipe, Put, Query, UseGuards } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
+import { IsNotEmpty } from "class-validator";
 import { JwtAccessTokenGuard } from "src/auth/guards/jwt-access-token.guard";
 import { UserEntity } from "src/core/entities/User.entity";
 import { PaginationResponse } from "src/core/types/paginationResponse.interface";
+import { UserRole } from "src/core/types/UserRole.enum";
 import { UpdateResult } from "typeorm";
 import { UpdateUserDTO } from "../../core/dtos/user.dto";
 import { UserService } from "../user.service";
@@ -21,8 +23,18 @@ export class UserController{
     }
     
     @Get('')
-    async findAll(@Query('offset') offset:number = 0 ,@Query('limit') limit:number = 10 ,@Query('orderBy') orderBy:string  = undefined , @Query('searchQuery') searchQuery:string , @Query('departementId') departementId:string , @Query('directionId') directionId:string):Promise<PaginationResponse<UserEntity>>{
-        return await  this.userService.findAll(offset,limit,orderBy,searchQuery,departementId,directionId);
+    async findAll(
+            @Query('offset') offset:number = 0 ,
+            @Query('limit') limit:number = 10 ,
+            @Query('orderBy') orderBy:string  = undefined , 
+            @Query('searchQuery') searchQuery:string , 
+            @Query('departementId') departementId:string , 
+            @Query('directionId') directionId:string,
+            @Query("role") role:UserRole = undefined,
+            @Query("active") active:"active" | "not_active"
+    ):Promise<PaginationResponse<UserEntity>>{
+
+        return await  this.userService.findAll(offset,limit,orderBy,searchQuery,departementId,directionId,active,role);
     }   
 
     @Get(":id")
