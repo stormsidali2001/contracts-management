@@ -50,6 +50,11 @@ const columns:GridColumns<any> = [
         flex:1
     },
     {
+        field:"createdAt",
+        headerName:"date de creation",
+        width:200
+    },
+    {
         field:"actions",
         headerName:"Details",
         type:"actions",
