@@ -106,7 +106,15 @@ export class AgreementService implements OnModuleInit{
             limit:number = 10 ,
             orderBy:string = undefined,
             agreementType:AgreementType,
-            searchQuery:string = undefined
+            searchQuery:string = undefined,
+            directionId:string = undefined,
+            departementId:string = undefined,
+            amount_min:number = undefined,
+            amount_max:number = undefined,
+            start_date:Date,
+            end_date:Date,
+            status:AgreementStatus,
+            
         ):Promise<PaginationResponse<AgreementEntity>>{
             
         let query =    this.agreementRepository.createQueryBuilder('ag')
