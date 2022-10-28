@@ -28,8 +28,8 @@ enum  AgreementStatus{
 interface Filters{
   directionId?:string;
   departementId?:string;
-  expiration_date?:string;
-  signature_date?:string;
+  start_date?:string;
+  end_date?:string;
   amount_min?:number;
   amount_max?:number;
   status?:AgreementStatus
@@ -49,18 +49,15 @@ const ContractsFilter = ({handleSetFilters,handleClose,initialFilters}:PropType)
   const [maxAmount,setMaxAmount] = useState(0)
   const [selectedStatus,setSelectedStatus] = useState({label:'not_executed',value:'not_executed'})
   const [isByStatus,setIsByStatus] = useState(false)
-  const [signatureDate, setSignatureDate] = useState<Dayjs>(
+  const [startDate, setStartDate] = useState<Dayjs>(
     dayjs(new Date()),
   );
-const [expirationDate, setExpirationDate] = useState<Dayjs>(
+const [endDate, setEndDate] = useState<Dayjs>(
     dayjs(new Date()),
   );
   const [isByDate,setIsByDate] = useState(false);
   const [isByDirection,setIsByDirection] = useState(false);
-  const [accountState,setAccountState] = useState(false);
-  const [isActive,setIsActive] = useState(false)
 
-  const [role,setRole] = useState('EMPLOYEE')
   const [directions,setDirections] = useState<Direction[]>([]);
   const [selectedDirection,setSelectedDirection] = useState<{label:string,value:string}>({label:"",value:""})
   const [selectedDepartement,setSelectedDepartement] = useState<{label:string,value:string}>({label:"",value:""});
@@ -92,12 +89,7 @@ const [expirationDate, setExpirationDate] = useState<Dayjs>(
     if(directionIndex < 0 ) return [];
     return directions[directionIndex].departements;
   }
-  const handleRoleChange = (event: SelectChangeEvent) => {
-    if(event.target.value === 'ADMIN' || event.target.value === 'JURIDICAL'){
-      setIsByDirection(false)
-    }
-    setRole(event.target.value as string);
-  };
+ 
   useEffect(()=>{
     const abortController = new AbortController();
     axiosPrivate.get("http://localhost:8080/api/directions",{
@@ -145,8 +137,8 @@ const [expirationDate, setExpirationDate] = useState<Dayjs>(
         filters.departementId = selectedDepartement.value;
     }
     if(isByDate){
-        filters.expiration_date = format(expirationDate.toDate());
-        filters.signature_date = format(signatureDate.toDate());
+        filters.start_date = format(startDate.toDate());
+        filters.end_date = format(endDate.toDate());
     }
     if(isByStatus){
         filters.status = selectedStatus.value as unknown as AgreementStatus;
@@ -156,6 +148,7 @@ const [expirationDate, setExpirationDate] = useState<Dayjs>(
         filters.amount_min = minAmount;
         filters.amount_max = maxAmount;
     }
+    handleSetFilters(filters)
     handleClose();
 
  }
@@ -230,20 +223,20 @@ const [expirationDate, setExpirationDate] = useState<Dayjs>(
    
        
                <MobileDatePicker
-               label="date de signature"
+               label="date de debut"
                inputFormat="MM/DD/YYYY"
-               value={signatureDate}
+               value={startDate}
                disabled={!isByDate}
-               onChange={(value)=>setSignatureDate(value ?? dayjs(""))}
+               onChange={(value)=>setStartDate(value ?? dayjs(""))}
                renderInput={(params) => <TextField size="small" {...params} />}
                />
  
                <MobileDatePicker
-               label="date d'expiration"
+               label="date end"
                inputFormat="MM/DD/YYYY"
-               value={expirationDate}
+               value={endDate}
                disabled={!isByDate}
-               onChange={(value)=>setExpirationDate(value ?? dayjs(""))}
+               onChange={(value)=>setEndDate(value ?? dayjs(""))}
                renderInput={(params) => <TextField size="small"  {...params} />}
                />
 

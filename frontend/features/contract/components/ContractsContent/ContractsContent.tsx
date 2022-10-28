@@ -65,24 +65,25 @@ const ContractsContent = () => {
     const [filterModalOpen,setFilterModalOPen] = useState(false)
     const handleCloseFilterModal = ()=>setFilterModalOPen(false)
     const handleOpenFilterModal = ()=>setFilterModalOPen(true)
-    interface AgreementStatus{
-      executed:number;
-      executed_with_delay:number;
-      in_execution:number;
-      in_execution_with_delay:number;
-      not_executed:number;
-  }
+    enum  AgreementStatus{
+        executed = 'executed' ,
+        executed_with_delay = 'executed_with_delay',
+        in_execution = 'in_execution',
+        in_execution_with_delay = 'in_execution_with_delay',
+        not_executed = 'in_execution_with_delay'
+    
+    }
   interface Filters{
     directionId?:string;
     departementId?:string;
-    expiration_date?:string;
-    signature_date?:string;
+    start_date?:string;
+    end_date?:string;
     amount_min?:number;
     amount_max?:number;
     status?:AgreementStatus
   
   }
-    const [filters,setFilters] = useState<Filters | null>(null);
+  const [filters,setFilters] = useState<Filters | null>(null);
     const handleSetFilter = (filters:Filters)=>{
         setFilters(filters)
     }
@@ -208,5 +209,6 @@ const ContractsContent = () => {
         </div>
       )
 }
+
 
 export default ContractsContent
