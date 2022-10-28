@@ -134,8 +134,28 @@ const [expirationDate, setExpirationDate] = useState<Dayjs>(
  }
 
  const handleSubmitFilters = ()=>{
+    const format = (d:Date)=>{
+        const newD = new Date(d);
+        return newD.toISOString().replace(/T[0-9:.Z]*/g,"");
+    
+    }
     const filters:Filters = {};
-    if(isByDirection) filters.
+    if(isByDirection) {
+        filters.directionId = selectedDirection.value;
+        filters.departementId = selectedDepartement.value;
+    }
+    if(isByDate){
+        filters.expiration_date = format(expirationDate.toDate());
+        filters.signature_date = format(signatureDate.toDate());
+    }
+    if(isByStatus){
+        filters.status = selectedStatus.value as unknown as AgreementStatus;
+    }
+
+    if(isByAmount){
+        filters.amount_min = minAmount;
+        filters.amount_max = maxAmount;
+    }
     handleClose();
 
  }
