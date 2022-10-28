@@ -1,4 +1,4 @@
-import {Button, Modal} from '@mui/material';
+import {Badge, Button, Modal} from '@mui/material';
 import { DataGrid, GridColumns, GridSortItem, GridSortModel } from '@mui/x-data-grid';
 import TextField from '@mui/material/TextField';
 import { useEffect, useState } from 'react';
@@ -9,6 +9,7 @@ import FilterIcon from '../../../../icons/FilterIcon';
 import CreateContract from '../CreateContract/CreateContract';
 import { useDebounce } from '../../../../hooks/useDebounce.hook';
 import Link from 'next/link';
+import ContractsFilter from '../ContractsFilter/ContractsFilter';
 
 
 const columns:GridColumns<any> = [
@@ -61,6 +62,30 @@ const columns:GridColumns<any> = [
     }
 ];
 const ContractsContent = () => {
+    const [filterModalOpen,setFilterModalOPen] = useState(false)
+    const handleCloseFilterModal = ()=>setFilterModalOPen(false)
+    const handleOpenFilterModal = ()=>setFilterModalOPen(true)
+    interface AgreementStatus{
+      executed:number;
+      executed_with_delay:number;
+      in_execution:number;
+      in_execution_with_delay:number;
+      not_executed:number;
+  }
+  interface Filters{
+    directionId?:string;
+    departementId?:string;
+    expiration_date?:string;
+    signature_date?:string;
+    amount_min?:number;
+    amount_max?:number;
+    status?:AgreementStatus
+  
+  }
+    const [filters,setFilters] = useState<Filters | null>(null);
+    const handleSetFilter = (filters:Filters)=>{
+        setFilters(filters)
+    }
     const [pageState,setPageState] = useState<any>({
         isLoading:false,
         data:[],
@@ -110,13 +135,16 @@ const ContractsContent = () => {
         <div className={styles.container}>
             <div className={styles.wrapperBox}>
                 <div className={styles.searchContainer}>
+                <Badge badgeContent={3}  sx={{padding:0}}  className={styles.searchBadge}>
                     <Button 
-                        startIcon ={<FilterIcon/>}  
-                        size='small' 
-                        color='secondary' 
-                        variant="contained" 
-                        className={styles.advancedButton}>Avancée</Button>
-                  
+                            startIcon ={<FilterIcon/>}  
+                            size='small' 
+                            color='secondary' 
+                            variant="contained" 
+                            onClick={()=>handleOpenFilterModal()}
+                            className={styles.advancedButton}>Avancée</Button>
+                </Badge>
+                    
               
                     <TextField 
                         placeholder='mot clé...' color='secondary' 
@@ -166,6 +194,15 @@ const ContractsContent = () => {
           >
             <CreateContract handleClose={handleClose}/>
           </Modal>
+          <Modal
+            open={filterModalOpen}
+            onClose={handleCloseFilterModal}
+            aria-labelledby="modal-filter-modal-title"
+            aria-describedby="modal-filter-modal-description"
+           >
+                <ContractsFilter initialFilters={filters ?? {} as Filters } handleClose={handleCloseFilterModal} handleSetFilters={handleSetFilter}/>
+         </Modal>
+    
     
          
         </div>

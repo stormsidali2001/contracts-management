@@ -6,6 +6,7 @@ import {Button, Modal} from '@mui/material';
 import PlayCircleFilledWhiteIcon from '@mui/icons-material/PlayCircleFilledWhite';
 import useAxiosPrivate from '../../../../hooks/auth/useAxiosPrivate';
 import ExecutionModal from '../ExecutionModal/ExecutionModal';
+import ContractsFilter from '../ContractsFilter/ContractsFilter';
 
 const ContractContent = () => {
 
@@ -149,6 +150,9 @@ const ContractContent = () => {
         >
                <ExecutionModal handleClose={handelCloseExecutionModal} agreementId = {contract.id}/>
         </Modal>
+
+        
+    
     </div>
   )
 }
