@@ -1,8 +1,9 @@
-import { Button } from '@mui/material';
+import { Button, TextField } from '@mui/material';
 import { DataGrid, GridColumns, GridSortItem, GridSortModel } from '@mui/x-data-grid'
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import useAxiosPrivate from '../../../../hooks/auth/useAxiosPrivate';
+import { useDebounce } from '../../../../hooks/useDebounce.hook';
 import styles from './AgreementList.module.css'
 const columns:GridColumns<any> = [
     // {
@@ -64,6 +65,7 @@ interface PropType{
     vendorId:string
 }
 const AgreementList = ({handleClose,type = 'contract',vendorId}:PropType) => {
+ const  {debounce} = useDebounce();
  const [pageState,setPageState] = useState<any>({
         isLoading:false,
         data:[],
@@ -103,11 +105,34 @@ const AgreementList = ({handleClose,type = 'contract',vendorId}:PropType) => {
        
     },[pageState?.page,pageState?.pageSize,queryOptions.sortModel,searchQuery])
       
+ const handleSearch = (e:any)=>{
+        const {value} = e.target;
+        debounce(()=>setSearchQuery(value),1000)
+}
   return (
     <div className={styles.container}>
          <span className={styles.title}>{type}</span>
+         <div className={styles.searchContainer}>
+    
+              
+          
+                <TextField 
+                    placeholder='mot clé...' color='secondary' 
+                    size='small' 
+                    fullWidth type='search' 
+                    onChange={handleSearch}
+                   InputProps={{
+
+                                // startAdornment:obj
+                                
+                                
+                                className: styles.input,
+
+                                }}
+                />
+                
+            </div>
         
-            
                 <div className={styles.tableContainer}>
                 <DataGrid
                     autoHeight
