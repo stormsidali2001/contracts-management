@@ -15,9 +15,14 @@ import useAxiosPrivate from '../../../../hooks/auth/useAxiosPrivate';
 import { useAppDispatch, useAppSelector } from '../../../../hooks/redux/hooks';
 import { showSnackbar } from '../../../ui/UiSlice';
 import { UserRole } from '../../../auth/models/user-role.enum';
+import DepartementUsersList from '../DepartementUsersList/DepartementUsersList';
 
 
 const DirectionContent = () => {
+  const [openDepartementUsers,setOpenDepartementUsers] = useState(false)
+  const [choosenDepartementId,setChoosenDepartementId] = useState('')
+  const handleOpenDepartementUsersModal = ()=>setOpenDepartementUsers(true)
+  const handleCloseDepartementUsersModal = ()=>setOpenDepartementUsers(false)
   const {user} = useAppSelector(state=>state.auth)
   const axiosPrivate = useAxiosPrivate();
   const [directions,setDirections] = useState<Direction[]>([]);
@@ -103,7 +108,10 @@ const DirectionContent = () => {
     return user.role === UserRole.ADMIN;
   }
 
-  
+  const handleShowDepartementUsers = (departementId:string)=>{
+    handleOpenDepartementUsersModal();
+    setChoosenDepartementId(departementId);
+  }
   return (
     <div className={styles.container}>
         <div className={styles.wrapperBox}>
@@ -170,7 +178,7 @@ const DirectionContent = () => {
                                             <TableCell align="left">{row.title}</TableCell>
                                             <TableCell align="left">{row.abriviation}</TableCell>
                                             <TableCell align="left">{row.users}</TableCell>
-                                            <TableCell align="center"><Button>Details</Button></TableCell>
+                                            <TableCell align="center"><Button onClick={()=>handleShowDepartementUsers(row?.id ?? "" )}>Details</Button></TableCell>
                                             {
                                               dispalayIfAdmin()&&(
                                                 <TableCell align="center">
@@ -214,6 +222,19 @@ const DirectionContent = () => {
       >
        
         <CreateDirection pushDirection={pushDirection} handleDirectionModalClose={handleDirectionModalClose}/>
+      </Modal>
+
+      <Modal
+        open={openDepartementUsers}
+        onClose={handleCloseDepartementUsersModal}
+        aria-labelledby="departement-users-modal-modal-title"
+        aria-describedby="departement-users-modal-modal-description"
+
+      >
+        <DepartementUsersList
+          departementId={choosenDepartementId}
+          handleClose={handleCloseDepartementUsersModal}
+        />
       </Modal>
     </div>
   )

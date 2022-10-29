@@ -93,9 +93,13 @@ export class UserService{
             )`)
            
         }
-        if(departementId && directionId){
+        if(departementId){
             query = query 
             .andWhere('user.departementId = :departementId',{departementId})
+            
+        }
+        if(directionId){
+            query = query 
             .andWhere('user.directionId = :directionId',{directionId})
             
         }

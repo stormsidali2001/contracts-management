@@ -19,6 +19,8 @@ import 'chartjs-adapter-date-fns';
 import {fr} from 'date-fns/locale';
 import { AnimateSharedLayout,motion } from 'framer-motion';
 import { useAppSelector } from '../../../../hooks/redux/hooks';
+import { MobileDatePicker } from '@mui/x-date-pickers';
+import { Stack } from '@mui/system';
 
 
 ChartJS.register(
@@ -60,7 +62,7 @@ export default VendorsCard;
 
 export function CompactCard({stats,cardId,setExpanded}:any){
   const data = {
-    labels: stats?.map((el:any)=>(el.date ))?? [],
+    labels: stats?.slice(-7)?.map((el:any)=>(el.date ))?? [],
     datasets: [
       {
         label: 'nombre de fournisseurs',
@@ -69,7 +71,7 @@ export function CompactCard({stats,cardId,setExpanded}:any){
         borderWidth: 1,
         hoverBackgroundColor: 'rgba(255,99,132,0.4)',
         hoverBorderColor: '#17498ebb',
-        data: stats?.map((el:any)=>(el.nb_vendors)) ?? [],
+        data:  stats?.slice(-7)?.map((el:any)=>(el.nb_vendors)) ?? [],
         
       }
     ]
@@ -115,6 +117,7 @@ export function CompactCard({stats,cardId,setExpanded}:any){
 
 }
 export function ExpandedCard({stats,cardId,setExpanded}:any){
+ 
   const data = {
     labels: stats?.map((el:any)=>(el.date))?? [],
     datasets: [
@@ -135,6 +138,32 @@ export function ExpandedCard({stats,cardId,setExpanded}:any){
                 <CloseOutlinedIcon />
       </div>
             <div className={styles.title}>Fournisseurs</div>
+            <div className={styles.datesContainter}>
+            <Stack direction="row" justifyContent="center" gap={3} sx={{marginTop:"10px"}}>
+               
+   
+       
+               <MobileDatePicker
+               label="date de debut"
+               inputFormat="MM/DD/YYYY"
+               value={startDate}
+               disabled={!isByDate}
+               onChange={(value)=>setStartDate(value ?? dayjs(""))}
+               renderInput={(params) => <TextField size="small" {...params} />}
+               />
+ 
+               <MobileDatePicker
+               label="date end"
+               inputFormat="MM/DD/YYYY"
+               value={endDate}
+               disabled={!isByDate}
+               onChange={(value)=>setEndDate(value ?? dayjs(""))}
+               renderInput={(params) => <TextField size="small"  {...params} />}
+               />
+
+
+           </Stack>
+            </div>
     
     <div className={styles.chartContainer}>
      
