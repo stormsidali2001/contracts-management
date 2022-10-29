@@ -49,11 +49,11 @@ export default AgreementStatsCard;
 function CompactCard({stats,cardId,setExpanded}:any){
   const getContractPercentage = ()=>{
     if(stats?.types?.contract === 0 && stats?.types?.convension ===0) return 0;
-    return (stats?.types?.contract / (stats?.types?.contract + stats?.types?.convension))*100 ;
+    return (stats?.types?.contract / (stats?.types?.contract + stats?.types?.convension)) ;
   }
   const getConvensionPercentage = ()=>{
     if(stats?.types?.contract === 0 && stats?.types?.convension ===0) return 0;
-    return (stats.types.convension / (stats.types.contract + stats.types.convension))*100 ;
+    return (stats.types.convension / (stats.types.contract + stats.types.convension)) ;
   }
   return (
     <motion.div layoutId={cardId} className={styles.container}>
@@ -115,7 +115,7 @@ function CompactCard({stats,cardId,setExpanded}:any){
 
         </div>
         <div className={styles.contractPercentage}>
-        <CircularProgressbar value={getContractPercentage()} text={`${getContractPercentage()}%`} 
+        <CircularProgressbar value={Math.round(getContractPercentage()*100)} text={`${Math.round(getContractPercentage()*100)}%`} 
           styles={
             {
                
@@ -141,7 +141,7 @@ function CompactCard({stats,cardId,setExpanded}:any){
         />
         </div>
         <div className={styles.convensionPercentage}>
-        <CircularProgressbar value={getConvensionPercentage()} text={`${getConvensionPercentage()}%`} 
+        <CircularProgressbar value={Math.round(getConvensionPercentage()*100)} text={`${Math.round(getConvensionPercentage()*100)}%`} 
           styles={
             {
                
