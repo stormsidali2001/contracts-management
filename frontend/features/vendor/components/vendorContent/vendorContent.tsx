@@ -2,15 +2,27 @@ import styles from './vendorContent.module.css';
 import {useEffect , useState} from 'react';
 import { useRouter } from 'next/router';
 import axios from 'axios';
-import { Button } from '@mui/material';
+import { Button, Modal } from '@mui/material';
 import useAxiosPrivate from '../../../../hooks/auth/useAxiosPrivate';
+import AgreementList from '../AgreementList/AgreementList';
 const VendorContent = () => {
     const axiosPrivate = useAxiosPrivate();
     const router = useRouter();
     const [vendor,setVendor] = useState<any>(null)
+    const [contractModalOpen,setContractModalOpen] = useState(false);
+    const handleContractModaOpen = ()=>setContractModalOpen(true)
+    const handleContractModalClose = ()=>setContractModalOpen(false)
+    const [modalType,setModalType] = useState<"contract" | "convension">("contract")
     const {query} = router;
     const {vendorId} = query;
-    
+    const handleShowContract = ()=>{
+      setModalType("contract")
+      handleContractModaOpen();
+    }
+    const handleShowConvension = ()=>{
+      setModalType("convension")
+      handleContractModaOpen();
+    }
     useEffect(()=>{
       if(!vendorId) return;
       axiosPrivate.get(`http://localhost:8080/api/vendors/${vendorId}`)
@@ -63,14 +75,22 @@ const VendorContent = () => {
             <div className={styles.littleCard}>
               <div className={styles.title}>Contrat</div>
               <div className={styles.counter}>{vendor?.contractCount}</div>
-              <Button color="secondary" className={styles.cardButton} variant="contained">voir</Button>
+              <Button color="secondary" onClick={()=>handleShowContract()} className={styles.cardButton} variant="contained">voir</Button>
             </div>
             <div className={styles.littleCard}>
               <div className={styles.title}>Convension</div>
               <div className={styles.counter}>{vendor?.convensionCount}</div>
-              <Button color="secondary" className={styles.cardButton}  variant="contained">voir</Button>
+              <Button onClick={()=>handleShowConvension()} color="secondary" className={styles.cardButton}  variant="contained">voir</Button>
             </div>
        </div>
+
+
+       <Modal
+        open={contractModalOpen}
+        onClose={handleContractModalClose}
+       >
+          <AgreementList vendorId={vendor?.id} type={modalType} handleClose={handleContractModalClose} />
+       </Modal>
     </div>
   )
 }
