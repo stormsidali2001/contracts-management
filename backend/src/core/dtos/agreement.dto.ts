@@ -125,4 +125,8 @@ export class FindAllAgreementsDTO{
     @ApiPropertyOptional({example:AgreementStatus.NOT_EXECUTED , enum:AgreementStatus , default:AgreementStatus.NOT_EXECUTED})
     @IsEnum(AgreementStatus)
     status:AgreementStatus;
+
+    @IsOptional()
+    @IsUUID()
+    vendorId:string;
 }

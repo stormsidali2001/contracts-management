@@ -33,8 +33,8 @@ function createRandomVendor() {
         return nif;
     }
     
-    const date = new Date();
-    const afterOnMonthDate = addMonth(date,-2);
+    const date = addMonth(new Date(),-2);
+    const afterOnMonthDate =new Date() ;
     console.log(`date between ${format(date.toISOString())} -----> ${format(afterOnMonthDate.toISOString())}`)
     const vendor = {
         nif:generateNif(),
@@ -44,8 +44,8 @@ function createRandomVendor() {
         address:faker.address.country()+faker.address.state()+faker.address.city(),
         mobile_phone_number:faker.phone.number('06########'),
         home_phone_number:faker.phone.number('03########'),
-        // createdAt:format(faker.date.between(date.toISOString(), afterOnMonthDate.toISOString()))
-        createdAt:format(new Date())
+         createdAt:format(faker.date.between(date.toISOString(), afterOnMonthDate.toISOString()))
+        // createdAt:format(new Date())
 
     }
 

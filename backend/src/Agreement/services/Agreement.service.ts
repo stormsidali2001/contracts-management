@@ -113,7 +113,8 @@ export class AgreementService implements OnModuleInit{
             orderBy,
             searchQuery,
             start_date,
-            status
+            status,
+            vendorId
         }:FindAllAgreementsDTO):Promise<PaginationResponse<AgreementEntity>>{
             
         let query =    this.agreementRepository.createQueryBuilder('ag')
@@ -139,6 +140,10 @@ export class AgreementService implements OnModuleInit{
         if(status){
             query = query
             .andWhere('ag.status = :status',{status});
+        }
+        if(vendorId){
+            query = query 
+            .andWhere('ag.vendorId = :vendorId',{vendorId})
         }
         if(searchQuery && searchQuery.length >= 2){
             query = query.where(`MATCH(ag.number) AGAINST ('${searchQuery}' IN BOOLEAN MODE)`)
