@@ -146,9 +146,13 @@ export class AgreementService implements OnModuleInit{
             .andWhere('ag.vendorId = :vendorId',{vendorId})
         }
         if(searchQuery && searchQuery.length >= 2){
-            query = query.where(`MATCH(ag.number) AGAINST ('${searchQuery}' IN BOOLEAN MODE)`)
-            .orWhere(`MATCH(ag.object) AGAINST ('${searchQuery}' IN BOOLEAN MODE)`)
-            .orWhere(`MATCH(ag.observation) AGAINST ('${searchQuery}' IN BOOLEAN MODE)`)
+            query = query.andWhere(`
+            (
+                MATCH(ag.number) AGAINST ('${searchQuery}' IN BOOLEAN MODE)
+                or MATCH(ag.object) AGAINST ('${searchQuery}' IN BOOLEAN MODE)
+                or MATCH(ag.observation) AGAINST ('${searchQuery}' IN BOOLEAN MODE)
+            )`)
+          
            
         }
         if(orderBy && orderBy!== 'type'){
