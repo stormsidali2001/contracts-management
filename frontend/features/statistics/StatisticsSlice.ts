@@ -9,6 +9,7 @@ import {AxiosInstance} from 'axios'
 import { UserRole } from "../auth/models/user-role.enum";
 import { Entity } from "../notification/models/Entity.enum";
 import { Operation } from "../notification/models/Operation.enum";
+import { Dayjs } from "dayjs";
 
 interface AsyncState{
     isSuccess:boolean;
@@ -23,7 +24,9 @@ export interface StatisticsSlice extends AsyncState{
         types:AgreementTypes
    } | null,
    userTypes:UserTypes | null,
-   vendorsStats:VendorStats | null
+   vendorsStats:VendorStats | null,
+   start_date:Dayjs | null,
+   end_date:Dayjs| null,
 }
 
 const initialState:StatisticsSlice = {
@@ -32,14 +35,22 @@ const initialState:StatisticsSlice = {
     isSuccess:false,
     agreementsStats:null,
     userTypes:null,
-    vendorsStats:null
+    vendorsStats:null,
+    start_date:null,
+    end_date:null
     
 }
 
 export const getStatistics = createAsyncThunk(
     'StatisticsSlice/getStatistics',
     async({axiosInstance}:{axiosInstance:AxiosInstance},thunkAPI)=>{
-        return await statisticsService.getStatistics({axiosInstance})
+        return await statisticsService.getStatistics({axiosInstance});
+    }
+)
+export const getStatisticsIntervall = createAsyncThunk(
+    'StatisticsSlice/getStatisticsIntervall',
+    async({axiosInstance}:{axiosInstance:AxiosInstance},thunkAPI)=>{
+        return await statisticsService.getStatistics({axiosInstance});
     }
 )
 const format = (d:Date)=>{
