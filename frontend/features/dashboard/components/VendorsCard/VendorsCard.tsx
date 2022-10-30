@@ -21,6 +21,10 @@ import { AnimateSharedLayout,motion } from 'framer-motion';
 import { useAppSelector } from '../../../../hooks/redux/hooks';
 import { MobileDatePicker } from '@mui/x-date-pickers';
 import { Stack } from '@mui/system';
+import dayjs from 'dayjs';
+import { Modal, TextField } from '@mui/material';
+import FilterIcon from '../../../../icons/FilterIcon';
+import ChangeDate from './ChangeDate/ChangeDate';
 
 
 ChartJS.register(
@@ -117,6 +121,11 @@ export function CompactCard({stats,cardId,setExpanded}:any){
 
 }
 export function ExpandedCard({stats,cardId,setExpanded}:any){
+  const {end_date,start_date} = useAppSelector(state=>state.StatisticsSlice);
+  const [openDateModal,setOpenDateModal] = useState(false);
+  const handleOpenDateModal = ()=>setOpenDateModal(true)
+  const handleCloseDateModal = ()=>setOpenDateModal(false)
+
  
   const data = {
     labels: stats?.map((el:any)=>(el.date))?? [],
@@ -138,32 +147,37 @@ export function ExpandedCard({stats,cardId,setExpanded}:any){
                 <CloseOutlinedIcon />
       </div>
             <div className={styles.title}>Fournisseurs</div>
-            <div className={styles.datesContainter}>
-            <Stack direction="row" justifyContent="center" gap={3} sx={{marginTop:"10px"}}>
+            <div className={styles.datesContainer}>
+               <Stack direction="row" gap={2} className={styles.dateIntervalle}>
+                <span>de</span>
+                <span onClick={()=>handleOpenDateModal()}>{!start_date?'xxxx-xx-xx':'2001-04-20'}</span>
+                <span>a</span>
+                <span onClick={()=>handleOpenDateModal()}>{!end_date?'xxxx-xx-xx':'2001-07-20'}</span>
+               </Stack>
+              
+        {/* <Stack direction="row" justifyContent="center" gap={3} sx={{marginTop:"10px"}}>
                
    
        
                <MobileDatePicker
                label="date de debut"
                inputFormat="MM/DD/YYYY"
-               value={startDate}
-               disabled={!isByDate}
-               onChange={(value)=>setStartDate(value ?? dayjs(""))}
+               value={start_date ?? dayjs("")}
+               onChange={(value)=>null}
                renderInput={(params) => <TextField size="small" {...params} />}
                />
  
                <MobileDatePicker
                label="date end"
                inputFormat="MM/DD/YYYY"
-               value={endDate}
-               disabled={!isByDate}
-               onChange={(value)=>setEndDate(value ?? dayjs(""))}
+               value={end_date ?? dayjs("")}
+               onChange={(value)=>null}
                renderInput={(params) => <TextField size="small"  {...params} />}
                />
 
 
-           </Stack>
-            </div>
+           </Stack> */}
+        </div>
     
     <div className={styles.chartContainer}>
      
@@ -197,6 +211,15 @@ export function ExpandedCard({stats,cardId,setExpanded}:any){
         }}
       />
     </div>
+    <Modal
+      open={openDateModal}
+      onClose={handleCloseDateModal}
+
+    >
+      <ChangeDate start_date={start_date} end_date={end_date}/>
+
+    </Modal>
+
     </motion.div>
   )
 }

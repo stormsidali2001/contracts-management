@@ -10,8 +10,8 @@ export class StatisticsController{
     ){}
 
     @Get('')
-    async getStats(@Body() {startDate = null,endDate = null}:StatsParamsDTO){
-        return await this.statisticsService.getStats(startDate,endDate);
+    async getStats(@Body() params:StatsParamsDTO){
+        return await this.statisticsService.getStats(params);
     }
 
 }

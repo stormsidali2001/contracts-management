@@ -9,7 +9,7 @@ import {AxiosInstance} from 'axios'
 import { UserRole } from "../auth/models/user-role.enum";
 import { Entity } from "../notification/models/Entity.enum";
 import { Operation } from "../notification/models/Operation.enum";
-import { Dayjs } from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 
 interface AsyncState{
     isSuccess:boolean;
@@ -49,8 +49,11 @@ export const getStatistics = createAsyncThunk(
 )
 export const getStatisticsIntervall = createAsyncThunk(
     'StatisticsSlice/getStatisticsIntervall',
-    async({axiosInstance}:{axiosInstance:AxiosInstance},thunkAPI)=>{
-        return await statisticsService.getStatistics({axiosInstance});
+    async({axiosInstance,startDate,endDate}:{axiosInstance:AxiosInstance,startDate:string,endDate:string},thunkAPI)=>{
+
+        const data =  await statisticsService.getStatistics({axiosInstance,startDate,endDate});
+        return {data,startDate,endDate}
+
     }
 )
 const format = (d:Date)=>{
@@ -103,7 +106,31 @@ const StatisticsSlice = createSlice(
                 state.vendorsStats = action.payload.vendorsStats;
                 state.agreementsStats = action.payload.agreementsStats;
             })
+            //getStatisticsIntervall
+           .addCase(getStatisticsIntervall.pending,(state,action)=>{
+                state.isLoading = true;
+                state.isError = false;
+                state.isSuccess = false;
+            })
+            .addCase(getStatisticsIntervall.rejected,(state,action)=>{
+                state.isLoading = false;
+                state.isError = true;
+                state.isSuccess = false;
+            })
+            .addCase(getStatisticsIntervall.fulfilled,(state,action)=>{
+                state.isLoading = false;
+                state.isError = false;
+                state.isSuccess = true;
+
+                state.userTypes = action.payload.data.userTypes;
+                state.vendorsStats = action.payload.data.vendorsStats;
+                state.agreementsStats = action.payload.data.agreementsStats;
+                state.start_date = dayjs(action.payload.startDate);
+                state.end_date = dayjs(action.payload.endDate);
+
+            })
         }
+
     }
 )
 
