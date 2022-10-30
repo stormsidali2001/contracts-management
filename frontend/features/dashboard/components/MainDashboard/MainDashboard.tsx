@@ -1,7 +1,11 @@
+import { Button, TextField } from '@mui/material';
+import { Stack } from '@mui/system';
+import { MobileDatePicker } from '@mui/x-date-pickers';
+import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
 import axios from '../../../../api/axios';
 import useAxiosPrivate from '../../../../hooks/auth/useAxiosPrivate';
-import { useAppDispatch } from '../../../../hooks/redux/hooks';
+import { useAppDispatch, useAppSelector } from '../../../../hooks/redux/hooks';
 import { getStatistics } from '../../../statistics/StatisticsSlice';
 import { showSnackbar } from '../../../ui/UiSlice';
 import AgreementStatsCard from '../AgreementStatsCard/AgreementStatsCard';
@@ -14,14 +18,15 @@ const MainDashboard = () => {
   
   const dispatch = useAppDispatch(); 
   const axiosPrivate = useAxiosPrivate();
- 
+  const {end_date,start_date} = useAppSelector(state=>state.StatisticsSlice)
+  
   useEffect(()=>{
     dispatch(getStatistics({axiosInstance:axiosPrivate}) )
   },[])
   return (
     <div className={styles.container}>
-        {/* <DateRangePicker/> */}
-        <div></div>
+        
+      <div></div>
         <div className={styles.contentWrapper}>
             <AgreementStatsCard/>
             <div className={styles.middleCard}>
