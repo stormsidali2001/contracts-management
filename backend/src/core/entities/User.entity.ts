@@ -59,7 +59,10 @@ export class UserEntity{
         enum:UserRole,
         default:UserRole.EMPLOYEE
     })
-    role:UserRole
+    role:UserRole;
+
+    @Column({default:false})
+    recieve_notifications:boolean;
 
 
 
@@ -79,6 +82,7 @@ export class UserEntity{
 
     @OneToMany(type=>NotificationEntity,n=>n.user)
     notifications:NotificationEntity[];
+
 
     
     @OneToOne(type=>PasswordTokenEntity) @JoinColumn()
