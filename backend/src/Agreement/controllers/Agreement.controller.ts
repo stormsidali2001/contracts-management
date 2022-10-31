@@ -7,6 +7,7 @@ import { PaginationResponse } from "src/core/types/paginationResponse.interface"
 import { AgreementType } from "src/core/types/agreement-type.enum";
 import { AgreementStatus } from "src/core/types/agreement-status.enum";
 import { StatsParamsDTO } from "src/statistics/models/statsPramsDTO.interface";
+import { CurrentUserId } from "src/auth/decorators/currentUserId.decorator";
 @ApiTags('Agreements')
 // @RequiredRoles(UserRole.JURIDICAL,UserRole.ADMIN)
 // @UseGuards(JwtAccessTokenGuard,RoleGuard)
@@ -21,16 +22,7 @@ export class AgreementController{
         return await this.AgreementService.createAgreement(agreement);
     }
 
-    @ApiQuery({
-        enum:AgreementType,
-        name:'agreementType',
-        enumName:'agreementType'
-    })
 
-    @Get("stats")
-    async getAgreementsStats(@Query() params:StatsParamsDTO){
-        return await this.AgreementService.getAgreementsStats(params);
-    }
     
     @Get(':id')
     async findById(@Param("id") id:string ,@Query("agreementType") agreementType:AgreementType){

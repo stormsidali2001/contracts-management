@@ -62,6 +62,7 @@ export class UserEntity{
     role:UserRole;
 
     @Column({default:false})
+    
     recieve_notifications:boolean;
 
 

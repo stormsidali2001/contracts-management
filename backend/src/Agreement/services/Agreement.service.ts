@@ -5,11 +5,13 @@ import { CronJob } from 'cron';
 import { CreateAgreementDTO, ExecuteAgreementDTO, FindAllAgreementsDTO } from 'src/core/dtos/agreement.dto';
 import { AgreementEntity } from 'src/core/entities/Agreement.entity';
 import { AgreementExecJobsEntity } from 'src/core/entities/agreementExecJobs';
+import { UserEntity } from 'src/core/entities/User.entity';
 import { AgreementStatus } from 'src/core/types/agreement-status.enum';
 import { AgreementType } from 'src/core/types/agreement-type.enum';
 import { Entity } from 'src/core/types/entity.enum';
 import { Operation } from 'src/core/types/operation.enum';
 import { PaginationResponse } from 'src/core/types/paginationResponse.interface';
+import { UserRole } from 'src/core/types/UserRole.enum';
 import { DirectionService } from 'src/direction/services/direction.service';
 import { StatsParamsDTO } from 'src/statistics/models/statsPramsDTO.interface';
 import {  Repository } from 'typeorm';
@@ -217,17 +219,21 @@ export class AgreementService implements OnModuleInit{
         return this.agreementRepository.save(agreement)
 
     }
-    async getAgreementsStats({startDate,endDate}:StatsParamsDTO){
+    async getAgreementsStats({startDate,endDate}:StatsParamsDTO,user:UserEntity){
         let query =  this.agreementRepository.createQueryBuilder('ag')
         .select('count(ag.id)','total')
         .groupBy('ag.status')
         .addSelect('ag.status','status')
 
+        Logger.debug(user,'getAgreementsStats')
+        if(user.role === UserRole.EMPLOYEE){
+            query = query.where('ag.departementId = :departementId and ag.directionId = :directionId',{departementId:user.departementId,directionId:user.directionId})
+        }
         if(startDate){
-            query = query.where('ag.createdAt >= :startDate',{startDate})
+            query = query.andWhere('ag.createdAt >= :startDate',{startDate})
         }
         if(endDate){
-            query = query.where('ag.createdAt <= :endDate',{endDate})
+            query = query.andWhere('ag.createdAt <= :endDate',{endDate})
         }
 
 
@@ -242,12 +248,17 @@ export class AgreementService implements OnModuleInit{
             statusReponse[st.status] =parseInt(st.total);
         })
 
-        const types = await this.agreementRepository.createQueryBuilder('ag')
+        let typesQuery =  this.agreementRepository.createQueryBuilder('ag')
         .select('count(ag.id)','total')
         .groupBy('ag.type')
-        .addSelect('ag.type','type')
-        .getRawMany();
+        .addSelect('ag.type','type');
+
         
+        if(user.role === UserRole.EMPLOYEE){
+            typesQuery = typesQuery.where('ag.departementId = :departementId and ag.directionId = :directionId',{departementId:user.departementId,directionId:user.directionId})
+        }
+        
+        const types = await typesQuery.getRawMany();;
         const typesResponse = {}
         Object.values(AgreementType).forEach(v=>{
             typesResponse[v] = 0;
