@@ -5,6 +5,7 @@ import { JwtAccessTokenGuard } from "src/auth/guards/jwt-access-token.guard";
 import { UserEntity } from "src/core/entities/User.entity";
 import { PaginationResponse } from "src/core/types/paginationResponse.interface";
 import { UserRole } from "src/core/types/UserRole.enum";
+import { StatsParamsDTO } from "src/statistics/models/statsPramsDTO.interface";
 import { UpdateResult } from "typeorm";
 import { UpdateUserDTO } from "../../core/dtos/user.dto";
 import { UserService } from "../user.service";
@@ -18,8 +19,8 @@ export class UserController{
 
     @UseGuards(JwtAccessTokenGuard)
     @Get('types-stats')
-    async getUserTypesStats(){
-        return await  this.userService.getUserTypesStats()
+    async getUserTypesStats(@Query() params:StatsParamsDTO){
+        return await  this.userService.getUserTypesStats(params)
     }
     
     @Get('')
