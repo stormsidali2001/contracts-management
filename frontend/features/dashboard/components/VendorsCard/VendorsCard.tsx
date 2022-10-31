@@ -158,30 +158,7 @@ export function ExpandedCard({stats,cardId,setExpanded}:any){
                 <span>a</span>
                 <span onClick={()=>handleOpenDateModal()}>{!end_date?'xxxx-xx-xx':format(end_date.toDate())}</span>
                </Stack>
-              
-        {/* <Stack direction="row" justifyContent="center" gap={3} sx={{marginTop:"10px"}}>
-               
-   
-       
-               <MobileDatePicker
-               label="date de debut"
-               inputFormat="MM/DD/YYYY"
-               value={start_date ?? dayjs("")}
-               onChange={(value)=>null}
-               renderInput={(params) => <TextField size="small" {...params} />}
-               />
- 
-               <MobileDatePicker
-               label="date end"
-               inputFormat="MM/DD/YYYY"
-               value={end_date ?? dayjs("")}
-               onChange={(value)=>null}
-               renderInput={(params) => <TextField size="small"  {...params} />}
-               />
-
-
-           </Stack> */}
-        </div>
+            </div>
     
     <div className={styles.chartContainer}>
      

@@ -8,7 +8,7 @@ import { AnimateSharedLayout ,motion} from 'framer-motion';
 import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
 import ZoomOutMapIcon from '@mui/icons-material/ZoomOutMap';
 import { Box } from '@mui/system';
-import { Tab, Tabs } from '@mui/material';
+import { Modal, Tab, Tabs } from '@mui/material';
 import {Doughnut, Pie,Bar} from 'react-chartjs-2'
 import {
   Chart as ChartJS,
@@ -197,6 +197,10 @@ function CompactCard({stats,cardId,setExpanded}:any){
 
 function ExpandedCard({stats,cardId,setExpanded}:any){
   const [value, setValue] = useState(0);
+  const {end_date,start_date} = useAppSelector(state=>state.StatisticsSlice);
+  const [openDateModal,setOpenDateModal] = useState(false);
+  const handleOpenDateModal = ()=>setOpenDateModal(true);
+  const handleCloseDateModal = ()=>setOpenDateModal(false);
   const data = {
     labels: [
       'non executé',
@@ -330,6 +334,14 @@ function ExpandedCard({stats,cardId,setExpanded}:any){
       </TabPanel>
     </Box>
 
+    <Modal
+      open={openDateModal}
+      onClose={handleCloseDateModal}
+
+    >
+      <ChangeDate handleClose={handleCloseDateModal} start_date={start_date} end_date={end_date}/>
+
+    </Modal>
     </motion.div>
   )
 }

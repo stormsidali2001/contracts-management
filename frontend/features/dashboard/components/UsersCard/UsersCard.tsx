@@ -20,6 +20,9 @@ import {
   ArcElement
 } from "chart.js";
 import { useAppSelector } from '../../../../hooks/redux/hooks';
+import { Modal, Stack } from '@mui/material';
+import { format } from '../../../../shared/utils/helpers';
+import ChangeDate from '../VendorsCard/ChangeDate/ChangeDate';
 
 ChartJS.register(
   ArcElement
@@ -28,6 +31,7 @@ ChartJS.register(
 
 const UsersCard = () => {
   const {userTypes:stats} = useAppSelector(state=>state.StatisticsSlice)
+
   
   const [expanded,setExpanded] = useState(false)
   const cardId = useId();
@@ -99,6 +103,11 @@ function CompactCard({stats,setExpanded,cardId}:any){
   )
 }
 function ExpandedCard({stats,cardId,setExpanded}:any){
+  const {end_date,start_date} = useAppSelector(state=>state.StatisticsSlice);
+  const [openDateModal,setOpenDateModal] = useState(false);
+  const handleOpenDateModal = ()=>setOpenDateModal(true)
+  const handleCloseDateModal = ()=>setOpenDateModal(false)
+
   const getEntityValue = (entity:string)=>{
     if(stats.total === 0) return 0;
     switch(entity){
@@ -133,6 +142,14 @@ function ExpandedCard({stats,cardId,setExpanded}:any){
                 <CloseOutlinedIcon />
       </div>
     <div className={styles.title}>Utilisateurs</div>
+    <div className={styles.datesContainer}>
+               <Stack direction="row" gap={2} className={styles.dateIntervalle}>
+                <span>de</span>
+                <span onClick={()=>handleOpenDateModal()}>{!start_date?'xxxx-xx-xx':format(start_date.toDate())}</span>
+                <span>a</span>
+                <span onClick={()=>handleOpenDateModal()}>{!end_date?'xxxx-xx-xx':format(end_date.toDate())}</span>
+               </Stack>
+    </div>
     <div className={styles.chartContainer}>
       <Doughnut
         data={data}
@@ -149,6 +166,14 @@ function ExpandedCard({stats,cardId,setExpanded}:any){
         }
       />
     </div>
+    <Modal
+      open={openDateModal}
+      onClose={handleCloseDateModal}
+
+    >
+      <ChangeDate handleClose={handleCloseDateModal} start_date={start_date} end_date={end_date}/>
+
+    </Modal>
    
   </motion.div>
   )
