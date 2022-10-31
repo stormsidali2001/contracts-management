@@ -8,7 +8,7 @@ import { AnimateSharedLayout ,motion} from 'framer-motion';
 import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
 import ZoomOutMapIcon from '@mui/icons-material/ZoomOutMap';
 import { Box } from '@mui/system';
-import { Modal, Tab, Tabs } from '@mui/material';
+import { Modal, Stack, Tab, Tabs } from '@mui/material';
 import {Doughnut, Pie,Bar} from 'react-chartjs-2'
 import {
   Chart as ChartJS,
@@ -17,6 +17,7 @@ import {
 } from "chart.js";
 import { useAppSelector } from '../../../../hooks/redux/hooks';
 import ChangeDate from '../VendorsCard/ChangeDate/ChangeDate';
+import { format } from '../../../../shared/utils/helpers';
 ChartJS.register(
   ArcElement,
   BarElement
@@ -279,6 +280,14 @@ function ExpandedCard({stats,cardId,setExpanded}:any){
       <div onClick={()=>setExpanded(false)} className={styles.closeButton}>
                 <CloseOutlinedIcon />
       </div>
+      <div className={styles.datesContainer}>
+               <Stack direction="row" gap={2} className={styles.dateIntervalle}>
+                <span>de</span>
+                <span onClick={()=>handleOpenDateModal()}>{!start_date?'xxxx-xx-xx':format(start_date.toDate())}</span>
+                <span>a</span>
+                <span onClick={()=>handleOpenDateModal()}>{!end_date?'xxxx-xx-xx':format(end_date.toDate())}</span>
+               </Stack>
+    </div>
       <Box sx={{ width: '100%',height:'80%'}}>
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
         <Tabs value={value} onChange={handleChange} aria-label="agreementStats card tabs" centered>

@@ -193,3 +193,21 @@ font-size: 6.81818px;
     justify-content: center;
     padding-left: 0;
 }
+.datesContainer{
+    display: flex;
+    justify-content: center;
+}
+.dateIntervalle{
+    display: flex;
+    align-items: center;
+    color:rgb(20, 19, 19)
+}
+.dateIntervalle > span:nth-last-of-type(2n + 1){
+    color:#807D7D;
+    font-size: 13px;
+    transition: ease-in-out 200ms;
+}
+.dateIntervalle > span:nth-last-of-type(2n + 1):hover{
+    transform: scale(1.05);
+    cursor: pointer;
+}
