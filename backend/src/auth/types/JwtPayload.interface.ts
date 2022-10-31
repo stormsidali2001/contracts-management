@@ -7,6 +7,7 @@ export interface JwtPayload{
     lastName:string;
     imageUrl?:string;
     role:string;
+    recieve_notifications:boolean;
 
 }
 export interface JwtCompletePayload  {

@@ -66,7 +66,7 @@ export class UserService{
     async findByEmailOrUsername({email,username}:{email:string,username:string}):Promise<UserEntity>{
         try{
             return this.userRepository.createQueryBuilder('user')
-            .select(['user.password','user.email','user.username','user.id','user.firstName','user.lastName','user.imageUrl','user.role','user.departementId','user.directionId'])
+            .select(['user.password','user.email','user.username','user.id','user.firstName','user.lastName','user.imageUrl','user.role','user.departementId','user.directionId','user.recieve_notifications'])
             .where('user.username = :username or user.email = :email',{username,email})
             .getOne();
         }catch(err){
@@ -246,8 +246,9 @@ export class UserService{
     async updateUserPassword(id:string , hashed_password:string){
         return await this.userRepository.update(id,{password:hashed_password})
     }
-    async recieveNotifications( userId:string){
-            await this.userRepository.update(userId,{recieve_notifications:true})
+    async recieveNotifications( userId:string,recieve_notifications:boolean){
+            await this.userRepository.update(userId,{recieve_notifications:()=>"!recieve_notifications"})
+            return !recieve_notifications;
     }
   
 

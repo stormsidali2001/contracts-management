@@ -54,9 +54,10 @@ export class UserController{
         return await this.userService.updateUserUniqueCheck(id,user)
     }
 
+    @UseGuards(JwtAccessTokenGuard)
     @Patch('recieve-notifications')
-    async recieveNotifications(@CurrentUserId() userId:string){
-        
+    async recieveNotifications(@CurrentUserId() userId:string, @Body('recieve_notifications') recieve_notifications:boolean){
+        return await this.userService.recieveNotifications(userId,recieve_notifications);
     }
    
 }

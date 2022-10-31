@@ -8,4 +8,5 @@ export interface DisplayUser{
     lastName:string;
     role?:UserRole;
     imageUrl?:string;
+    recieve_notifications:boolean;
 }

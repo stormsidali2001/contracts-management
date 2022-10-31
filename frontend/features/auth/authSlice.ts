@@ -1,4 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { AxiosInstance } from "axios";
 import { RootState } from "../../store";
 import { startConnecting } from "../notification/notificationSlice";
 import { DisplayUser } from "./models/DisplayUser.interface";
@@ -78,6 +79,18 @@ export const logout = createAsyncThunk(
     async (_,thunkAPI)=>{
         try{
             return await authService.logout();
+        }catch(err){
+            console.log(err);
+            return  thunkAPI.rejectWithValue("unable to logout")
+        }
+    }
+)
+
+export const selectRecieveNotifications = createAsyncThunk(
+    'auth/selectRecieveNotification',
+    async (params:{axios_instance:AxiosInstance},thunkAPI)=>{
+        try{
+            return await authService.selectRecieveNotification(params)
         }catch(err){
             console.log(err);
             return  thunkAPI.rejectWithValue("unable to logout")
@@ -176,6 +189,25 @@ export const authSlice = createSlice({
             state.isError = false;
         })
         .addCase(resetPassword.rejected,(state)=>{
+            state.isSuccess = false;
+            state.isLoading = false;
+            state.isError = true;
+        })
+
+        //selectRecieveNotifications
+        .addCase(selectRecieveNotifications.fulfilled,(state,action)=>{
+            state.isSuccess = true;
+            state.isLoading = false;
+            state.isError = false;
+            if(state.user) state.user.recieve_notifications = !state.user.recieve_notifications
+
+        })
+        .addCase(selectRecieveNotifications.pending,(state)=>{
+            state.isSuccess = false;
+            state.isLoading = true;
+            state.isError = false;
+        })
+        .addCase(selectRecieveNotifications.rejected,(state)=>{
             state.isSuccess = false;
             state.isLoading = false;
             state.isError = true;
