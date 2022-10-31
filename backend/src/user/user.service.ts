@@ -246,6 +246,9 @@ export class UserService{
     async updateUserPassword(id:string , hashed_password:string){
         return await this.userRepository.update(id,{password:hashed_password})
     }
+    async recieveNotifications( userId:string){
+            await this.userRepository.update(userId,{recieve_notifications:true})
+    }
   
 
 }
