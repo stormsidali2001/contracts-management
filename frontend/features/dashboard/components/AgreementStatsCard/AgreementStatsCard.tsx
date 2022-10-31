@@ -16,6 +16,7 @@ import {
   BarElement
 } from "chart.js";
 import { useAppSelector } from '../../../../hooks/redux/hooks';
+import ChangeDate from '../VendorsCard/ChangeDate/ChangeDate';
 ChartJS.register(
   ArcElement,
   BarElement
