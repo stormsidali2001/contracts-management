@@ -1,7 +1,11 @@
-import { Button, Input, Modal } from '@mui/material';
+import { Button, CircularProgress, Input, Modal } from '@mui/material';
 import { useState } from 'react';
+import useAxiosPrivate from '../../../../hooks/auth/useAxiosPrivate';
+import { useAppDispatch, useAppSelector } from '../../../../hooks/redux/hooks';
 import NotificationIconA from '../../../../icons/NotificationIconA';
 import PasswordIcon from '../../../../icons/PasswordIcon';
+import { selectRecieveNotifications } from '../../../auth/authSlice';
+import { recieveNotifications } from '../../../notification/notificationSlice';
 import ChangePassword from '../../ChangePassword/ChangePassword';
 import styles from './Settings.module.css';
 
@@ -9,6 +13,15 @@ const Settings = () => {
   const [changePasswordModal,setChangePasswordModal] = useState(false);
   const handleOpenChangePasswordModal = ()=>setChangePasswordModal(true);
   const handleCloseChangePasswordModal = ()=>setChangePasswordModal(false);
+  const [recieveNotificationsModalOpen,setRecieveNotificationsModalOpen] = useState(false)
+  const handleOpenRecieveNotificationsModal = ()=>setRecieveNotificationsModalOpen(false)
+  const handleCloseRecieveNotificationsModal = ()=>setRecieveNotificationsModalOpen(true)
+  const dispatch = useAppDispatch();
+  const axiosPrivate = useAxiosPrivate();
+  const {user,isLoading} = useAppSelector(state=>state.auth);
+  const handleNotificationChange = ()=>{
+    dispatch(selectRecieveNotifications({axios_instance:axiosPrivate}))
+  }
   return (
     <div className={styles.container}>
       <div className={styles.card}>
@@ -23,10 +36,19 @@ const Settings = () => {
             <p>
               si les notification de l’application vous suffit disactivez cette options
             </p>
-            <div className={styles.checkboxContainer}>
-              <Input id="notification-check-box" type="checkbox" className={styles.checkbox}/>
-              <label htmlFor='notification-check-box'>recevoir des notification par email.</label>
-            </div>
+           
+              {
+                isLoading?(
+                  <CircularProgress sx={{margin:'0 auto',width:"2px",height:"2px"}} />
+                ):(
+                  <div className={styles.checkboxContainer}>
+                  <Input id="notification-check-box" type="checkbox" value={!!user?.recieve_notifications} className={styles.checkbox} inputProps={{checked:!!user?.recieve_notifications}} onChange={()=>handleNotificationChange()}/>
+                  <label htmlFor='notification-check-box'>recevoir des notification par email.</label>
+                 </div>
+                )
+              }
+         
+             
           </div>
          
        </div>
@@ -59,7 +81,7 @@ const Settings = () => {
 
      </Modal>
 
-   
+  
     </div>
   )
 }

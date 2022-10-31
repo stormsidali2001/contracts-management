@@ -97,7 +97,7 @@ export class AuthService{
            if(!matches){
                 throw new UnauthorizedException("wrong credentials")
            }
-           const tokens = await this.#generateTokens({email:userDb.email , username:userDb.username, sub:userDb.id,firstName:userDb.firstName ,lastName:userDb.lastName,imageUrl:userDb.imageUrl,role:userDb.role});
+           const tokens = await this.#generateTokens({email:userDb.email , username:userDb.username, sub:userDb.id,firstName:userDb.firstName ,lastName:userDb.lastName,imageUrl:userDb.imageUrl,role:userDb.role,recieve_notifications:userDb.recieve_notifications});
            await this.#updateRefreshTokenHash(userDb.id,tokens.refresh_token);
 
            return tokens;
@@ -130,7 +130,7 @@ export class AuthService{
                     throw new ForbiddenException("old token")
                 }
                 
-                const tokens = await this.#generateTokens({email:userDb.email , username:userDb.username, sub:userDb.id,firstName:userDb.firstName ,lastName:userDb.lastName,imageUrl:userDb.imageUrl,role:userDb.role});
+                const tokens = await this.#generateTokens({email:userDb.email , username:userDb.username, sub:userDb.id,firstName:userDb.firstName ,lastName:userDb.lastName,imageUrl:userDb.imageUrl,role:userDb.role,recieve_notifications:userDb.recieve_notifications});
                 await this.#updateRefreshTokenHash(userDb.id,tokens.refresh_token);
                 return tokens;
             }catch(err){

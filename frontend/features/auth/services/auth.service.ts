@@ -3,6 +3,7 @@ import jwt_decode from 'jwt-decode';
 import { DecodedJwt } from "../models/decoded-jwt.interface";
 import { DisplayUser } from "../models/DisplayUser.interface";
 import axios, { axiosPrivate } from "../../../api/axios";
+import { AxiosInstance } from "axios";
 
 
 const login = async (user:LoginUser):Promise<{user:DisplayUser| null , jwt:string| null} >=>{
@@ -33,12 +34,19 @@ const resetPassword = async ({password,userId,token}:{password:string,userId:str
     await  axiosPrivate.post('/auth/reset-password',{password,userId,token});
 }
 
+const selectRecieveNotification = async ({axios_instance}:{axios_instance:AxiosInstance})=>{
+    const res =  await axios_instance.patch("/users/recieve-notifications")
+    if(!res?.data) throw new Error();
+    return res?.data;
+}
+
 const authService ={
     login,
     logout,
     refresh,
     forgotPassword,
-    resetPassword
+    resetPassword,
+    selectRecieveNotification
 }
 
 
