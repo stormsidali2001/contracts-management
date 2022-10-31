@@ -18,11 +18,7 @@ export class UserController{
         private readonly userService:UserService
     ){}
 
-    @UseGuards(JwtAccessTokenGuard)
-    @Get('types-stats')
-    async getUserTypesStats(@Query() params:StatsParamsDTO){
-        return await  this.userService.getUserTypesStats(params)
-    }
+  
     
     @Get('')
     async findAll(

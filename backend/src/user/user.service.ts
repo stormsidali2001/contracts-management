@@ -166,14 +166,18 @@ export class UserService{
     async findAllBy(options:FindOptionsWhere<UserEntity> | FindOptionsWhere<UserEntity>[]){
         return this.userRepository.find({where:options})
     }
-    async getUserTypesStats({startDate,endDate}:StatsParamsDTO){
+    async getUserTypesStats({startDate,endDate}:StatsParamsDTO,user:UserEntity){
         let query =   this.userRepository.createQueryBuilder('u')
         .select('count(u.id)','total')
         .addSelect('u.role','role')
         .groupBy('u.role')
 
+        // if(user.role === UserRole.EMPLOYEE){
+        //     query = query.where('u.departementId = :departementId and u.directionId = :directionId',{departementId:user.departementId,directionId:user.directionId})
+        // }
+
         if(startDate){
-            query = query.where('u.createdAt >= :startDate',{startDate})
+            query = query.andWhere('u.createdAt >= :startDate',{startDate})
         }
 
         if(endDate){
@@ -247,6 +251,7 @@ export class UserService{
         return await this.userRepository.update(id,{password:hashed_password})
     }
     async recieveNotifications( userId:string,recieve_notifications:boolean){
+        //@ts-ignore
             await this.userRepository.update(userId,{recieve_notifications:()=>"!recieve_notifications"})
             return !recieve_notifications;
     }

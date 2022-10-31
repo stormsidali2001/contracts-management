@@ -2,6 +2,8 @@ import { Injectable, Logger } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { CreateEventDTO } from "src/core/entities/event.dto";
 import { EventEntity } from "src/core/entities/Event.entity";
+import { UserEntity } from "src/core/entities/User.entity";
+import { UserRole } from "src/core/types/UserRole.enum";
 import { Repository } from "typeorm";
 
 
@@ -20,11 +22,20 @@ export class EventService{
         await this.eventRepository.save({entity,entityId,operation});
 
     }
-    async getEvents(limit:number){
-        return this.eventRepository.createQueryBuilder("e")
+    async getEvents(limit:number,user:UserEntity){
+        let query =  this.eventRepository.createQueryBuilder("e")
         .limit(limit)
         .orderBy("e.createdAt",'DESC')
-        .getMany()
+
+
+        if(user.role === UserRole.EMPLOYEE){
+            query = query
+            .where('e.departementId = :departementId or e.departementId IS NULL',{departementId:user.departementId})
+            .andWhere('e.directionId = :directionId or e.directionId IS NULL',{directionId:user.directionId})
+
+        }
+
+        return await query.getMany();
     }
     
 

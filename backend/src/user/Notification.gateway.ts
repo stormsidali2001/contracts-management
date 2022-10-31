@@ -5,6 +5,7 @@ import { SocketWithJwtPayload } from "src/auth/types/JwtPayload.interface";
 import { EventService } from "src/Event/services/Event.service";
 import { SocketStateService } from "src/socket/SocketState.service";
 import { UserNotificationService } from "src/user/user-notification.service";
+import { UserService } from "./user.service";
 
 
 @WebSocketGateway({
@@ -16,7 +17,8 @@ export class NotificationsGateWay implements OnGatewayInit , OnGatewayConnection
     constructor(
         private socketStateService:SocketStateService,
         private notificationService:UserNotificationService,
-        private readonly eventService:EventService
+        private readonly eventService:EventService,
+        private readonly userService:UserService
 
     ){}
     private readonly logger = new Logger(NotificationsGateWay.name);
@@ -53,7 +55,8 @@ export class NotificationsGateWay implements OnGatewayInit , OnGatewayConnection
     @SubscribeMessage('REQUEST_ALL_EVENTS')
     async getLastEvents(@ConnectedSocket() client:SocketWithJwtPayload){
         this.logger.debug(`request all events user : ${client.user.email}`);
-        const events =  await this.eventService.getEvents(20);
+        const user = await this.userService.findBy({id:client.user.sub})
+        const events =  await this.eventService.getEvents(20,user);
 
 
         client.emit("SEND_EVENTS",events)

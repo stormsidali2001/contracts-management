@@ -12,11 +12,12 @@ export class StatisticsService{
         private readonly agreeementService:AgreementService,
         private readonly vendorService:VendorService
     ){}
-    async getStats(params:StatsParamsDTO){
+    async getStats(params:StatsParamsDTO,userId:string){
+        const user = await this.userService.findBy({id:userId});
         const [userTypes,vendorsStats,agreementsStats]= await Promise.all([
-            this.userService.getUserTypesStats(params),
+            this.userService.getUserTypesStats(params,user),
             this.vendorService.getVendorsStats(params),
-            this.agreeementService.getAgreementsStats(params)
+            this.agreeementService.getAgreementsStats(params,user)
         ])
 
         return {
