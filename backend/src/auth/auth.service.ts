@@ -210,10 +210,11 @@ export class AuthService{
         if(!connectedUser) throw new BadRequestException("couldn't find user");
 
         const matches = await this.#comparePassword(actualPassword,connectedUser.password);
-        if(!matches) throw new UnauthorizedException();
+        if(!matches) throw new UnauthorizedException("mot de passe icorrect");
         const hashed_password = await this.#hashPassword(password);
         await this.userService.updateUserPassword(userId,hashed_password);
 
         return 'done';
     }
+
 }

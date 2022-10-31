@@ -1,6 +1,7 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Put, Query, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Put, Query, UseGuards } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { IsNotEmpty } from "class-validator";
+import { CurrentUserId } from "src/auth/decorators/currentUserId.decorator";
 import { JwtAccessTokenGuard } from "src/auth/guards/jwt-access-token.guard";
 import { UserEntity } from "src/core/entities/User.entity";
 import { PaginationResponse } from "src/core/types/paginationResponse.interface";
@@ -53,5 +54,9 @@ export class UserController{
         return await this.userService.updateUserUniqueCheck(id,user)
     }
 
+    @Patch('recieve-notifications')
+    async recieveNotifications(@CurrentUserId() userId:string){
+        
+    }
    
 }

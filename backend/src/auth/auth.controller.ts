@@ -1,5 +1,5 @@
 import { Body, Controller, InternalServerErrorException, Post ,Req,UseGuards , Get, Res, Logger} from "@nestjs/common";
-import { CreateUserDTO, ForgotPasswordDTO, LoginUserDTO, ResetPasswordDTO } from "src/core/dtos/user.dto";
+import { ConnectedUserResetPassword, CreateUserDTO, ForgotPasswordDTO, LoginUserDTO, ResetPasswordDTO } from "src/core/dtos/user.dto";
 import { AuthService } from "./auth.service";
 import {ApiTags} from '@nestjs/swagger';
 import { JwtAccessTokenGuard } from "./guards/jwt-access-token.guard";
@@ -77,6 +77,18 @@ export class AuthController{
     @Post('reset-password')
     async resetPassword(@Body() params:ResetPasswordDTO ){
         return await this.authService.resetPassword(params)
+    }
+
+
+    @UseGuards(JwtAccessTokenGuard)
+    @Post("connected-user/reset-password")
+    async connectedUserResetPassword(
+             @Body() params:ConnectedUserResetPassword,
+             @CurrentUserId() userId:string
+             ){
+
+                return await this.authService.connectedUserResetPassword(params,userId)
+
     }
 
 }
