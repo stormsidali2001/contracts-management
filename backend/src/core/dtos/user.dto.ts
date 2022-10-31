@@ -123,3 +123,14 @@ export class ResetPasswordDTO{
     @IsUUID()
     userId:string;
 }
+
+export class ConnectedUserResetPassword{
+    
+    @ApiProperty({example:"123456"})
+    @IsNotEmpty()
+    actualPassword:string;
+    
+    @ApiProperty({example:"123456"})
+    @IsNotEmpty()
+    password:string;
+}

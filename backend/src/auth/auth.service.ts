@@ -1,6 +1,6 @@
 import { BadRequestException, ForbiddenException, HttpStatus, Injectable, InternalServerErrorException, Logger, NotFoundException, UnauthorizedException } from "@nestjs/common";
 import * as bcrypt from 'bcrypt';
-import { CreateUserDTO, ForgotPasswordDTO, LoginUserDTO, ResetPasswordDTO } from "src/core/dtos/user.dto";
+import { ConnectedUserResetPassword, CreateUserDTO, ForgotPasswordDTO, LoginUserDTO, ResetPasswordDTO } from "src/core/dtos/user.dto";
 import { UserEntity } from "src/core/entities/User.entity";
 import { UserService } from "src/user/user.service";
 import { JwtCompletePayload, JwtPayload } from "./types/JwtPayload.interface";
@@ -203,5 +203,17 @@ export class AuthService{
             subject: "Mot de pasee oublié", // Subject line
             html: `<b>vous avez envoyer une demmande de réinitialisation de mot de passe.</b><br/> presser sur le lien si il s'agit bien de vous </b><br/> le lien:  http://localhost:3000/reset-password?token=${token}&userId=${userId}`, // html body
           });
+    }
+
+    async connectedUserResetPassword({actualPassword,password}:ConnectedUserResetPassword,userId:string){
+        const connectedUser = await this.userService.getUserPassword(userId);
+        if(!connectedUser) throw new BadRequestException("couldn't find user");
+
+        const matches = await this.#comparePassword(actualPassword,connectedUser.password);
+        if(!matches) throw new UnauthorizedException();
+        const hashed_password = await this.#hashPassword(password);
+        await this.userService.updateUserPassword(userId,hashed_password);
+
+        return 'done';
     }
 }
