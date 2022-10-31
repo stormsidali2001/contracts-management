@@ -10,6 +10,7 @@ import { Operation } from "src/core/types/operation.enum";
 import { PaginationResponse } from "src/core/types/paginationResponse.interface";
 import { UserRole } from "src/core/types/UserRole.enum";
 import { DirectionService } from "src/direction/services/direction.service";
+import { StatsParamsDTO } from "src/statistics/models/statsPramsDTO.interface";
 import { DataSource, FindManyOptions, FindOptionsWhere, Repository, UpdateResult } from "typeorm";
 import { QueryDeepPartialEntity } from "typeorm/query-builder/QueryPartialEntity";
 import { UserNotificationService } from "./user-notification.service";
@@ -159,12 +160,23 @@ export class UserService{
     async findAllBy(options:FindOptionsWhere<UserEntity> | FindOptionsWhere<UserEntity>[]){
         return this.userRepository.find({where:options})
     }
-    async getUserTypesStats(){
-        const stats =  await this.userRepository.createQueryBuilder('u')
+    async getUserTypesStats({startDate,endDate}:StatsParamsDTO){
+        let query =   this.userRepository.createQueryBuilder('u')
         .select('count(u.id)','total')
         .addSelect('u.role','role')
         .groupBy('u.role')
-        .getRawMany()
+
+        if(startDate){
+            query = query.where('u.createdAt >= :startDate',{startDate})
+        }
+
+        if(endDate){
+            query = query.andWhere('u.createdAt <= :endDate',{endDate})
+        }
+
+
+        const stats = await query.getRawMany();
+
         const response:any = {
             juridical:0,
             employee:0,

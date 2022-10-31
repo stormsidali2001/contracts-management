@@ -62,7 +62,11 @@ const VendorsCard = () => {
 
 export default VendorsCard;
 
+const format = (d:Date)=>{
+  const newD = new Date(d);
+  return newD.toISOString().replace(/T[0-9:.Z]*/g,"");
 
+}
 
 export function CompactCard({stats,cardId,setExpanded}:any){
   const data = {
@@ -150,9 +154,9 @@ export function ExpandedCard({stats,cardId,setExpanded}:any){
             <div className={styles.datesContainer}>
                <Stack direction="row" gap={2} className={styles.dateIntervalle}>
                 <span>de</span>
-                <span onClick={()=>handleOpenDateModal()}>{!start_date?'xxxx-xx-xx':'2001-04-20'}</span>
+                <span onClick={()=>handleOpenDateModal()}>{!start_date?'xxxx-xx-xx':format(start_date.toDate())}</span>
                 <span>a</span>
-                <span onClick={()=>handleOpenDateModal()}>{!end_date?'xxxx-xx-xx':'2001-07-20'}</span>
+                <span onClick={()=>handleOpenDateModal()}>{!end_date?'xxxx-xx-xx':format(end_date.toDate())}</span>
                </Stack>
               
         {/* <Stack direction="row" justifyContent="center" gap={3} sx={{marginTop:"10px"}}>
@@ -216,7 +220,7 @@ export function ExpandedCard({stats,cardId,setExpanded}:any){
       onClose={handleCloseDateModal}
 
     >
-      <ChangeDate start_date={start_date} end_date={end_date}/>
+      <ChangeDate handleClose={handleCloseDateModal} start_date={start_date} end_date={end_date}/>
 
     </Modal>
 

@@ -11,6 +11,7 @@ import { Entity } from 'src/core/types/entity.enum';
 import { Operation } from 'src/core/types/operation.enum';
 import { PaginationResponse } from 'src/core/types/paginationResponse.interface';
 import { DirectionService } from 'src/direction/services/direction.service';
+import { StatsParamsDTO } from 'src/statistics/models/statsPramsDTO.interface';
 import {  Repository } from 'typeorm';
 import { UserNotificationService } from '../../user/user-notification.service';
 import { VendorService } from './vendor.service';
@@ -216,12 +217,22 @@ export class AgreementService implements OnModuleInit{
         return this.agreementRepository.save(agreement)
 
     }
-    async getAgreementsStats(){
-        const status = await this.agreementRepository.createQueryBuilder('ag')
+    async getAgreementsStats({startDate,endDate}:StatsParamsDTO){
+        let query =  this.agreementRepository.createQueryBuilder('ag')
         .select('count(ag.id)','total')
         .groupBy('ag.status')
         .addSelect('ag.status','status')
-        .getRawMany();
+
+        if(startDate){
+            query = query.where('ag.createdAt >= :startDate',{startDate})
+        }
+        if(endDate){
+            query = query.where('ag.createdAt <= :endDate',{endDate})
+        }
+
+
+        const status = await query.getRawMany();
+
 
         const statusReponse = {}
         Object.values(AgreementStatus).forEach(v=>{

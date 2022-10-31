@@ -1,4 +1,4 @@
-import { Body, Controller, Get } from "@nestjs/common";
+import { Body, Controller, Get, Query } from "@nestjs/common";
 import { StatsParamsDTO } from "./models/statsPramsDTO.interface";
 import { StatisticsService } from "./statistics.service";
 
@@ -10,7 +10,8 @@ export class StatisticsController{
     ){}
 
     @Get('')
-    async getStats(@Body() params:StatsParamsDTO){
+    async getStats(@Query() params:StatsParamsDTO){
+
         return await this.statisticsService.getStats(params);
     }
 

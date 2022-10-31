@@ -1,17 +1,17 @@
 import { AxiosInstance } from "axios";
-import axios from "../../../api/axios";
 
 async function getStatistics({axiosInstance,startDate,endDate}:{axiosInstance:AxiosInstance,startDate?:string,endDate?:string}){
-  const body:{startDate?:string,endDate?:string} = {};
+  let params  = '';
   if(startDate ){
-    body.startDate = startDate;
+    params += `?startDate=${startDate}`
 
    }
    if(endDate){
-    body.endDate = endDate;
-   }
+    params += `${startDate?'&':'?'}endDate=${endDate}`
 
-    const res =  await axios.get('/statistics') 
+   }
+   console.log("t530",startDate,endDate)
+    const res =  await axiosInstance.get('/statistics'+params) 
     if(!res.data) throw new Error("empty data statisticsService/getStatistics")
     return res.data;
 }
