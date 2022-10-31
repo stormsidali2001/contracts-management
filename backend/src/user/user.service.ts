@@ -1,6 +1,6 @@
 import { Injectable, InternalServerErrorException, Logger,BadRequestException, ForbiddenException, forwardRef, Inject } from "@nestjs/common";
 import { InjectDataSource, InjectRepository } from "@nestjs/typeorm";
-import { CreateUserDTO, UpdateUserDTO } from "src/core/dtos/user.dto";
+import { ConnectedUserResetPassword, CreateUserDTO, UpdateUserDTO } from "src/core/dtos/user.dto";
 import { DepartementEntity } from "src/core/entities/Departement.entity";
 import { DirectionEntity } from "src/core/entities/Direction.entity";
 import { PasswordTokenEntity } from "src/core/entities/PasswordToken";
@@ -44,6 +44,12 @@ export class UserService{
     }
     async findBy(options:FindOptionsWhere<UserEntity>):Promise<UserEntity>{
         return this.userRepository.findOneBy(options)
+    }
+    async  getUserPassword(id:string):Promise<UserEntity>{
+        return await this.userRepository.createQueryBuilder('u')
+        .select('u.password')
+        .where('u.id = :userId',{userId:id})
+        .getOne();
     }
     async findByEmailWithToken(email:string):Promise<UserEntity>{
         return this.userRepository.createQueryBuilder('u')
@@ -236,5 +242,10 @@ export class UserService{
            
 
     }
+
+    async updateUserPassword(id:string , hashed_password:string){
+        return await this.userRepository.update(id,{password:hashed_password})
+    }
+  
 
 }
