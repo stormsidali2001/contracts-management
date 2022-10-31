@@ -12,11 +12,11 @@ export class StatisticsService{
         private readonly agreeementService:AgreementService,
         private readonly vendorService:VendorService
     ){}
-    async getStats({startDate = null , endDate = null}:StatsParamsDTO){
+    async getStats(params:StatsParamsDTO){
         const [userTypes,vendorsStats,agreementsStats]= await Promise.all([
-            this.userService.getUserTypesStats(),
-            this.vendorService.getVendorsStats(startDate,endDate),
-            this.agreeementService.getAgreementsStats()
+            this.userService.getUserTypesStats(params),
+            this.vendorService.getVendorsStats(params),
+            this.agreeementService.getAgreementsStats(params)
         ])
 
         return {
@@ -24,5 +24,6 @@ export class StatisticsService{
             vendorsStats,
             agreementsStats
         }
+        
     }
 }

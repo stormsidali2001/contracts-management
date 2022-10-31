@@ -1,4 +1,4 @@
-import {Injectable,BadRequestException, ForbiddenException} from '@nestjs/common'
+import {Injectable,BadRequestException, ForbiddenException, Logger} from '@nestjs/common'
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { CreateVendorDTO, UpdateVendorDTO } from 'src/core/dtos/vendor.dto';
 import { AgreementEntity } from 'src/core/entities/Agreement.entity';
@@ -8,6 +8,7 @@ import { AgreementType } from 'src/core/types/agreement-type.enum';
 import { Entity } from 'src/core/types/entity.enum';
 import { Operation } from 'src/core/types/operation.enum';
 import { PaginationResponse } from 'src/core/types/paginationResponse.interface';
+import { StatsParamsDTO } from 'src/statistics/models/statsPramsDTO.interface';
 import { UserNotificationService } from 'src/user/user-notification.service';
 import { DataSource, FindOptionsWhere, Repository, UpdateResult } from 'typeorm';
 
@@ -112,9 +113,11 @@ export class VendorService{
         return this.vendorRepository.update(id,newVendor)
     }
 
-    async getVendorsStats(startDate:Date , endDate:Date){
+    async getVendorsStats({startDate,endDate}:StatsParamsDTO){
         let  query =   this.vendorStatsRepository.createQueryBuilder('v')
         .orderBy('v.date')
+
+        console.log("k....k",startDate,endDate)
        
 
         if(startDate ){

@@ -1,4 +1,4 @@
-import {Controller ,Post ,Get , Body , Param, Put,UseGuards , Query} from '@nestjs/common'
+import {Controller ,Post ,Get , Body , Param, Put,UseGuards , Query, Logger} from '@nestjs/common'
 import { RequiredRoles } from 'src/auth/decorators/RequiredRoles.decorator';
 import { JwtAccessTokenGuard } from 'src/auth/guards/jwt-access-token.guard';
 import { RoleGuard } from 'src/auth/guards/Role.guard';
@@ -9,6 +9,7 @@ import {ApiTags} from '@nestjs/swagger';
 import { PaginationResponse } from 'src/core/types/paginationResponse.interface';
 import { VendorEntity } from 'src/core/entities/Vendor.entity';
 import { UpdateResult } from 'typeorm';
+import { StatsParamsDTO } from 'src/statistics/models/statsPramsDTO.interface';
 @ApiTags('vendors')
 @Controller('vendors')
 // @RequiredRoles(UserRole.JURIDICAL,UserRole.ADMIN)
@@ -22,8 +23,9 @@ export class VendorController{
         return await this.vendorService.createVendor(vendor);
     }
     @Get('stats')
-    async getVendorStats(@Query() query:VendotrStats){
-        return await this.vendorService.getVendorsStats(query.startDate , query.endDate)
+    async getVendorStats(@Query() params:StatsParamsDTO){
+      
+        return await this.vendorService.getVendorsStats(params)
     }
     @Get(":id")
     async findById(@Param("id") id:string ){

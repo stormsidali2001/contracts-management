@@ -49,8 +49,9 @@ export const getStatistics = createAsyncThunk(
 )
 export const getStatisticsIntervall = createAsyncThunk(
     'StatisticsSlice/getStatisticsIntervall',
-    async({axiosInstance,startDate,endDate}:{axiosInstance:AxiosInstance,startDate:string,endDate:string},thunkAPI)=>{
+    async({axiosInstance,startDate,endDate}:{axiosInstance:AxiosInstance,startDate?:string |undefined,endDate?:string | undefined},thunkAPI)=>{
 
+        console.log("t530",startDate,endDate)
         const data =  await statisticsService.getStatistics({axiosInstance,startDate,endDate});
         return {data,startDate,endDate}
 
@@ -125,8 +126,8 @@ const StatisticsSlice = createSlice(
                 state.userTypes = action.payload.data.userTypes;
                 state.vendorsStats = action.payload.data.vendorsStats;
                 state.agreementsStats = action.payload.data.agreementsStats;
-                state.start_date = dayjs(action.payload.startDate);
-                state.end_date = dayjs(action.payload.endDate);
+                if(action.payload.startDate) state.start_date = dayjs(action.payload.startDate);
+                if(action.payload.endDate) state.end_date = dayjs(action.payload.endDate);
 
             })
         }
