@@ -87,7 +87,7 @@ useEffect(()=>{
             sx={{boxShadow:'none'}} size='small'
              className={styles.textField} 
              inputProps={{className:styles.input}} 
-             label="nouveau mot de passe" 
+             label="confirmation" 
              type='password'
             />
             

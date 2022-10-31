@@ -1,9 +1,14 @@
-import { Button, Input } from '@mui/material';
+import { Button, Input, Modal } from '@mui/material';
+import { useState } from 'react';
 import NotificationIconA from '../../../../icons/NotificationIconA';
 import PasswordIcon from '../../../../icons/PasswordIcon';
+import ChangePassword from '../../ChangePassword/ChangePassword';
 import styles from './Settings.module.css';
 
 const Settings = () => {
+  const [changePasswordModal,setChangePasswordModal] = useState(false);
+  const handleOpenChangePasswordModal = ()=>setChangePasswordModal(true);
+  const handleCloseChangePasswordModal = ()=>setChangePasswordModal(false);
   return (
     <div className={styles.container}>
       <div className={styles.card}>
@@ -39,11 +44,20 @@ const Settings = () => {
             <p>
               choisissez cette option si vous voulez changer votre mot de passe
             </p>
-            <Button variant='contained' size='small'  sx={{marginTop:'15px'}}>Changer</Button>
+            <Button variant='contained' size='small'  sx={{marginTop:'15px'}} onClick={()=>handleOpenChangePasswordModal()}>Changer</Button>
           </div>
          
        </div>
      
+
+     <Modal
+      open={changePasswordModal}
+      onClose={handleCloseChangePasswordModal}
+
+     >
+      <ChangePassword handleClose={handleCloseChangePasswordModal}/>
+
+     </Modal>
 
    
     </div>

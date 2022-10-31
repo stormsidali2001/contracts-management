@@ -37,7 +37,7 @@
     width: 265px;
     height: 46.38px;
     margin: 0 auto 0 auto;
-    z-index: 5000;
+    z-index: 100;
     display: flex;
     align-items: center;
     justify-content: center;
