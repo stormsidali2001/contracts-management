@@ -8,45 +8,56 @@ import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import FilterIcon from '../../../../icons/FilterIcon';
 import { useDebounce } from '../../../../hooks/useDebounce.hook';
 import useAxiosPrivate from '../../../../hooks/auth/useAxiosPrivate';
+import Link from 'next/link';
 
 
 const columns:GridColumns<any> = [
-    // {
-    //     field:"id",
-    //     headerName:"id",
-    //     flex:1,
-        
-    // },
     {
         field:"number",
         headerName:"numero",
-        flex:1
+        width:150,
     },
     {
         field:"object",
         headerName:"objet",
-        flex:1
+        width:200
     },
     {
         field:"amount",
         headerName:"montant",
-        flex:1
+        width:100
     },
     {
         field:"expiration_date",
         headerName:"expiration",
-        flex:1
+        width:120
     },
     {
         field:"signature_date",
         headerName:"signature",
-        flex:1
+        width:120
     },
     {
         field:"status",
         headerName:"status",
-        flex:1
+        width:170
     },
+    {
+        field:"createdAt",
+        headerName:"date de creation",
+        width:170
+    },
+    {
+        field:"actions",
+        headerName:"Details",
+        type:"actions",
+        renderCell:(params)=>{
+
+            return (
+             <Button><Link href={`/convensions/${params.id}`}>Details</Link></Button>
+            )
+        }
+    }
 ];
 const ConvensionsContent = () => {
     const [pageState,setPageState] = useState<any>({
