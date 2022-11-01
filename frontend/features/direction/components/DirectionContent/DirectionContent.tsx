@@ -6,7 +6,6 @@ import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import { useEffect, useState } from 'react';
 import { Stack } from '@mui/system';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
-import axios from 'axios';
 import { Direction, DisplayDirection } from '../../models/direction.interface';
 import CreateDepartement from '../CreateDepartement/CreateDepartement';
 import { Departement } from '../../models/departement.interface';

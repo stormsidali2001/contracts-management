@@ -8,6 +8,7 @@ export interface CreateAgreement{
     url:string;
     signature_date:string;
     expiration_date:string;
+    type:"contract"|"convension";
 
 
 }

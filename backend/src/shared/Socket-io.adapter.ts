@@ -48,7 +48,7 @@ export class SocketIoAdapter extends IoAdapter  implements WebSocketAdapter {
       server.on('connection', async(socket: SocketWithJwtPayload) => {
         if (socket.user) {
           const userDb = await userService.findBy({id:socket.user.sub});
-          socketStateService.add(socket.user.sub, socket,{role:userDb.role,departementId:userDb.role});
+          socketStateService.add(socket.user.sub, socket,{role:userDb.role,departementId:userDb.departementId});
           Logger.debug(`user: ${socket.user.sub} has now : ${socketStateService.get(socket.user.sub).length} connected socket`,'connection')
    
           socket.on('disconnect', () => {
