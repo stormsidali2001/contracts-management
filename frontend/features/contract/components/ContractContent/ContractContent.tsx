@@ -6,6 +6,8 @@ import {Button, Modal} from '@mui/material';
 import PlayCircleFilledWhiteIcon from '@mui/icons-material/PlayCircleFilledWhite';
 import useAxiosPrivate from '../../../../hooks/auth/useAxiosPrivate';
 import ExecutionModal from '../ExecutionModal/ExecutionModal';
+import { useAppSelector } from '../../../../hooks/redux/hooks';
+import { UserRole } from '../../../auth/models/user-role.enum';
 
 
 interface PropType{
@@ -14,6 +16,7 @@ interface PropType{
 }
 const ContractContent = ({type , agreementId}:PropType) => {
 
+  const {user} = useAppSelector(state=>state.auth)
   const axiosPrivate = useAxiosPrivate();
  
   const [contract,setContract] = useState<any>(null);
@@ -52,6 +55,9 @@ const ContractContent = ({type , agreementId}:PropType) => {
    }
   }
 
+  const canExecuteContract = ()=>{
+    return user?.role === UserRole.JURIDICAL;
+  }
   return (
     <div className={styles.container}>
         <div className={styles.wrapperBox}>
@@ -106,15 +112,15 @@ const ContractContent = ({type , agreementId}:PropType) => {
            
         </div>
 
-
         <div className={styles.wrapperBox}>
-           <Button
-            className={styles.executionButton}
-            disabled = {!(contract.status === 'not_executed')}
-            onClick={()=>handelOpenExecutionModal()}
-           >
-                <PlayCircleFilledWhiteIcon/>
-           </Button>
+          { canExecuteContract() &&(<Button
+              className={styles.executionButton}
+              disabled = {!(contract.status === 'not_executed')}
+              onClick={()=>handelOpenExecutionModal()}
+            >
+                  <PlayCircleFilledWhiteIcon/>
+            </Button>)
+           }
            <div className={styles.labelWrapper}>
               <div className={styles.label}>N</div>
               <div className={styles.labelText}>{contract?.number}</div>
