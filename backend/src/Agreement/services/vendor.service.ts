@@ -57,7 +57,7 @@ export class VendorService{
 
             return createdVendor;
         })
-        await this.notificationService.sendNewEventToAuthenticatedUsers({entity:Entity.VENDOR,operation:Operation.INSERT,entityId:createdVendor.id,createdAt:new Date()})
+        await this.notificationService.sendEventToAllUsers({entity:Entity.VENDOR,operation:Operation.INSERT,entityId:createdVendor.id,createdAt:new Date()})
 
         return createdVendor;
     }
