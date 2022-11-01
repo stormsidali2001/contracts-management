@@ -100,7 +100,7 @@ const UsersContent = () => {
             {
                 field:"created_at",
                 headerName:"cree a",
-                editable:true,
+                editable:false,
                 width:200
             },
             {
@@ -109,28 +109,28 @@ const UsersContent = () => {
                 editable:true,
                 width:200
             },
-            // {
-            //     field:"actions",
-            //     headerName:"actions",
-            //     type:"actions",
-            //     renderCell:(params)=>{
+            {
+                field:"actions",
+                headerName:"actions",
+                type:"actions",
+                renderCell:(params)=>{
         
-            //         return (
-            //           <UserActions {...{params,rowId,setRowId}}/>
-            //         )
-            //     }
-            // },
-            // {
-            //     field:"details",
-            //     headerName:"Details",
-            //     type:"actions",
-            //     renderCell:(params)=>{
+                    return (
+                      <UserActions {...{params,rowId,setRowId}}/>
+                    )
+                }
+            },
+            {
+                field:"details",
+                headerName:"Details",
+                type:"actions",
+                renderCell:(params)=>{
               
-            //         return (
-            //          <Button><Link href={`/users/${params.id}`}>Details</Link></Button>
-            //         )
-            //     }
-            // }
+                    return (
+                     <Button><Link href={`/users/${params.id}`}>Details</Link></Button>
+                    )
+                }
+            }
         ]
     ),[rowId])
     useEffect( ()=>{

@@ -8,10 +8,16 @@ import { AxiosInstance } from "axios";
 
 const login = async (user:LoginUser):Promise<{user:DisplayUser| null , jwt:string| null} >=>{
 
-            const response = await axiosPrivate.post(`/auth/login`, user);
-            const access_token =   response.data?.access_token;
-            const decodedJwt:DecodedJwt = jwt_decode(access_token);
-            return {jwt:access_token , user:decodedJwt.user};
+            try{
+                const response = await axiosPrivate.post(`/auth/login`, user);
+                const access_token =   response.data?.access_token;
+                const decodedJwt:DecodedJwt = jwt_decode(access_token);
+                return {jwt:access_token , user:decodedJwt.user};
+
+            }catch(err){
+                throw err;
+            }
+           
 }
 
 const logout = async ()=>{

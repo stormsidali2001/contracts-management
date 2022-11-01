@@ -1,19 +1,26 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { Namespace, Server, Socket } from "socket.io";
+import { UserRole } from "src/core/types/UserRole.enum";
+import { Any } from "typeorm";
 
 @Injectable()
 export class SocketStateService{
     private socketState = new Map<string,Socket[]>();
+    private userMetaData = new Map<string,{departementId:string,role:string}>();
     public notificationServer:Namespace = null;
     constructor(){
       Logger.debug(`initialized`,'SocketStateService')
     }
-    add(userId:string, socket:Socket){
+    add(userId:string, socket:Socket,params:{departementId:string,role:string} = undefined){
         const sockets:Socket[] = this.socketState.get(userId) || [];
+        if(sockets.length === 0 && params){
+            this.userMetaData[userId] = {...params};
+        }
         this.socketState.set(userId,[...sockets,socket]);
         Logger.debug( `socket :${socket.id} was added to user: ${userId} total sockets:${this.get(userId).length}`,'SocketStateService/add')
         return true;
     }
+   
      remove(userId: string, socket: Socket): boolean {
         const sockets = this.socketState.get(userId)
 
@@ -25,6 +32,7 @@ export class SocketStateService{
      
         if (!newSockets.length) {
           this.socketState.delete(userId)
+          this.userMetaData.delete(userId)
         } else {
           this.socketState.set(userId, newSockets)
         }
@@ -67,8 +75,39 @@ export class SocketStateService{
           socket.emit(eventName,data)
           Logger.debug(`${socket.id} recieved ${JSON.stringify(data)}`,eventName)
        })
-        
+      
        
      }
+     
+     emitDataToConnectedUsersWithContrainsts(eventName:string,departementId:string,data:any){
+      for(let userId of this.socketState.keys()){
+        const sockets = this.get(userId)
+        const metaData = this.userMetaData.get(userId)
+
+          if(  metaData?.role === UserRole.ADMIN || metaData.role === UserRole.JURIDICAL || metaData?.departementId === departementId){
+              sockets.forEach((socket)=>{
+                this.notificationServer.to(socket.id).emit(eventName,data);
+              })
+          }
+        
+      }
+     
+    }
+     emitDataToAdminsOnly(eventName:string,data:any){
+      for(let userId of this.socketState.keys()){
+        const sockets = this.get(userId)
+        const metaData = this.userMetaData.get(userId)
+
+          if(  metaData?.role === UserRole.ADMIN ){
+              sockets.forEach((socket)=>{
+                this.notificationServer.to(socket.id).emit(eventName,data);
+              })
+          }
+        
+      }
+     
+    }
+
+
 
 }

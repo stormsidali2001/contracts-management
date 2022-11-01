@@ -35,10 +35,15 @@ export class UserNotificationService{
         Logger.warn(`notification sent to departement: ${departementId} ${users.length} users`)
     }
 
-    async sendNewEventToAuthenticatedUsers(params:CreateEventDTO){
+   
+    async sendNewEventaToConnectedUsersWithContrainsts(params:CreateEventDTO,departementId:string){
          await this.eventService.addEvent(params)
-         this.socketStateService.emitConnected({...params},"SEND_EVENT");
+         this.socketStateService.emitDataToConnectedUsersWithContrainsts("SEND_EVENT",departementId,{...params});
 
+    }
+    async emitDataToAdminsOnly(params:CreateEventDTO){
+        await this.eventService.addEvent(params)
+        this.socketStateService.emitDataToAdminsOnly("SEND_EVENT",{...params})
     }
    
 }

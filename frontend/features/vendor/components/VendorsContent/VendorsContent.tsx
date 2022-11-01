@@ -178,6 +178,7 @@ const handleSearch = (e:any)=>{
                 experimentalFeatures={{ newEditingApi: true }}
                 onCellEditStop={params=>{console.log(params,"...");setRowId(params.id)}}
                 getRowId={(row)=>row.id}
+                className={styles.dataGridStyle}
                 
             />
             </div>

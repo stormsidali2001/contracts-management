@@ -6,6 +6,7 @@ import { WsException } from "@nestjs/websockets";
 import { Server, ServerOptions } from "socket.io";
 import { SocketWithJwtPayload } from "src/auth/types/JwtPayload.interface";
 import { SocketStateService } from "src/socket/SocketState.service";
+import { UserService } from "src/user/user.service";
 
 export class SocketIoAdapter extends IoAdapter  implements WebSocketAdapter {
     private readonly logger = new Logger(SocketIoAdapter.name);
@@ -43,9 +44,11 @@ export class SocketIoAdapter extends IoAdapter  implements WebSocketAdapter {
     }
      bindClientConnect(server:Server, callback: Function): void {
       const socketStateService = this.app.get(SocketStateService)
-      server.on('connection', (socket: SocketWithJwtPayload) => {
+      const userService = this.app.get(UserService);
+      server.on('connection', async(socket: SocketWithJwtPayload) => {
         if (socket.user) {
-          socketStateService.add(socket.user.sub, socket);
+          const userDb = await userService.findBy({id:socket.user.sub});
+          socketStateService.add(socket.user.sub, socket,{role:userDb.role,departementId:userDb.role});
           Logger.debug(`user: ${socket.user.sub} has now : ${socketStateService.get(socket.user.sub).length} connected socket`,'connection')
    
           socket.on('disconnect', () => {
