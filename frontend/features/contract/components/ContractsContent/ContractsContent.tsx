@@ -11,6 +11,8 @@ import { useDebounce } from '../../../../hooks/useDebounce.hook';
 import Link from 'next/link';
 import ContractsFilter from '../ContractsFilter/ContractsFilter';
 import useAxiosPrivate from '../../../../hooks/auth/useAxiosPrivate';
+import { useAppSelector } from '../../../../hooks/redux/hooks';
+import { UserRole } from '../../../auth/models/user-role.enum';
 
 
 const columns:GridColumns<any> = [
@@ -96,6 +98,7 @@ const ContractsContent = () => {
 
 
     });
+    const {user} = useAppSelector(state=>state.auth);
     const [searchQuery,setSearchQuery] = useState('');
     const axiosPrivate = useAxiosPrivate();
     const {debounce} = useDebounce();
@@ -151,6 +154,10 @@ const ContractsContent = () => {
    
         return count;
     }
+
+    const canCreateAgreement = ()=>{
+        return user?.role === UserRole.JURIDICAL;
+    }
     return (
         <div className={styles.container}>
             <div className={styles.wrapperBox}>
@@ -202,9 +209,10 @@ const ContractsContent = () => {
                     
                 />
                 </div>
-                <Button onClick={handleOpen} className={styles.UserFormButton}>
+             { canCreateAgreement()&&(  <Button onClick={handleOpen} className={styles.UserFormButton}>
                     <PersonAddIcon/>
-                </Button>
+                </Button>)
+             }
             </div>
             <Modal
                 open={open}

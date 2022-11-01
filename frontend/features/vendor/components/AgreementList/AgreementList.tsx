@@ -5,66 +5,67 @@ import { useEffect, useState } from 'react';
 import useAxiosPrivate from '../../../../hooks/auth/useAxiosPrivate';
 import { useDebounce } from '../../../../hooks/useDebounce.hook';
 import styles from './AgreementList.module.css'
-const columns:GridColumns<any> = [
-    // {
-    //     field:"id",
-    //     headerName:"id",
-    //     flex:1,
-        
-    // },
-    {
-        field:"number",
-        headerName:"numero",
-        width:200
-    },
-    {
-        field:"object",
-        headerName:"objet",
-        width:200
-    },
-    {
-        field:"amount",
-        headerName:"montant",
-        width:200
-    },
-    {
-        field:"expiration_date",
-        headerName:"expiration",
-        width:200
-    },
-    {
-        field:"signature_date",
-        headerName:"signature",
-        width:200
-    },
-    {
-        field:"status",
-        headerName:"status",
-        width:200
-    },
-    {
-        field:"createdAt",
-        headerName:"date de creation",
-        width:200
-    },
-    {
-        field:"actions",
-        headerName:"Details",
-        type:"actions",
-        renderCell:(params)=>{
 
-            return (
-             <Button><Link href={`/contracts/${params.id}`}>Details</Link></Button>
-            )
-        }
-    }
-];
 interface PropType{
     handleClose:()=>void,
     type:'contract' | 'convension',
     vendorId:string
 }
 const AgreementList = ({handleClose,type = 'contract',vendorId}:PropType) => {
+    const columns:GridColumns<any> = [
+        // {
+        //     field:"id",
+        //     headerName:"id",
+        //     flex:1,
+            
+        // },
+        {
+            field:"number",
+            headerName:"numero",
+            width:200
+        },
+        {
+            field:"object",
+            headerName:"objet",
+            width:200
+        },
+        {
+            field:"amount",
+            headerName:"montant",
+            width:200
+        },
+        {
+            field:"expiration_date",
+            headerName:"expiration",
+            width:200
+        },
+        {
+            field:"signature_date",
+            headerName:"signature",
+            width:200
+        },
+        {
+            field:"status",
+            headerName:"status",
+            width:200
+        },
+        {
+            field:"createdAt",
+            headerName:"date de creation",
+            width:200
+        },
+        {
+            field:"actions",
+            headerName:"Details",
+            type:"actions",
+            renderCell:(params)=>{
+    
+                return (
+                 <Button><Link href={`/${type}s/${params.id}`}>Details</Link></Button>
+                )
+            }
+        }
+    ];
  const  {debounce} = useDebounce();
  const [pageState,setPageState] = useState<any>({
         isLoading:false,
@@ -75,6 +76,7 @@ const AgreementList = ({handleClose,type = 'contract',vendorId}:PropType) => {
 
 
   });
+  
     const axiosPrivate = useAxiosPrivate();
     const [searchQuery,setSearchQuery] = useState('');
     const [queryOptions, setQueryOptions] = useState<{ sortModel:GridSortItem[] | null}>({sortModel:null});

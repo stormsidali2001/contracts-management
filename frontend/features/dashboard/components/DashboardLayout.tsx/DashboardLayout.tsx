@@ -26,7 +26,7 @@ const DashboardLayout = ({children}:any) => {
   return (
     <div className={styles.container}>
     <Sidebar/>
-    <div>
+    <div className={styles.content}>
         <Topbar/>
         <WithSnackbar>
           {children}

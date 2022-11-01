@@ -1,4 +1,4 @@
-import {Button, Modal} from '@mui/material';
+import {Badge, Button, Modal} from '@mui/material';
 import { DataGrid, GridColumns, GridSortItem, GridSortModel } from '@mui/x-data-grid';
 import TextField from '@mui/material/TextField';
 import { useEffect, useState } from 'react';
@@ -9,6 +9,9 @@ import FilterIcon from '../../../../icons/FilterIcon';
 import { useDebounce } from '../../../../hooks/useDebounce.hook';
 import useAxiosPrivate from '../../../../hooks/auth/useAxiosPrivate';
 import Link from 'next/link';
+import ContractsFilter from '../../../contract/components/ContractsFilter/ContractsFilter';
+import { useAppSelector } from '../../../../hooks/redux/hooks';
+import { UserRole } from '../../../auth/models/user-role.enum';
 
 
 const columns:GridColumns<any> = [
@@ -59,7 +62,33 @@ const columns:GridColumns<any> = [
         }
     }
 ];
+enum  AgreementStatus{
+    executed = 'executed' ,
+    executed_with_delay = 'executed_with_delay',
+    in_execution = 'in_execution',
+    in_execution_with_delay = 'in_execution_with_delay',
+    not_executed = 'in_execution_with_delay'
+
+}
+interface Filters{
+directionId?:string;
+departementId?:string;
+start_date?:string;
+end_date?:string;
+amount_min?:number;
+amount_max?:number;
+status?:AgreementStatus
+
+}
 const ConvensionsContent = () => {
+  const [filterModalOpen,setFilterModalOPen] = useState(false)
+  const handleCloseFilterModal = ()=>setFilterModalOPen(false)
+  const handleOpenFilterModal = ()=>setFilterModalOPen(true)
+
+  const [filters,setFilters] = useState<Filters | null>(null);
+    const handleSetFilter = (filters:Filters)=>{
+        setFilters(filters)
+    }
     const [pageState,setPageState] = useState<any>({
         isLoading:false,
         data:[],
@@ -74,6 +103,7 @@ const ConvensionsContent = () => {
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
     const {debounce} = useDebounce();
+    const {user} = useAppSelector(state=>state.auth)
     const [searchQuery,setSearchQuery] = useState('');
     const axiosPrivate = useAxiosPrivate();
     const handleSortModelChange = (sortModel: GridSortModel)=> {
@@ -83,12 +113,18 @@ const ConvensionsContent = () => {
  
     useEffect( ()=>{
         let params = '';
-        if(queryOptions.sortModel){
+        if(queryOptions.sortModel && queryOptions.sortModel.length >0){
             params+= '&orderBy='+queryOptions.sortModel[0].field
         }
         if(searchQuery.length > 0 ){
             params+= `&searchQuery=${searchQuery}`;
           }
+          if(filters && Object.keys(filters).length > 0){
+            Object.entries(filters).forEach(([key,value])=>{
+                params +=`&${key}=${value}`
+            })
+           
+        }
         setPageState((old:any)=>({...old,isLoading:true}))
             axiosPrivate.get(`http://localhost:8080/api/agreements?offset=${pageState.page}&limit=${pageState.pageSize}${params}&agreementType=convension`)
             .then((res:any)=>{
@@ -100,22 +136,40 @@ const ConvensionsContent = () => {
                 console.error(err);
             })
        
-    },[pageState?.page,pageState?.pageSize,queryOptions.sortModel])
+    },[pageState?.page,pageState?.pageSize,queryOptions.sortModel,filters,searchQuery])
     const handleSearch = (e:any)=>{
         const {value} = e.target;
         debounce(()=>setSearchQuery(value),1000)
       }
+
+      const countFilters = ()=>{
+        if(filters == null) return 0;
+        let count = 0;
+        Object.keys(filters).forEach(f=>{
+           if(!['departementId','amount_min','start_date'].includes(f)){
+               count++;
+           }
+        })
+   
+        return count;
+    }
+    const canCreateAgreement = ()=>{
+        return user?.role === UserRole.JURIDICAL;
+    }
     return (
         <div className={styles.container}>
             <div className={styles.wrapperBox}>
                 <div className={styles.searchContainer}>
-                    <Button 
-                        startIcon ={<FilterIcon/>}  
-                        size='small' 
-                        color='secondary' 
-                        variant="contained" 
-                        className={styles.advancedButton}>Avancée</Button>
-                  
+                    <Badge badgeContent={countFilters()}  sx={{padding:0}}  className={styles.searchBadge}>
+                        <Button 
+                                startIcon ={<FilterIcon/>}  
+                                size='small' 
+                                color='secondary' 
+                                variant="contained" 
+                                onClick={()=>handleOpenFilterModal()}
+                                className={styles.advancedButton}>Avancée</Button>
+                    </Badge>
+                    
               
                     <TextField 
                         placeholder='mot clé...' color='secondary' 
@@ -153,9 +207,9 @@ const ConvensionsContent = () => {
                     
                 />
                 </div>
-                <Button onClick={handleOpen} className={styles.UserFormButton}>
+              { canCreateAgreement() &&( <Button onClick={handleOpen} className={styles.UserFormButton}>
                     <PersonAddIcon/>
-                </Button>
+                </Button>)}
             </div>
             <Modal
                 open={open}
@@ -165,6 +219,17 @@ const ConvensionsContent = () => {
           >
             <div></div>
           </Modal>
+
+          <Modal
+            open={filterModalOpen}
+            onClose={handleCloseFilterModal}
+            aria-labelledby="modal-filter-modal-title"
+            aria-describedby="modal-filter-modal-description"
+           >
+                <ContractsFilter initialFilters={filters ?? {} as Filters } handleClose={handleCloseFilterModal} handleSetFilters={handleSetFilter}/>
+         </Modal>
+    
+    
     
          
         </div>
