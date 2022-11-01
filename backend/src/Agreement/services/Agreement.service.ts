@@ -94,15 +94,16 @@ export class AgreementService implements OnModuleInit{
 
         const res= await  this.agreementRepository.save({...agreementData,direction,departement,vendor});
         await this.userNotificationService.sendToUsersInDepartement(departement.id,`${agreement.type === AgreementType.CONTRACT ? "un nouveau contrat est ajoute a votre departement":"une nouvelle convension a etee ajoutee a votre departement"} avec le fournisseur: ${vendor.company_name}`)
-        await this.userNotificationService.sendNewEventToAuthenticatedUsers({
+        await this.userNotificationService.sendNewEventaToConnectedUsersWithContrainsts({
             entity:res.type as unknown as Entity,
-            operation:Operation.INSERT,entityId:res.id,
+            operation:Operation.INSERT,
+            entityId:res.id,
             departementId:departement.id,
             directionId:direction.id,
             departementAbriviation:departement.abriviation,
             directionAbriviation:direction.abriviation,
             createdAt:new Date()
-        })
+        },departement.id)
         return res;
     }
 
@@ -224,7 +225,18 @@ export class AgreementService implements OnModuleInit{
         agreement.execution_end_date = execution_end_date;
         agreement.observation = observation;
         
-        await this.userNotificationService.sendNewEventToAuthenticatedUsers({entity:agreement.type as unknown as Entity,operation:Operation.EXECUTE,entityId:agreement.id,departementId:agreement.departementId,directionId:agreement.directionId,createdAt:new Date(),departementAbriviation:agreement.departement.abriviation,directionAbriviation:agreement.direction.abriviation})
+        await this.userNotificationService.sendNewEventaToConnectedUsersWithContrainsts(
+            {entity:agreement.type as unknown as Entity,
+                operation:Operation.EXECUTE,
+                entityId:agreement.id,
+                departementId:agreement.departementId,
+                directionId:agreement.directionId,
+                createdAt:new Date(),
+                departementAbriviation:agreement.departement.abriviation,
+                directionAbriviation:agreement.direction.abriviation
+            },
+            agreement.departementId
+            )
         return this.agreementRepository.save(agreement)
 
     }
