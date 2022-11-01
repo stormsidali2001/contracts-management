@@ -45,5 +45,10 @@ export class UserNotificationService{
         await this.eventService.addEvent(params)
         this.socketStateService.emitDataToAdminsOnly("SEND_EVENT",{...params})
     }
+
+    async sendEventToAllUsers(params:CreateEventDTO){
+        await this.eventService.addEvent(params)
+        this.socketStateService.emitConnected({...params},"SEND_EVENT")
+    }
    
 }

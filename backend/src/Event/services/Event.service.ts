@@ -3,6 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { CreateEventDTO } from "src/core/entities/event.dto";
 import { EventEntity } from "src/core/entities/Event.entity";
 import { UserEntity } from "src/core/entities/User.entity";
+import { Entity } from "src/core/types/entity.enum";
 import { UserRole } from "src/core/types/UserRole.enum";
 import { Repository } from "typeorm";
 
@@ -27,12 +28,18 @@ export class EventService{
         .limit(limit)
         .orderBy("e.createdAt",'DESC')
 
+       
+
 
         if(user.role === UserRole.EMPLOYEE){
             query = query
             .where('e.departementId = :departementId or e.departementId IS NULL',{departementId:user.departementId})
             .andWhere('e.directionId = :directionId or e.directionId IS NULL',{directionId:user.directionId})
 
+        }
+        if(user.role === UserRole.JURIDICAL || user.role === UserRole.EMPLOYEE){
+            query = query 
+            .andWhere('e.entity not in (:...entities)',{entities:[Entity.JURIDICAL,Entity.EMPLOYEE,Entity.ADMIN]})
         }
 
         return await query.getMany();
