@@ -12,6 +12,8 @@ import Link from 'next/link';
 import ContractsFilter from '../../../contract/components/ContractsFilter/ContractsFilter';
 import { useAppSelector } from '../../../../hooks/redux/hooks';
 import { UserRole } from '../../../auth/models/user-role.enum';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
+import CreateContract from '../../../contract/components/CreateContract/CreateContract';
 
 
 const columns:GridColumns<any> = [
@@ -208,7 +210,7 @@ const ConvensionsContent = () => {
                 />
                 </div>
               { canCreateAgreement() &&( <Button onClick={handleOpen} className={styles.UserFormButton}>
-                    <PersonAddIcon/>
+                    <AddCircleIcon/>
                 </Button>)}
             </div>
             <Modal
@@ -217,7 +219,7 @@ const ConvensionsContent = () => {
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
           >
-            <div></div>
+            <CreateContract type="convension" handleClose={handleClose}/>
           </Modal>
 
           <Modal

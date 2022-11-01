@@ -23,6 +23,7 @@ const getEntityText = (entityType:Entity)=>{
       case Entity.EMPLOYEE: return "d'un employee";
       case Entity.JURIDICAL: return "d'un juridique";
       case Entity.VENDOR: return "d'un fournisseur";
+      case Entity.ADMIN: return "d'un admin";
     }
 }
 

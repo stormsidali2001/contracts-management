@@ -13,6 +13,8 @@ import ContractsFilter from '../ContractsFilter/ContractsFilter';
 import useAxiosPrivate from '../../../../hooks/auth/useAxiosPrivate';
 import { useAppSelector } from '../../../../hooks/redux/hooks';
 import { UserRole } from '../../../auth/models/user-role.enum';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
+
 
 
 const columns:GridColumns<any> = [
@@ -210,7 +212,7 @@ const ContractsContent = () => {
                 />
                 </div>
              { canCreateAgreement()&&(  <Button onClick={handleOpen} className={styles.UserFormButton}>
-                    <PersonAddIcon/>
+                <AddCircleIcon />
                 </Button>)
              }
             </div>

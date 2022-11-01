@@ -33,13 +33,13 @@ export class EventService{
 
         if(user.role === UserRole.EMPLOYEE){
             query = query
-            .where('e.departementId = :departementId or e.departementId IS NULL',{departementId:user.departementId})
-            .andWhere('e.directionId = :directionId or e.directionId IS NULL',{directionId:user.directionId})
+            .where('(e.departementId = :departementId or e.departementId IS NULL)',{departementId:user.departementId})
+            .andWhere('(e.directionId = :directionId or e.directionId IS NULL)',{directionId:user.directionId})
 
         }
         if(user.role === UserRole.JURIDICAL || user.role === UserRole.EMPLOYEE){
             query = query 
-            .andWhere('e.entity not in (:...entities)',{entities:[Entity.JURIDICAL,Entity.EMPLOYEE,Entity.ADMIN]})
+            .andWhere('e.entity in (:...entities)',{entities:[Entity.CONTRACT,Entity.CONVENSION,Entity.VENDOR]})
         }
 
         return await query.getMany();

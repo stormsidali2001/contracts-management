@@ -92,10 +92,13 @@ export class AgreementService implements OnModuleInit{
         }
       
 
+        const agreementDb = await this.agreementRepository.findOneBy({number:agreementData.number})
+        Logger.debug(JSON.stringify(agreementDb),'kakakak')
+        if(agreementDb) throw new BadRequestException("le numero est deja reserver")
         const res= await  this.agreementRepository.save({...agreementData,direction,departement,vendor});
         await this.userNotificationService.sendToUsersInDepartement(departement.id,`${agreement.type === AgreementType.CONTRACT ? "un nouveau contrat est ajoute a votre departement":"une nouvelle convension a etee ajoutee a votre departement"} avec le fournisseur: ${vendor.company_name}`)
         await this.userNotificationService.sendNewEventaToConnectedUsersWithContrainsts({
-            entity:res.type as unknown as Entity,
+            entity:res.type.toUpperCase() as unknown as Entity,
             operation:Operation.INSERT,
             entityId:res.id,
             departementId:departement.id,
@@ -226,7 +229,7 @@ export class AgreementService implements OnModuleInit{
         agreement.observation = observation;
         
         await this.userNotificationService.sendNewEventaToConnectedUsersWithContrainsts(
-            {entity:agreement.type as unknown as Entity,
+            {entity:agreement.type.toUpperCase() as unknown as Entity,
                 operation:Operation.EXECUTE,
                 entityId:agreement.id,
                 departementId:agreement.departementId,

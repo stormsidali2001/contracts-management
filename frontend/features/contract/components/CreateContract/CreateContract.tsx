@@ -199,10 +199,11 @@ interface Proptype{
               vendorId:vendor.id,
               signature_date:format(signatureDate.toDate()),
               expiration_date:format(expirationDate.toDate()),
+              type
           }
           setLoading(true)
-          await axiosPrivate.post("http://localhost:8080/api/Agreements?agreementType=contract",{
-            ...newAgreement
+          await axiosPrivate.post(`http://localhost:8080/api/Agreements`,{
+            ...newAgreement,
           })
   
           setLoading(false);
@@ -249,7 +250,7 @@ interface Proptype{
     return (
       <div className={styles.container}>
         <Stack direction="row">
-          <Typography className={styles.title}>Nouveau Compte</Typography>
+          <Typography className={styles.title}>{type === 'contract'?'Nouveau contrat':'Nouvelle convension'}</Typography>
         </Stack>
         <Stepper   activeStep={activeStep} alternativeLabel>
           {steps.map((label,index) => (
@@ -409,7 +410,7 @@ interface Proptype{
                                  </>):(
                                     loading?(
                                       <>
-                                      <Typography>Creation de  Contrat...</Typography>
+                                      <Typography>Creation de  {type==='contract'?'contrat':"convension"}...</Typography>
                                       <CircularProgress/>
                                       </>
                                        
@@ -417,7 +418,7 @@ interface Proptype{
                                   ):(
                                     done?(
                                       <>
-                                        <Typography>Contrat cree !</Typography>
+                                        <Typography>{type==='contract'?'contrat':"convension"} cree !</Typography>
                                         <Fab
                                         aria-label="save"
                                         color="secondary"

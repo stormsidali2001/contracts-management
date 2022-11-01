@@ -13,8 +13,8 @@ export class SocketStateService{
     }
     add(userId:string, socket:Socket,params:{departementId:string,role:string} = undefined){
         const sockets:Socket[] = this.socketState.get(userId) || [];
-        if(sockets.length === 0 && params){
-            this.userMetaData[userId] = {...params};
+        if(sockets.length === 0 ){
+            this.userMetaData.set(userId,{...params});
         }
         this.socketState.set(userId,[...sockets,socket]);
         Logger.debug( `socket :${socket.id} was added to user: ${userId} total sockets:${this.get(userId).length}`,'SocketStateService/add')
@@ -82,9 +82,9 @@ export class SocketStateService{
      emitDataToConnectedUsersWithContrainsts(eventName:string,departementId:string,data:any){
       for(let userId of this.socketState.keys()){
         const sockets = this.get(userId)
-        const metaData = this.userMetaData.get(userId)
-
-          if(  metaData?.role === UserRole.ADMIN || metaData.role === UserRole.JURIDICAL || metaData?.departementId === departementId){
+        const metaData = this.userMetaData.get(userId) 
+        
+          if(  metaData?.role === UserRole.ADMIN || metaData?.role === UserRole.JURIDICAL || metaData?.departementId === departementId){
               sockets.forEach((socket)=>{
                 this.notificationServer.to(socket.id).emit(eventName,data);
               })
