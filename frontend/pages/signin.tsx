@@ -5,6 +5,7 @@ import { FormEvent, useEffect } from 'react';
 import { login ,reset} from '../features/auth/authSlice';
 import { LoginUser } from '../features/auth/models/login-user.interface';
 import { BMT_LOGO_URL } from '../features/dashboard/data';
+import { showSnackbar } from '../features/ui/UiSlice';
 import useInput from '../hooks/input/use-input';
 import { useAppDispatch, useAppSelector } from '../hooks/redux/hooks';
 import { validateEmail } from '../shared/utils/validation/email';
@@ -16,7 +17,7 @@ const signin = () => {
   const {text:password,textChangeHandler:passwordChangeHandler,inputClearHandler:passwordClearHandler} = useInput();
   const dispatch = useAppDispatch();
   const router = useRouter()
-  const {isLoading , isAuthenticated , isSuccess} = useAppSelector(state=>state.auth)
+  const {isLoading , isAuthenticated , isSuccess,error,isError} = useAppSelector(state=>state.auth)
  const handleSubmit =  (e:FormEvent)=>{
     e.preventDefault();
      const isEmail = validateEmail(email);
@@ -26,7 +27,12 @@ const signin = () => {
      }else{
       loginUser.username = email;
      }
-     dispatch(login(loginUser))
+     try{
+
+       dispatch(login(loginUser))
+     }catch(err){
+      alert(err)
+     }
  }
  const clearForm = ()=>{
   emailClearHandler();
@@ -44,6 +50,13 @@ const signin = () => {
   
   router.push('/')
  },[isAuthenticated])
+
+ useEffect(()=>{
+  //@ts-ignore
+  if(isError  && error?.length >0){
+    dispatch(showSnackbar({message:error}))
+  }
+ },[isError,error])
   return (
     <div className={styles.container}>
         <div className={styles.leftWrapper}>

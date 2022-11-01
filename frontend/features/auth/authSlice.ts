@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { AxiosInstance } from "axios";
+import { AxiosError, AxiosInstance } from "axios";
 import { RootState } from "../../store";
 import { startConnecting } from "../notification/notificationSlice";
 import { DisplayUser } from "./models/DisplayUser.interface";
@@ -11,6 +11,7 @@ export interface AsyncState{
     isLoading:boolean;
     isSuccess:boolean;
     isError:boolean;
+    error:string| null;
 }
 
 export interface AuthState extends AsyncState{
@@ -25,7 +26,8 @@ const initialState:AuthState = {
    isError:false,
    user:null,
    jwt:null,
-   isAuthenticated:false
+   isAuthenticated:false,
+   error:null
 }
 
 export const login = createAsyncThunk(
@@ -34,8 +36,9 @@ export const login = createAsyncThunk(
         try{
             return await authService.login(user);
         }catch(err){
-            console.log(err);
-            return  thunkAPI.rejectWithValue("unable to sign in ")
+            console.log("t71",err);
+            //@ts-ignore
+            return thunkAPI.rejectWithValue(err?.response?.data?.error ?? "error inconnu");
         }
     }
 )
@@ -80,8 +83,8 @@ export const logout = createAsyncThunk(
         try{
             return await authService.logout();
         }catch(err){
-            console.log(err);
-            return  thunkAPI.rejectWithValue("unable to logout")
+           
+            return  err;
         }
     }
 )
@@ -122,6 +125,7 @@ export const authSlice = createSlice({
         .addCase(login.pending,(state)=>{
             state.isLoading = true;
             state.isSuccess = false;
+            state.isError = false
         })
         .addCase(login.fulfilled,(state,action)=>{
             state.user = action.payload?.user;
@@ -129,12 +133,17 @@ export const authSlice = createSlice({
             state.isSuccess = true;
             state.isLoading = false;
             state.isAuthenticated = true;
+            state.isError = false
+
         })
-        .addCase(login.rejected,(state)=>{
+        .addCase(login.rejected,(state,action)=>{
+            console.log("t72",action)
             state.isLoading = false;
             state.isError = true;
             state.user = null;
             state.isAuthenticated = false;
+            state.error = action.payload as unknown as string | null;
+           
         })
         //refresh_token
         .addCase(refresh_token.pending,(state)=>{
@@ -147,7 +156,7 @@ export const authSlice = createSlice({
             state.jwt =  action.payload.jwt;
             state.user = action.payload.user;
         })
-        .addCase(refresh_token.rejected,(state)=>{
+        .addCase(refresh_token.rejected,(state,action)=>{
             state.isLoading = false;
             state.isError = true;
             state.isAuthenticated = false;

@@ -90,13 +90,17 @@ export class AuthService{
            const userDb = await this.userService.findByEmailOrUsername({email:user.email,username:user.username});
            
            if(!userDb){
-                throw new UnauthorizedException("wrong credentials")
+                throw new BadRequestException("l'email n'existe pas")
            }
+
+
     
            const matches = await this.#comparePassword(user.password,userDb.password)
            if(!matches){
-                throw new UnauthorizedException("wrong credentials")
+                throw new BadRequestException("mauvais mot de passe")
            }
+           if(!userDb.active) throw new BadRequestException("ce compte a eté désactivé.");
+
            const tokens = await this.#generateTokens({email:userDb.email , username:userDb.username, sub:userDb.id,firstName:userDb.firstName ,lastName:userDb.lastName,imageUrl:userDb.imageUrl,role:userDb.role,recieve_notifications:userDb.recieve_notifications});
            await this.#updateRefreshTokenHash(userDb.id,tokens.refresh_token);
 

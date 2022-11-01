@@ -39,7 +39,7 @@ export class UserService{
         }
         const res = await  this.userRepository.save({...userData,direction,departement});
         console.log('testoooooooo',direction)
-        await this.notificationService.sendNewEventToAuthenticatedUsers({entity:res.role as unknown as Entity,operation:Operation.INSERT,departementId:departementId,directionId,entityId:res.id,departementAbriviation:departement?.abriviation,directionAbriviation:direction?.abriviation})
+        await this.notificationService.emitDataToAdminsOnly({entity:res.role as unknown as Entity,operation:Operation.INSERT,departementId:departementId,directionId,entityId:res.id,departementAbriviation:departement?.abriviation,directionAbriviation:direction?.abriviation})
         return res;
     }
     async findBy(options:FindOptionsWhere<UserEntity>):Promise<UserEntity>{
@@ -66,7 +66,7 @@ export class UserService{
     async findByEmailOrUsername({email,username}:{email:string,username:string}):Promise<UserEntity>{
         try{
             return this.userRepository.createQueryBuilder('user')
-            .select(['user.password','user.email','user.username','user.id','user.firstName','user.lastName','user.imageUrl','user.role','user.departementId','user.directionId','user.recieve_notifications'])
+            .select(['user.password','user.email','user.username','user.id','user.firstName','user.lastName','user.imageUrl','user.role','user.departementId','user.directionId','user.recieve_notifications','user.active'])
             .where('user.username = :username or user.email = :email',{username,email})
             .getOne();
         }catch(err){
@@ -141,7 +141,7 @@ export class UserService{
             if(userDb && userDb.id !== id) throw new ForbiddenException("username et l'email   exists deja")
    
              const res = await  this.userRepository.update(id,newUser)
-             await this.notificationService.sendNewEventToAuthenticatedUsers({
+             await this.notificationService.emitDataToAdminsOnly({
                 entity:userDb.role as unknown as Entity,
                 entityId:id,
                 operation:Operation.UPDATE,
@@ -229,17 +229,17 @@ export class UserService{
              const passwordTokenRepository = manager.getRepository(PasswordTokenEntity);
              await userRepository.update(userId,{password_token:null,password})
              await  passwordTokenRepository.delete(id);
-
-             await this.notificationService.sendNewEventToAuthenticatedUsers({
-                entity:userRole as unknown as Entity ,
-                entityId:userId,
-                operation:Operation.UPDATE,
-                directionId,
-                departementId
-             })
+           
          }
-
+         
          )
+         await this.notificationService.emitDataToAdminsOnly({
+            entity:userRole as unknown as Entity ,
+            entityId:userId,
+            operation:Operation.UPDATE,
+            directionId,
+            departementId
+         })
 
            
 
@@ -249,8 +249,16 @@ export class UserService{
         return await this.userRepository.update(id,{password:hashed_password})
     }
     async recieveNotifications( userId:string,recieve_notifications:boolean){
+        const userDb = await this.userRepository.findOneBy({id:userId})
         //@ts-ignore
             await this.userRepository.update(userId,{recieve_notifications:()=>"!recieve_notifications"})
+            await this.notificationService.emitDataToAdminsOnly({
+                entity:userDb.role as unknown as Entity ,
+                entityId:userId,
+                operation:Operation.UPDATE,
+                directionId:userDb.directionId,
+                departementId:userDb.departementId
+             })
             return !recieve_notifications;
     }
   

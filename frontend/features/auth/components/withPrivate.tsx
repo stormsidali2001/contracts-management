@@ -1,6 +1,7 @@
 import { NextPage } from "next"
 import { useRouter } from "next/router";
 import { useEffect } from "react";
+import WithSnackbar from "../../../global/withSnackbar";
 import { useAppDispatch, useAppSelector } from "../../../hooks/redux/hooks"
 import Signin from "../../../pages/signin";
 import { refresh_token } from "../authSlice";
@@ -17,7 +18,7 @@ function WithPrivate({children}:any) {
 
     },[jwt , isAuthenticated])
 
-  return isAuthenticated || exceptionPaths.includes(pathname) ?children : <Signin/>;
+  return isAuthenticated || exceptionPaths.includes(pathname) ?children : <WithSnackbar><Signin/></WithSnackbar>;
 }
 
 export default WithPrivate
