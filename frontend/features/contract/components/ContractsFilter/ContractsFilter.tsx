@@ -4,7 +4,7 @@ import { DatePicker, MobileDatePicker } from '@mui/x-date-pickers';
 import dayjs, { Dayjs } from 'dayjs';
 import { useEffect, useState } from 'react';
 import useAxiosPrivate from '../../../../hooks/auth/useAxiosPrivate';
-import { useAppDispatch } from '../../../../hooks/redux/hooks';
+import { useAppDispatch, useAppSelector } from '../../../../hooks/redux/hooks';
 import { UserRole } from '../../../auth/models/user-role.enum';
 import { Direction } from '../../../direction/models/direction.interface';
 import { showSnackbar } from '../../../ui/UiSlice';
@@ -52,9 +52,13 @@ const ContractsFilter = ({handleSetFilters,handleClose,initialFilters}:PropType)
   const [startDate, setStartDate] = useState<Dayjs>(
     dayjs(new Date()),
   );
-const [endDate, setEndDate] = useState<Dayjs>(
-    dayjs(new Date()),
-  );
+  const [endDate, setEndDate] = useState<Dayjs>(
+      dayjs(new Date()),
+    );
+  const {user} = useAppSelector(state=>state.auth)
+  const shouldDisplayFilter = ()=>{
+    return user?.role === UserRole.ADMIN || user?.role === UserRole.JURIDICAL;
+  }
   const [isByDate,setIsByDate] = useState(false);
   const [isByDirection,setIsByDirection] = useState(false);
 
@@ -182,7 +186,7 @@ const [endDate, setEndDate] = useState<Dayjs>(
         <span className={styles.title}>Filtre</span>
         <div className={styles.filtersContainer}>
       
-            <div className={styles.filterContainer} >
+           { shouldDisplayFilter() &&(<div className={styles.filterContainer} >
                <div className={styles.titleContainer}>
                   <label htmlFor='check-box-direction'>Par direction:</label>
                   <Input id='check-box-direction' type='checkbox' value={isByDirection} inputProps={{checked:isByDirection,}}  onChange={()=>handleByDirectionChange()}/>
@@ -234,7 +238,8 @@ const [endDate, setEndDate] = useState<Dayjs>(
                 </Select>
             </FormControl>
             </Stack>
-            </div>
+            </div>)
+            }
             <div className={styles.filterContainer} >
                <div className={styles.titleContainer}>
                   <label htmlFor='check-box-direction'>Par date:</label>

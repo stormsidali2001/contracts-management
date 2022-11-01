@@ -10,6 +10,7 @@ import CreateContract from '../CreateContract/CreateContract';
 import { useDebounce } from '../../../../hooks/useDebounce.hook';
 import Link from 'next/link';
 import ContractsFilter from '../ContractsFilter/ContractsFilter';
+import useAxiosPrivate from '../../../../hooks/auth/useAxiosPrivate';
 
 
 const columns:GridColumns<any> = [
@@ -102,6 +103,7 @@ const ContractsContent = () => {
 
     });
     const [searchQuery,setSearchQuery] = useState('');
+    const axiosPrivate = useAxiosPrivate();
     const {debounce} = useDebounce();
     const [queryOptions, setQueryOptions] = useState<{ sortModel:GridSortItem[] | null}>({sortModel:null});
     const [open, setOpen] = useState(false);
@@ -127,7 +129,7 @@ const ContractsContent = () => {
            
         }
         setPageState((old:any)=>({...old,isLoading:true}))
-             axios.get(`http://localhost:8080/api/agreements?offset=${pageState.page}&limit=${pageState.pageSize}${params}&agreementType=contract`)
+        axiosPrivate.get(`http://localhost:8080/api/agreements?offset=${pageState.page}&limit=${pageState.pageSize}${params}&agreementType=contract`)
             .then((res:any)=>{
                 const {data:d} = res;
                 console.log(1,d)

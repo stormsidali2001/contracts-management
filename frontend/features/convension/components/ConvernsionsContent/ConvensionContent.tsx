@@ -7,6 +7,7 @@ import axios from 'axios';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import FilterIcon from '../../../../icons/FilterIcon';
 import { useDebounce } from '../../../../hooks/useDebounce.hook';
+import useAxiosPrivate from '../../../../hooks/auth/useAxiosPrivate';
 
 
 const columns:GridColumns<any> = [
@@ -63,6 +64,7 @@ const ConvensionsContent = () => {
     const handleClose = () => setOpen(false);
     const {debounce} = useDebounce();
     const [searchQuery,setSearchQuery] = useState('');
+    const axiosPrivate = useAxiosPrivate();
     const handleSortModelChange = (sortModel: GridSortModel)=> {
         // Here you save the data you need from the sort model
         setQueryOptions({ sortModel: [...sortModel] });
@@ -77,7 +79,7 @@ const ConvensionsContent = () => {
             params+= `&searchQuery=${searchQuery}`;
           }
         setPageState((old:any)=>({...old,isLoading:true}))
-             axios.get(`http://localhost:8080/api/agreements?offset=${pageState.page}&limit=${pageState.pageSize}${params}&agreementType=convension`)
+            axiosPrivate.get(`http://localhost:8080/api/agreements?offset=${pageState.page}&limit=${pageState.pageSize}${params}&agreementType=convension`)
             .then((res:any)=>{
                 const {data:d} = res;
                 console.log(1,d)
