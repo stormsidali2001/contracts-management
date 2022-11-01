@@ -172,9 +172,7 @@ export class UserService{
         .addSelect('u.role','role')
         .groupBy('u.role')
 
-        // if(user.role === UserRole.EMPLOYEE){
-        //     query = query.where('u.departementId = :departementId and u.directionId = :directionId',{departementId:user.departementId,directionId:user.directionId})
-        // }
+      
 
         if(startDate){
             query = query.andWhere('u.createdAt >= :startDate',{startDate})

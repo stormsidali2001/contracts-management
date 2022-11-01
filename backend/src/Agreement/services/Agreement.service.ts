@@ -14,6 +14,7 @@ import { PaginationResponse } from 'src/core/types/paginationResponse.interface'
 import { UserRole } from 'src/core/types/UserRole.enum';
 import { DirectionService } from 'src/direction/services/direction.service';
 import { StatsParamsDTO } from 'src/statistics/models/statsPramsDTO.interface';
+import { UserService } from 'src/user/user.service';
 import {  Repository } from 'typeorm';
 import { UserNotificationService } from '../../user/user-notification.service';
 import { VendorService } from './vendor.service';
@@ -29,6 +30,7 @@ export class AgreementService implements OnModuleInit{
         private readonly directionService:DirectionService,
         private readonly userNotificationService:UserNotificationService,
         private readonly schdulerRegistry:SchedulerRegistry,
+        private readonly userService:UserService
 
     ){}
     async onModuleInit() {
@@ -118,14 +120,15 @@ export class AgreementService implements OnModuleInit{
             start_date,
             status,
             vendorId
-        }:FindAllAgreementsDTO):Promise<PaginationResponse<AgreementEntity>>{
+        }:FindAllAgreementsDTO,userId:string):Promise<PaginationResponse<AgreementEntity>>{
             
+        const user = await this.userService.findBy({id:userId});
         let query =    this.agreementRepository.createQueryBuilder('ag')
         .where("ag.type = :type",{type:agreementType})
         .skip(offset)
         .take(limit);
 
-        if(departementId && directionId){
+        if(departementId && directionId &&(user.role === UserRole.ADMIN || user.role === UserRole.JURIDICAL)){
             query = query 
             .andWhere('ag.departementId = :departementId',{departementId})
             .andWhere('ag.directionId = :directionId',{directionId})

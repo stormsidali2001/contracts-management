@@ -30,13 +30,14 @@ export class AgreementController{
     }
     @Get('')
     async findAll(
-            @Query() params:FindAllAgreementsDTO
+            @Query() params:FindAllAgreementsDTO,
+            @CurrentUserId() userId:string
            
 
             )
             :Promise<PaginationResponse<AgreementEntity>>
             {
-        return await  this.AgreementService.findAll(params);
+        return await  this.AgreementService.findAll(params,userId);
     }   
 
     @Patch('exec')
