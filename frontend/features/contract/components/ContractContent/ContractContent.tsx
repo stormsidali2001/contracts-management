@@ -6,29 +6,31 @@ import {Button, Modal} from '@mui/material';
 import PlayCircleFilledWhiteIcon from '@mui/icons-material/PlayCircleFilledWhite';
 import useAxiosPrivate from '../../../../hooks/auth/useAxiosPrivate';
 import ExecutionModal from '../ExecutionModal/ExecutionModal';
-import ContractsFilter from '../ContractsFilter/ContractsFilter';
 
-const ContractContent = () => {
+
+interface PropType{
+  type:"contract" | "convension";
+  agreementId:string | undefined;
+}
+const ContractContent = ({type , agreementId}:PropType) => {
 
   const axiosPrivate = useAxiosPrivate();
-  const router = useRouter();
+ 
   const [contract,setContract] = useState<any>(null);
   const [openExecutionModal,setOpenExecutionModal] = useState(false)
-  const {query} = router;
-  const {contractId} = query;
   
   const handelOpenExecutionModal = ()=>setOpenExecutionModal(true)
   const handelCloseExecutionModal = ()=>setOpenExecutionModal(false)
   useEffect(()=>{
-    if(!contractId) return;
-    axiosPrivate.get(`http://localhost:8080/api/Agreements/${contractId}`)
+    if(!agreementId) return;
+    axiosPrivate.get(`http://localhost:8080/api/Agreements/${agreementId}?agreementType=${type}`)
     .then(res=>{
         console.log(res,"contract")
         setContract(res.data)
     })
     .catch(err=>console.error(err))
-  },[contractId])
-  if(!contract) return "Loading"
+  },[agreementId])
+  if(!contract) return <div className={styles.container}>Loading</div>
   const getStatus = (str:string)=>{
   
    switch (str) {
@@ -59,7 +61,7 @@ const ContractContent = () => {
               <div className={styles.labelText}>{contract?.number}</div>
            </div>
 
-           <div className={styles.title}>Contract</div>
+           <div className={styles.title}>{type === "contract"?"Contrat":"Convension"}</div>
             <div className={styles.contractHeader}>
                 <div className={styles.bmtContainer}>
                     <div className={styles.bmtItem}>
