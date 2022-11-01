@@ -8,6 +8,7 @@ import { AgreementType } from "src/core/types/agreement-type.enum";
 import { AgreementStatus } from "src/core/types/agreement-status.enum";
 import { StatsParamsDTO } from "src/statistics/models/statsPramsDTO.interface";
 import { CurrentUserId } from "src/auth/decorators/currentUserId.decorator";
+import { JwtAccessTokenGuard } from "src/auth/guards/jwt-access-token.guard";
 @ApiTags('Agreements')
 // @RequiredRoles(UserRole.JURIDICAL,UserRole.ADMIN)
 // @UseGuards(JwtAccessTokenGuard,RoleGuard)
@@ -28,12 +29,13 @@ export class AgreementController{
     async findById(@Param("id") id:string ,@Query("agreementType") agreementType:AgreementType){
         return await this.AgreementService.findById(id,agreementType)
     }
+
+
+    @UseGuards(JwtAccessTokenGuard)
     @Get('')
     async findAll(
             @Query() params:FindAllAgreementsDTO,
             @CurrentUserId() userId:string
-           
-
             )
             :Promise<PaginationResponse<AgreementEntity>>
             {

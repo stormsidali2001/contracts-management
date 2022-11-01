@@ -128,6 +128,12 @@ export class AgreementService implements OnModuleInit{
         .skip(offset)
         .take(limit);
 
+        if(user.role === UserRole.EMPLOYEE){
+            query = query 
+            .andWhere('ag.departementId = :departementId',{departementId:user.departementId})
+            .andWhere('ag.directionId = :directionId',{directionId:user.directionId})
+        }
+
         if(departementId && directionId &&(user.role === UserRole.ADMIN || user.role === UserRole.JURIDICAL)){
             query = query 
             .andWhere('ag.departementId = :departementId',{departementId})
