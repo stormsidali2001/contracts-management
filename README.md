@@ -5,6 +5,19 @@
 git clone https://github.com/stormsidali2001/contracts-management
 ```
 2. generate fake data 
+* open each folder of the 3 main folders: **'fake data generator'** , **'backend'** , **'frontend'** and type on the cli:
+```
+npm install
+```
+> or if you have yarn installed
+```
+yarn
+```
+* optional
+>to install yarn type
+```
+npm install --global yarn
+```
 * go to the fake data generator folder
 ```
 cd 'fake data generator'
