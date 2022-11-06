@@ -2,6 +2,8 @@ import { forwardRef, Inject, Injectable, Logger } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { CreateEventDTO } from "src/core/entities/event.dto";
 import { NotificationEntity } from "src/core/entities/Notification.entity";
+import { Entity } from "src/core/types/entity.enum";
+import { Operation } from "src/core/types/operation.enum";
 import { UserRole } from "src/core/types/UserRole.enum";
 import { EventService } from "src/Event/services/Event.service";
 import { SocketStateService } from "src/socket/SocketState.service";
@@ -49,6 +51,10 @@ export class UserNotificationService{
     async sendEventToAllUsers(params:CreateEventDTO){
         await this.eventService.addEvent(params)
         this.socketStateService.emitConnected({...params},"SEND_EVENT")
+    }
+
+    async IncrementUsersStats(eventData:{type:Entity,operation:Operation}){
+        this.socketStateService.emitConnected({...eventData},"INCR_USER")
     }
    
 }

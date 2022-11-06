@@ -40,6 +40,7 @@ export class UserService{
         const res = await  this.userRepository.save({...userData,direction,departement});
         console.log('testoooooooo',direction)
         await this.notificationService.emitDataToAdminsOnly({entity:res.role as unknown as Entity,operation:Operation.INSERT,departementId:departementId,directionId,entityId:res.id,departementAbriviation:departement?.abriviation,directionAbriviation:direction?.abriviation})
+        await this.notificationService.IncrementUsersStats({type:res.role as unknown as Entity,operation:Operation.INSERT});
         return res;
     }
     async findBy(options:FindOptionsWhere<UserEntity>):Promise<UserEntity>{
@@ -175,11 +176,11 @@ export class UserService{
       
 
         if(startDate){
-            query = query.andWhere('u.createdAt >= :startDate',{startDate})
+            query = query.andWhere('u.created_at >= :startDate',{startDate})
         }
 
         if(endDate){
-            query = query.andWhere('u.createdAt <= :endDate',{endDate})
+            query = query.andWhere('u.created_at <= :endDate',{endDate})
         }
 
 

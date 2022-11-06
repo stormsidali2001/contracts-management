@@ -30,9 +30,38 @@ async function generateUsers(directions){
         const randomDirection = randomElemenetFromArray(directions)
         if(randomDirection.departements.length ===0) continue;
         const randomDepartement = randomElemenetFromArray(randomDirection.departements);
-        const user = createRandomUser(randomDirection.id,randomDepartement.id)
-        console.log(user)
-        arr.push(axios.post("http://localhost:8080/api/auth/register/test",{...user},{headers:{'Content-Type':'application/json'}}))
+        const user1 = {
+                        username: "storm.sidali",
+                        firstName:"sidali",
+                        lastName:"assoul",
+                        email: "assoulsidali@gmail.com",
+                        role:"EMPLOYEE",
+                        departementId:randomDepartement.id,
+                        directionId:randomDirection.id,
+                        password: '123456',
+                    }
+        const user2 = {
+                        username: "admin.admin",
+                        firstName:"admin",
+                        lastName:"admin",
+                        email: "admin@gmail.com",
+                        role:"ADMIN",
+                        password: '123456',
+        }
+        const user3 = {
+                        username: "juridical.adala",
+                        firstName:"juridical",
+                        lastName:"adala",
+                        email: "juridical@gmail.com",
+                        role:"ADMIN",
+                        password: '123456',
+        }
+        console.log(user1)
+        console.log(user2)
+        console.log(user3)
+        arr.push(axios.post("http://localhost:8080/api/auth/register/test",{...user1},{headers:{'Content-Type':'application/json'}}))
+        arr.push(axios.post("http://localhost:8080/api/auth/register/test",{...user2},{headers:{'Content-Type':'application/json'}}))
+        arr.push(axios.post("http://localhost:8080/api/auth/register/test",{...user3},{headers:{'Content-Type':'application/json'}}))
     }
     try{
 
