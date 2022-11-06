@@ -28,7 +28,7 @@ cd 'fake data generator'
 ```
 node directions.js
 ```
-> your output should be something like this
+
 ```javascript
 {
   title: 'direction generale',
@@ -41,13 +41,14 @@ node directions.js
 }
 ...
 ```
+> your output should be something like this
+
 3. generate random users (directions step is required)
 ```
 node users.js 200
 ```
 > adding 200 random user
 
-> your output should be something like this
 ```javascript
 {
   username: 'Théodose.Thomas',
@@ -61,6 +62,7 @@ node users.js 200
 }
 ...
 ```
+> your output should be something like this
 
 4. generate random vendors (suppliers)
 ```
