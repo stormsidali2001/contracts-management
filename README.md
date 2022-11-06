@@ -18,6 +18,19 @@ node directions.js
 ```
 node users.js 200
 ```
+> your output should be something like this
+```javascript
+{
+  title: 'direction generale',
+  abriviation: 'DRG',
+  departements: [
+    { title: 'departement 1', abriviation: 'DP1' },
+    { title: 'departement 2', abriviation: 'DP2' },
+    { title: 'departement 3', abriviation: 'DP3' }
+  ]
+}
+....
+```
 > adding 200 random user
 
 * generate random vendors (suppliers)
