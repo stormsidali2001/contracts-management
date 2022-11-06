@@ -1,11 +1,11 @@
 # contracts-management
 ### installation
-1. clone the repository
+## 1. clone the repository
 ```
 git clone https://github.com/stormsidali2001/contracts-management
 ```
-2. generate fake data 
-* open each folder of the 3 main folders: **'fake data generator'** , **backend** , **frontend** and type on the cli:
+## 2. generate fake data 
+* open each folder of the 3 main folders: **fake data generator** , **backend** , **frontend** and type on the cli:
 ```
 npm install
 ```
