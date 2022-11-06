@@ -1,7 +1,7 @@
 import { Button, Input, Stack, TextField } from '@mui/material'
 import { MobileDatePicker } from '@mui/x-date-pickers'
 import dayjs, { Dayjs } from 'dayjs'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import useAxiosPrivate from '../../../../../hooks/auth/useAxiosPrivate'
 import { useAppDispatch, useAppSelector } from '../../../../../hooks/redux/hooks'
 import { getStatisticsIntervall } from '../../../../statistics/StatisticsSlice'
@@ -35,6 +35,14 @@ const ChangeDate = ({start_date,end_date,handleClose}:PropType) => {
    handleClose();
    
   }
+  useEffect(()=>{
+      if(startDate){
+         setByStartDate(true)
+      }
+      if(endDate){
+         setByEndDate(true)
+      }
+  },[])
   return (
     <div className={styles.container}>
     <span className={styles.title}>Filtre</span>

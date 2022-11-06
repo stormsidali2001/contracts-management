@@ -139,10 +139,10 @@ const CreateUser = ({handleClose}:Proptype) => {
     })
     .catch(err=>{
       console.error(err,"t2")
-      if(err.code !== "ERR_CANCELED"){
+      // if(err.code !== "ERR_CANCELED"){
 
-        dispatch(showSnackbar({message:"verifiez si vous etes en ligne"}))
-      }
+      //   dispatch(showSnackbar({message:"verifiez si vous etes en ligne"}))
+      // }
      
     })
     return ()=>{

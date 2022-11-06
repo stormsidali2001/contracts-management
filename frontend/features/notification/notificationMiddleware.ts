@@ -4,7 +4,7 @@ import { refresh_token, setCredentials } from "../auth/authSlice";
 import { UserRole } from "../auth/models/user-role.enum";
 import authService from "../auth/services/auth.service";
 import { VendorStats } from "../statistics/models/VendorStats.interface";
-import { newCreatedUserEvent, newVendorStats } from "../statistics/StatisticsSlice";
+import { newCreatedUserEvent, newVendorStats, StatisticsSlice } from "../statistics/StatisticsSlice";
 import { Entity } from "./models/Entity.enum";
 import { Notification } from "./models/Notification.interface";
 import { NotificationEvents } from "./models/NotificationEvents";
@@ -43,7 +43,7 @@ const notificationMiddleware:Middleware = store=>{
         }
     }
    
-    let socket:Socket;
+    let socket:Socket|null = null;
     let then = Date.now();
     let dt = 0;
     return next =>action=>{
@@ -51,17 +51,21 @@ const notificationMiddleware:Middleware = store=>{
         const notificationState = store.getState().notification;
         const isConnected =  notificationState.isConnected;
         
-        if(startConnecting.match(action) ){
+        if(startConnecting.match(action) && !socket){
             console.log("t10",notificationState)
             socket = SocketConnection.getInstance(auth.jwt)
 
             socket.on('connect',()=>{
+                if(!socket) return;
                 store.dispatch(connectionEstablished())
+               
                 socket.emit(NotificationEvents.RequestAllNotifications)
                 socket.emit(UserEventsTypes.REQUEST_ALL_EVENTS);
             })
             socket.on("connect_error",  (err) => {
+                if(!socket) return;
                 socket.close()
+                socket.removeAllListeners()
                alert("connection error")
                 console.log("t11",{k:err?.message})
                 if(err?.message.includes('unauthorized')  ){
@@ -69,6 +73,7 @@ const notificationMiddleware:Middleware = store=>{
                     then = Date.now()
                 
                     setTimeout(async ()=>{
+                        if(!socket) return;
                         const data = await authService.refresh()
                         console.log("tt20",data)
                         setCredentials(data)
@@ -95,15 +100,11 @@ const notificationMiddleware:Middleware = store=>{
             })
             socket.on(UserEventsTypes.SEND_EVENT,(event:UserEvent)=>{
                 store.dispatch(recieveUserEvent({event}))
-                
-                const options = [Entity.JURIDICAL , Entity.EMPLOYEE , Entity.ADMIN];
-                if(options.includes(event.entity)){
-
-                     store.dispatch(newCreatedUserEvent({type:event.entity,operation:event.operation}))
-                }
-                
-
-              
+            })
+            socket.on("INCR_USER",({ operation , type}:{type:Entity,operation:Operation})=>{
+                const statsSlice = store.getState().StatisticsSlice as  StatisticsSlice;
+                if(statsSlice.end_date || statsSlice.start_date) return;
+                store.dispatch(newCreatedUserEvent({type,operation}))
             })
           
         }
