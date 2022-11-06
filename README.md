@@ -39,13 +39,28 @@ node directions.js
     { title: 'departement 3', abriviation: 'DP3' }
   ]
 }
-....
+...
 ```
 3. generate random users (directions step is required)
 ```
 node users.js 200
 ```
 > adding 200 random user
+
+> your output should be something like this
+```javascript
+{
+  username: 'Théodose.Thomas',
+  firstName: 'Corentin',
+  lastName: 'Roche',
+  email: 'Bernard_Breton59@yahoo.fr',
+  role: 'EMPLOYEE',
+  departementId: '65bcb45a-02e8-4fad-8f63-4dffcc076800',
+  directionId: '34aad234-c03a-4b0d-900b-f5bf347303b9',
+  password: '123456'
+}
+...
+```
 
 4. generate random vendors (suppliers)
 ```
