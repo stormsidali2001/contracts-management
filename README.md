@@ -175,5 +175,41 @@ node agreements.js 500
 ```
 > your output should be something like this
 
+### Create the testing accounts
+ ```
+ cd 'fake data generator'
+ node testing-accounts
+ ```
+ > then you will get an account foreach user role to use in your exploring journey
+ ```javascript
+ {
+  username: 'storm.sidali',
+  firstName: 'sidali',
+  lastName: 'assoul',
+  email: 'assoulsidali@gmail.com',
+  role: 'EMPLOYEE',
+  departementId: '58911004-4120-4c38-b55e-0013c99726cf',
+  directionId: '6f4f175a-752d-4d9e-9e5d-6ff4e9a78686',
+  password: '123456'
+}
+{
+  username: 'admin.admin',
+  firstName: 'admin',
+  lastName: 'admin',
+  email: 'admin@gmail.com',
+  role: 'ADMIN',
+  password: '123456'
+}
+{
+  username: 'juridical.adala',
+  firstName: 'juridical',
+  lastName: 'adala',
+  email: 'juridical@gmail.com',
+  role: 'ADMIN',
+  password: '123456'
+}
+
+ ```
+
 
 
