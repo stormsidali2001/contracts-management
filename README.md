@@ -18,7 +18,7 @@ yarn
 ```
 npm install --global yarn
 ```
-### filling the .env file
+### filling the .env file with credentials
 > create a .env file in the backend directory 
 > use the .env-example template or copy paste the following code
 ```.env
