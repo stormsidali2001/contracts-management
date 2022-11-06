@@ -95,4 +95,17 @@ const VendorContent = () => {
   )
 }
 
+function Field({edit, value,onChange}:any){
+  return (
+      <>
+      { edit?(
+              <input type="text" className={styles.editInput} value={value} onChange={onChange} />
+          ):(
+
+              <span>{value}</span>
+          )}
+      </>
+  )
+}
+
 export default VendorContent;
