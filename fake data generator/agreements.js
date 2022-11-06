@@ -57,7 +57,7 @@ async function generateAgreements(directions,vendorIds){
         const randomDepartement = randomElemenetFromArray(randomDirection.departements);
         const agreement = createRandomAgreement(randomDirection.id,randomDepartement.id,randomVendorId)
         console.log(agreement)
-        arr.push(axios.post("http://localhost:8080/api/Agreements",{...agreement},{headers:{'Content-Type':'application/json'}}))
+        arr.push(axios.post("http://localhost:8080/api/Agreements/test",{...agreement},{headers:{'Content-Type':'application/json'}}))
     }
     try{
 

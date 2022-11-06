@@ -57,7 +57,7 @@ async function generateVendors(num){
     for(let i=0;i<num;i++){
         const vendor = createRandomVendor()
         console.log(vendor)
-        arr.push(axios.post("http://localhost:8080/api/vendors",{...vendor},{headers:{'Content-Type':'application/json'}}))
+        arr.push(axios.post("http://localhost:8080/api/vendors/test",{...vendor},{headers:{'Content-Type':'application/json'}}))
     }
     try{
 

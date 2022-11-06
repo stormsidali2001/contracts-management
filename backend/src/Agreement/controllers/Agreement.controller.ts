@@ -54,6 +54,11 @@ export class AgreementController{
         return await this.AgreementService.executeAgreement(execAg)
     }
 
+    //testing routes
+    @Post("/test")
+    async createAgreementTest(@Body() agreement:CreateAgreementDTO){
+        return await this.AgreementService.createAgreement(agreement);
+    }
   
 
 }

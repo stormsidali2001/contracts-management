@@ -8,6 +8,7 @@ import { Response } from "express";
 import { ConfigService } from "@nestjs/config";
 import { JwtRefreshTokenGuard } from "./guards/jwt-refresh-token.guard";
 import { CurrentUserId } from "./decorators/currentUserId.decorator";
+import { RequiredRoles } from "./decorators/RequiredRoles.decorator";
 
 @ApiTags('auth')
 @Controller("auth")
@@ -16,6 +17,9 @@ export class AuthController{
         private authService:AuthService,
         private configService:ConfigService
     ){}
+
+    @RequiredRoles(UserRole.ADMIN)
+    @UseGuards(JwtAccessTokenGuard)
     @Post('register')
     async registerUser(@Body() newUser:CreateUserDTO){
         return await this.authService.register(newUser);
@@ -90,5 +94,11 @@ export class AuthController{
                 return await this.authService.connectedUserResetPassword(params,userId)
 
     }
+    //testing routes
+    @Post('register/test')
+    async registerUserTest(@Body() newUser:CreateUserDTO){
+        return await this.authService.register(newUser);
+    }   
+
 
 }

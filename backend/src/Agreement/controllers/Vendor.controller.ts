@@ -12,35 +12,49 @@ import { UpdateResult } from 'typeorm';
 import { StatsParamsDTO } from 'src/statistics/models/statsPramsDTO.interface';
 @ApiTags('vendors')
 @Controller('vendors')
-// @RequiredRoles(UserRole.JURIDICAL,UserRole.ADMIN)
-// @UseGuards(JwtAccessTokenGuard,RoleGuard)
 export class VendorController{
     constructor(
         private readonly vendorService:VendorService
     ){}
+
+    @RequiredRoles(UserRole.JURIDICAL)
+    @UseGuards(JwtAccessTokenGuard,RoleGuard)
     @Post('')
     async createVendor(@Body() vendor:CreateVendorDTO){
         return await this.vendorService.createVendor(vendor);
     }
+
+    @UseGuards(JwtAccessTokenGuard)
     @Get('stats')
     async getVendorStats(@Query() params:StatsParamsDTO){
       
         return await this.vendorService.getVendorsStats(params)
     }
+
+    @UseGuards(JwtAccessTokenGuard)
     @Get(":id")
     async findById(@Param("id") id:string ){
         return await this.vendorService.findByIdWithRelations(id)
     }
 
   
+    @UseGuards(JwtAccessTokenGuard)
     @Get('')
     async findAll(@Query('offset') offset:number = 0 ,@Query('limit') limit:number = 10 ,@Query('orderBy') orderBy:string  = undefined ,@Query("searchQuery") searchQuery:string = undefined):Promise<PaginationResponse<VendorEntity>>{
         return await  this.vendorService.findAll(offset,limit,orderBy ,searchQuery );
     }   
 
+    @RequiredRoles(UserRole.JURIDICAL)
+    @UseGuards(JwtAccessTokenGuard,RoleGuard)
     @Put(':id')
     async updateVendor(@Param('id') id:string,@Body() newVendor:UpdateVendorDTO):Promise<UpdateResult>{
         return await this.vendorService.updateVendor(id,newVendor)
+    }
+
+    //testing route
+    @Post('/test')
+    async createVendorTest(@Body() vendor:CreateVendorDTO){
+        return await this.vendorService.createVendor(vendor);
     }
 
 
