@@ -43,6 +43,36 @@ CLIENT_PORT = 3000
 ethereal_user = xxxxxxx@xxxx.com
 ethereal_password = password
 ```
+
+### launching the backend & frontend processes
+#### frontend process:
+* in the main directory type
+```
+cd frontend
+```
+1. with yarn
+```
+yarn run dev
+```
+2. with npm
+```
+npm run dev
+```
+#### frontend process:
+* in the main directory type
+```
+cd backend
+```
+1. with yarn
+```
+yarn start:dev
+```
+2. with npm
+```
+npm start:dev
+```
+
+
 ###  generate fake data 
 1. go to the fake data generator folder
 ```
