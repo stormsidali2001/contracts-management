@@ -1,4 +1,4 @@
-import {Injectable , CanActivate, ExecutionContext } from '@nestjs/common'
+import {Injectable , CanActivate, ExecutionContext, Inject, forwardRef } from '@nestjs/common'
 import {Reflector} from '@nestjs/core'
 import { Observable } from 'rxjs';
 import { UserService } from 'src/user/user.service';
@@ -7,7 +7,7 @@ import {  REQUIRED_ROLES_KEY } from '../decorators/RequiredRoles.decorator';
 @Injectable()
 export class RoleGuard implements CanActivate{
     constructor(
-        private readonly userService:UserService,
+        @Inject(forwardRef(()=>UserService)) private readonly userService:UserService,
         private readonly reflector:Reflector
     ){}
      async canActivate(context: ExecutionContext): Promise<boolean>  {

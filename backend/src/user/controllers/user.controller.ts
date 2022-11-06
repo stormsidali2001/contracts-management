@@ -18,8 +18,7 @@ export class UserController{
         private readonly userService:UserService
     ){}
 
-  
-    
+    @UseGuards(JwtAccessTokenGuard)
     @Get('')
     async findAll(
             @Query('offset') offset:number = 0 ,
@@ -35,6 +34,7 @@ export class UserController{
         return await  this.userService.findAll(offset,limit,orderBy,searchQuery,departementId,directionId,active,role);
     }   
 
+    @UseGuards(JwtAccessTokenGuard)
     @Get(":id")
     async findById(@Param('id') id:string){
         return await  this.userService.findByIdWithDepartementAndDirection(id);
@@ -44,7 +44,8 @@ export class UserController{
     // async deleteUser(@Param('id') id:string): Promise<string>{
        
     // }
-    // @UseGuards(JwtAccessTokenGuard)
+    
+    @UseGuards(JwtAccessTokenGuard)
     @Put(':id')
     async updateUser(@Param('id') id:string,@Body() user:UpdateUserDTO):Promise<UpdateResult>{
         return await this.userService.updateUserUniqueCheck(id,user)
