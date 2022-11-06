@@ -18,7 +18,31 @@ yarn
 ```
 npm install --global yarn
 ```
+### filling the .env file
+> create a .env file in the backend directory 
+> use the .env-example template or copy paste the following code
+```.env
+### mysql database connection credentials
+MYSQL_USERNAME =user1   
+MYSQL_PASSWORD =password
+MYSQL_DATABASE_HOST =localhost
+MYSQL_DATABASE_PORT =3306
+MYSQL_DATABASE_NAME =contracts_management
 
+### jwt configuration variables
+JWT_ACCESS_TOKEN_SECRET = super_secret_access_token
+JWT_ACCESS_TOKEN_EXPIRES_IN = 10000
+
+JWT_REFRESH_TOKEN_SECRET = super_secret_refresh_token
+JWT_REFRESH_TOKEN_EXPIRES_IN = 100000000
+
+### frontend port
+CLIENT_PORT = 3000
+
+### email service configuration
+ethereal_user = xxxxxxx@xxxx.com
+ethereal_password = password
+```
 ###  generate fake data 
 1. go to the fake data generator folder
 ```
