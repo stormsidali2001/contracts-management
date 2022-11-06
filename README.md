@@ -1,11 +1,11 @@
 # contracts-management
 ## installation
-### 1. clone the repository
+###  clone the repository
 ```
 git clone https://github.com/stormsidali2001/contracts-management
 ```
-### 2. generate fake data 
-* open each folder of the 3 main folders: **fake data generator** , **backend** , **frontend** and type on the cli:
+### install the packages
+1. open each folder of the 3 main folders: **fake data generator** , **backend** , **frontend** and type on the cli:
 ```
 npm install
 ```
@@ -13,23 +13,20 @@ npm install
 ```
 yarn
 ```
-* optional
+2. optional
 >to install yarn type
 ```
 npm install --global yarn
 ```
-* go to the fake data generator folder
+
+###  generate fake data 
+1. go to the fake data generator folder
 ```
 cd 'fake data generator'
 ```
-* generate some directions with their inner departements for testing .
+2. generate some directions with their inner departements for testing .
 ```
 node directions.js
-```
-
-* generate random users (directions step is required)
-```
-node users.js 200
 ```
 > your output should be something like this
 ```javascript
@@ -44,15 +41,19 @@ node users.js 200
 }
 ....
 ```
+3. generate random users (directions step is required)
+```
+node users.js 200
+```
 > adding 200 random user
 
-* generate random vendors (suppliers)
+4. generate random vendors (suppliers)
 ```
 node vendor.js 300
 ```
 > adding 200 random vendor
 
-* generate random contracts or convensions
+5. generate random contracts or convensions
 ```
 node agreements.js 500
 ```
