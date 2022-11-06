@@ -13,6 +13,7 @@ import { Vendor } from '../../models/vendor.interface';
 import { useDebounce } from '../../../../hooks/useDebounce.hook';
 import VendorActions from '../../../dashboard/VendorActions/VendorActions';
 import Link from 'next/link';
+import useAxiosPrivate from '../../../../hooks/auth/useAxiosPrivate';
 
 
 const VendorsContent = () => {
@@ -102,7 +103,7 @@ const handleSortModelChange = (sortModel: GridSortModel)=> {
     }
   }
 
-
+const privateAxiosPrivate = useAxiosPrivate();
 
 useEffect( ()=>{
     let params = '';
@@ -114,7 +115,7 @@ useEffect( ()=>{
       params+= `&searchQuery=${searchQuery}`;
     }
     setPageState((old:any)=>({...old,isLoading:true}))
-         axios.get(`http://localhost:8080/api/vendors?offset=${pageState.page}&limit=${pageState.pageSize}${params}`)
+    privateAxiosPrivate.get(`http://localhost:8080/api/vendors?offset=${pageState.page}&limit=${pageState.pageSize}${params}`)
         .then((res:any)=>{
             const {data:d} = res;
             console.log(1,d)
