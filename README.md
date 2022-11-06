@@ -69,12 +69,57 @@ node users.js 200
 node vendor.js 300
 ```
 > adding 200 random vendor
+```javascript
+{
+  nif: 'R4021357B',
+  company_name: 'Roger SAS',
+  nrc: 'IKPGXWVPGP',
+  num: 'RYMOTWMKYJ',
+  address: 'MarocÎle-de-FranceBoulogne-Billancourt',
+  mobile_phone_number: '0647556550',
+  home_phone_number: '0396324966',
+  createdAt: '2022-11-01'
+}
+...
+```
+> your output should be something like this
 
 5. generate random contracts or convensions
 ```
 node agreements.js 500
 ```
 > adding 500 random contracts or convensions
+
+```javascript
+{
+  number: 'VF6,5,1,7,4,8,2,8',
+  type: 'contract',
+  amount: 976,
+  signature_date: '2022-11-06',
+  expiration_date: '2023-01-06',
+  status: 'not_executed',
+  url: '2ad66aba-d2b1-4c63-9b46-fd4b6be94388.pdf',
+  object: "un champ reservee pour l'object",
+  directionId: '1e64be81-10d4-4d78-bc8b-e5ce458d2e38',
+  departementId: '4ad0cd65-b5a4-4a40-852f-e2b400b4dced',
+  vendorId: '819c3f29-4634-46e3-8c8a-962dd3e2f7be'
+}
+{
+  number: 'BY5,5,0,2,1,1,8,7',
+  type: 'convension',
+  amount: 1180,
+  signature_date: '2022-11-06',
+  expiration_date: '2023-01-06',
+  status: 'not_executed',
+  url: '2ad66aba-d2b1-4c63-9b46-fd4b6be94388.pdf',
+  object: "un champ reservee pour l'object",
+  directionId: '6f4f175a-752d-4d9e-9e5d-6ff4e9a78686',
+  departementId: '58911004-4120-4c38-b55e-0013c99726cf',
+  vendorId: 'de3b8ee5-43ef-4d05-a5cc-152673f828e1'
+}
+....
+```
+> your output should be something like this
 
 
 
