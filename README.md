@@ -1,0 +1,36 @@
+# contracts-management
+### installation
+1. clone the repository
+```
+git clone https://github.com/stormsidali2001/contracts-management
+```
+2. generate fake data 
+* go to the fake data generator folder
+```
+cd 'fake data generator'
+```
+* generate some directions with their inner departements for testing .
+```
+node directions.js
+```
+
+* generate random users (directions step is required)
+```
+node users.js 200
+```
+> adding 200 random user
+
+* generate random vendors (suppliers)
+```
+node vendor.js 300
+```
+> adding 200 random vendor
+
+* generate random contracts or convensions
+```
+node agreements.js 500
+```
+> adding 500 random contracts or convensions
+
+
+
