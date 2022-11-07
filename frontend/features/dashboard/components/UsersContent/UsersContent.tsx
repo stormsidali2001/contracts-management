@@ -13,6 +13,7 @@ import Link from 'next/link';
 import useAxiosPrivate from '../../../../hooks/auth/useAxiosPrivate';
 import UsersFilter from '../UsersFilter/UsersFilter';
 import { UserRole } from '../../../auth/models/user-role.enum';
+import { useAppSelector } from '../../../../hooks/redux/hooks';
 
 
 const UsersContent = () => {
@@ -33,6 +34,7 @@ const UsersContent = () => {
         active?:"active"| "not_active";
         role?:UserRole;
     }
+    const {user} = useAppSelector(state=>state.auth)
     const [filters,setFilters] = useState<Filters | null>(null);
     const handleSetFilter = (filters:Filters)=>{
         setFilters(filters)
@@ -179,6 +181,9 @@ const UsersContent = () => {
 
      return count;
  }
+ const shouldDisplayAddUser = ()=>{
+    return user?.role === UserRole.ADMIN
+ }
   return (
     <div className={styles.container}>
         <div className={styles.wrapperBox}>
@@ -236,9 +241,9 @@ const UsersContent = () => {
 
             />
             </div>
-            <Button onClick={handleOpen} className={styles.UserFormButton}>
+            {shouldDisplayAddUser() &&<Button onClick={handleOpen} className={styles.UserFormButton}>
                 <PersonAddIcon/>
-            </Button>
+            </Button>}
         </div>
         <Modal
             open={open}

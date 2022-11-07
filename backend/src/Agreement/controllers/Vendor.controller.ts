@@ -1,4 +1,4 @@
-import {Controller ,Post ,Get , Body , Param, Put,UseGuards , Query, Logger} from '@nestjs/common'
+import {Controller ,Post ,Get , Body , Param, Put,UseGuards , Query, Logger, Patch} from '@nestjs/common'
 import { RequiredRoles } from 'src/auth/decorators/RequiredRoles.decorator';
 import { JwtAccessTokenGuard } from 'src/auth/guards/jwt-access-token.guard';
 import { RoleGuard } from 'src/auth/guards/Role.guard';
@@ -46,7 +46,7 @@ export class VendorController{
 
     @RequiredRoles(UserRole.JURIDICAL)
     @UseGuards(JwtAccessTokenGuard,RoleGuard)
-    @Put(':id')
+    @Patch(':id')
     async updateVendor(@Param('id') id:string,@Body() newVendor:UpdateVendorDTO):Promise<UpdateResult>{
         return await this.vendorService.updateVendor(id,newVendor)
     }
