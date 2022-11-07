@@ -97,7 +97,9 @@ const ContractsFilter = ({handleSetFilters,handleClose,initialFilters}:PropType)
   useEffect(()=>{
     const abortController = new AbortController();
     axiosPrivate.get("http://localhost:8080/api/directions",{
+
       signal:abortController.signal
+      
     }).then(res=>{
       const newDirections = res.data;
       setDirections(newDirections)
@@ -112,12 +114,7 @@ const ContractsFilter = ({handleSetFilters,handleClose,initialFilters}:PropType)
       console.log(res.data,"t2")
     })
     .catch(err=>{
-      console.error(err,"t2")
-      if(err.code !== "ERR_CANCELED"){
-
-        dispatch(showSnackbar({message:"verifiez si vous etes en ligne"}))
-      }
-     
+      console.error(err,"t2");
     })
     return ()=>{
       abortController.abort();
