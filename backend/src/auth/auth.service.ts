@@ -54,7 +54,6 @@ export class AuthService{
     async register(newUser:CreateUserDTO):Promise<UserEntity>{
        
             const userDb = await this.userService.findByEmailOrUsername({email:newUser.email ?? undefined,username:newUser.username ?? undefined});
-            Logger.debug(JSON.stringify(userDb),'kkkkkkkk')
             if(userDb){
                 let msg = '';
                 const emailsMatch = (userDb.email === newUser.email);
@@ -103,7 +102,6 @@ export class AuthService{
 
            const tokens = await this.#generateTokens({email:userDb.email , username:userDb.username, sub:userDb.id,firstName:userDb.firstName ,lastName:userDb.lastName,imageUrl:userDb.imageUrl,role:userDb.role,recieve_notifications:userDb.recieve_notifications});
            await this.#updateRefreshTokenHash(userDb.id,tokens.refresh_token);
-
            return tokens;
        }catch(err){
            throw new ForbiddenException(err);

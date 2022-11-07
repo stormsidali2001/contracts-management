@@ -13,7 +13,7 @@ import { DirectionService } from "src/direction/services/direction.service";
 import { StatsParamsDTO } from "src/statistics/models/statsPramsDTO.interface";
 import { DataSource, FindManyOptions, FindOptionsWhere, Repository, UpdateResult } from "typeorm";
 import { QueryDeepPartialEntity } from "typeorm/query-builder/QueryPartialEntity";
-import { UserNotificationService } from "./user-notification.service";
+import { NotificationBody, UserNotificationService } from "./user-notification.service";
 
 @Injectable()
 export class UserService{
@@ -39,6 +39,14 @@ export class UserService{
         }
         const res = await  this.userRepository.save({...userData,direction,departement});
         console.log('testoooooooo',direction)
+        //send notification to admins
+        const adminUsers = await this.userRepository.createQueryBuilder('u')
+        .where('u.role = :userRole',{userRole:UserRole.ADMIN})
+        .getMany();
+        const extraMessage = departement && direction ?`au ${departement.abriviation} de ${direction.abriviation}`:"";
+        const notifications:NotificationBody[] = adminUsers.map(u=>({userId:u.id,message:`l'utilisateur ${res.email} de type ${res.role} est ajouté ${extraMessage} avec success`}));
+        
+        if(notifications.length > 0) await this.notificationService.sendNotifications(notifications);
         await this.notificationService.emitDataToAdminsOnly({entity:res.role as unknown as Entity,operation:Operation.INSERT,departementId:departementId,directionId,entityId:res.id,departementAbriviation:departement?.abriviation ?? "",directionAbriviation:direction?.abriviation ?? ""})
         await this.notificationService.IncrementUsersStats({type:res.role as unknown as Entity,operation:Operation.INSERT});
         return res;
