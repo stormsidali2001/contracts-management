@@ -3,6 +3,7 @@ import { InjectDataSource, InjectRepository } from "@nestjs/typeorm";
 import { ConnectedUserResetPassword, CreateUserDTO, UpdateUserDTO } from "src/core/dtos/user.dto";
 import { DepartementEntity } from "src/core/entities/Departement.entity";
 import { DirectionEntity } from "src/core/entities/Direction.entity";
+import { NotificationEntity } from "src/core/entities/Notification.entity";
 import { PasswordTokenEntity } from "src/core/entities/PasswordToken";
 import { UserEntity } from "src/core/entities/User.entity";
 import { Entity } from "src/core/types/entity.enum";
@@ -290,6 +291,25 @@ export class UserService{
 
              })
             return !recieve_notifications;
+    }
+
+    async deleteUser(userId:string){
+        const userDb = await this.userRepository.findOneBy({id:userId});
+        if(!userDb) throw new NotFoundException("l'utilisateur n'est pas trouvé")
+        await this.dataSource.transaction(async manager =>{
+            const userRepository = manager.getRepository(UserEntity);
+            const notificationRepository = manager.getRepository(NotificationEntity)
+
+            await notificationRepository.createQueryBuilder()
+            .delete()
+            .where('notifications.userId = :userId',{userId})
+            .execute();
+            await userRepository.createQueryBuilder()
+            .delete()
+            .where('users.id = :userId',{userId})
+            .execute();
+            
+        })
     }
   
 
