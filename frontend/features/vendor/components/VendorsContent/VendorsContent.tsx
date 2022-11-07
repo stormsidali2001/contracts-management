@@ -14,6 +14,8 @@ import { useDebounce } from '../../../../hooks/useDebounce.hook';
 import VendorActions from '../../../dashboard/VendorActions/VendorActions';
 import Link from 'next/link';
 import useAxiosPrivate from '../../../../hooks/auth/useAxiosPrivate';
+import { useAppSelector } from '../../../../hooks/redux/hooks';
+import { UserRole } from '../../../auth/models/user-role.enum';
 
 
 const VendorsContent = () => {
@@ -104,6 +106,8 @@ const handleSortModelChange = (sortModel: GridSortModel)=> {
   }
 
 const privateAxiosPrivate = useAxiosPrivate();
+const {user} = useAppSelector(state=>state.auth);
+
 
 useEffect( ()=>{
     let params = '';
@@ -130,6 +134,9 @@ useEffect( ()=>{
 const handleSearch = (e:any)=>{
   const {value} = e.target;
   debounce(()=>setSearchQuery(value),1000)
+}
+const showDisplayAddVendor = ()=>{
+    return user?.role === UserRole.JURIDICAL;
 }
   return (
     <div className={styles.container}>
@@ -183,9 +190,10 @@ const handleSearch = (e:any)=>{
                 
             />
             </div>
-            <Button onClick={handleOpen} className={styles.UserFormButton}>
+
+          { showDisplayAddVendor() && <Button onClick={handleOpen} className={styles.UserFormButton}>
                 <PersonAddIcon/>
-            </Button>
+            </Button>}
         </div>
         <Modal
             open={open}

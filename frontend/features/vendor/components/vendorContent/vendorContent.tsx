@@ -7,12 +7,17 @@ import useAxiosPrivate from '../../../../hooks/auth/useAxiosPrivate';
 import AgreementList from '../AgreementList/AgreementList';
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
+import { useAppDispatch, useAppSelector } from '../../../../hooks/redux/hooks';
+import { showSnackbar } from '../../../ui/UiSlice';
+import { UserRole } from '../../../auth/models/user-role.enum';
 const VendorContent = () => {
+    const {user} = useAppSelector(state=>state.auth)
     const [editMode,setEditMode] = useState(false)
     const [loading,setLoading] = useState(false)
     const axiosPrivate = useAxiosPrivate();
     const router = useRouter();
     const [vendor,setVendor] = useState<any>(null)
+    const dispatch = useAppDispatch();
     const [contractModalOpen,setContractModalOpen] = useState(false);
     const handleContractModaOpen = ()=>setContractModalOpen(true)
     const handleContractModalClose = ()=>setContractModalOpen(false)
@@ -39,14 +44,30 @@ const VendorContent = () => {
     if(!vendor) return "Loading"
     const setVendorProperty = (key:string,value:any)=>setVendor((u:Object)=>({...u,[key]:value}))
     const handleSubmit = ()=>{
+      setLoading(true)
+      axiosPrivate.patch(`/vendors/${vendor.id}`,{
+        ...vendor
+      })
+      .then(res=>{
+        setLoading(false)
+        dispatch(showSnackbar({message:"le fournisseur a eté mis a jour",severty:"success"}))
+      })
+      .catch(err=>{
+        setLoading(false)
+        dispatch(showSnackbar({message:err.response.data.error ?? "erreur inconu"}))
 
+      })
     }
+    const showDisplayEdit = ()=>{
+      return user?.role === UserRole.JURIDICAL;
+  }
   return (
     <div className={styles.container}>
        <div className={styles.left}>
             <div className={styles.vendorCard}>
             {
-                editMode?(
+              showDisplayEdit() &&<>
+              {  editMode?(
                     <Button 
                     className={styles.editButton}
                     onClick={()=>handleSubmit()}
@@ -66,7 +87,8 @@ const VendorContent = () => {
                     >
                         <EditIcon/>
                     </Button>
-                )
+                )}
+              </>
             }
   
               <div className={styles.labelWrapper}>
