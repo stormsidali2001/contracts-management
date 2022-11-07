@@ -56,8 +56,9 @@ const UsersContent = () => {
       }
     const handleOpenFilterModal = ()=>setFilterModalOPen(true)
     const handleCloseFilterModal = ()=>setFilterModalOPen(false)
-      const columns:GridColumns<any> = useMemo(()=>(
-        [
+      const columns:GridColumns<any> = useMemo(()=>{
+        const editable = shouldDisplayAddUser()
+        const original:GridColumns<any> = [
             {
                 field:"imageUrl",
                 headerName:"photo",
@@ -73,13 +74,13 @@ const UsersContent = () => {
                 field:"firstName",
                 headerName:"nom",
                 width:100,
-                editable:true,
+                editable:editable,
             },
             {
                 field:"lastName",
                 headerName:"prenom",
                 width:100,
-                editable:true,
+                editable:editable,
             },
             {
                 field:"role",
@@ -87,44 +88,49 @@ const UsersContent = () => {
                 width:100,
                 valueOptions:['ADMIN','JURIDICAL','EMPLOYEE'],
                 type: "singleSelect",
-                editable:true,
+                editable:editable,
         
             },
             {
                 field:"email",
                 headerName:"email",
                 width:200,
-                editable:true
+                editable
             },
             {
                 field:"active",
                 type:"boolean",
-                editable:true
+                editable
             },
             {
                 field:"created_at",
                 headerName:"cree a",
-                editable:false,
+                editable,
                 width:200
             },
             {
                 field:"username",
                 headerName:"nom d'utilisateur",
-                editable:true,
+                editable,
                 width:200
             },
             {
-                field:"actions",
-                headerName:"mise a jour",
+                field:"details",
+                headerName:"Details",
                 type:"actions",
-                renderCell:(params)=>{
-        
+                renderCell:(params:any)=>{
+              
                     return (
-
-                            <UserActions {...{params,rowId,setRowId}}/>
+                     <Button><Link href={`/users/${params.id}`}>Details</Link></Button>
                     )
                 }
-            },
+            }
+
+           
+        
+        ]
+
+        const extra:GridColumns<any> = [...original,
             {
                 field:"actions1",
                 headerName:"suppression",
@@ -137,18 +143,24 @@ const UsersContent = () => {
                 }
             },
             {
-                field:"details",
-                headerName:"Details",
+                field:"actions",
+                headerName:"mise a jour",
                 type:"actions",
-                renderCell:(params)=>{
-              
+                renderCell:(params:any)=>{
+        
                     return (
-                     <Button><Link href={`/users/${params.id}`}>Details</Link></Button>
+
+                            <UserActions {...{params,rowId,setRowId}}/>
                     )
                 }
-            }
-        ]
-    ),[rowId])
+            },
+           
+    
+    ]
+
+    return shouldDisplayAddUser() ? extra :original
+        
+   },[rowId,shouldDisplayAddUser()])
     useEffect( ()=>{
         let params = '';
         if(queryOptions.sortModel && queryOptions.sortModel.length > 0){
@@ -201,7 +213,7 @@ const UsersContent = () => {
 
      return count;
  }
- const shouldDisplayAddUser = ()=>{
+ function shouldDisplayAddUser(){
     return user?.role === UserRole.ADMIN
  }
   return (
