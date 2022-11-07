@@ -1,4 +1,4 @@
-import {Injectable,BadRequestException, ForbiddenException, Logger} from '@nestjs/common'
+import {Injectable,BadRequestException, ForbiddenException, Logger, NotFoundException} from '@nestjs/common'
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { CreateVendorDTO, UpdateVendorDTO } from 'src/core/dtos/vendor.dto';
 import { AgreementEntity } from 'src/core/entities/Agreement.entity';
@@ -130,5 +130,20 @@ export class VendorService{
         }
 
         return query.getMany();
+    }
+    async deleteVendor(vendorId:string){
+        const vendorDb = await this.vendorRepository.createQueryBuilder('v')
+        .where('v.id = :vendorId',{vendorId})
+        .loadRelationCountAndMap('v.agreementCount','agreements')
+        .getOne();
+
+        if(!vendorDb) throw new NotFoundException("fournisseur non trouvé");
+        //@ts-ignore
+        if(vendorDb.vendorCount > 0)throw new NotFoundException(`le fournisseur ne peut pas etre supprimer car il a ${vendorDb.vendorCount}`);
+
+        await this.vendorRepository.createQueryBuilder()
+        .delete()
+        .where('vendors.id = :vendorId',{vendorId})
+        .execute()
     }
 }
