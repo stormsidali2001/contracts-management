@@ -205,7 +205,7 @@ node agreements.js 500
   firstName: 'juridical',
   lastName: 'adala',
   email: 'juridical@gmail.com',
-  role: 'ADMIN',
+  role: 'JURIDICAL',
   password: '123456'
 }
 
