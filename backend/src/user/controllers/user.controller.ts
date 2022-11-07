@@ -44,11 +44,11 @@ export class UserController{
     // async deleteUser(@Param('id') id:string): Promise<string>{
        
     // }
-    
+
     @UseGuards(JwtAccessTokenGuard)
     @Put(':id')
-    async updateUser(@Param('id') id:string,@Body() user:UpdateUserDTO):Promise<UpdateResult>{
-        return await this.userService.updateUserUniqueCheck(id,user)
+    async updateUser(@Param('id') id:string,@Body() user:UpdateUserDTO ,@CurrentUserId() currentUserId:string):Promise<UpdateResult>{
+        return await this.userService.updateUserUniqueCheck(id,user,currentUserId)
     }
 
     @UseGuards(JwtAccessTokenGuard)
