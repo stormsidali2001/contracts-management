@@ -65,7 +65,7 @@ const UserActions = ({params,rowId,setRowId}:any) => {
                     boxShadow:"none"
                 }}
                 disabled={params.id !== rowId || loading}
-                onClick={handleSubmit}
+                onClick={()=>handleSubmit}
                 >
                     <Save
                         sx={{

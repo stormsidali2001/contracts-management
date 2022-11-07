@@ -5,21 +5,31 @@ import Check from '@mui/icons-material/Check';
 import { DeleteForever, Save } from '@mui/icons-material';
 import axios from 'axios';
 import {useEffect} from 'react';
-const DeleteUserAction = ({params}:any) => {
+import { useAppDispatch } from '../../../../../hooks/redux/hooks';
+import { showSnackbar } from '../../../../ui/UiSlice';
+import useAxiosPrivate from '../../../../../hooks/auth/useAxiosPrivate';
+const DeleteUserAction = ({params,deleteRow}:any) => {
     const [loading,setLoading] = useState(false);
     const [success,setSuccess] = useState(false);
+    const disptach = useAppDispatch();
+    const axiosPrivate = useAxiosPrivate();
 
-    const handleSubmit = async ()=>{
+    const handleSubmit =  ()=>{
         const {id} = params.row;
             setLoading(true)
-            axios.delete(`http://localhost:8080/api/users/${id}`)
+          
+            axiosPrivate.delete(`http://localhost:8080/api/users/${id}`)
             .then(res=>{
                 setSuccess(true)
                 setLoading(false)
+                disptach(showSnackbar({message:"l'utilisateur a eté supprimé avec success",severty:"success"}))
+                deleteRow(id);
             })
             .catch(err=>{
                 console.error(err);
+                setSuccess(false)
                 setLoading(false)
+                disptach(showSnackbar({message:err?.response?.data?.error ?? "erreur inconnu",severty:"error"}))
             })
        
     }
@@ -52,7 +62,7 @@ const DeleteUserAction = ({params}:any) => {
                     height:30,
                     boxShadow:"none"
                 }}
-                onClick={handleSubmit}
+                onClick={()=>handleSubmit()}
                 >
                     <DeleteForever
                         sx={{

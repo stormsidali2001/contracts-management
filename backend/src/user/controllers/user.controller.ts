@@ -4,6 +4,7 @@ import { IsNotEmpty } from "class-validator";
 import { CurrentUserId } from "src/auth/decorators/currentUserId.decorator";
 import { RequiredRoles } from "src/auth/decorators/RequiredRoles.decorator";
 import { JwtAccessTokenGuard } from "src/auth/guards/jwt-access-token.guard";
+import { RoleGuard } from "src/auth/guards/Role.guard";
 import { UserEntity } from "src/core/entities/User.entity";
 import { PaginationResponse } from "src/core/types/paginationResponse.interface";
 import { UserRole } from "src/core/types/UserRole.enum";
@@ -42,13 +43,14 @@ export class UserController{
     }  
     
     @RequiredRoles(UserRole.ADMIN)
-    @UseGuards(JwtAccessTokenGuard)
+    @UseGuards(JwtAccessTokenGuard,RoleGuard)
     @Delete(':id')
     async deleteUser(@Param('id') id:string){
         return await this.userService.deleteUser(id);
     }
 
-    @UseGuards(JwtAccessTokenGuard)
+    @RequiredRoles(UserRole.ADMIN)
+    @UseGuards(JwtAccessTokenGuard,RoleGuard)
     @Put(':id')
     async updateUser(@Param('id') id:string,@Body() user:UpdateUserDTO ,@CurrentUserId() currentUserId:string):Promise<UpdateResult>{
         return await this.userService.updateUserUniqueCheck(id,user,currentUserId)
