@@ -14,6 +14,8 @@ import useAxiosPrivate from '../../../../hooks/auth/useAxiosPrivate';
 import UsersFilter from '../UsersFilter/UsersFilter';
 import { UserRole } from '../../../auth/models/user-role.enum';
 import { useAppSelector } from '../../../../hooks/redux/hooks';
+import DeleteUserAction from '../UserActions/DeleteUserAction/DeleteUserAction';
+import { Stack } from '@mui/system';
 
 
 const UsersContent = () => {
@@ -113,12 +115,24 @@ const UsersContent = () => {
             },
             {
                 field:"actions",
-                headerName:"actions",
+                headerName:"mise a jour",
                 type:"actions",
                 renderCell:(params)=>{
         
                     return (
-                      <UserActions {...{params,rowId,setRowId}}/>
+
+                            <UserActions {...{params,rowId,setRowId}}/>
+                    )
+                }
+            },
+            {
+                field:"actions1",
+                headerName:"suppression",
+                type:"actions",
+                renderCell:(params)=>{
+        
+                    return (
+                        <DeleteUserAction {...{params}}/>
                     )
                 }
             },
