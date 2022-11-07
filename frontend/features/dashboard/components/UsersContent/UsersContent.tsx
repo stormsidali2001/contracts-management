@@ -132,7 +132,7 @@ const UsersContent = () => {
                 renderCell:(params)=>{
         
                     return (
-                        <DeleteUserAction {...{params}}/>
+                        <DeleteUserAction deleteRow={deleteRow} {...{params}}/>
                     )
                 }
             },
@@ -178,6 +178,12 @@ const UsersContent = () => {
     // const obj = <InputAdornment position="start">
     // <SearchRounded />
     // </InputAdornment>;
+
+    function deleteRow(userId:string){
+        const newPageState = {... pageState};
+        if(!newPageState?.data) return;
+        setPageState((old:any)=>({...old,data:old.data.filter((u:any)=>u.id !== userId)}))
+    }
 
  const handleSearch = (e:any)=>{
         const {value} = e.target;
