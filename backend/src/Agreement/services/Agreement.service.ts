@@ -16,7 +16,7 @@ import { DirectionService } from 'src/direction/services/direction.service';
 import { StatsParamsDTO } from 'src/statistics/models/statsPramsDTO.interface';
 import { UserService } from 'src/user/user.service';
 import {  Repository } from 'typeorm';
-import { UserNotificationService } from '../../user/user-notification.service';
+import { NotificationBody, UserNotificationService } from '../../user/user-notification.service';
 import { VendorService } from './vendor.service';
 
 
@@ -97,6 +97,11 @@ export class AgreementService implements OnModuleInit{
         if(agreementDb) throw new BadRequestException("le numero est deja reserver")
         const res= await  this.agreementRepository.save({...agreementData,direction,departement,vendor});
         await this.userNotificationService.sendToUsersInDepartement(departement.id,`${agreement.type === AgreementType.CONTRACT ? "un nouveau contrat est ajoute a votre departement":"une nouvelle convension a etee ajoutee a votre departement"} avec le fournisseur: ${vendor.company_name}`)
+        const extraMessage = departement && direction ?`au ${departement.abriviation} de ${direction.abriviation}`:"";
+
+        const juridicals = await this.userService.findAllBy({role:UserRole.JURIDICAL});
+        const notifications:NotificationBody[] = juridicals.map(j=>({message:`${agreement.type === AgreementType.CONTRACT ? "un nouveau contrat est ajoute ":"une nouvelle convension a etee ajoutee "} ${extraMessage} avec le fournisseur: ${vendor.company_name}`,userId:j.id}));
+        await this.userNotificationService.sendNotifications(notifications);
         await this.userNotificationService.sendNewEventaToConnectedUsersWithContrainsts({
             entity:res.type.toUpperCase() as unknown as Entity,
             operation:Operation.INSERT,
