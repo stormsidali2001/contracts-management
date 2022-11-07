@@ -16,6 +16,7 @@ import Link from 'next/link';
 import useAxiosPrivate from '../../../../hooks/auth/useAxiosPrivate';
 import { useAppSelector } from '../../../../hooks/redux/hooks';
 import { UserRole } from '../../../auth/models/user-role.enum';
+import DeleteVendorAction from '../../../dashboard/components/UserActions/DeleteVendorAction/DeleteVendorAction';
 
 
 const VendorsContent = () => {
@@ -34,69 +35,97 @@ const [queryOptions, setQueryOptions] = useState<{ sortModel:GridSortItem[] | nu
 const [open, setOpen] = useState(false);
 const handleOpen = () => setOpen(true);
 const handleClose = () => setOpen(false);
+const {user} = useAppSelector(state=>state.auth);
 const {debounce} = useDebounce();
-const columns:GridColumns<any> = useMemo(()=>[
+function showDisplayAddVendor(){
+  return Boolean(user?.role === UserRole.JURIDICAL);
+}
+const columns:GridColumns<any> = useMemo(()=>{
+  const editable = showDisplayAddVendor();
+
+const original:GridColumns<any> = [
 
   {
       field:"num",
       headerName:"numero",
       flex:1,
-      editable:true
+      editable
   },
   {
       field:"company_name",
       headerName:"raison sociale",
       flex:1,
-      editable:true
+      editable
   },
   {
       field:"nif",
       headerName:"nif",
       flex:1,
-      editable:true
+      editable
   },
   {
       field:"address",
       headerName:"adresse",
       flex:1,
-      editable:true
+      editable
   },
   {
       field:"mobile_phone_number",
       headerName:"mobile",
       flex:1,
-      editable:true
+      editable
   },
   {
       field:"home_phone_number",
       headerName:"fixe",
       flex:1,
-      editable:true
+      editable
+  },
+  {
+    field:"details",
+    headerName:"Details",
+    type:"actions",
+    renderCell:(params)=>{
+
+        return (
+        <Button><Link href={`/vendors/${params.id}`}>Details</Link></Button>
+        )
+    }
+  }
+
+]
+const extra:GridColumns<any> = [...original,
+    {
+      field:"actions1",
+      headerName:"suppression",
+      type:"actions",
+      renderCell:(params)=>{
+
+          return (
+              <DeleteVendorAction deleteRow={deleteRow} {...{params}}/>
+          )
+      }
   },
   {
     field:"actions",
     headerName:"actions",
     type:"actions",
-    renderCell:(params)=>{
+    renderCell:(params:any)=>{
 
         return (
           <VendorActions {...{params,rowId,setRowId}}/>
         )
-    }
-},
-{
-  field:"details",
-  headerName:"Details",
-  type:"actions",
-  renderCell:(params)=>{
-
-      return (
-       <Button><Link href={`/vendors/${params.id}`}>Details</Link></Button>
-      )
-  }
+    },
+  
 }
 
-],[rowId])
+];
+
+return editable ?extra :original;
+
+
+
+},[showDisplayAddVendor(),rowId])
 const handleSortModelChange = (sortModel: GridSortModel)=> {
     // Here you save the data you need from the sort model
     if(sortModel){
@@ -106,7 +135,6 @@ const handleSortModelChange = (sortModel: GridSortModel)=> {
   }
 
 const privateAxiosPrivate = useAxiosPrivate();
-const {user} = useAppSelector(state=>state.auth);
 
 
 useEffect( ()=>{
@@ -135,9 +163,13 @@ const handleSearch = (e:any)=>{
   const {value} = e.target;
   debounce(()=>setSearchQuery(value),1000)
 }
-const showDisplayAddVendor = ()=>{
-    return user?.role === UserRole.JURIDICAL;
+
+function deleteRow(vendorId:string){
+  const newPageState = {... pageState};
+  if(!newPageState?.data) return;
+  setPageState((old:any)=>({...old,data:old.data.filter((u:any)=>u.id !== vendorId)}))
 }
+
   return (
     <div className={styles.container}>
         <div className={styles.wrapperBox}>

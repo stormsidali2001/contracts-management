@@ -134,12 +134,12 @@ export class VendorService{
     async deleteVendor(vendorId:string){
         const vendorDb = await this.vendorRepository.createQueryBuilder('v')
         .where('v.id = :vendorId',{vendorId})
-        .loadRelationCountAndMap('v.agreementCount','agreements')
+        .loadRelationCountAndMap('v.agreementCount','v.agreements')
         .getOne();
 
         if(!vendorDb) throw new NotFoundException("fournisseur non trouvé");
         //@ts-ignore
-        if(vendorDb.vendorCount > 0)throw new NotFoundException(`le fournisseur ne peut pas etre supprimer car il a ${vendorDb.vendorCount}`);
+        if(vendorDb.agreementCount > 0)throw new NotFoundException(`le fournisseur ne peut pas etre supprimer car il a ${vendorDb.agreementCount} accords`);
 
         await this.vendorRepository.createQueryBuilder()
         .delete()
