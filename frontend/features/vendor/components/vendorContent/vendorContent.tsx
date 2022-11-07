@@ -2,10 +2,14 @@ import styles from './vendorContent.module.css';
 import {useEffect , useState} from 'react';
 import { useRouter } from 'next/router';
 import axios from 'axios';
-import { Button, Modal } from '@mui/material';
+import { Button, CircularProgress, Modal } from '@mui/material';
 import useAxiosPrivate from '../../../../hooks/auth/useAxiosPrivate';
 import AgreementList from '../AgreementList/AgreementList';
+import EditIcon from '@mui/icons-material/Edit';
+import SaveIcon from '@mui/icons-material/Save';
 const VendorContent = () => {
+    const [editMode,setEditMode] = useState(false)
+    const [loading,setLoading] = useState(false)
     const axiosPrivate = useAxiosPrivate();
     const router = useRouter();
     const [vendor,setVendor] = useState<any>(null)
@@ -33,10 +37,38 @@ const VendorContent = () => {
       .catch(err=>console.error(err))
     },[vendorId])
     if(!vendor) return "Loading"
+    const setVendorProperty = (key:string,value:any)=>setVendor((u:Object)=>({...u,[key]:value}))
+    const handleSubmit = ()=>{
+
+    }
   return (
     <div className={styles.container}>
        <div className={styles.left}>
             <div className={styles.vendorCard}>
+            {
+                editMode?(
+                    <Button 
+                    className={styles.editButton}
+                    onClick={()=>handleSubmit()}
+                    >
+                        {
+                            loading?(
+                                <CircularProgress size={30}/>
+                            ):(
+                                <SaveIcon/>
+                            )
+                        }
+                    </Button>
+                ):(
+                    <Button 
+                        className={styles.editButton}
+                        onClick={()=>setEditMode(true)}
+                    >
+                        <EditIcon/>
+                    </Button>
+                )
+            }
+  
               <div className={styles.labelWrapper}>
                 <div className={styles.label}>N</div>
                 <div className={styles.labelText}>{vendor?.num}</div>
@@ -45,27 +77,55 @@ const VendorContent = () => {
               <div className={styles.content}>
                 <div className={styles.vendorContentItem}>
                   <span>raison sociale:</span>
-                  <span>{vendor?.company_name}</span>
+                  <Field
+                    edit = {editMode}
+                    value={vendor?.company_name ?? ""}
+                    onChange={(e:any)=>setVendorProperty("company_name",e.target.value)}
+
+                  />
                 </div>
                 <div className={styles.vendorContentItem}>
                   <span>nif:</span>
-                  <span>{vendor?.nif}</span>
+                  <Field
+                    edit = {editMode}
+                    value={vendor?.nif ?? ""}
+                    onChange={(e:any)=>setVendorProperty("nif",e.target.value)}
+
+                  />
                 </div>
                 <div className={styles.vendorContentItem}>
                   <span>nrc:</span>
-                  <span>{vendor?.nrc}</span>
+                  <Field
+                    edit = {editMode}
+                    value={vendor?.nrc ?? ""}
+                    onChange={(e:any)=>setVendorProperty("nrc",e.target.value)}
+
+                  />
                 </div>
                 <div className={styles.vendorContentItem}>
                   <span>mobile:</span>
-                  <span>{vendor?.mobile_phone_number}</span>
+                  <Field
+                    edit = {editMode}
+                    value={vendor?.mobile_phone_number ?? ""}
+                    onChange={(e:any)=>setVendorProperty("mobile_phone_number",e.target.value)}
+                  />
                 </div>
                 <div className={styles.vendorContentItem}>
                   <span>fixe:</span>
-                  <span>{vendor?.home_phone_number}</span>
+                  <Field
+                    edit = {editMode}
+                    value={vendor?.home_phone_number ?? ""}
+                    onChange={(e:any)=>setVendorProperty("home_phone_number",e.target.value)}
+
+                  />
                 </div>
                 <div className={styles.vendorContentItem}>
                   <span>adresse:</span>
-                  <span>{vendor?.address}</span>
+                  <Field
+                    edit = {editMode}
+                    value={vendor?.address ?? ""}
+                    onChange={(e:any)=>setVendorProperty("address",e.target.value)}
+                  />
                 </div>
               </div>
             </div>
@@ -102,7 +162,7 @@ function Field({edit, value,onChange}:any){
               <input type="text" className={styles.editInput} value={value} onChange={onChange} />
           ):(
 
-              <span>{value}</span>
+              <span className={styles.vendorContentItem}>{value}</span>
           )}
       </>
   )

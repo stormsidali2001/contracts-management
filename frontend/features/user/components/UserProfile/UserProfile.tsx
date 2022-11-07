@@ -18,7 +18,7 @@ const UserProfile = () => {
     const {userId} = query;
     const [edit,setEdit] = useState(false);
     const [loading,setLoading] = useState(false)
-    const [imagePreview,setImagePreview] = useState(user?.imageUrl?`http://localhost:8080/api/users/image/${user?.imageUrl}`:"blank-profile-picture.png");
+    const [imagePreview,setImagePreview] = useState(user?.imageUrl?`http://localhost:8080/api/users/image/${user?.imageUrl}`:"/blank-profile-picture.png");
     const [isImageUploading,setIsImageUploading] = useState(false)
     const [imageFile,setImageFile] = useState<any>(null)
     const [imageUploadProgress,setImageUploadProgress] = useState(0)

@@ -41,16 +41,20 @@
         color: #1E1D1D;
     }
     .editInput{
+        border:1px solid gray;
+        border-radius: 15px;
+        padding: 2px 4px;
         font-family: 'Poppins';
         font-style: normal;
         font-weight: 400;
-        font-size: 16px;
+        font-size: 12px;
         line-height: 22px;
-        outline: none;
-        background-color: transparent;
-        border: none;
+        color: #1E1D1D;
     }
-
+    .editInput:focus{
+        outline:none;
+        border:1px solid #17498E;
+    }
     .content{
         display: flex;
         flex-direction: column;
