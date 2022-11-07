@@ -85,10 +85,6 @@ const UsersFilter = ({handleSetFilters,handleClose,initialFilters}:PropType) => 
     })
     .catch(err=>{
       console.error(err,"t2")
-      if(err.code !== "ERR_CANCELED"){
-
-        dispatch(showSnackbar({message:"verifiez si vous etes en ligne"}))
-      }
      
     })
     return ()=>{
