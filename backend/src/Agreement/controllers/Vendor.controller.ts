@@ -51,7 +51,9 @@ export class VendorController{
         return await this.vendorService.updateVendor(id,newVendor)
     }
 
-    @Delete('')
+    @RequiredRoles(UserRole.JURIDICAL)
+    @UseGuards(JwtAccessTokenGuard,RoleGuard)
+    @Delete(':id')
     async deleteVendor(@Param('id') vendorId:string){
         return await this.vendorService.deleteVendor(vendorId);
     }
