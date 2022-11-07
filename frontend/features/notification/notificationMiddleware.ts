@@ -92,8 +92,9 @@ const notificationMiddleware:Middleware = store=>{
             socket.on(NotificationEvents.SendAllNotifications,(notifications:Notification[])=>{
                 store.dispatch(recieveNotifications({notifications}))
             })
-            socket.on(NotificationEvents.sendNotification,(notification:Notification)=>{
-                store.dispatch(recieveNotification({notification}))
+            socket.on(NotificationEvents.sendNotification,(notification:string)=>{
+                console.log("t1000",notification)
+                store.dispatch(recieveNotification({notification:{id: Date.now().toString(),message:notification }}))
             })
             socket.on(UserEventsTypes.SEND_EVENTS,(events:UserEvent[])=>{
                 store.dispatch(recieveUserEvents({events}))
