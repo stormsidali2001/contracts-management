@@ -10,6 +10,7 @@ import useAxiosPrivate from '../../../../hooks/auth/useAxiosPrivate';
 import { showSnackbar } from '../../../ui/UiSlice';
 import { Stack } from '@mui/system';
 import { setImageUrl } from '../../../auth/authSlice';
+import { UserRole } from '../../../auth/models/user-role.enum';
 const UserProfile = () => {
     const {user:currentUser} = useAppSelector(state=>state.auth)
     const router = useRouter();
@@ -17,6 +18,7 @@ const UserProfile = () => {
     const {query} = router;
     const {userId} = query;
     const [edit,setEdit] = useState(false);
+    const {user:connectedUser} = useAppSelector(state=>state.auth)
     const [loading,setLoading] = useState(false)
     const [imagePreview,setImagePreview] = useState(user?.imageUrl?`http://localhost:8080/api/users/image/${user?.imageUrl}`:"/blank-profile-picture.png");
     const [isImageUploading,setIsImageUploading] = useState(false)
@@ -100,6 +102,7 @@ const UserProfile = () => {
     .catch(err=>{
         dispatch(showSnackbar({message:err?.response?.data?.error ?? "erreur iconu"}))
         setLoading(false)
+        setEdit(false)
 
     });
   }
@@ -118,30 +121,39 @@ const UserProfile = () => {
         URL.revokeObjectURL(objectUrl)
     }
   },[imageFile])
+  const canEditUser = ()=>{
+    return connectedUser?.role === UserRole.ADMIN || connectedUser?.sub === user?.id;
+  }
   return (
     <div className={styles.userCard}>
     {
-        edit?(
-            <Button 
-            className={styles.editButton}
-            onClick={()=>handleSubmit()}
-            >
-                {
-                    loading?(
-                        <CircularProgress size={30}/>
-                    ):(
-                        <SaveIcon/>
-                    )
-                }
-            </Button>
-        ):(
-            <Button 
-                className={styles.editButton}
-                onClick={()=>setEdit(true)}
-            >
-                <EditIcon/>
-            </Button>
-        )
+        canEditUser() &&(<>
+            {
+                edit?(
+                    <Button 
+                    className={styles.editButton}
+                    onClick={()=>handleSubmit()}
+                    >
+                        {
+                            loading?(
+                                <CircularProgress size={30}/>
+                            ):(
+                                <SaveIcon/>
+                            )
+                        }
+                    </Button>
+                ):(
+                    <Button 
+                        className={styles.editButton}
+                        onClick={()=>setEdit(true)}
+                    >
+                        <EditIcon/>
+                    </Button>
+                )
+            }
+        
+        </>)
+       
     }
   
     <div className={styles.userTitle}>Profile</div>

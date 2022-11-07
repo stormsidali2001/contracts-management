@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException, Logger,BadRequestException, ForbiddenException, forwardRef, Inject } from "@nestjs/common";
+import { Injectable, InternalServerErrorException, Logger,BadRequestException, ForbiddenException, forwardRef, Inject, NotFoundException } from "@nestjs/common";
 import { InjectDataSource, InjectRepository } from "@nestjs/typeorm";
 import { ConnectedUserResetPassword, CreateUserDTO, UpdateUserDTO } from "src/core/dtos/user.dto";
 import { DepartementEntity } from "src/core/entities/Departement.entity";
@@ -39,7 +39,7 @@ export class UserService{
         }
         const res = await  this.userRepository.save({...userData,direction,departement});
         console.log('testoooooooo',direction)
-        await this.notificationService.emitDataToAdminsOnly({entity:res.role as unknown as Entity,operation:Operation.INSERT,departementId:departementId,directionId,entityId:res.id,departementAbriviation:departement?.abriviation,directionAbriviation:direction?.abriviation})
+        await this.notificationService.emitDataToAdminsOnly({entity:res.role as unknown as Entity,operation:Operation.INSERT,departementId:departementId,directionId,entityId:res.id,departementAbriviation:departement?.abriviation ?? "",directionAbriviation:direction?.abriviation ?? ""})
         await this.notificationService.IncrementUsersStats({type:res.role as unknown as Entity,operation:Operation.INSERT});
         return res;
     }
@@ -131,14 +131,18 @@ export class UserService{
         }
     }   
   
-    async updateUserUniqueCheck(id:string,newUser:UpdateUserDTO):Promise<UpdateResult>{
+    async updateUserUniqueCheck(id:string,newUser:UpdateUserDTO , currentUserId:string):Promise<UpdateResult>{
        
+            const currentUser = await this.userRepository.findOneBy({id:currentUserId})
+           
             const userDb = await this.userRepository.createQueryBuilder('user')
             .select(['user.password','user.email','user.username','user.id','user.firstName','user.lastName','user.imageUrl','user.role','user.departementId','user.directionId'])
             .where('user.username = :username or user.email = :email',{username:newUser.username,email:newUser.email})
             .leftJoinAndSelect('user.departement','dp')
             .leftJoinAndSelect("user.direction",'dr')
             .getOne();
+            if(!userDb) throw new NotFoundException("l'utilisateur n'existe pas")
+            if(currentUser.role !== UserRole.ADMIN && userDb.id  !== currentUser.id) throw new ForbiddenException("permission denied")
             if(userDb && userDb.id !== id) throw new ForbiddenException("username et l'email   exists deja")
    
              const res = await  this.userRepository.update(id,newUser)
@@ -148,8 +152,8 @@ export class UserService{
                 operation:Operation.UPDATE,
                 departementId:userDb.departementId,
                 directionId:userDb.directionId,
-                departementAbriviation:userDb.departement.abriviation,
-                directionAbriviation:userDb.direction.abriviation
+                departementAbriviation:userDb?.departement?.abriviation ?? "",
+                directionAbriviation:userDb?.direction?.abriviation ?? ""
              })
 
              return res;
@@ -231,15 +235,23 @@ export class UserService{
              await userRepository.update(userId,{password_token:null,password})
              await  passwordTokenRepository.delete(id);
            
+           
          }
          
          )
+         const userDb = await this.userRepository.createQueryBuilder('u')
+         .where('u.id = :userdId',{userId})
+         .leftJoinAndSelect('u.departement','dp')
+         .leftJoinAndSelect('u.direction','dr')
+         .getOne()
          await this.notificationService.emitDataToAdminsOnly({
             entity:userRole as unknown as Entity ,
             entityId:userId,
             operation:Operation.UPDATE,
             directionId,
-            departementId
+            departementId,
+            departementAbriviation:userDb?.departement?.abriviation ?? "",
+            directionAbriviation:userDb?.direction?.abriviation ?? ""
          })
 
            
@@ -250,7 +262,11 @@ export class UserService{
         return await this.userRepository.update(id,{password:hashed_password})
     }
     async recieveNotifications( userId:string,recieve_notifications:boolean){
-        const userDb = await this.userRepository.findOneBy({id:userId})
+        const userDb = await this.userRepository.createQueryBuilder('u')
+        .where('u.id = :userdId',{userId})
+        .leftJoinAndSelect('u.departement','dp')
+        .leftJoinAndSelect('u.direction','dr')
+        .getOne()
         //@ts-ignore
             await this.userRepository.update(userId,{recieve_notifications:()=>"!recieve_notifications"})
             await this.notificationService.emitDataToAdminsOnly({
@@ -258,7 +274,12 @@ export class UserService{
                 entityId:userId,
                 operation:Operation.UPDATE,
                 directionId:userDb.directionId,
-                departementId:userDb.departementId
+                departementId:userDb.departementId,
+                departementAbriviation:userDb?.departement?.abriviation ?? "",
+                directionAbriviation:userDb?.direction?.abriviation ?? ""
+                
+                
+
              })
             return !recieve_notifications;
     }
