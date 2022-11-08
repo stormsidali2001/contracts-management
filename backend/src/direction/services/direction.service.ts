@@ -11,21 +11,30 @@ export class DirectionService{
         private dataSource:DataSource
     ){}
     
-    async createDirection(direction:CreateDirectionDTO):Promise<InsertResult>{
+    async createDirection(direction:CreateDirectionDTO){
       
       const {departements,...otherDirectionData} = direction;
       return  await this.dataSource.manager.transaction(async (entityManger:EntityManager)=>{
-        const directionDb = await entityManger.getRepository(DirectionEntity).createQueryBuilder("d")
-        .where('d.title = :title or d.abriviation = :abriviation',{title:otherDirectionData.title,abriviation:otherDirectionData.abriviation}).getOne() 
-        if(directionDb) throw new BadRequestException("l'abriviation ou le nom de la direction exist deja") 
-        const newDirection = await entityManger.getRepository(DirectionEntity).save({...otherDirectionData});
+        const directionRepository = entityManger.getRepository(DirectionEntity)
         const departementRepository = entityManger.getRepository(DepartementEntity);
-        return departementRepository.insert(direction.departements.map(dp=>{
+
+        const directionDb = await directionRepository.createQueryBuilder("d")
+        .where('d.title = :title or d.abriviation = :abriviation',{title:otherDirectionData.title,abriviation:otherDirectionData.abriviation})
+        .getOne() 
+
+        if(directionDb) throw new BadRequestException("l'abriviation ou le nom de la direction exist deja") 
+        const newDirection = await directionRepository.save({...otherDirectionData});
+        const departements = await  departementRepository.save(direction.departements.map(dp=>{
             const departement = departementRepository.create({...dp,direction:newDirection})
             return departement;
        }))
+       return {
+            direction:newDirection,
+            departements:departements
+       }
        })
     
+
     }
     async findAll(offset:number  , limit:number ):Promise<DirectionEntity[]>{
         console.log(offset, limit,"limit offset")
