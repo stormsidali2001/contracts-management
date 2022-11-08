@@ -59,13 +59,15 @@ const CreateDirection = ({
         departements
       })
       .then(res=>{
+        const {data} = res;
+        const {direction,departements} = data;
         setIsLoading(false)
         setIsSuccess(true)
         pushDirection({
-          title,
-          abriviation,
+          title:direction.title,
+          abriviation:direction.abriviation,
           departements,
-          id:Date.now().toString()
+          id:direction.id
         })
         handleDirectionModalClose()
 
