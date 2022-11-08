@@ -156,7 +156,7 @@ const ContractContent = ({type , agreementId}:PropType) => {
           open={openExecutionModal}
           onClose={handelCloseExecutionModal}
         >
-               <ExecutionModal handleClose={handelCloseExecutionModal} agreementId = {contract.id}/>
+               <ExecutionModal type={type} handleClose={handelCloseExecutionModal} agreementId = {contract.id}/>
         </Modal>
 
         

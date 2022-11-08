@@ -19,9 +19,10 @@ function getTomorrow(d:Date){
 }
 interface PropType{
     agreementId:string;
-    handleClose:()=>void
+    handleClose:()=>void;
+    type:"contract" | "convension"
 }
-const ExecutionModal = ({agreementId,handleClose}:PropType) => {
+const ExecutionModal = ({agreementId,handleClose,type }:PropType) => {
     const [startDate,setStartDate] = useState<any>(format(new Date(Date.now())))
     const [endDate,setEndDate] = useState<any>(format(getTomorrow(new Date(Date.now()))));
     const [observation,setObservation] = useState<any>('');
@@ -37,6 +38,7 @@ const ExecutionModal = ({agreementId,handleClose}:PropType) => {
          axios.patch('/Agreements/exec',{...newExecAgreement})
          .then(res=>{
              handleClose()
+             dispatch(showSnackbar({message:`${type === 'contract' ?"le contrat":"la convension"} a eté${type === 'contract'?'':'e'}`}))
              setTimeout(()=>{
                  router.reload()
              },1000)
