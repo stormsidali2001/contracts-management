@@ -45,8 +45,7 @@ export class VendorService{
         const createdVendor = await this.dataSource.transaction(async manager =>{
             const vendorRepository = manager.getRepository(VendorEntity);
             const vendorStatsRepository = manager.getRepository(VendorStatsEntity)
-
-            const createdVendor = await vendorRepository.save({address,createdAt,home_phone_number,mobile_phone_number,...uniques});
+            const createdVendor = await vendorRepository.save({address,createdAt:createdAt?createdAt:new Date(),home_phone_number,mobile_phone_number,...uniques});
       
             const vendorStatsDb = await vendorStatsRepository.findOneBy({date:createdAt})
             if(vendorStatsDb){

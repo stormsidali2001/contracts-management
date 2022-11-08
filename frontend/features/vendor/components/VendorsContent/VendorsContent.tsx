@@ -48,37 +48,37 @@ const original:GridColumns<any> = [
   {
       field:"num",
       headerName:"numero",
-      flex:1,
+      width:130,
       editable
   },
   {
       field:"company_name",
       headerName:"raison sociale",
-      flex:1,
+      width:160,
       editable
   },
   {
       field:"nif",
       headerName:"nif",
-      flex:1,
+      width:140,
       editable
   },
   {
       field:"address",
       headerName:"adresse",
-      flex:1,
+      width:150,
       editable
   },
   {
       field:"mobile_phone_number",
       headerName:"mobile",
-      flex:1,
+      width:130,
       editable
   },
   {
       field:"home_phone_number",
       headerName:"fixe",
-      flex:1,
+      width:120,
       editable
   },
   {
@@ -95,6 +95,18 @@ const original:GridColumns<any> = [
 
 ]
 const extra:GridColumns<any> = [...original,
+      {
+        field:"actions",
+        headerName:"actions",
+        type:"actions",
+        renderCell:(params:any)=>{
+
+            return (
+              <VendorActions {...{params,rowId,setRowId}}/>
+            )
+        },
+      
+    },
     {
       field:"actions1",
       headerName:"suppression",
@@ -106,18 +118,7 @@ const extra:GridColumns<any> = [...original,
           )
       }
   },
-  {
-    field:"actions",
-    headerName:"actions",
-    type:"actions",
-    renderCell:(params:any)=>{
 
-        return (
-          <VendorActions {...{params,rowId,setRowId}}/>
-        )
-    },
-  
-}
 
 ];
 
@@ -136,8 +137,8 @@ const handleSortModelChange = (sortModel: GridSortModel)=> {
 
 const privateAxiosPrivate = useAxiosPrivate();
 
-
 useEffect( ()=>{
+   
     let params = '';
     if(queryOptions.sortModel){
       console.log(queryOptions,"code530")

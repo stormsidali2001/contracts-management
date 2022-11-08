@@ -35,6 +35,7 @@ export class CreateVendorDTO{
     @ApiProperty({type:'string',example:'0363737507'})
     home_phone_number:string;
 
+    @IsOptional()
     @ApiPropertyOptional({  example:"2023-01-05"})
     @IsDateString({strict:true})
     createdAt:Date;
