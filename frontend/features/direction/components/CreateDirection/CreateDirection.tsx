@@ -66,7 +66,7 @@ const CreateDirection = ({
         pushDirection({
           title:direction.title,
           abriviation:direction.abriviation,
-          departements,
+          departements:departements.map((dp:any)=>({...dp,users:0})),
           id:direction.id
         })
         handleDirectionModalClose()
