@@ -6,6 +6,7 @@ import axios from '../../../../api/axios'
 import { ExecuteAgreement } from '../../models/ExecuteAgreement.interface';
 import { useAppDispatch } from '../../../../hooks/redux/hooks';
 import { showSnackbar } from '../../../ui/UiSlice';
+import { useRouter } from 'next/router';
 const format = (d:Date)=>{
     const newD = new Date(d);
     return newD.toISOString().replace(/T[0-9:.Z]*/g,"");
@@ -25,6 +26,7 @@ const ExecutionModal = ({agreementId,handleClose}:PropType) => {
     const [endDate,setEndDate] = useState<any>(format(getTomorrow(new Date(Date.now()))));
     const [observation,setObservation] = useState<any>('');
     const dispatch = useAppDispatch();
+    const router = useRouter();
     const handleAgreementExecution = ()=>{
         const newExecAgreement:ExecuteAgreement = {
             execution_start_date:format(startDate),
@@ -34,7 +36,11 @@ const ExecutionModal = ({agreementId,handleClose}:PropType) => {
         }
          axios.patch('/Agreements/exec',{...newExecAgreement})
          .then(res=>{
-            handleClose()
+             handleClose()
+             setTimeout(()=>{
+                 router.reload()
+             },1000)
+
          })
          .catch(err=>{
              //@ts-ignore
