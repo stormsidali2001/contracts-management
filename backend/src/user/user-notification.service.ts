@@ -56,5 +56,8 @@ export class UserNotificationService{
     async IncrementUsersStats(eventData:{type:Entity,operation:Operation}){
         this.socketStateService.emitConnected({...eventData},"INCR_USER")
     }
+    async IncrementAgreementsStats(eventData:{type:Entity,operation:Operation},departementId:string){
+        this.socketStateService.emitDataToConnectedUsersWithContrainsts("INC_AGR",departementId,{...eventData})
+    }
    
 }

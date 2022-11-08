@@ -4,7 +4,7 @@ import { refresh_token, setCredentials } from "../auth/authSlice";
 import { UserRole } from "../auth/models/user-role.enum";
 import authService from "../auth/services/auth.service";
 import { VendorStats } from "../statistics/models/VendorStats.interface";
-import { newCreatedUserEvent, newVendorStats, StatisticsSlice } from "../statistics/StatisticsSlice";
+import { newCreatedUserEvent, newVendorStats, StatisticsSlice ,newAgreement} from "../statistics/StatisticsSlice";
 import { Entity } from "./models/Entity.enum";
 import { Notification } from "./models/Notification.interface";
 import { NotificationEvents } from "./models/NotificationEvents";
@@ -106,6 +106,12 @@ const notificationMiddleware:Middleware = store=>{
                 const statsSlice = store.getState().StatisticsSlice as  StatisticsSlice;
                 if(statsSlice.end_date || statsSlice.start_date) return;
                 store.dispatch(newCreatedUserEvent({type,operation}))
+            })
+            socket.on("INC_AGR",({ operation , type}:{type:Entity,operation:Operation})=>{
+                const statsSlice = store.getState().StatisticsSlice as  StatisticsSlice;
+                if(statsSlice.end_date || statsSlice.start_date) return;
+                store.dispatch(newAgreement({operation,type}))
+
             })
           
         }

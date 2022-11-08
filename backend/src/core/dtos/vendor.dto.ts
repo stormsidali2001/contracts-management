@@ -30,9 +30,13 @@ export class CreateVendorDTO{
     address:string;
 
     @ApiProperty({type:'string',example:'0663737507'})
+    @IsNotEmpty()
+    @IsString()
     mobile_phone_number:string;
 
     @ApiProperty({type:'string',example:'0363737507'})
+    @IsNotEmpty()
+    @IsString()
     home_phone_number:string;
 
     @IsOptional()
