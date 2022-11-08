@@ -5,11 +5,13 @@ import Check from '@mui/icons-material/Check';
 import { Save } from '@mui/icons-material';
 import axios from 'axios';
 import {useEffect} from 'react';
+import useAxiosPrivate from '../../../../hooks/auth/useAxiosPrivate';
 const UserActions = ({params,rowId,setRowId}:any) => {
     const [loading,setLoading] = useState(false);
     const [success,setSuccess] = useState(false);
-
+    const axiosPrivate = useAxiosPrivate();
     const handleSubmit = async ()=>{
+
         const {id,role,active,email,firstName,lastName,username} = params.row;
             setLoading(true)
             axios.put(`http://localhost:8080/api/users/${id}`,{
