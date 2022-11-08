@@ -14,7 +14,7 @@ const UserActions = ({params,rowId,setRowId}:any) => {
 
         const {id,role,active,email,firstName,lastName,username} = params.row;
             setLoading(true)
-            axios.put(`http://localhost:8080/api/users/${id}`,{
+            axiosPrivate.put(`http://localhost:8080/api/users/${id}`,{
                 role,
                 active,
                 email,
