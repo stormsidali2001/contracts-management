@@ -172,15 +172,11 @@ interface Proptype{
                  console.log(`${loaded} kbof ${total}`)
                  setFileUploadProgress(Math.floor((loaded/total)*100))
              },
-             headers:{
-               'Authorization':"Bearer "+JSON.parse(localStorage.getItem("jwt") ?? "" )?.access_token
-             }
            })
   
           }
           let url =""
          if( res){
-           console.log(res)
            setIsAgreementDocumentFileUploading(false);
            url = res.data.filename
          }
