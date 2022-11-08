@@ -38,10 +38,12 @@ const ExecutionModal = ({agreementId,handleClose,type }:PropType) => {
          axios.patch('/Agreements/exec',{...newExecAgreement})
          .then(res=>{
              handleClose()
-             dispatch(showSnackbar({message:`${type === 'contract' ?"le contrat":"la convension"} a eté${type === 'contract'?'':'e'}`}))
+             const e  =type === 'contract'?'':'e'
+             dispatch(showSnackbar({message:`${type === 'contract' ?"le contrat":"la convension"} a eté${e} executé${e} avec success`,severty:"success"}))
+
              setTimeout(()=>{
                  router.reload()
-             },1000)
+             },3000)
 
          })
          .catch(err=>{
