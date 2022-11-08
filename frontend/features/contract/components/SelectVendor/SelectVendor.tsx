@@ -11,32 +11,32 @@ const columns:GridColumns<any> = [
     {
         field:"num",
         headerName:"numero",
-        flex:1
+        width:150
     },
     {
         field:"company_name",
         headerName:"raison sociale",
-        flex:1
+        width:125
     },
     {
         field:"nif",
         headerName:"nif",
-        flex:1
+        width:150
     },
     {
         field:"address",
         headerName:"adresse",
-        flex:1
+        width:150
     },
     {
         field:"mobile_phone_number",
         headerName:"mobile",
-        flex:1
+        width:130
     },
     {
         field:"home_phone_number",
         headerName:"fixe",
-        flex:1
+        width:130
     },
   ]
 
