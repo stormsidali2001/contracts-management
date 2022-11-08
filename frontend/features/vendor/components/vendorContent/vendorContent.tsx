@@ -36,7 +36,6 @@ const VendorContent = () => {
       if(!vendorId) return;
       axiosPrivate.get(`http://localhost:8080/api/vendors/${vendorId}`)
       .then(res=>{
-          console.log(res,"contract")
           setVendor(res.data)
       })
       .catch(err=>console.error(err))
@@ -50,10 +49,12 @@ const VendorContent = () => {
       })
       .then(res=>{
         setLoading(false)
+        setEditMode(false)
         dispatch(showSnackbar({message:"le fournisseur a eté mis a jour",severty:"success"}))
       })
       .catch(err=>{
         setLoading(false)
+        setEditMode(false)
         dispatch(showSnackbar({message:err.response.data.error ?? "erreur inconu"}))
 
       })

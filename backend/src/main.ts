@@ -11,7 +11,7 @@ import { SocketStateService } from './socket/SocketState.service';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.setGlobalPrefix('api')
-  app.useGlobalPipes(new ValidationPipe({transform:true,disableErrorMessages:false}))
+  app.useGlobalPipes(new ValidationPipe({transform:true,disableErrorMessages:false,whitelist:true}))
   app.enableCors({credentials:true,origin:["http://localhost:3000"],methods:['POST','GET','PUT','PATCH','DELETE']});
   app.use(cookieParser()) // to parse the cookie  in the request
   const config = new DocumentBuilder().setTitle('Contracts Management')
