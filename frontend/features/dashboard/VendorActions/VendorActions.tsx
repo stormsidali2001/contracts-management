@@ -5,14 +5,15 @@ import Check from '@mui/icons-material/Check';
 import { Save } from '@mui/icons-material';
 import axios from 'axios';
 import {useEffect} from 'react';
+import useAxiosPrivate from '../../../hooks/auth/useAxiosPrivate';
 const VendorActions = ({params,rowId,setRowId}:any) => {
     const [loading,setLoading] = useState(false);
     const [success,setSuccess] = useState(false);
-
-    const handleSubmit = async ()=>{
+    const axiosPrivate = useAxiosPrivate();
+    const handleSubmit = async ()=>{    
         const {id,...others} = params.row;
             setLoading(true)
-            axios.put(`http://localhost:8080/api/vendors/${id}`,{
+            axiosPrivate.patch(`http://localhost:8080/api/vendors/${id}`,{
                 ...others
             })
             .then(res=>{
