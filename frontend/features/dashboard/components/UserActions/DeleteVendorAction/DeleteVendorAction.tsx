@@ -3,8 +3,6 @@ import {Box,CircularProgress, Button} from '@mui/material';
 import {useState} from 'react';
 import Check from '@mui/icons-material/Check';
 import { DeleteForever, Save } from '@mui/icons-material';
-import axios from 'axios';
-import {useEffect} from 'react';
 import { useAppDispatch } from '../../../../../hooks/redux/hooks';
 import { showSnackbar } from '../../../../ui/UiSlice';
 import useAxiosPrivate from '../../../../../hooks/auth/useAxiosPrivate';

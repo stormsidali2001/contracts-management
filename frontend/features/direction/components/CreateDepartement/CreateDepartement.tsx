@@ -79,7 +79,6 @@ const CreateDepartement = ({
                 title,
                 abriviation,
                 users:0,
-                id:new Date().toString()
             })
             handleCloseDepartementModal();
         }
