@@ -1,11 +1,10 @@
 import styles from './SelectVendor.module.css'
 import {  Button, Fab, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Step, StepLabel, TextField, Typography ,Modal,Stack} from '@mui/material';
-import FilterIcon from '../../../../icons/FilterIcon';
 import {useState,useEffect} from 'react';
 import { useDebounce } from '../../../../hooks/useDebounce.hook';
 import { DataGrid, GridColumns, GridSortItem, GridSortModel } from '@mui/x-data-grid';
-import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import axios from 'axios';
+import useAxiosPrivate from '../../../../hooks/auth/useAxiosPrivate';
 
 const columns:GridColumns<any> = [
 
@@ -59,6 +58,7 @@ const SelectVendor = ({handleClose,selectVendor}:PropType) => {
     const {debounce} = useDebounce();
     const [queryOptions, setQueryOptions] = useState<{ sortModel:GridSortItem[] | null}>({sortModel:null});
     const [selectedVendor,setSelectedVendor] = useState<any>(null)
+    const axiosPrivate = useAxiosPrivate();
     const handleSearch = (e:any)=>{
         const {value} = e.target;
         debounce(()=>setSearchQuery(value),1000)
@@ -80,7 +80,7 @@ const SelectVendor = ({handleClose,selectVendor}:PropType) => {
       params+= `&searchQuery=${searchQuery}`;
     }
     setPageState((old:any)=>({...old,isLoading:true}))
-         axios.get(`http://localhost:8080/api/vendors?offset=${pageState.page}&limit=${pageState.pageSize}${params}`)
+      axiosPrivate.get(`http://localhost:8080/api/vendors?offset=${pageState.page}&limit=${pageState.pageSize}${params}`)
         .then((res:any)=>{
             const {data:d} = res;
             console.log(1,d)
