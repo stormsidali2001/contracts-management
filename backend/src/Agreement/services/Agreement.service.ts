@@ -112,6 +112,10 @@ export class AgreementService implements OnModuleInit{
             directionAbriviation:direction.abriviation,
             createdAt:new Date()
         },departement.id)
+        await this.userNotificationService.IncrementAgreementsStats({
+            operation:Operation.INSERT,
+            type:res.type.toUpperCase() as unknown as Entity,
+        },departement.id)
         return res;
     }
 

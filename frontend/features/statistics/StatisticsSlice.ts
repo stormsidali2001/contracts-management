@@ -84,6 +84,15 @@ const StatisticsSlice = createSlice(
             },
             newVendorStats:(state,action:PayloadAction<{vendorsStats:VendorStats}>)=>{
                 state.vendorsStats = action.payload.vendorsStats;
+            },
+            newAgreement:(state,action:PayloadAction<{type:Entity,operation:Operation}>)=>{
+                if(!state.agreementsStats) return;
+                if(action.payload.type === Entity.CONTRACT){
+                    state.agreementsStats.types.contract++;
+                }else if(action.payload.type === Entity.CONVENSION){
+                    state.agreementsStats.types.convension++;
+                }
+                state.agreementsStats.status.not_executed++;
             }
            
         },
@@ -135,6 +144,6 @@ const StatisticsSlice = createSlice(
     }
 )
 
-export const {newCreatedUserEvent,newVendorStats} = StatisticsSlice.actions;
+export const {newCreatedUserEvent,newVendorStats,newAgreement} = StatisticsSlice.actions;
 
 export default StatisticsSlice;
