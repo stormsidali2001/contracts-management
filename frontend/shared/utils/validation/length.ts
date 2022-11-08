@@ -24,8 +24,8 @@ export const validateDepartementAbriviationLength:ValidatorFn = (text:string):bo
 }
 
 export const validateFirstName:ValidatorFn = (text:string):boolean=>{
-    return _validateLength(text,{ min:5 })
+    return _validateLength(text,{ min:3 })
 }
 export const validateLastName:ValidatorFn = (text:string):boolean=>{
-    return _validateLength(text,{ min:5 })
+    return _validateLength(text,{ min:3 })
 }
