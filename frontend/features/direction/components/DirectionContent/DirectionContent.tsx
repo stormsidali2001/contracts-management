@@ -70,7 +70,6 @@ const DirectionContent = () => {
 
   }
   const handleDeleteDepartement =  (id:string,directionId:string)=>{
-    alert("fired with id "+id)
      
      axiosPrivate.delete("/departements/"+id)
      .then(res=>{
@@ -87,7 +86,6 @@ const DirectionContent = () => {
 
   }
   const handleDeleteDirection =  (directionId:string)=>{
-    alert("fired with id "+directionId)
      
      axiosPrivate.delete("/directions/"+directionId)
      .then(res=>{

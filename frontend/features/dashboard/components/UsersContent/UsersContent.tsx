@@ -131,17 +131,7 @@ const UsersContent = () => {
         ]
 
         const extra:GridColumns<any> = [...original,
-            {
-                field:"actions1",
-                headerName:"suppression",
-                type:"actions",
-                renderCell:(params)=>{
-        
-                    return (
-                        <DeleteUserAction deleteRow={deleteRow} {...{params}}/>
-                    )
-                }
-            },
+           
             {
                 field:"actions",
                 headerName:"mise a jour",
@@ -151,6 +141,17 @@ const UsersContent = () => {
                     return (
 
                             <UserActions {...{params,rowId,setRowId}}/>
+                    )
+                }
+            },
+            {
+                field:"actions1",
+                headerName:"suppression",
+                type:"actions",
+                renderCell:(params)=>{
+        
+                    return (
+                        <DeleteUserAction deleteRow={deleteRow} {...{params}}/>
                     )
                 }
             },
