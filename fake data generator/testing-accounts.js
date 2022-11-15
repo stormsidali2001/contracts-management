@@ -56,12 +56,22 @@ async function generateUsers(directions){
                         role:"JURIDICAL",
                         password: '123456',
         }
+        const user4 = {
+                        username: "admin1.admin1",
+                        firstName:"admin1",
+                        lastName:"admin1",
+                        email: "admin1@gmail.com",
+                        role:"ADMIN",
+                        password: '123456',
+        }
         console.log(user1)
         console.log(user2)
         console.log(user3)
+        console.log(user4)
         arr.push(axios.post("http://localhost:8080/api/auth/register/test",{...user1},{headers:{'Content-Type':'application/json'}}))
         arr.push(axios.post("http://localhost:8080/api/auth/register/test",{...user2},{headers:{'Content-Type':'application/json'}}))
         arr.push(axios.post("http://localhost:8080/api/auth/register/test",{...user3},{headers:{'Content-Type':'application/json'}}))
+        arr.push(axios.post("http://localhost:8080/api/auth/register/test",{...user4},{headers:{'Content-Type':'application/json'}}))
     }
     try{
 
