@@ -201,6 +201,15 @@ node agreements.js 500
   password: '123456'
 }
 {
+  username: 'admin1.admin1',
+  firstName: 'admin1',
+  lastName: 'admin1',
+  email: 'admin1@gmail.com',
+  role: 'ADMIN',
+  password: '123456'
+}
+
+{
   username: 'juridical.adala',
   firstName: 'juridical',
   lastName: 'adala',
@@ -208,6 +217,7 @@ node agreements.js 500
   role: 'JURIDICAL',
   password: '123456'
 }
+
 
  ```
 
