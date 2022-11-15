@@ -49,7 +49,10 @@ const Topbar = () => {
       case '/settings':
         return "Parametres";
     }
-    if(pathname.includes("/users") )return "utilisateur"
+    if(pathname.includes("/users") )return "un utilisateur"
+    if(pathname.includes("/convensions") )return "une convension"
+    if(pathname.includes("/contracts") )return "un contrat"
+    if(pathname.includes("/vendors") )return "un fournisseur"
   }
   return (
     <div className={styles.container}>
