@@ -175,13 +175,7 @@ function deleteRow(vendorId:string){
     <div className={styles.container}>
         <div className={styles.wrapperBox}>
             <div className={styles.searchContainer}>
-                <Button 
-                    startIcon ={<FilterIcon/>}  
-                    size='small' 
-                    color='secondary' 
-                    variant="contained" 
-                    className={styles.advancedButton}>Avancée</Button>
-              
+            
           
                 <TextField 
                     placeholder='mot clé...' color='secondary' 
@@ -205,7 +199,7 @@ function deleteRow(vendorId:string){
                 rows={pageState.data}
                 rowCount={pageState.total}
                 loading={pageState.isLoading}
-                rowsPerPageOptions={[5,10,20]}
+                rowsPerPageOptions={[5]}
                 pagination
                 page={pageState.page}
                 pageSize={pageState.pageSize}

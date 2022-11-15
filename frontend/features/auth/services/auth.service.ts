@@ -20,8 +20,8 @@ const login = async (user:LoginUser):Promise<{user:DisplayUser| null , jwt:strin
            
 }
 
-const logout = async ()=>{
-    await axiosPrivate.post("auth/logout");
+const logout = async ({axios_instance}:{axios_instance:AxiosInstance})=>{
+    await axios_instance.post("auth/logout");
 }
 
 const refresh = async ()=>{

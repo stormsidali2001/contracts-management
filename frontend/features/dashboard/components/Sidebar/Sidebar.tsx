@@ -1,12 +1,26 @@
 import { Button } from '@mui/material';
-import { BMT_LOGO_URL, sidebarLinks } from '../../data';
+import { BMT_LOGO_URL } from '../../data';
 import styles from './Sidebar.module.css';
 import {useState , useEffect,useLayoutEffect} from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import MainDashboardIcon from '../../../../icons/MainDashboardIcon';
+import DirectionsIcon from '../../../../icons/DirectionsIcon';
+import UsersIcon from '../../../../icons/UsersIcon';
+import VendorsIcon from '../../../../icons/VendorsIcon';
+import ConvensionIcon from '../../../../icons/ConvensionIcon';
+import ContractsIcon from '../../../../icons/ContractsIcon';
+const sidebarLinks = [
+   {text:"Accueil" , icon:()=><MainDashboardIcon/>,link:"/"},
+   {text:"Directions" , icon:()=><DirectionsIcon/>,link:"/directions"},
+   {text:"Utilisateurs" , icon:()=><UsersIcon/>,link:"/users"},
+   {text:"Fournisseurs" , icon:()=><VendorsIcon/>,link:"/vendors"},
+   {text:"Convensions" , icon:()=><ConvensionIcon/>,link:"/convensions"},
+   {text:"Contrats" , icon:()=><ContractsIcon/>,link:"/contracts"},
+];
+
 const Sidebar = () => {
   
-
     const router = useRouter();
     const {pathname} = router;
     const index = sidebarLinks.findIndex(l=>pathname === l.link );        

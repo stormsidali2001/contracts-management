@@ -257,7 +257,7 @@ const UsersContent = () => {
                 rows={pageState.data}
                 rowCount={pageState.total}
                 loading={pageState.isLoading}
-                rowsPerPageOptions={[5,10,20]}
+                rowsPerPageOptions={[5]}
                 pagination
                 page={pageState.page}
                 pageSize={pageState.pageSize}

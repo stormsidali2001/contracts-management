@@ -1,4 +1,4 @@
-import { Button, TextField } from '@mui/material';
+import { Button, TextField, useMediaQuery } from '@mui/material';
 import { Stack } from '@mui/system';
 import { MobileDatePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
@@ -19,7 +19,7 @@ const MainDashboard = () => {
   const dispatch = useAppDispatch(); 
   const axiosPrivate = useAxiosPrivate();
   const {end_date,start_date} = useAppSelector(state=>state.StatisticsSlice)
-  
+  const isMedium = useMediaQuery('(max-width: 900px)');
   useEffect(()=>{
     dispatch(getStatistics({axiosInstance:axiosPrivate}) )
   },[])
@@ -28,12 +28,32 @@ const MainDashboard = () => {
         
       <div></div>
         <div className={styles.contentWrapper}>
-            <AgreementStatsCard/>
-            <div className={styles.middleCard}>
-                <VendorsCard />
-                <UsersCard />
-            </div>
-            <LastEventsCard/>
+          {
+            isMedium ?(
+              <>
+              <div className={styles.middleCard}>
+                  <VendorsCard />
+                  <UsersCard />
+              </div>
+              <div className={styles.flexy}>
+               <AgreementStatsCard/>
+              <LastEventsCard/>
+
+              </div>
+              </>
+
+            ):(
+              <>
+              <AgreementStatsCard/>
+              <div className={styles.middleCard}>
+                  <VendorsCard />
+                  <UsersCard />
+              </div>
+              <LastEventsCard/>
+              </>
+            )
+          }
+           
         </div>
     </div>
   )

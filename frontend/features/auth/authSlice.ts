@@ -79,9 +79,9 @@ export const refresh_token = createAsyncThunk(
 
 export const logout = createAsyncThunk(
     'auth/logout',
-    async (_,thunkAPI)=>{
+    async ({axios_instance}:{axios_instance:AxiosInstance},thunkAPI)=>{
         try{
-            return await authService.logout();
+            return await authService.logout({axios_instance});
         }catch(err){
            
             return  err;

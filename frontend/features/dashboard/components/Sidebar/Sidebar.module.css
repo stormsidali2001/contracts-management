@@ -16,7 +16,8 @@
   display: flex;
   column-gap: 10px;
   cursor: pointer;
-  margin-left: 0;
+  align-items: center;
+  margin-left: 5px;
   transition: all 300ms ease;
   border-radius: 5px;
   padding: 5px 0;
@@ -32,13 +33,13 @@
     content: '';
     width: 8px;
     background-color: #17498ed8;
-    transform: translateY(-5px);
+    transform: translateY(0px);
     height: calc(100% + 10px);
     left: 0;
 }
 .link > span {
     color:var(--primary-text-contrast);
-    font-size: 14px;
+    font-size: clamp(7px, 12px, 14px);;
     font-style: normal;
     font-weight: 400;
 }
@@ -52,4 +53,21 @@
     height: inherit;
     object-fit: contain;
 
+}
+@media screen and (max-width : 900px) {
+    .link > span {
+       display: none;
+    }
+    .logo {
+        width: 30px;
+        height: 30px;
+        margin-left: -10px !important;
+    }
+    
+      .active{
+          /* background-color: aqua; */
+          position: relative;
+          background-color: #17498e3f;
+         
+      }
 }
