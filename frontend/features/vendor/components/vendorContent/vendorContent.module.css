@@ -70,22 +70,23 @@ text-align: center;
 .vendorContentItem{
     display: flex;
     column-gap: 10px;
+    width: 100%;
 }
 .vendorContentItem > span:nth-of-type(1){
     font-family: 'Poppins';
     font-style: normal;
     font-weight: 500;
-    font-size: 16px;
+    font-size: 14px;
     line-height: 24px;
     color: #807D7D;
 }
-.vendorContentItem > span::nth-of-type(2){
+.vendorValueItem{
     font-family: 'Poppins';
     font-style: normal;
     font-weight: 400;
-    font-size: 12px;
-    line-height: 22px;
-    color: #1E1D1D;
+    font-size: 14px;
+    line-height: 24px;
+    word-wrap: break-word;
 }
 .content{
     display: flex;
@@ -142,4 +143,20 @@ text-align: center;
 .editInput:focus{
     outline:none;
     border:1px solid #17498E;
+}
+
+@media screen and (max-width: 900px){
+    .vendorCard{
+        overflow-y: auto;
+    }
+    .container{
+        flex-direction: column-reverse;
+        padding-top: 50px;
+        padding-bottom: 30px;
+        row-gap: 30px;
+    }
+    .right{
+        flex-direction: row;
+        column-gap:30px;
+    }
 }

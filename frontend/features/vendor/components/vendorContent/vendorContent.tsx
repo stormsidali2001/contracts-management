@@ -14,7 +14,7 @@ const VendorContent = () => {
     const {user} = useAppSelector(state=>state.auth)
     const [editMode,setEditMode] = useState(false)
     const [loading,setLoading] = useState(false)
-    const axiosPrivate = useAxiosPrivate();
+    const axiosPrivate = useAxiosPrivate({});
     const router = useRouter();
     const [vendor,setVendor] = useState<any>(null)
     const dispatch = useAppDispatch();
@@ -185,7 +185,7 @@ function Field({edit, value,onChange}:any){
               <input type="text" className={styles.editInput} value={value} onChange={onChange} />
           ):(
 
-              <span className={styles.vendorContentItem}>{value}</span>
+              <span className={styles.vendorValueItem}>{value}</span>
           )}
       </>
   )
