@@ -17,7 +17,7 @@ const PopoverContent = () => {
         {text:"Parametres" , link:"/settings",icon:SettingsIcon},
     ],[user?.sub])
     
-    const axiosPrivate = useAxiosPrivate();
+    const axiosPrivate = useAxiosPrivate({withResponseInterceptor:false});
     function handleLogout(e:any){
         e.preventDefault();
         dispatch(logout({axios_instance:axiosPrivate}))

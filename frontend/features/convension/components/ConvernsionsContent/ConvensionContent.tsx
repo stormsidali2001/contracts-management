@@ -107,7 +107,7 @@ const ConvensionsContent = () => {
     const {debounce} = useDebounce();
     const {user} = useAppSelector(state=>state.auth)
     const [searchQuery,setSearchQuery] = useState('');
-    const axiosPrivate = useAxiosPrivate();
+    const axiosPrivate = useAxiosPrivate({});
     const handleSortModelChange = (sortModel: GridSortModel)=> {
         // Here you save the data you need from the sort model
         setQueryOptions({ sortModel: [...sortModel] });

@@ -23,7 +23,7 @@ const DirectionContent = () => {
   const handleOpenDepartementUsersModal = ()=>setOpenDepartementUsers(true)
   const handleCloseDepartementUsersModal = ()=>setOpenDepartementUsers(false)
   const {user} = useAppSelector(state=>state.auth)
-  const axiosPrivate = useAxiosPrivate();
+  const axiosPrivate = useAxiosPrivate({});
   const [directions,setDirections] = useState<Direction[]>([]);
   const dispatch = useAppDispatch();
   //departement modal state ----------------

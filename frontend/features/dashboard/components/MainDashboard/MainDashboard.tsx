@@ -17,7 +17,7 @@ import styles from './MainDashboard.module.css';
 const MainDashboard = () => {
   
   const dispatch = useAppDispatch(); 
-  const axiosPrivate = useAxiosPrivate();
+  const axiosPrivate = useAxiosPrivate({});
   const {end_date,start_date} = useAppSelector(state=>state.StatisticsSlice)
   const isMedium = useMediaQuery('(max-width: 900px)');
   useEffect(()=>{

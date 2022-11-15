@@ -102,7 +102,7 @@ const ContractsContent = () => {
     });
     const {user} = useAppSelector(state=>state.auth);
     const [searchQuery,setSearchQuery] = useState('');
-    const axiosPrivate = useAxiosPrivate();
+    const axiosPrivate = useAxiosPrivate({});
     const {debounce} = useDebounce();
     const [queryOptions, setQueryOptions] = useState<{ sortModel:GridSortItem[] | null}>({sortModel:null});
     const [open, setOpen] = useState(false);

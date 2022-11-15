@@ -24,7 +24,7 @@ const UserProfile = () => {
     const [isImageUploading,setIsImageUploading] = useState(false)
     const [imageFile,setImageFile] = useState<any>(null)
     const [imageUploadProgress,setImageUploadProgress] = useState(0)
-    const privateAxios = useAxiosPrivate();
+    const privateAxios = useAxiosPrivate({});
     const dispatch = useAppDispatch();
 
 
