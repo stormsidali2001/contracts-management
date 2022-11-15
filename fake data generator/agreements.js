@@ -31,7 +31,7 @@ const format = (d)=>{
 function createRandomAgreement(directionId,departementId,vendorId) {
     const now = new Date();
     return {
-        number:`${randomChar()}${randomChar()}${new Array(8).fill(0).map(()=>(Math.floor(Math.random()*9)))}`,
+        number:new Array(10).fill(0).map(()=>randomChar()).join(''),
         type: Math.random() > 0.5 ? 'contract':'convension',
         amount:Math.floor(Math.random()*1000 + 200),
         signature_date:format(now),

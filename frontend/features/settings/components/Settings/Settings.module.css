@@ -5,6 +5,7 @@
     height: calc(100% - 60px);
 }
 
+
 .card{
     background: #FFFFFF;
     box-shadow: 0px 1.52532px 6.86392px rgba(23, 73, 142, 0.6);
@@ -69,7 +70,7 @@
     font-size: 16px;
     color: #807D7D;
    
-    padding: 0 auto;
+    padding: 10px auto;
     text-align: left;
 }
 
@@ -86,4 +87,20 @@
     font-size: 15.6224px;
     line-height: 23px;
     color: #1E1D1D;
+}
+
+@media screen and (max-width: 900px){
+    .container{
+        flex-direction: column;
+        overflow-y: scroll;
+        row-gap: 60px;
+        justify-content: start;
+        padding: 40px 0 60px 0;
+
+    }
+    .card{
+        height: fit-content;
+        padding: 20px;
+    }
+
 }

@@ -17,7 +17,7 @@ const Settings = () => {
   const handleOpenRecieveNotificationsModal = ()=>setRecieveNotificationsModalOpen(false)
   const handleCloseRecieveNotificationsModal = ()=>setRecieveNotificationsModalOpen(true)
   const dispatch = useAppDispatch();
-  const axiosPrivate = useAxiosPrivate();
+  const axiosPrivate = useAxiosPrivate({});
   const {user,isLoading} = useAppSelector(state=>state.auth);
   const handleNotificationChange = ()=>{
     dispatch(selectRecieveNotifications({axios_instance:axiosPrivate}))
