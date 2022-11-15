@@ -140,8 +140,8 @@ export class AuthService{
             }
     }
 
-    async logout(userId:string):Promise<void>{
-         this.userService.findAndUpdate(userId,{refresh_token_hash:null})
+    async logout(userId:string){
+        return  await this.userService.findAndUpdate(userId,{refresh_token_hash:null})
     }
     async forgotPassword({email}:ForgotPasswordDTO){
         const userDb = await this.userService.findByEmailWithToken(email);

@@ -65,11 +65,10 @@ export class AuthController{
         return {access_token:tokens.access_token} ;
     }
 
-    @UseGuards(JwtRefreshTokenGuard)
+    @UseGuards(JwtAccessTokenGuard)
     @Post('logout')
     async logout(@CurrentUserId() id:string){
-        await this.authService.logout(id);
-        return "done"
+        return await this.authService.logout(id);
     }
 
     @Post('forgot-password')
