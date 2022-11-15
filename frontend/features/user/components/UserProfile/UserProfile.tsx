@@ -70,14 +70,21 @@ const UserProfile = () => {
 
       }
       let imageUrl =""
-     if( res){
+     if( res?.data){
        console.log(res)
-       setIsImageUploading(false);
        imageUrl = res.data.filename
+       setIsImageUploading(false);
      }
 
    
     setLoading(true)
+    console.log("update user :",{
+        email:user.email,
+        username:user.username,
+        firstName:user.firstName,
+        lastName:user.lastName,
+        imageUrl
+    })
     privateAxios.put(`http://localhost:8080/api/users/${user.id}`,{
         email:user.email,
         username:user.username,

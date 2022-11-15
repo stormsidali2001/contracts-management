@@ -28,7 +28,7 @@ import { StatisticsModule } from './statistics/statistics.module';
     port:+process.env.MYSQL_DATABASE_PORT,
     database:process.env.MYSQL_DATABASE_NAME,
     synchronize:true,
-    logging:true,
+    // logging:true,
     autoLoadEntities:true,
 
     }),

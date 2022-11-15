@@ -143,7 +143,7 @@ export class UserService{
     async updateUserUniqueCheck(id:string,newUser:UpdateUserDTO , currentUserId:string):Promise<UpdateResult>{
        
             const currentUser = await this.userRepository.findOneBy({id:currentUserId})
-           
+            if(!currentUser) throw new InternalServerErrorException("connected user not found")
             const userDb = await this.userRepository.createQueryBuilder('user')
             .select(['user.password','user.email','user.username','user.id','user.firstName','user.lastName','user.imageUrl','user.role','user.departementId','user.directionId'])
             .where('user.username = :username or user.email = :email',{username:newUser.username,email:newUser.email})
