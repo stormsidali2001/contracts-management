@@ -3,6 +3,8 @@
     height: calc(100% - 60px);
     display: grid;
     grid-template-rows: 15% auto;
+    overflow-y: auto;
+    padding-bottom: 50px;
 
 }
 .contentWrapper{
@@ -11,6 +13,8 @@
     justify-items: center;
    
 }
+
+
 .middleCard{
     display: flex;
     flex-direction: column;
@@ -18,8 +22,34 @@
 }
 .datesContainer{
     width: 100%;
-    border: 1px solid red;
     display: flex;
     justify-content: center;
     margin: 20px 0;
+}
+
+
+@media screen and (max-width: 900px) {
+  
+    .contentWrapper{
+        grid-template-columns: 1fr ;
+    }
+   .middleCard{
+    flex-direction: row-reverse;
+    justify-content: center;
+    align-items: center;
+    padding: 30px 0;
+   }
+    
+   
+}
+/* @media screen and (max-width: 769px) {
+    .contentWrapper{
+        grid-template-columns: 1fr ;
+    }
+    
+} */
+
+.flexy{
+    display: flex;
+    column-gap: 30px;
 }

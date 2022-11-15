@@ -8,7 +8,7 @@
 }
 
 .wrapperBox{
-    width: 791px;
+    width: 80%;
     box-shadow: 0px 1.52532px 6.86392px rgba(23, 73, 142, 0.6);
     border-radius: 15.2532px;
     padding: 10px;
@@ -24,6 +24,7 @@
     padding-left: 20px;
     padding-top: 7px;
     align-items: center;
+    width: 80%;
 }
 .advancedButton{
     box-shadow: none !important;
@@ -38,7 +39,7 @@
    
 }
 .input{
-    width: 485.01px;
+    width:100%;
     height: 36.46px;
 }
 .input:hover{

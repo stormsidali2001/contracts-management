@@ -1,4 +1,5 @@
 import { Badge, Button, IconButton, Popover } from '@mui/material'
+import { useRouter } from 'next/router'
 import { MouseEvent, useId ,useState } from 'react'
 import { useAppSelector } from '../../../../hooks/redux/hooks'
 import LittleChevronIcon from '../../../../icons/LittleChevronIcon'
@@ -9,6 +10,8 @@ import styles from './Topbar.module.css'
 
 const Topbar = () => {
   const {notifications} = useAppSelector(state=>state.notification)
+  const router = useRouter();
+  const {pathname} = router
   const popoverId = useId();
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const popoverIdNotification = useId();
@@ -29,10 +32,29 @@ const Topbar = () => {
     setAnchorElNotification(null);
   };
 
+  const getStringFromPathName = ()=>{
+    switch(pathname){
+      case '/':
+        return "Tableau de board";
+      case '/directions':
+        return "les directions";
+      case '/vendors':
+        return "les fournisseurs"
+      case '/users':
+        return "les utilisateurs";
+      case '/contracts':
+        return "les contrats"
+      case '/convensions':
+        return "Les convensions";
+      case '/settings':
+        return "Parametres";
+    }
+    if(pathname.includes("/users") )return "utilisateur"
+  }
   return (
     <div className={styles.container}>
        <div className={styles.indications}>
-            <span>Tableau de Bord</span>
+            <span>{getStringFromPathName()}</span>
             <span>{user?.role ?? ''}</span>
        </div>
        <div className={styles.rightButtons}>

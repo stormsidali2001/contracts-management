@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { useAppDispatch, useAppSelector } from '../../../../../hooks/redux/hooks';
 import { logout } from '../../../../auth/authSlice';
 import { useMemo } from 'react';
+import useAxiosPrivate from '../../../../../hooks/auth/useAxiosPrivate';
 
 const PopoverContent = () => {
     const dispatch = useAppDispatch();
@@ -16,9 +17,10 @@ const PopoverContent = () => {
         {text:"Parametres" , link:"/settings",icon:SettingsIcon},
     ],[user?.sub])
     
+    const axiosPrivate = useAxiosPrivate();
     function handleLogout(e:any){
         e.preventDefault();
-        dispatch(logout())
+        dispatch(logout({axios_instance:axiosPrivate}))
     }
   return (
     <div className={styles.container}>

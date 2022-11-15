@@ -153,8 +153,9 @@ export class UserService{
             if(!userDb) throw new NotFoundException("l'utilisateur n'existe pas")
             if(currentUser.role !== UserRole.ADMIN && userDb.id  !== currentUser.id) throw new ForbiddenException("permission denied")
             if(userDb && userDb.id !== id) throw new ForbiddenException("username et l'email   exists deja")
-   
-             const res = await  this.userRepository.update(id,newUser)
+             const {imageUrl} = newUser
+             if(!imageUrl) delete newUser.imageUrl
+             const res = await  this.userRepository.update(id,{...newUser})
              await this.notificationService.emitDataToAdminsOnly({
                 entity:userDb.role as unknown as Entity,
                 entityId:id,
