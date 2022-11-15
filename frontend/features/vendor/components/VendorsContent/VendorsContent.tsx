@@ -135,7 +135,7 @@ const handleSortModelChange = (sortModel: GridSortModel)=> {
     }
   }
 
-const privateAxiosPrivate = useAxiosPrivate();
+const privateAxiosPrivate = useAxiosPrivate({});
 
 useEffect( ()=>{
    

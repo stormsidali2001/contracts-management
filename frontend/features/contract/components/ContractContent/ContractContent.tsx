@@ -17,7 +17,7 @@ interface PropType{
 const ContractContent = ({type , agreementId}:PropType) => {
 
   const {user} = useAppSelector(state=>state.auth)
-  const axiosPrivate = useAxiosPrivate();
+  const axiosPrivate = useAxiosPrivate({});
  
   const [contract,setContract] = useState<any>(null);
   const [openExecutionModal,setOpenExecutionModal] = useState(false)

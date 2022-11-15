@@ -20,7 +20,7 @@ import { Stack } from '@mui/system';
 
 const UsersContent = () => {
     const [filterModalOpen,setFilterModalOPen] = useState(false)
-    const axiosPrivate = useAxiosPrivate();
+    const axiosPrivate = useAxiosPrivate({});
     const [pageState,setPageState] = useState<any>({
         isLoading:false,
         data:[],
