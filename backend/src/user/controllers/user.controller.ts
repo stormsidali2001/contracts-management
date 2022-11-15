@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Put, Query, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Logger, Param, ParseIntPipe, Patch, Put, Query, UseGuards } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { IsNotEmpty } from "class-validator";
 import { CurrentUserId } from "src/auth/decorators/currentUserId.decorator";
@@ -49,10 +49,10 @@ export class UserController{
         return await this.userService.deleteUser(id);
     }
 
-    @RequiredRoles(UserRole.ADMIN)
-    @UseGuards(JwtAccessTokenGuard,RoleGuard)
+    @UseGuards(JwtAccessTokenGuard)
     @Put(':id')
     async updateUser(@Param('id') id:string,@Body() user:UpdateUserDTO ,@CurrentUserId() currentUserId:string):Promise<UpdateResult>{
+        Logger.debug("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
         return await this.userService.updateUserUniqueCheck(id,user,currentUserId)
     }
 

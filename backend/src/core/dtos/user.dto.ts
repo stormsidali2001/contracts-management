@@ -97,6 +97,11 @@ export class UpdateUserDTO{
     @IsOptional()
     active:boolean;    
 
+    @ApiPropertyOptional({type:'string',example:true})
+    @IsOptional()
+    @IsNotEmpty()
+    imageUrl:string;    
+
    
 }
 
