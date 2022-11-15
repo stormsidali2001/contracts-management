@@ -7,7 +7,10 @@ interface PropType{
     withResponseInterceptor?:boolean;
     withRequestInterceptor?:boolean;
 }
-const useAxiosPrivate  = ({withRequestInterceptor = true,withResponseInterceptor = true}:PropType)=>{
+const useAxiosPrivate  = (props:PropType)=>{
+    const withRequestInterceptor = props?.withRequestInterceptor === false ? false :true;  
+    const withResponseInterceptor = props?.withResponseInterceptor  === false ? false :true;  
+     
     const dispatch = useAppDispatch()
     const {jwt} = useAppSelector(state=>state.auth)
     useEffect(()=>{
