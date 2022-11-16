@@ -47,7 +47,7 @@ export class VendorController{
     @RequiredRoles(UserRole.JURIDICAL)
     @UseGuards(JwtAccessTokenGuard,RoleGuard)
     @Patch(':id')
-    async updateVendor(@Param('id') id:string,@Body() newVendor:UpdateVendorDTO):Promise<UpdateResult>{
+    async updateVendor(@Param('id') id:string,@Body() newVendor:UpdateVendorDTO){
         return await this.vendorService.updateVendor(id,newVendor)
     }
 

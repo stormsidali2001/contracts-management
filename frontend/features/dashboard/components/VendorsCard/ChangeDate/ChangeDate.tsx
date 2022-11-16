@@ -21,16 +21,24 @@ const ChangeDate = ({start_date,end_date,handleClose}:PropType) => {
   const [byEndDate,setByEndDate] = useState(false)
   const [startDate,setStartDate] = useState(start_date)
   const [endDate,setEndDate] = useState(end_date)
-  const axiosPrivate = useAxiosPrivate();
+  const axiosPrivate = useAxiosPrivate({});
   const dispatch = useAppDispatch();
 
   const handleSubmitFilters = ()=>{
- 
-  
+       let st = startDate
+       let ed = endDate
+      if(startDate && !byStartDate)  {
+         st = null;
+         setStartDate(null)
+      }
+      if(endDate && !byEndDate){
+         ed = null;
+         setEndDate(null);
+      }
       dispatch(getStatisticsIntervall({
          axiosInstance:axiosPrivate,
-         startDate:startDate ?format(startDate.toDate()) :undefined,
-         endDate:endDate ?format(endDate.toDate()) :undefined
+         startDate:st ?format(st.toDate()) :undefined,
+         endDate:ed ?format(ed.toDate()) :undefined
       }))
    handleClose();
    
@@ -92,7 +100,7 @@ const ChangeDate = ({start_date,end_date,handleClose}:PropType) => {
     </div>
     
         <Stack direction="row" className={styles.actionButtons}>
-          <Button disabled={!byStartDate && !byEndDate}  onClick={()=>handleSubmitFilters()}>Appliquer</Button>
+          <Button disabled={!startDate && !endDate}  onClick={()=>handleSubmitFilters()}>Appliquer</Button>
           
             <Button onClick={()=>handleClose()}>Fermer</Button>
         </Stack>

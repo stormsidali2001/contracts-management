@@ -135,8 +135,10 @@ const StatisticsSlice = createSlice(
                 state.userTypes = action.payload.data.userTypes;
                 state.vendorsStats = action.payload.data.vendorsStats;
                 state.agreementsStats = action.payload.data.agreementsStats;
-                if(action.payload.startDate) state.start_date = dayjs(action.payload.startDate);
-                if(action.payload.endDate) state.end_date = dayjs(action.payload.endDate);
+                if(action.payload.startDate) state.start_date = dayjs(action.payload.startDate)
+                else state.start_date = null;
+                if(action.payload.endDate) state.end_date = dayjs(action.payload.endDate)
+                else state.end_date = null;
 
             })
         }
