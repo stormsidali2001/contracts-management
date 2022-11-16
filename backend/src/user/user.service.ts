@@ -260,7 +260,7 @@ export class UserService{
          
          )
          const userDb = await this.userRepository.createQueryBuilder('u')
-         .where('u.id = :userdId',{userId})
+         .where('u.id = :userId',{userId})
          .leftJoinAndSelect('u.departement','dp')
          .leftJoinAndSelect('u.direction','dr')
          .getOne();
@@ -294,7 +294,7 @@ export class UserService{
     }
     async recieveNotifications( userId:string,recieve_notifications:boolean){
         const userDb = await this.userRepository.createQueryBuilder('u')
-        .where('u.id = :userdId',{userId})
+        .where('u.id = :userId',{userId})
         .leftJoinAndSelect('u.departement','dp')
         .leftJoinAndSelect('u.direction','dr')
         .getOne()
