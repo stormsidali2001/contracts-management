@@ -223,15 +223,43 @@ export class UserService{
         })
     }
     async deleteUserPasswordToken(id:string,userId:string){
+        const userDb = await this.userRepository.createQueryBuilder('user')
+        .select(['user.password','user.email','user.username','user.id','user.firstName','user.lastName','user.imageUrl','user.role','user.departementId','user.directionId'])
+        .where('user.id = :userId',{userId})
+        .leftJoinAndSelect('user.departement','dp')
+        .leftJoinAndSelect("user.direction",'dr')
+        .getOne();
+        const departement = userDb?.departement;
+        const direction = userDb?.direction;
          await this.dataSource.transaction(async manager =>{
 
              const userRepository = manager.getRepository(UserEntity);
              const passwordTokenRepository = manager.getRepository(PasswordTokenEntity);
              await userRepository.update(userId,{password_token:null})
-             await  passwordTokenRepository.delete(id)
+             await  passwordTokenRepository.delete(id);
+               //send notification to admins
+      
+             await this.notificationService.emitDataToAdminsOnly({
+                entity:userDb.role as unknown as Entity,
+                entityId:id,
+                operation:Operation.DELETE,
+                departementId:userDb.departementId,
+                directionId:userDb.directionId,
+                departementAbriviation:userDb?.departement?.abriviation ?? "",
+                directionAbriviation:userDb?.direction?.abriviation ?? ""
+             })
 
          }
          )
+         const adminUsers = await this.userRepository.createQueryBuilder('u')
+         .where('u.role = :userRole',{userRole:UserRole.ADMIN})
+         .getMany();
+         const extraMessage = departement && direction ?`au ${departement.abriviation} de ${direction.abriviation}`:"";
+         const notifications:NotificationBody[] = adminUsers.map(u=>({userId:u.id,message:`l'utilisateur ${userDb.email} de type ${userDb.role} est supprimé ${extraMessage} avec success`}));
+         
+         if(notifications.length > 0) await this.notificationService.sendNotifications(notifications);
+         await this.notificationService.emitDataToAdminsOnly({entity:userDb.role as unknown as Entity,operation:Operation.DELETE,departementId:departement.id,directionId:direction.id,entityId:userDb.id,departementAbriviation:departement?.abriviation ?? "",directionAbriviation:direction?.abriviation ?? ""})
+         await this.notificationService.IncrementUsersStats({type:userDb.role as unknown as Entity,operation:Operation.DELETE});
 
       
         
@@ -253,7 +281,7 @@ export class UserService{
          .where('u.id = :userdId',{userId})
          .leftJoinAndSelect('u.departement','dp')
          .leftJoinAndSelect('u.direction','dr')
-         .getOne()
+         .getOne();
          await this.notificationService.emitDataToAdminsOnly({
             entity:userRole as unknown as Entity ,
             entityId:userId,
@@ -263,6 +291,17 @@ export class UserService{
             departementAbriviation:userDb?.departement?.abriviation ?? "",
             directionAbriviation:userDb?.direction?.abriviation ?? ""
          })
+         const adminUsers = await this.userRepository.createQueryBuilder('u')
+         .where('u.role = :userRole',{userRole:UserRole.ADMIN})
+         .getMany();
+         const departement = userDb?.departement;
+         const direction = userDb?.direction;
+         const extraMessage = departement && direction ?`au ${departement.abriviation} de ${direction.abriviation}`:"";
+         const notifications:NotificationBody[] = adminUsers.map(u=>({userId:u.id,message:`l'utilisateur ${userDb.email} de type ${userDb.role} est mise a jour ${extraMessage} avec success`}));
+         
+         if(notifications.length > 0) await this.notificationService.sendNotifications(notifications);
+         await this.notificationService.emitDataToAdminsOnly({entity:userDb.role as unknown as Entity,operation:Operation.UPDATE,departementId:departement.id,directionId:direction.id,entityId:userDb.id,departementAbriviation:departement?.abriviation ?? "",directionAbriviation:direction?.abriviation ?? ""})
+         await this.notificationService.IncrementUsersStats({type:userDb.role as unknown as Entity,operation:Operation.UPDATE});
 
            
 
