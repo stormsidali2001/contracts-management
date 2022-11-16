@@ -150,6 +150,8 @@ export class UserService{
             .leftJoinAndSelect('user.departement','dp')
             .leftJoinAndSelect("user.direction",'dr')
             .getOne();
+            const departement = userDb?.departement;
+            const direction = userDb?.direction;
             if(!userDb) throw new NotFoundException("l'utilisateur n'existe pas")
             if(currentUser.role !== UserRole.ADMIN && userDb.id  !== currentUser.id) throw new ForbiddenException("permission denied")
             if(userDb && userDb.id !== id) throw new ForbiddenException("username et l'email   exists deja")
@@ -165,6 +167,15 @@ export class UserService{
                 departementAbriviation:userDb?.departement?.abriviation ?? "",
                 directionAbriviation:userDb?.direction?.abriviation ?? ""
              })
+             const adminUsers = await this.userRepository.createQueryBuilder('u')
+             .where('u.role = :userRole',{userRole:UserRole.ADMIN})
+             .getMany();
+             const extraMessage = departement && direction ?`au ${departement.abriviation} de ${direction.abriviation}`:"";
+             const notifications:NotificationBody[] = adminUsers.map(u=>({userId:u.id,message:`l'utilisateur ${userDb.email} de type ${userDb.role}  ${extraMessage} est mis a jour avec success`}));
+             
+             if(notifications.length > 0) await this.notificationService.sendNotifications(notifications);
+             await this.notificationService.emitDataToAdminsOnly({entity:userDb.role as unknown as Entity,operation:Operation.UPDATE,departementId:departement?.id,directionId:direction?.id,entityId:userDb.id,departementAbriviation:departement?.abriviation ?? "",directionAbriviation:direction?.abriviation ?? ""})
+             await this.notificationService.IncrementUsersStats({type:userDb.role as unknown as Entity,operation:Operation.UPDATE});
 
              return res;
     }
@@ -305,19 +316,25 @@ export class UserService{
     }
 
     async deleteUser(userId:string){
-        const userDb = await this.userRepository.createQueryBuilder('user')
-        .select(['user.password','user.email','user.username','user.id','user.firstName','user.lastName','user.imageUrl','user.role','user.departementId','user.directionId'])
-        .where('user.id = :userId',{userId})
-        .leftJoinAndSelect('user.departement','dp')
-        .leftJoinAndSelect("user.direction",'dr')
+        const userDb = await this.userRepository.createQueryBuilder('u')
+        .where('u.id = :userId',{userId})
+        .leftJoinAndSelect('u.departement','dp')
+        .leftJoinAndSelect("u.direction",'dr')
         .getOne();
         const departement = userDb?.departement;
         const direction = userDb?.direction;
+        Logger.debug(userId+"---->"+JSON.stringify(userDb),'deleteUser')
         if(!userDb) throw new NotFoundException("l'utilisateur n'est pas trouvé")
+
+       
         await this.dataSource.transaction(async manager =>{
+
+            Logger.debug("transaction started----------------","deleteUser/transaction")
+
             const userRepository = manager.getRepository(UserEntity);
             const notificationRepository = manager.getRepository(NotificationEntity)
 
+          
             await notificationRepository.createQueryBuilder()
             .delete()
             .where('notifications.userId = :userId',{userId})
@@ -326,11 +343,12 @@ export class UserService{
             .delete()
             .where('users.id = :userId',{userId})
             .execute();
+            Logger.debug("transaction ended------------","deleteUser/transaction")
             
         })
         await this.notificationService.emitDataToAdminsOnly({
-            entity:userDb.id as unknown as Entity ,
-            entityId:userId,
+            entity:userDb.role as unknown as Entity ,
+            entityId:userDb.role,
             operation:Operation.DELETE,
             directionId:direction?.id,
             departementId:departement?.id,
