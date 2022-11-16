@@ -244,8 +244,8 @@ export class AgreementService implements OnModuleInit{
                 departementId:agreement.departementId,
                 directionId:agreement.directionId,
                 createdAt:new Date(),
-                departementAbriviation:agreement.departement.abriviation,
-                directionAbriviation:agreement.direction.abriviation
+                departementAbriviation:agreement?.departement?.abriviation ?? "",
+                directionAbriviation:agreement?.direction?.abriviation ?? ""
             },
             agreement.departementId
             )

@@ -96,7 +96,7 @@ export class VendorService{
         .loadRelationCountAndMap("vendor.convensionCount","vendor.agreements","agreements",qb=>qb.where("agreements.type = :agreementType",{agreementType:AgreementType.CONVENSION}))
         .getOne()
     }
-    async updateVendor(id:string,newVendor:UpdateVendorDTO):Promise<UpdateResult>{
+    async updateVendor(id:string,newVendor:UpdateVendorDTO){
             const {address,home_phone_number,mobile_phone_number,...uniques} = newVendor;
             let condition = '';
             const uniquesKeys = Object.keys(uniques);
@@ -109,7 +109,10 @@ export class VendorService{
             .getOne();
             if(vendorDb && vendorDb.id !== id ) throw new ForbiddenException("nif , nrc , company_name  ,num doit etre unique")
             
-        return this.vendorRepository.update(id,newVendor)
+        const res = await  this.vendorRepository.save({...newVendor,id})
+        await this.notificationService.sendEventToAllUsers({entity:Entity.VENDOR,operation:Operation.UPDATE,entityId:res.id,createdAt:new Date(),departementAbriviation:"",directionId:null,departementId:null,directionAbriviation:""})
+
+        return res;
     }
 
     async getVendorsStats({startDate,endDate}:StatsParamsDTO){
@@ -144,5 +147,6 @@ export class VendorService{
         .delete()
         .where('vendors.id = :vendorId',{vendorId})
         .execute()
+        await this.notificationService.sendEventToAllUsers({entity:Entity.VENDOR,operation:Operation.DELETE,entityId:vendorDb.id,createdAt:new Date(),departementAbriviation:"",directionId:null,departementId:null,directionAbriviation:""})
     }
 }
