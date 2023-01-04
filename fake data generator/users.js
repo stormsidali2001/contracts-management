@@ -23,16 +23,16 @@ function createRandomUser(directionId,departementId) {
  
  
 async function generateUsers(directions){
-    if(directions.length === 0 ) return ;
+    if(Object.keys(directions).length === 0 ) return ;
     const arr = [];
    
     for(let i=0;i<(process.argv.at(2) ?? 1);i++){
-        const randomDirection = randomElemenetFromArray(directions)
-        if(randomDirection.departements.length ===0) continue;
-        const randomDepartement = randomElemenetFromArray(randomDirection.departements);
-        const user = createRandomUser(randomDirection.id,randomDepartement.id)
+        const randomDirection = randomElemenetFromArray(Object.keys(directions))
+        if(directions[randomDirection]?.length === 0) continue;
+        const randomDepartement = randomElemenetFromArray(directions[randomDirection]);
+        const user = createRandomUser(randomDirection,randomDepartement)
         console.log(user)
-        arr.push(axios.post("http://localhost:8080/api/auth/register/test",{...user},{headers:{'Content-Type':'application/json'}}))
+        arr.push(axios.post("http://localhost:8080/api/auth/register",{...user},{headers:{'Content-Type':'application/json'}}))
     }
     try{
 
@@ -58,17 +58,32 @@ async function generateUsers(directions){
         });
 
         //i ignored the n+1 problem just because of the absence of an orm to ajust the entities
-        const [directions] = await connection.execute(`select * from directions`,[])
-        for(direction of directions ){
-            const [departements] = await connection.execute("select * from departements  where directionId = ?",[direction.id])
-            direction.departements = departements;
+        const [directionsRaw] = await connection.execute(`
+            select 
+            dr.id as directionId,
+            dp.id as departementId
 
-            
+            from directions dr inner join departements dp 
+            where dp.directionId = dr.id;
+        `,[])
+        console.log(directionsRaw)
+        const directions = {}
+        for( directionRaw of directionsRaw){
+           const {directionId,departementId}= directionRaw;
+           if(directions[directionId] === undefined) directions[directionId] = [departementId]
+           else directions[directionId].push(departementId)
+           
         }
-         generateUsers(directions)
+      
+        generateUsers(directions)
        
     }catch(err){
         console.error(err)
     }
      
 })()
+
+
+function getDirectionEntities(directionsRaw){
+
+}
