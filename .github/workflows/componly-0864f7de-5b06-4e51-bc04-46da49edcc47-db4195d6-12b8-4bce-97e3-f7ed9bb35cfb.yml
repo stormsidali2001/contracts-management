@@ -1,0 +1,61 @@
+
+name: componly-0864f7de-5b06-4e51-bc04-46da49edcc47-db4195d6-12b8-4bce-97e3-f7ed9bb35cfb
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        workspaces:
+          - ./frontend
+
+    continue-on-error: true
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3.5.3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v2.5.2
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        id: install-dependencies
+        run: |
+        
+                echo -e "\n@componly:registry=https://npm.pkg.github.com/" >> .npmrc
+                echo //npm.pkg.github.com/:_authToken=${{ secrets.COMPONLY_NPM_AUTH_TOKEN }} >> .npmrc
+                if [[ "${{ matrix.workspaces}}" != "empty" ]]; then
+                    pwd
+                    pushd ${{ matrix.workspaces }} 
+                    yarn install --no-lockfile && yarn add @componly/core  @componly/cli  @componly/schemas  axios -D --no-lockfile
+                    popd
+                else
+                    echo "No workspaces to install. Running 'yarn install' in the root directory."
+                    yarn install --no-lockfile && yarn  add @componly/core  @componly/cli  @componly/schemas  axios -D --no-lockfile
+                fi
+      
+      - name: Scan
+        id: componly-scan
+        env:
+          COMMIT_NAME: ${{ github.event.head_commit.message }}
+          RUN_ID: ${{ github.run_id }}
+          COMMIT_HASH: ${{ github.sha }}
+          STEP_OUTCOME: ${{ steps.componly-scan.outcome }}
+          JOB_NAME: ${{ github.job }}
+          REPO_NAME: ${{ github.repository }}
+          WORKFLOW_NAME: ${{ github.workflow }}
+          COMPONLY_BACKEND_URL: https://backend-production-e808.up.railway.app
+          COMPONLY_CLI_ENV: development
+        run: |
+          ls -a 
+          cd  ${{ matrix.workspaces }}   
+          npx componly scan --cli-id=${{secrets.COMPONLY_API_KEY}} --cli-password="${{secrets.COMPONLY_API_SECRET}}" --config-path ./   --project  ./
+
