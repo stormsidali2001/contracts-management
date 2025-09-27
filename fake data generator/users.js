@@ -32,7 +32,7 @@ async function generateUsers(directions){
         const randomDepartement = randomElemenetFromArray(directions[randomDirection]);
         const user = createRandomUser(randomDirection,randomDepartement)
         console.log(user)
-        arr.push(axios.post("http://localhost:8080/api/auth/register",{...user},{headers:{'Content-Type':'application/json'}}))
+        arr.push(axios.post("http://localhost:8080/api/auth/register/test",{...user},{headers:{'Content-Type':'application/json'}}))
     }
     try{
 
@@ -53,7 +53,7 @@ async function generateUsers(directions){
             host:'localhost',
             user:'root',
             database:'contracts_management',
-            password:'123456',
+            password:'root',
             Promise:bluebird
         });
 
