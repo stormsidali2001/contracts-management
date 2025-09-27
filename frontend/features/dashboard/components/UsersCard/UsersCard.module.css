@@ -1,93 +1,393 @@
-.container{
-    width: 241px;
-    height: 128.13px;
-    background: #FFFFFF;
-    box-shadow: 0px 1.52532px 6.86392px rgba(23, 73, 142, 0.2);
-    border-radius: 15.2532px;
+.container {
+    width: 280px;
+    height: 200px;
+    background: linear-gradient(135deg, #ffffff 0%, #fafbfc 100%);
+    border: 1px solid rgba(23, 73, 142, 0.08);
+    border-radius: 20px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    padding: 10px;
+    padding: 24px 18px;
+    position: relative;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
 }
-.title{
-    font-family: 'Poppins';
-    font-style: normal;
-    font-weight: 500;
-    font-size: 13.3333px;
-    color: #807D7D;
-    margin-left: 8px;
-    margin-top: -4px;
 
+.container:hover {
+    transform: translateY(-4px);
+    border-color: rgba(23, 73, 142, 0.12);
 }
-.numUsers{
-    text-align: center;
-    font-family: 'Poppins';
+
+.container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #4F46E5 0%, #7C3AED 50%, #EC4899 100%);
+    border-radius: 20px 20px 0 0;
+}
+
+.title {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     font-style: normal;
-    font-weight: 500;
-    font-size: 26.67px;
-    color: rgba(65, 62, 62, 0.89);
+    font-weight: 600;
+    font-size: 16px;
+    color: #1e293b;
+    margin-left: 0;
+    margin-top: 8px;
+    background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 50%, #EC4899 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
-.percentages{
+
+.numUsers {
+    text-align: center;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-style: normal;
+    font-weight: 700;
+    font-size: 36px;
+    color: #1e293b;
+    margin: 16px 0;
+    position: relative;
+}
+
+.numUsers::after {
+    content: 'utilisateurs';
+    position: absolute;
+    bottom: -18px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 12px;
+    font-weight: 500;
+    color: #64748b;
+}
+
+.percentages {
     display: flex;
     align-items: center;
     justify-content: space-around;
-
+    padding: 12px 0;
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 12px;
+    border: 1px solid rgba(23, 73, 142, 0.06);
 }
-.percentage{
+
+.percentage {
     display: flex;
     align-items: center;
-    column-gap: 10px;
-}
-.percentage > span{
-    color:rgba(65, 62, 62, 0.89);
-    font-family: 'Poppins';
-    font-style: normal;
-    font-weight: 500;
-    font-size: 10px;
+    column-gap: 8px;
+    padding: 4px 8px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
 }
 
-.expandedCard{
-    width: 100vw;
-    height:100vh;
-    background: #FFFFFF;
-    box-shadow: 0px 1.52532px 6.86392px rgba(23, 73, 142, 0.3);
-    border-radius: 15.2532px;
-
-    cursor: pointer;
-    position: absolute;
-   
-    top:0;
-    left:0;
-    padding: 20px;
-
-    z-index: 9;
-  
-  }
- 
-  .chartContainer{
-    width: 100%;
-    height:90%;
-    display: flex;
-    justify-content: center;
-    padding-left: 0;
-  
-    
-}
-.datesContainer{
-    display: flex;
-    justify-content: center;
-}
-.dateIntervalle{
-    display: flex;
-    align-items: center;
-    color:rgb(20, 19, 19)
-}
-.dateIntervalle > span:nth-last-of-type(2n + 1){
-    color:#807D7D;
-    font-size: 13px;
-    transition: ease-in-out 200ms;
-}
-.dateIntervalle > span:nth-last-of-type(2n + 1):hover{
+.percentage:hover {
+    background: rgba(23, 73, 142, 0.04);
     transform: scale(1.05);
+}
+
+.percentage > span {
+    color: #374151;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 12px;
+}
+
+/* Status indicators */
+.activeIndicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+    position: relative;
+}
+
+.activeIndicator::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.8);
+}
+
+.inactiveIndicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+    box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+    position: relative;
+}
+
+.inactiveIndicator::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.8);
+}
+
+/* Expand button */
+.expandButton {
+    position: absolute;
+    right: 18px;
+    top: 18px;
     cursor: pointer;
+    padding: 8px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, rgba(79, 70, 229, 0.1) 0%, rgba(236, 72, 153, 0.1) 100%);
+    color: #4F46E5;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(79, 70, 229, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+}
+
+.expandButton:hover {
+    background: linear-gradient(135deg, rgba(79, 70, 229, 0.2) 0%, rgba(236, 72, 153, 0.2) 100%);
+    transform: scale(1.05);
+    border-color: rgba(79, 70, 229, 0.25);
+}
+
+/* Expanded Card */
+.expandedCard {
+    width: 100vw;
+    height: 100vh;
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    border-radius: 0;
+    cursor: default;
+    position: fixed;
+    top: 0;
+    left: 0;
+    padding: 32px;
+    z-index: 1000;
+    overflow-y: auto;
+}
+
+.chartContainer {
+    width: 100%;
+    height: calc(100vh - 200px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: white;
+    border-radius: 16px;
+    border: 1px solid rgba(23, 73, 142, 0.08);
+    padding: 20px;
+    margin-top: 20px;
+}
+
+.datesContainer {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 24px;
+}
+
+.dateIntervalle {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: white;
+    padding: 12px 20px;
+    border-radius: 12px;
+    border: 1px solid rgba(23, 73, 142, 0.08);
+    color: #1f2937;
+    box-shadow: 0 2px 8px rgba(23, 73, 142, 0.05);
+}
+
+.dateIntervalle > span:nth-child(odd) {
+    color: #6b7280;
+    font-size: 14px;
+    font-weight: 500;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.dateIntervalle > span:nth-child(even) {
+    color: #1f2937;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    padding: 6px 12px;
+    background: linear-gradient(135deg, rgba(79, 70, 229, 0.06) 0%, rgba(236, 72, 153, 0.06) 100%);
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: 1px solid rgba(79, 70, 229, 0.1);
+}
+
+.dateIntervalle > span:nth-child(even):hover {
+    transform: scale(1.05);
+    background: linear-gradient(135deg, rgba(79, 70, 229, 0.1) 0%, rgba(236, 72, 153, 0.1) 100%);
+    border-color: rgba(79, 70, 229, 0.2);
+}
+
+.closeButton {
+    position: absolute;
+    right: 32px;
+    top: 32px;
+    width: 44px;
+    height: 44px;
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+    color: white;
+}
+
+.closeButton:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 16px rgba(239, 68, 68, 0.3);
+}
+
+.closeButton svg {
+    font-size: 20px;
+}
+
+/* Stats grid for expanded view */
+.statsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-bottom: 24px;
+}
+
+.statCard {
+    background: white;
+    border-radius: 16px;
+    padding: 20px;
+    border: 1px solid rgba(23, 73, 142, 0.08);
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.statCard:hover {
+    transform: translateY(-2px);
+    border-color: rgba(23, 73, 142, 0.15);
+}
+
+.statValue {
+    font-size: 32px;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 8px;
+}
+
+.statLabel {
+    font-size: 14px;
+    color: #64748b;
+    font-weight: 500;
+}
+
+/* Loading state */
+.loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: #6b7280;
+    font-size: 14px;
+}
+
+/* Pulse animation for active users indicator */
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4);
+    }
+    70% {
+        box-shadow: 0 0 0 6px rgba(16, 185, 129, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+    }
+}
+
+.activeIndicator.pulsing {
+    animation: pulse 2s infinite;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        width: 100%;
+        max-width: 320px;
+        height: 180px;
+        margin: 0 auto;
+        padding: 20px 16px;
+    }
+    
+    .title {
+        font-size: 15px;
+    }
+    
+    .numUsers {
+        font-size: 28px;
+        margin: 12px 0;
+    }
+    
+    .numUsers::after {
+        bottom: -16px;
+        font-size: 11px;
+    }
+    
+    .percentages {
+        padding: 8px 0;
+    }
+    
+    .percentage > span {
+        font-size: 11px;
+    }
+    
+    .expandedCard {
+        padding: 20px;
+    }
+    
+    .closeButton {
+        right: 20px;
+        top: 20px;
+        width: 40px;
+        height: 40px;
+    }
+    
+    .chartContainer {
+        height: calc(100vh - 150px);
+        padding: 15px;
+    }
+    
+    .statsGrid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+}
+
+/* Accessibility improvements */
+.container:focus-within {
+    border-color: rgba(79, 70, 229, 0.3);
+}
+
+.expandButton:focus,
+.closeButton:focus,
+.dateIntervalle > span:focus {
+    outline: 2px solid rgba(79, 70, 229, 0.3);
+    outline-offset: 2px;
 }

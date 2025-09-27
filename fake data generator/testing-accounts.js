@@ -92,7 +92,7 @@ async function generateUsers(directions){
             host:'localhost',
             user:'root',
             database:'contracts_management',
-            password:'123456',
+            password:'root',
             Promise:bluebird
         });
 
