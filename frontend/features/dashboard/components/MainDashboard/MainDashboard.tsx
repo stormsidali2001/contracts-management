@@ -25,10 +25,6 @@ const MainDashboard = () => {
   },[])
   return (
     <div className={styles.container}>
-        
-        {
-          !isMedium && <div></div>
-        }
         <div className={styles.contentWrapper}>
           {
             isMedium ?(

@@ -3,6 +3,7 @@ const faker = require("@faker-js/faker").faker;
 const mysql = require('mysql2/promise');
 const bluebird = require('bluebird');
 faker.locale = 'fr';
+require('dotenv').config();
 
 
 function randomChar(){

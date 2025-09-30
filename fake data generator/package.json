@@ -12,6 +12,7 @@
     "@faker-js/faker": "^7.5.0",
     "axios": "^0.27.2",
     "bluebird": "^3.7.2",
+    "dotenv": "^17.2.2",
     "mysql": "^2.18.1",
     "mysql2": "^2.3.3"
   }

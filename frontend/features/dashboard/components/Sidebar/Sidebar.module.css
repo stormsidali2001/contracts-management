@@ -4,7 +4,7 @@
     background: linear-gradient(145deg, 
         rgba(255, 255, 255, 0.95) 0%, 
         rgba(248, 250, 252, 0.95) 100%);
-    backdrop-filter: blur(20px) saturate(1.8);
+    backdrop-filter: blur(18px) saturate(1.6);
     border-right: 1px solid rgba(255, 255, 255, 0.2);
     box-shadow: 
         0 8px 32px rgba(0, 0, 0, 0.08),
@@ -28,7 +28,7 @@
     top: 0;
     left: 0;
     right: 0;
-    height: 3px;
+    height: 2px;
     background: linear-gradient(
         90deg, 
         #667eea 0%, 
