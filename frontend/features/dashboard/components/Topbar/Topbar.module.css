@@ -5,15 +5,8 @@
     justify-content: space-between;
     align-items: center;
     padding: 0 24px;
-    background: linear-gradient(135deg,
-        rgba(255, 255, 255, 0.9) 0%,
-        rgba(248, 250, 252, 0.9) 100%);
-    backdrop-filter: blur(18px) saturate(1.6);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 
-        0 4px 12px rgba(0, 0, 0, 0.08),
-        0 1px 3px rgba(0, 0, 0, 0.04);
     position: relative;
+    backdrop-filter: blur(18px) saturate(1.6);
     z-index: 10;
     transition: all 0.3s ease;
 }
@@ -27,8 +20,7 @@
     right: 0;
     height: 2px;
     background: linear-gradient(90deg,
-        #667eea, #764ba2, #f093fb, #f5576c, #4facfe);
-    background-size: 300% 100%;
+    #667eea, #764ba2, #f093fb, #f5576c, #4facfe);
     animation: gradientShift 6s ease infinite;
 }
 

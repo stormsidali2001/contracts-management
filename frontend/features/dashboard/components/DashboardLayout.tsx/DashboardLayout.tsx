@@ -24,17 +24,15 @@ const DashboardLayout = ({children}:any) => {
 
   },[jwt])
   return (
-    <div className={styles.container}>
-    <Sidebar/>
-    <div className={styles.content}>
-        <Topbar/>
-        <WithSnackbar>
-          {children}
-        </WithSnackbar>
-        
+    <div className={styles.layout}>
+      <Sidebar />
+      <div className={styles.content}>
+        <Topbar />
+        <WithSnackbar>{children}</WithSnackbar>
+      </div>
     </div>
-  </div>
-  )
+  );
+  
 }
 
 export default DashboardLayout
