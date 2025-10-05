@@ -1,4 +1,4 @@
-/* Interface Moderne des Directions - Style Néomorphisme & Glassmorphisme */
+/* Interface Moderne des Directions - Style avec Couleur Primaire #17498E */
 
 .container {
     width: 100%;
@@ -20,6 +20,8 @@
     left: -50%;
     width: 200%;
     height: 200%;
+
+    
     z-index: -1;
 }
 
@@ -47,11 +49,11 @@
     right: 0;
     height: 3px;
     background: linear-gradient(90deg, 
-        #6366f1 0%, 
-        #8b5cf6 25%, 
-        #ec4899 50%, 
-        #06b6d4 75%, 
-        #10b981 100%);
+        #17498E 0%, 
+        #1e5bb3 25%, 
+        #2563eb 50%, 
+        #1e5bb3 75%, 
+        #17498E 100%);
     background-size: 300% 100%;
     animation: gradientFlow 8s ease-in-out infinite;
 }
@@ -90,9 +92,9 @@
     right: 0;
     height: 2px;
     background: linear-gradient(90deg, 
-        rgba(99, 102, 241, 0.3) 0%, 
-        rgba(236, 72, 153, 0.2) 50%,
-        rgba(16, 185, 129, 0.3) 100%);
+        rgba(23, 73, 142, 0.3) 0%, 
+        rgba(30, 91, 179, 0.2) 50%,
+        rgba(23, 73, 142, 0.3) 100%);
     border-radius: 1px;
 }
 
@@ -118,9 +120,9 @@
 
 .directionsWrapper::-webkit-scrollbar-thumb {
     background: linear-gradient(180deg, 
-        rgba(99, 102, 241, 0.6) 0%, 
-        rgba(139, 92, 246, 0.6) 50%,
-        rgba(236, 72, 153, 0.6) 100%);
+        rgba(23, 73, 142, 0.6) 0%, 
+        rgba(30, 91, 179, 0.6) 50%,
+        rgba(37, 99, 235, 0.6) 100%);
     border-radius: 12px;
     border: 2px solid rgba(255, 255, 255, 0.1);
     transition: all 0.3s ease;
@@ -128,9 +130,9 @@
 
 .directionsWrapper::-webkit-scrollbar-thumb:hover {
     background: linear-gradient(180deg, 
-        rgba(99, 102, 241, 0.8) 0%, 
-        rgba(139, 92, 246, 0.8) 50%,
-        rgba(236, 72, 153, 0.8) 100%);
+        rgba(23, 73, 142, 0.8) 0%, 
+        rgba(30, 91, 179, 0.8) 50%,
+        rgba(37, 99, 235, 0.8) 100%);
     transform: scale(1.1);
 }
 
@@ -155,28 +157,25 @@
 
 .departementsWrapper::-webkit-scrollbar-thumb {
     background: linear-gradient(180deg, 
-        rgba(99, 102, 241, 0.4) 0%, 
-        rgba(236, 72, 153, 0.4) 100%);
+        rgba(23, 73, 142, 0.4) 0%, 
+        rgba(30, 91, 179, 0.4) 100%);
     border-radius: 8px;
     border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .departementsWrapper::-webkit-scrollbar-thumb:hover {
     background: linear-gradient(180deg, 
-        rgba(99, 102, 241, 0.6) 0%, 
-        rgba(236, 72, 153, 0.6) 100%);
+        rgba(23, 73, 142, 0.6) 0%, 
+        rgba(30, 91, 179, 0.6) 100%);
 }
-
-
 
 .MuiAccordion-root::before {
     display: none !important;
 }
 
-
 .MuiAccordion-root.Mui-expanded {
     background: rgba(255, 255, 255, 0.2) !important;
-    border-color: rgba(99, 102, 241, 0.3) !important;
+    border-color: rgba(23, 73, 142, 0.3) !important;
 }
 
 .MuiAccordionSummary-root {
@@ -193,8 +192,8 @@
 }
 
 .MuiAccordionSummary-root.Mui-expanded {
-    background: rgba(99, 102, 241, 0.1) !important;
-    border-bottom: 1px solid rgba(99, 102, 241, 0.2) !important;
+    background: rgba(23, 73, 142, 0.1) !important;
+    border-bottom: 1px solid rgba(23, 73, 142, 0.2) !important;
 }
 
 .MuiAccordionSummary-content {
@@ -202,13 +201,13 @@
 }
 
 .MuiAccordionSummary-expandIconWrapper {
-    color: #6366f1 !important;
+    color: #17498E !important;
     transition: all 0.3s ease !important;
 }
 
 .MuiAccordionSummary-expandIconWrapper.Mui-expanded {
     transform: rotate(180deg) scale(1.1) !important;
-    color: #8b5cf6 !important;
+    color: #1e5bb3 !important;
 }
 
 .MuiAccordionDetails-root {
@@ -230,17 +229,17 @@
     border: 1px solid rgba(255, 255, 255, 0.3) !important;
     border-radius: 12px !important;
     padding: 8px 16px !important;
-    color: #6366f1 !important;
+    color: #17498E !important;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
     text-transform: none !important;
     font-weight: 500 !important;
 }
 
 .MuiButton-root:hover {
-    background: rgba(99, 102, 241, 0.15) !important;
-    border-color: rgba(99, 102, 241, 0.4) !important;
+    background: rgba(23, 73, 142, 0.15) !important;
+    border-color: rgba(23, 73, 142, 0.4) !important;
     transform: translateY(-1px) !important;
-    box-shadow: 0 8px 25px rgba(99, 102, 241, 0.2) !important;
+    box-shadow: 0 8px 25px rgba(23, 73, 142, 0.2) !important;
 }
 
 .MuiButton-root:active {
@@ -273,7 +272,7 @@
 
 .MuiTableCell-head {
     background: transparent !important;
-    color: #6366f1 !important;
+    color: #17498E !important;
     font-weight: 600 !important;
     text-transform: uppercase !important;
     font-size: 0.75rem !important;
@@ -285,7 +284,7 @@
 }
 
 .MuiTableRow-root:hover {
-    background: rgba(99, 102, 241, 0.05) !important;
+    background: rgba(23, 73, 142, 0.05) !important;
     transform: scale(1.01) !important;
 }
 
@@ -414,7 +413,7 @@
 /* Focus states pour l'accessibilité */
 .MuiButton-root:focus-visible,
 .MuiAccordionSummary-root:focus-visible {
-    outline: 2px solid #6366f1 !important;
+    outline: 2px solid #17498E !important;
     outline-offset: 2px !important;
 }
 

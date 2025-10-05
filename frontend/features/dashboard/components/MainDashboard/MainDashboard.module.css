@@ -5,6 +5,7 @@
     grid-template-rows: 15% auto;
     overflow-y: auto;
     padding-bottom: 50px;
+    padding-top: 20px;
 }
 
 .contentWrapper{

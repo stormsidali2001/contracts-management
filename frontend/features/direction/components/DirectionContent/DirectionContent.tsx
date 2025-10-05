@@ -113,7 +113,7 @@ const DirectionContent = () => {
     <div className={styles.container}>
         <div className={styles.wrapperBox}>
              <Stack direction="row" className={styles.departementsTitleWrapper}>
-             <Typography sx={{color:"#807D7D",paddingLeft:"10px"}}>Directions</Typography>
+             <Typography sx={{color:"#17498E",paddingLeft:"10px"}}>Directions</Typography>
                        { 
                        dispalayIfAdmin() &&<Button onClick={()=>handleDirectionModalOpen()}><AddCircleIcon /></Button>
                        }
@@ -215,7 +215,7 @@ const DirectionContent = () => {
             open={openDirectionModal}
             onClose={handleDirectionModalClose}
             aria-labelledby="modal-modal-title"
-            aria-describedby="modal-modal-description"
+            aria-describedby="modal-modal-description"      
       >
        
         <CreateDirection pushDirection={pushDirection} handleDirectionModalClose={handleDirectionModalClose}/>
