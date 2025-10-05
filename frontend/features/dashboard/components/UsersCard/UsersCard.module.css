@@ -25,7 +25,7 @@
     left: 0;
     right: 0;
     height: 3px;
-    background: linear-gradient(90deg, #4F46E5 0%, #7C3AED 50%, #EC4899 100%);
+    background: #17498E;
     border-radius: 20px 20px 0 0;
 }
 
@@ -37,7 +37,7 @@
     color: #1e293b;
     margin-left: 0;
     margin-top: 8px;
-    background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 50%, #EC4899 100%);
+    background: #17498E;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
