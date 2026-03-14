@@ -1,49 +1,283 @@
-.container{
-    width: 500px;
-    background-color: white;
-    box-shadow: 0px 1.52532px 6.86392px rgba(23, 73, 142, 0.6);
-    border-radius: 15.2532px;
+/* Modal Form - Style Glassmorphisme avec Couleur Primaire #17498E */
+
+.container {
+    width: min(500px, 90vw);
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(25px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 8px 32px rgba(23, 73, 142, 0.15),
+                0 2px 8px rgba(23, 73, 142, 0.1);
+    border-radius: 24px;
     position: absolute;
-    top:50%;
-    left:50%;
-    transform: translate(-50%,-50%);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     display: flex;
     flex-direction: column;
-    padding: 20px;
+    padding: 32px;
+    overflow: hidden;
+    animation: modalFadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
-.title{
-    font-size: 16px;
-    
+
+.container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, 
+        #17498E 0%, 
+        #1e5bb3 25%, 
+        #2563eb 50%, 
+        #1e5bb3 75%, 
+        #17498E 100%);
+    background-size: 300% 100%;
+    animation: gradientFlow 8s ease-in-out infinite;
 }
-.formElementsWrapper{
-    row-gap:20px;
-    
+
+.title {
+    font-size: 20px;
+    font-weight: 700;
+    font-family: 'Poppins', 'Inter', -apple-system, sans-serif;
+    color: #1f2937;
+    margin-bottom: 24px;
+    letter-spacing: -0.02em;
+    position: relative;
+    padding-bottom: 12px;
 }
-.actionButtonsContainer{
-    column-gap:30px;
+
+.title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(90deg, #17498E 0%, #2563eb 100%);
+    border-radius: 2px;
+}
+
+.formElementsWrapper {
+    display: flex;
+    flex-direction: column;
+    row-gap: 20px;
+}
+
+/* Style des inputs du formulaire */
+.formElementsWrapper :global(.MuiTextField-root) {
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.formElementsWrapper :global(.MuiTextField-root:hover) {
+    background: rgba(255, 255, 255, 0.8);
+}
+
+.formElementsWrapper :global(.MuiOutlinedInput-root) {
+    border-radius: 12px;
+}
+
+.formElementsWrapper :global(.MuiOutlinedInput-notchedOutline) {
+    border-color: rgba(23, 73, 142, 0.2) !important;
+    transition: all 0.3s ease;
+}
+
+.formElementsWrapper :global(.MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline) {
+    border-color: rgba(23, 73, 142, 0.4) !important;
+}
+
+.formElementsWrapper :global(.MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline) {
+    border-color: #17498E !important;
+    border-width: 2px !important;
+}
+
+.formElementsWrapper :global(.MuiInputLabel-root.Mui-focused) {
+    color: #17498E !important;
+    font-weight: 600;
+}
+
+.actionButtonsContainer {
+    display: flex;
+    column-gap: 16px;
     justify-content: center;
-    margin-top: 30px;
+    margin-top: 32px;
 }
-.departementsTitleWrapper{
+
+.actionButtonsContainer :global(.MuiButton-root) {
+    padding: 10px 24px;
+    border-radius: 12px;
+    font-family: 'Poppins', 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    text-transform: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    letter-spacing: -0.01em;
+    min-width: 120px;
+}
+
+.departementsTitleWrapper {
+    display: flex;
     align-items: center;
+    column-gap: 12px;
+    margin-top: 8px;
+    padding: 12px 0;
+    border-bottom: 2px solid rgba(23, 73, 142, 0.1);
 }
 
-.departements{
-    padding-left: 10px;
+.departementsTitleWrapper :global(.MuiTypography-root) {
+    font-family: 'Poppins', 'Inter', sans-serif;
+    font-weight: 600;
+    color: #17498E;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.departements {
+    padding-left: 16px;
     height: fit-content;
-    max-height: 100px;
+    max-height: 180px;
     overflow-y: auto;
+    margin-top: 12px;
+    background: rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(5px);
+    border-radius: 12px;
+    padding: 12px;
+    border: 1px solid rgba(23, 73, 142, 0.1);
 }
 
-.departements::-webkit-scrollbar{
-    width: 4px;
-   
+.departements::-webkit-scrollbar {
+    width: 6px;
 }
-.departements::-webkit-scrollbar-track{
-    background-color: rgba(23, 73, 142, 0.1);
-    border-radius: 10px;
+
+.departements::-webkit-scrollbar-track {
+    background: rgba(23, 73, 142, 0.05);
+    border-radius: 8px;
+    margin: 4px;
 }
-.departements::-webkit-scrollbar-thumb{
-    background-color: rgba(23, 73, 142, 0.4);
-    border-radius: 10px;
+
+.departements::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, 
+        rgba(23, 73, 142, 0.5) 0%, 
+        rgba(30, 91, 179, 0.5) 100%);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+}
+
+.departements::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, 
+        rgba(23, 73, 142, 0.7) 0%, 
+        rgba(30, 91, 179, 0.7) 100%);
+}
+
+/* Animations */
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -48%) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+
+@keyframes gradientFlow {
+    0%, 100% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+}
+
+/* Styles pour les checkboxes et radio buttons */
+.departements :global(.MuiCheckbox-root),
+.departements :global(.MuiRadio-root) {
+    color: rgba(23, 73, 142, 0.6);
+}
+
+.departements :global(.MuiCheckbox-root:hover),
+.departements :global(.MuiRadio-root:hover) {
+    background: rgba(23, 73, 142, 0.08);
+}
+
+.departements :global(.MuiCheckbox-root.Mui-checked),
+.departements :global(.MuiRadio-root.Mui-checked) {
+    color: #17498E;
+}
+
+.departements :global(.MuiFormControlLabel-root) {
+    margin: 4px 0;
+    padding: 4px 8px;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.departements :global(.MuiFormControlLabel-root:hover) {
+    background: rgba(23, 73, 142, 0.05);
+}
+
+.departements :global(.MuiFormControlLabel-label) {
+    font-family: 'Poppins', 'Inter', sans-serif;
+    font-size: 14px;
+    color: #374151;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .container {
+        width: 92vw;
+        padding: 24px;
+        border-radius: 20px;
+    }
+    
+    .title {
+        font-size: 18px;
+        margin-bottom: 20px;
+    }
+    
+    .formElementsWrapper {
+        row-gap: 16px;
+    }
+    
+    .actionButtonsContainer {
+        flex-direction: column;
+        row-gap: 12px;
+        margin-top: 24px;
+    }
+    
+    .actionButtonsContainer :global(.MuiButton-root) {
+        width: 100%;
+    }
+    
+    .departements {
+        max-height: 150px;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        width: 95vw;
+        padding: 20px;
+        border-radius: 16px;
+    }
+    
+    .title {
+        font-size: 16px;
+    }
+    
+    .departements {
+        max-height: 120px;
+        padding: 8px;
+    }
+}
+
+/* Focus states pour l'accessibilité */
+.actionButtonsContainer :global(.MuiButton-root:focus-visible) {
+    outline: 2px solid #17498E;
+    outline-offset: 2px;
 }

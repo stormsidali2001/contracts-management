@@ -1,73 +1,313 @@
-.container{
-    width: 241px;
-    height:200px;
-    background: #FFFFFF;
-    box-shadow: 0px 1.52532px 6.86392px rgba(23, 73, 142, 0.2);
-    border-radius: 15.2532px;
-    padding: 10px;
+.container {
+    width: 280px;
+    height: 280px;
+    background: linear-gradient(135deg, #ffffff 0%, #fafbfc 100%);
+    border: 1px solid rgba(23, 73, 142, 0.08);
+    border-radius: 20px;
+    padding: 24px 18px;
     display: flex;
     flex-direction: column;
-
+    row-gap: 16px;
+    position: relative;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
 }
-.title{
-    font-family: 'Poppins';
-    font-style: normal;
-    font-weight: 500;
-    font-size: 13.3333px;
-    color: #807D7D;
-    margin-left: 8px;
-    margin-top: -4px;
 
+.container:hover {
+    transform: translateY(-4px);
+    border-color: rgba(23, 73, 142, 0.12);
 }
-.chartContainer{
-    width: 100%;
-    height:90%;
-    display: flex;
-    justify-content: center;
-    padding-left: 0;
-  
-    
-}
-.chartContainer  .apexcharts-tooltip {
-    background: #f3f3f3;
-    color: orange;
-  }
 
-  .expandedCard{
-    width: 100vw;
-    height:100vh;
-    background: #FFFFFF;
-    box-shadow: 0px 1.52532px 6.86392px rgba(23, 73, 142, 0.3);
-    border-radius: 15.2532px;
-
+.container::before {
+    content: '';
     position: absolute;
-   
-    top:0;
-    left:0;
-    padding: 20px;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background:  #17498E;
+    border-radius: 20px 20px 0 0;
+}
 
-    z-index: 9;
-  
-  }
+.title {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 16px;
+    color: #1e293b;
+    margin-left: 0;
+    margin-top: 8px;
+    background: #17498E;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
 
-.datesContainer{
+.chartContainer {
+    width: 100%;
+    height: calc(100% - 60px);
     display: flex;
     justify-content: center;
+    align-items: center;
+    padding: 0;
+    flex: 1;
+    min-height: 0;
 }
-.dateIntervalle{
+
+.chartContainer .apexcharts-tooltip {
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%) !important;
+    border: 1px solid rgba(23, 73, 142, 0.15) !important;
+    border-radius: 8px !important;
+    box-shadow: 0 4px 20px rgba(23, 73, 142, 0.1) !important;
+    color: #374151 !important;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
+}
+
+.chartContainer .apexcharts-tooltip-title {
+    background: transparent !important;
+    border: none !important;
+    color: #1f2937 !important;
+    font-weight: 600 !important;
+}
+
+.chartContainer .apexcharts-tooltip-series-group {
+    background: transparent !important;
+}
+
+.expandedCard {
+    width: 100vw;
+    height: 100vh;
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    border-radius: 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    padding: 32px;
+    z-index: 1000;
+    overflow-y: auto;
+}
+
+.datesContainer {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 24px;
+}
+
+.dateIntervalle {
     display: flex;
     align-items: center;
-    color:rgb(20, 19, 19)
+    gap: 12px;
+    background: white;
+    padding: 12px 20px;
+    border-radius: 12px;
+    border: 1px solid rgba(23, 73, 142, 0.08);
+    color: #1f2937;
+    box-shadow: 0 2px 8px rgba(23, 73, 142, 0.05);
 }
-.dateIntervalle > span:nth-last-of-type(2n + 1){
-    color:#807D7D;
-    font-size: 13px;
-    transition: ease-in-out 200ms;
+
+.dateIntervalle > span:nth-child(odd) {
+    color: #6b7280;
+    font-size: 14px;
+    font-weight: 500;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 }
-.dateIntervalle > span:nth-last-of-type(2n + 1):hover{
+
+.dateIntervalle > span:nth-child(even) {
+    color: #1f2937;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    padding: 6px 12px;
+    background: linear-gradient(135deg, rgba(23, 73, 142, 0.06) 0%, rgba(255, 179, 89, 0.06) 100%);
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: 1px solid rgba(23, 73, 142, 0.1);
+}
+
+.dateIntervalle > span:nth-child(even):hover {
     transform: scale(1.05);
-    cursor: pointer;
+    background: linear-gradient(135deg, rgba(23, 73, 142, 0.1) 0%, rgba(255, 179, 89, 0.1) 100%);
+    border-color: rgba(23, 73, 142, 0.2);
 }
-.closeButton{
+
+.closeButton {
+    position: absolute;
+    right: 32px;
+    top: 32px;
+    width: 44px;
+    height: 44px;
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+    color: white;
+}
+
+.closeButton:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 16px rgba(239, 68, 68, 0.3);
+}
+
+.closeButton svg {
+    font-size: 20px;
+}
+
+/* Expand button for chart cards */
+.expandButton {
+    position: absolute;
+    right: 18px;
+    top: 18px;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, rgba(23, 73, 142, 0.1) 0%, rgba(255, 179, 89, 0.1) 100%);
+    color: #17498E;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(23, 73, 142, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+}
+
+.expandButton:hover {
+    background: linear-gradient(135deg, rgba(23, 73, 142, 0.2) 0%, rgba(255, 179, 89, 0.2) 100%);
+    transform: scale(1.05);
+    border-color: rgba(23, 73, 142, 0.25);
+}
+
+/* Enhanced chart container for expanded view */
+.expandedChartContainer {
+    width: 100%;
+    height: calc(100vh - 200px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: white;
+    border-radius: 16px;
+    border: 1px solid rgba(23, 73, 142, 0.08);
+    padding: 20px;
+}
+
+/* Chart styling improvements */
+.chartContainer .apexcharts-canvas {
+    border-radius: 12px;
+}
+
+.chartContainer .apexcharts-legend {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
+}
+
+.chartContainer .apexcharts-legend-text {
+    color: #374151 !important;
+    font-weight: 500 !important;
+}
+
+/* Loading state */
+.loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: #6b7280;
+    font-size: 14px;
+}
+
+/* Error state */
+.error {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    color: #ef4444;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    text-align: center;
+}
+
+.error svg {
+    width: 32px;
+    height: 32px;
+    margin-bottom: 8px;
+}
+
+.error p {
+    font-size: 12px;
+    margin: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        width: 100%;
+        max-width: 320px;
+        height: 260px;
+        margin: 0 auto;
+        padding: 20px 16px;
+    }
+    
+    .title {
+        font-size: 15px;
+    }
+    
+    .expandedCard {
+        padding: 20px;
+    }
+    
+    .closeButton {
+        right: 20px;
+        top: 20px;
+        width: 40px;
+        height: 40px;
+    }
+    
+    .closeButton svg {
+        font-size: 18px;
+    }
+    
+    .expandedChartContainer {
+        height: calc(100vh - 150px);
+        padding: 15px;
+    }
+    
+    .dateIntervalle {
+        flex-wrap: wrap;
+        gap: 8px;
+        padding: 10px 16px;
+    }
+}
+
+/* Accessibility improvements */
+.container:focus-within {
+    border-color: rgba(23, 73, 142, 0.3);
+}
+
+.expandButton:focus,
+.closeButton:focus,
+.dateIntervalle > span:focus {
+    outline: 2px solid rgba(23, 73, 142, 0.3);
+    outline-offset: 2px;
+}
+
+/* Animation for data updates */
+@keyframes dataUpdate {
+    0% {
+        opacity: 0.7;
+        transform: scale(0.98);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.chartContainer.updating {
+    animation: dataUpdate 0.5s ease-out;
 }

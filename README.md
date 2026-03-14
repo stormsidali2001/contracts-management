@@ -18,7 +18,7 @@ yarn
 ```
 npm install --global yarn
 ```
-### filling the .env file with credentials
+### filling the backend .env file with credentials
 > create a .env file in the backend directory 
 > use the .env-example template or copy paste the following code
 ```.env
@@ -42,6 +42,18 @@ CLIENT_PORT = 3000
 ### email service configuration
 ethereal_user = xxxxxxx@xxxx.com
 ethereal_password = password
+```
+
+### filling the fake data generator .env file with credentials
+> create a .env file in the fake data generator directory 
+> use the .env-example template or copy paste the following code
+```.env
+### mysql database connection credentials
+MYSQL_USERNAME =user1   
+MYSQL_PASSWORD =password
+MYSQL_DATABASE_HOST =localhost
+MYSQL_DATABASE_PORT =3306
+MYSQL_DATABASE_NAME =contracts_management
 ```
 
 ### launching the backend & frontend processes

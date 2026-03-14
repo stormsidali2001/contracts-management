@@ -3,6 +3,7 @@ const faker = require("@faker-js/faker").faker;
 const mysql = require('mysql2/promise');
 const bluebird = require('bluebird');
 faker.locale = 'fr';
+require('dotenv').config();
  
 
 
@@ -89,10 +90,10 @@ async function generateUsers(directions){
 (async function  main(){
     try{
         const connection = await mysql.createConnection({
-            host:'localhost',
-            user:'root',
-            database:'contracts_management',
-            password:'123456',
+            host:process.env.MYSQL_DATABASE_HOST,
+            user:process.env.MYSQL_USERNAME,
+            database:process.env.MYSQL_DATABASE_NAME,
+            password:process.env.MYSQL_PASSWORD,
             Promise:bluebird
         });
 
