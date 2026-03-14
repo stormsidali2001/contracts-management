@@ -5,21 +5,23 @@
     grid-template-rows: 15% auto;
     overflow-y: auto;
     padding-bottom: 50px;
-
+    padding-top: 20px;
 }
+
 .contentWrapper{
     display: grid;
-    grid-template-columns: repeat(3,auto);
+    grid-template-columns: 1.5fr 1fr 1.5fr; /* Augmente l'espace pour les colonnes 1 et 3 */
     justify-items: center;
-   
+    gap: 20px; /* Ajoute un espacement entre les colonnes */
+    padding: 0 20px;
 }
-
 
 .middleCard{
     display: flex;
     flex-direction: column;
-    gap:58px;
+    gap: 58px;
 }
+
 .datesContainer{
     width: 100%;
     display: flex;
@@ -27,29 +29,28 @@
     margin: 20px 0;
 }
 
-
 @media screen and (max-width: 900px) {
-  
     .contentWrapper{
-        grid-template-columns: 1fr ;
+        grid-template-columns: 1fr;
+        gap: 20px;
     }
-   .middleCard{
-    flex-direction: row-reverse;
-    justify-content: center;
-    align-items: center;
-    padding: 30px 0;
-   }
     
-   
+    .middleCard{
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: stretch;
+        padding: 30px 0;
+        gap: 20px;
+    }
+    
+    .flexy{
+        flex-direction: column;
+        gap: 20px;
+    }
 }
-/* @media screen and (max-width: 769px) {
-    .contentWrapper{
-        grid-template-columns: 1fr ;
-    }
-    
-} */
 
 .flexy{
     display: flex;
     column-gap: 30px;
+    width: 100%; /* Assure que le conteneur prend toute la largeur disponible */
 }
