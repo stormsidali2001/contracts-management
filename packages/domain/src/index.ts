@@ -18,7 +18,15 @@ export { ExecutionPeriod } from './agreement/agreement/value-objects/execution-p
 export { MoneyAmount } from './agreement/agreement/value-objects/money-amount';
 export { DocumentUrl } from './agreement/agreement/value-objects/document-url';
 export { Observation } from './agreement/agreement/value-objects/observation';
-export type { AgreementRepository } from './agreement/agreement/persistence/agreement-repository';
+export type {
+  AgreementRepository,
+  AgreementRecord,
+  AgreementEntityRef,
+  AgreementVendorRef,
+  ExecJobRecord,
+  AgreementFilterParams,
+  AgreementUserContext,
+} from './agreement/agreement/persistence/agreement-repository';
 export { AgreementExecutionService } from './agreement/agreement/services/agreement-execution.service';
 
 // ─── Vendor ──────────────────────────────────────────────────────────────────
@@ -30,7 +38,11 @@ export { CompanyName } from './vendor/vendor/value-objects/company-name';
 export { FiscalIdentifiers } from './vendor/vendor/value-objects/fiscal-identifiers';
 export { PhoneNumbers } from './vendor/vendor/value-objects/phone-numbers';
 export { Address } from './vendor/vendor/value-objects/address';
-export type { VendorRepository } from './vendor/vendor/persistence/vendor-repository';
+export type {
+  VendorRepository,
+  VendorSummary,
+  VendorStatsSummary,
+} from './vendor/vendor/persistence/vendor-repository';
 
 // ─── Organization ─────────────────────────────────────────────────────────────
 export { Direction } from './organization/direction/direction';
@@ -41,7 +53,15 @@ export { DirectionId } from './organization/direction/value-objects/direction-id
 export { DepartementId } from './organization/direction/value-objects/departement-id';
 export { OrganizationTitle } from './organization/direction/value-objects/organization-title';
 export { Abbreviation } from './organization/direction/value-objects/abbreviation';
-export type { DirectionRepository } from './organization/direction/persistence/direction-repository';
+export type {
+  DirectionRepository,
+  DirectionSummary,
+  DepartementInDirectionSummary,
+} from './organization/direction/persistence/direction-repository';
+export type {
+  DepartementRepository,
+  DepartementSummary,
+} from './organization/direction/persistence/departement-repository';
 
 // ─── Identity ────────────────────────────────────────────────────────────────
 export { User } from './identity/user/user';
