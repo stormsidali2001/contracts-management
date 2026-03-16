@@ -1,0 +1,557 @@
+/* ════════════════════════════════════════
+   CreateUser — Multi-step account creation modal
+   ════════════════════════════════════════ */
+
+/* ── Modal sheet ── */
+.container {
+  width: 560px;
+  max-width: calc(100vw - 32px);
+  background: var(--surface);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--border);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  max-height: calc(100vh - 48px);
+}
+
+/* ── Navy header band ── */
+.modalHeader {
+  background: var(--navy);
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.modalHeader::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: repeating-linear-gradient(
+    45deg,
+    rgba(255,255,255,0.025) 0px,
+    rgba(255,255,255,0.025) 1px,
+    transparent 1px,
+    transparent 14px
+  );
+  pointer-events: none;
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  z-index: 1;
+}
+
+.headerIcon {
+  width: 42px;
+  height: 42px;
+  background: rgba(255,255,255,0.10);
+  border: 1.5px solid rgba(255,255,255,0.18);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #fff;
+}
+
+.headerText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  z-index: 1;
+}
+
+.headerTitle {
+  font-family: 'Outfit', sans-serif;
+  font-size: 17px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: -0.2px;
+  line-height: 1.2;
+}
+
+.headerSubtitle {
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  color: rgba(255,255,255,0.60);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.headerStep {
+  display: flex;
+  align-items: baseline;
+  gap: 2px;
+  z-index: 1;
+  flex-shrink: 0;
+}
+
+.headerStepNum {
+  font-family: 'Outfit', sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1;
+}
+
+.headerStepOf {
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(255,255,255,0.50);
+}
+
+/* ── Custom stepper ── */
+.stepperContainer {
+  padding: 16px 28px 14px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border-subtle);
+  flex-shrink: 0;
+}
+
+.stepperRow {
+  display: flex;
+  align-items: flex-start;
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.stepCircle {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  background: var(--surface);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  transition: border-color 0.2s, background 0.2s, color 0.2s;
+  flex-shrink: 0;
+}
+
+.step.stepActive .stepCircle {
+  border-color: var(--navy-mid);
+  background: var(--navy-mid);
+  color: #fff;
+  box-shadow: 0 0 0 4px rgba(23,73,142,0.12);
+}
+
+.step.stepDone .stepCircle {
+  border-color: var(--navy-mid);
+  background: var(--navy-mid);
+  color: #fff;
+}
+
+.stepLabel {
+  font-family: 'Inter', sans-serif;
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--text-muted);
+  text-align: center;
+  white-space: nowrap;
+  transition: color 0.2s, font-weight 0.1s;
+  max-width: 60px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.step.stepActive .stepLabel {
+  color: var(--navy-mid);
+  font-weight: 700;
+}
+
+.step.stepDone .stepLabel {
+  color: var(--navy-mid);
+  font-weight: 600;
+}
+
+.stepLine {
+  flex: 1;
+  height: 2px;
+  background: var(--border-subtle);
+  margin-top: 13px;
+  transition: background 0.3s;
+}
+
+.stepLine.stepLineDone {
+  background: var(--navy-mid);
+}
+
+/* ── Step body ── */
+.body {
+  padding: 24px 28px;
+  min-height: 210px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  overflow-y: auto;
+}
+
+.body::-webkit-scrollbar { width: 4px; }
+.body::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+}
+
+/* ── Hint text ── */
+.stepHint {
+  font-family: 'Inter', sans-serif;
+  font-size: 12.5px;
+  color: var(--text-secondary);
+  margin: 0 0 4px;
+  line-height: 1.5;
+}
+
+/* ── Step 0: fields ── */
+.fieldGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* ── Step 1: profile + role ── */
+.profileStep {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.profileTopRow {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* Upload zone */
+.uploadZone {
+  width: 92px;
+  height: 92px;
+  border-radius: 50%;
+  border: 2px dashed var(--border);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--text-secondary);
+  font-family: 'Inter', sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  gap: 4px;
+  transition: border-color 0.15s, background 0.15s, color 0.15s;
+  overflow: hidden;
+  flex-shrink: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.uploadZone:hover {
+  border-color: var(--navy-mid);
+  background: var(--navy-light);
+  color: var(--navy-mid);
+}
+
+.uploadPreviewImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Profile preview card */
+.profilePreview {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: var(--bg);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  flex: 1;
+  min-width: 0;
+}
+
+.profilePreviewAvatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid var(--border);
+  flex-shrink: 0;
+}
+
+.profilePreviewAvatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profilePreviewInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.profilePreviewName {
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.profilePreviewRole {
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--navy-mid);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.profilePreviewEmail {
+  font-family: 'Inter', sans-serif;
+  font-size: 11.5px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Role section */
+.roleSectionLabel {
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.roleCards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.roleCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  padding: 14px 10px;
+  border-radius: 10px;
+  border: 1.5px solid var(--border-subtle);
+  background: var(--bg);
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s, box-shadow 0.15s, transform 0.1s;
+  user-select: none;
+}
+
+.roleCard:hover {
+  border-color: var(--navy-mid);
+  background: var(--navy-light);
+  transform: translateY(-1px);
+}
+
+.roleCardActive {
+  border-color: var(--navy-mid);
+  background: var(--navy-light);
+  box-shadow: 0 0 0 3px rgba(23,73,142,0.09);
+}
+
+.roleCardIcon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: rgba(23,73,142,0.07);
+  border: 1px solid rgba(23,73,142,0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--navy-mid);
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.roleCardActive .roleCardIcon {
+  background: rgba(23,73,142,0.18);
+  border-color: rgba(23,73,142,0.28);
+}
+
+.roleCardLabel {
+  font-family: 'Inter', sans-serif;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.roleCardDesc {
+  font-family: 'Inter', sans-serif;
+  font-size: 10.5px;
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+/* ── Step 2: direction ── */
+.directionStep {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* ── Step 3: validation ── */
+.validationStep {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 16px 0 8px;
+  min-height: 160px;
+  text-align: center;
+}
+
+.statusIcon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 4px;
+}
+
+.statusIconSuccess {
+  background: rgba(22,163,74,0.10);
+  color: #16a34a;
+}
+
+.statusIconError {
+  background: rgba(220,38,38,0.10);
+  color: #dc2626;
+}
+
+.statusTitle {
+  font-family: 'Outfit', sans-serif;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.statusSubtitle {
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  color: var(--text-secondary);
+  max-width: 300px;
+  line-height: 1.5;
+}
+
+.progressWrap {
+  width: 100%;
+  max-width: 260px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.progressLabel {
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  color: var(--text-secondary);
+  text-align: right;
+}
+
+/* ── Action row ── */
+.actionRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 24px;
+  border-top: 1px solid var(--border-subtle);
+  background: var(--surface-subtle, #F4F6FA);
+  flex-shrink: 0;
+}
+
+.backBtn {
+  height: 36px;
+  padding: 0 16px;
+  border-radius: 8px;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.backBtn:hover:not(:disabled) {
+  background: var(--bg);
+}
+
+.backBtn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.nextBtn {
+  height: 36px;
+  padding: 0 20px;
+  border-radius: 8px;
+  background: var(--navy-mid);
+  border: none;
+  color: #fff;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: background 0.15s, transform 0.1s, opacity 0.15s;
+}
+
+.nextBtn:hover:not(:disabled) {
+  background: var(--navy);
+  transform: translateY(-1px);
+}
+
+.nextBtn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.nextBtn:disabled {
+  opacity: 0.38;
+  cursor: not-allowed;
+}

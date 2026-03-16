@@ -1,0 +1,39 @@
+/* ── Wide modal (vendor agreements) ── */
+.container {
+  width: min(90vw, 900px);
+  max-height: 85vh;
+  background: var(--surface, #fff);
+  border-radius: var(--radius, 12px);
+  box-shadow: var(--shadow-lg, 0 8px 24px rgba(13,27,62,0.12));
+  border: 1px solid var(--border, #B8C4D4);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  padding: 24px 24px 20px;
+  overflow: hidden;
+}
+
+.wrapperBox {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow: hidden;
+}
+
+.tableContainer {
+  width: 100%;
+  overflow: auto;
+}
+
+.title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary, #0D1B3E);
+  letter-spacing: -0.3px;
+  margin-bottom: 4px;
+}

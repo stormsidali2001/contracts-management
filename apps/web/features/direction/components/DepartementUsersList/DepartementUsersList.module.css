@@ -1,0 +1,138 @@
+/* ── Modal shell ── */
+.container {
+  width: min(820px, 94vw);
+  background: var(--surface, #fff);
+  border: 1px solid var(--border, #B8C4D4);
+  border-radius: var(--radius, 12px);
+  box-shadow: var(--shadow-lg, 0 20px 60px rgba(13,27,62,0.18));
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  max-height: 90vh;
+}
+
+/* ── Navy header band ── */
+.modalHeader {
+  background: var(--navy, #0D1B3E);
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.modalHeader::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: repeating-linear-gradient(
+    45deg,
+    rgba(255,255,255,0.025) 0px,
+    rgba(255,255,255,0.025) 1px,
+    transparent 1px,
+    transparent 14px
+  );
+  pointer-events: none;
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  z-index: 1;
+}
+
+.headerIcon {
+  width: 38px;
+  height: 38px;
+  background: rgba(255,255,255,0.10);
+  border: 1.5px solid rgba(255,255,255,0.18);
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--text-on-dark);
+}
+
+.headerText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.headerTitle {
+  font-family: 'Outfit', sans-serif;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text-on-dark);
+  letter-spacing: -0.2px;
+  line-height: 1.2;
+}
+
+.headerSubtitle {
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  color: rgba(255,255,255,0.70);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.closeBtn {
+  color: rgba(255,255,255,0.55) !important;
+  min-width: 0 !important;
+  padding: 5px !important;
+  border-radius: 7px !important;
+  z-index: 1;
+  transition: color 0.15s, background 0.15s !important;
+}
+
+.closeBtn:hover {
+  color: var(--text-on-dark) !important;
+  background: rgba(255,255,255,0.10) !important;
+}
+
+/* ── Search toolbar ── */
+.searchContainer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--border-subtle, #D4DCE8);
+  background: var(--surface-subtle, #F4F6FA);
+  flex-shrink: 0;
+}
+
+.input {
+  height: 36px;
+  background: var(--surface, #fff);
+  border-radius: var(--radius-sm, 8px);
+}
+
+/* ── Total count pill ── */
+.totalPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-muted, #96A3B5);
+  flex-shrink: 0;
+}
+
+/* ── Table wrapper ── */
+.tableContainer {
+  width: 100%;
+  overflow: auto;
+  flex: 1;
+}

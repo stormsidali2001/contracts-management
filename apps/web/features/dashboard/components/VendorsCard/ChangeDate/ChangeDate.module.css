@@ -1,0 +1,349 @@
+/* ════════════════════════════════════════
+   ChangeDate — Period Filter Modal
+   ════════════════════════════════════════ */
+
+.container {
+  width: min(420px, 94vw);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ── Navy header band ── */
+.modalHeader {
+  background: var(--navy);
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.modalHeader::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: repeating-linear-gradient(
+    45deg,
+    rgba(255,255,255,0.025) 0px,
+    rgba(255,255,255,0.025) 1px,
+    transparent 1px,
+    transparent 14px
+  );
+  pointer-events: none;
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  z-index: 1;
+}
+
+.headerIcon {
+  width: 42px;
+  height: 42px;
+  background: rgba(255,255,255,0.10);
+  border: 1.5px solid rgba(255,255,255,0.18);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--text-on-dark);
+}
+
+.headerText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.headerTitle {
+  font-family: 'Outfit', sans-serif;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text-on-dark);
+  letter-spacing: -0.2px;
+  line-height: 1.2;
+}
+
+.headerSubtitle {
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  color: rgba(255,255,255,0.60);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* ── Body ── */
+.modalBody {
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  position: relative;
+}
+
+/* Timeline track between the two rows */
+.modalBody::before {
+  content: '';
+  position: absolute;
+  left: 40px;
+  top: 56px;
+  bottom: 56px;
+  width: 2px;
+  background: repeating-linear-gradient(
+    to bottom,
+    var(--border) 0px,
+    var(--border) 4px,
+    transparent 4px,
+    transparent 8px
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── Date row ── */
+.dateRow {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  background: var(--bg);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 14px 16px;
+  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+  position: relative;
+  z-index: 1;
+}
+
+.dateRow:first-child {
+  margin-bottom: 10px;
+}
+
+.dateRow.active {
+  background: var(--navy-light);
+  border-color: var(--navy-mid);
+  box-shadow: 0 0 0 3px rgba(23,73,142,0.07);
+}
+
+/* Active left-border accent */
+.dateRow::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 8px;
+  bottom: 8px;
+  width: 3px;
+  border-radius: 0 2px 2px 0;
+  background: var(--navy-mid);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.dateRow.active::after {
+  opacity: 1;
+}
+
+.dateRowTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.dateRowLabel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dateRowIcon {
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+  background: rgba(23,73,142,0.07);
+  border: 1px solid rgba(23,73,142,0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--navy-mid);
+  flex-shrink: 0;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.dateRow.active .dateRowIcon {
+  background: rgba(23,73,142,0.15);
+  border-color: rgba(23,73,142,0.28);
+}
+
+.dateRowTitle {
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  transition: color 0.15s;
+}
+
+.dateRow.active .dateRowTitle {
+  color: var(--text-primary);
+}
+
+/* ── Toggle switch ── */
+.toggle {
+  position: relative;
+  width: 38px;
+  height: 22px;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.toggle input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+  position: absolute;
+}
+
+.toggleTrack {
+  position: absolute;
+  inset: 0;
+  border-radius: 99px;
+  background: var(--border);
+  transition: background 0.2s;
+}
+
+.toggle input:checked + .toggleTrack {
+  background: var(--navy-mid);
+}
+
+.toggleThumb {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--surface);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.22);
+  transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.toggle input:checked ~ .toggleThumb {
+  transform: translateX(16px);
+}
+
+/* ── Picker wrapper ── */
+.pickerWrapper {
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  transition: max-height 0.28s ease, opacity 0.22s ease, margin-top 0.22s ease;
+  margin-top: 0;
+}
+
+.pickerWrapper.visible {
+  max-height: 80px;
+  opacity: 1;
+  margin-top: 12px;
+}
+
+/* ── Period preview chip ── */
+.periodPreview {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 16px;
+  margin: 0 24px;
+  background: var(--navy-light);
+  border: 1px solid var(--navy-mid);
+  border-radius: 8px;
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--navy-mid);
+  transition: opacity 0.2s;
+  margin-bottom: 16px;
+}
+
+.periodPreview.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.periodArrow {
+  color: var(--navy-mid);
+  opacity: 0.6;
+  font-size: 14px;
+}
+
+/* ── Action row ── */
+.actionRow {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 14px 24px;
+  border-top: 1px solid var(--border-subtle);
+  background: var(--surface-subtle, #F4F6FA);
+}
+
+.cancelBtn {
+  height: 36px;
+  padding: 0 16px;
+  border-radius: 8px;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+.cancelBtn:hover {
+  background: var(--bg);
+  border-color: var(--border);
+}
+
+.applyBtn {
+  height: 36px;
+  padding: 0 20px;
+  border-radius: 8px;
+  background: var(--navy-mid);
+  border: none;
+  color: var(--text-on-dark);
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, opacity 0.15s, transform 0.1s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.applyBtn:hover:not(:disabled) {
+  background: var(--navy);
+  transform: translateY(-1px);
+}
+.applyBtn:active:not(:disabled) {
+  transform: translateY(0);
+}
+.applyBtn:disabled {
+  opacity: 0.38;
+  cursor: not-allowed;
+}

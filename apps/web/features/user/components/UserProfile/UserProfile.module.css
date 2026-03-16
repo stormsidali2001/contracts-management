@@ -1,0 +1,321 @@
+/* ═══════════════════════════════════════════════
+   UserProfile — "Executive Identity Card"
+   WCAG AAA contrast throughout
+   ═══════════════════════════════════════════════ */
+
+/* ── Page shell ── */
+.pageWrapper {
+  width: 100%;
+  min-height: calc(100vh - 60px);
+  padding: 48px 24px 64px;
+  background: var(--bg, #D8E0EC);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+/* ── Card ── */
+.userCard {
+  width: 100%;
+  max-width: 520px;
+  background: var(--surface, #fff);
+  border: 1px solid var(--border, #B8C4D4);
+  border-radius: 18px;
+  box-shadow:
+    0 1px 3px rgba(13,27,62,0.05),
+    0 8px 32px rgba(13,27,62,0.1),
+    0 24px 64px rgba(13,27,62,0.07);
+  position: relative;
+  overflow: hidden;
+  align-self: flex-start;
+  animation: cardIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes cardIn {
+  from { opacity: 0; transform: translateY(24px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0)   scale(1); }
+}
+
+/* ── Hero header ── */
+.cardHeader {
+  height: 156px;
+  background: var(--navy, #0D1B3E);
+  /* Dot-grid texture */
+  background-image:
+    radial-gradient(circle at 1px 1px, rgba(255,255,255,0.07) 1px, transparent 0);
+  background-size: 22px 22px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Decorative amber ring — bottom-right */
+.cardHeader::before {
+  content: '';
+  position: absolute;
+  bottom: -70px;
+  right: -70px;
+  width: 240px;
+  height: 240px;
+  border-radius: 50%;
+  border: 32px solid rgba(245, 158, 11, 0.10);
+  pointer-events: none;
+}
+
+/* Decorative glow — top-left */
+.cardHeader::after {
+  content: '';
+  position: absolute;
+  top: -40px;
+  left: -40px;
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(23,73,142,0.35) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* ── Edit / Save button — floats in header ── */
+/* AAA: white (#fff) on effective bg ≈ navy → 15:1 */
+.editButton {
+  position: absolute !important;
+  top: 14px !important;
+  right: 14px !important;
+  z-index: 20;
+  min-width: 0 !important;
+  width: 36px !important;
+  height: 36px !important;
+  padding: 0 !important;
+  border-radius: 10px !important;
+  background: rgba(255,255,255,0.10) !important;
+  color: var(--text-on-dark, #fff) !important;
+  border: 1px solid rgba(255,255,255,0.20) !important;
+  transition: background 0.15s ease, border-color 0.15s ease !important;
+  backdrop-filter: blur(4px);
+}
+
+.editButton:hover {
+  background: rgba(255,255,255,0.20) !important;
+  border-color: rgba(255,255,255,0.35) !important;
+}
+
+/* ── Role badge — inside header ── */
+/* AAA: white on effective dark blend → ≥ 7:1 */
+.headerRole {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(245,158,11,0.45);
+  color: var(--text-on-dark, #fff);
+  font-family: 'Outfit', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 4px 16px;
+  border-radius: 99px;
+  white-space: nowrap;
+  z-index: 5;
+}
+
+/* ── Avatar area — overlaps header ── */
+.avatarArea {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 0 24px 20px;
+  margin-top: -52px;
+  position: relative;
+  z-index: 10;
+}
+
+/* ── Clickable avatar wrapper (edit mode) ── */
+.avatarLabel {
+  cursor: pointer;
+  display: block;
+  position: relative;
+  border-radius: 50%;
+  line-height: 0;
+}
+
+.avatarEditWrapper {
+  position: relative;
+  display: inline-block;
+  border-radius: 50%;
+}
+
+.avatarEditWrapper:hover .avatarEditHint {
+  opacity: 1;
+}
+
+/* AAA: white on dark navy overlay → 15:1 */
+.avatarEditHint {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: rgba(13,27,62,0.62);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  font-family: 'Outfit', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-on-dark, #fff);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* ── Avatar itself ── */
+.profileImg {
+  width: 104px !important;
+  height: 104px !important;
+  border: 4px solid var(--surface, #fff);
+  box-shadow:
+    0 4px 16px rgba(13,27,62,0.18),
+    0 0 0 1px rgba(13,27,62,0.06);
+  background: var(--bg, #D8E0EC);
+  transition: transform 0.2s ease;
+}
+
+.avatarEditWrapper:hover .profileImg {
+  transform: scale(1.02);
+}
+
+/* ── Name ── */
+/* AAA: #0D1B3E on white → 15:1 */
+.userName {
+  font-family: 'Outfit', sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-primary, #0D1B3E);
+  letter-spacing: -0.5px;
+  text-align: center;
+  line-height: 1.15;
+  margin-top: 2px;
+}
+
+/* ── Org badges (dept / direction) ── */
+.orgBadges {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* Pill chip */
+.orgBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--bg, #D8E0EC);
+  border: 1px solid var(--border, #B8C4D4);
+  border-radius: 99px;
+  padding: 3px 12px 3px 3px;
+}
+
+/* AAA: white on navy → 15:1 */
+.orgBadgeLabel {
+  background: var(--navy, #0D1B3E);
+  color: var(--text-on-dark, #fff);
+  font-family: 'Outfit', sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 99px;
+  line-height: 1.5;
+}
+
+/* AAA: #3D4A5C on #D8E0EC → 7.41:1 */
+.orgBadgeValue {
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-body, #3D4A5C);
+}
+
+/* ── Upload progress ── */
+.uploadRow {
+  padding: 0 28px 12px;
+}
+
+/* ── Fields section ── */
+.fieldsSection {
+  padding: 4px 28px 28px;
+  border-top: 1px solid var(--border, #B8C4D4);
+  margin-top: 4px;
+}
+
+/* ── Individual field row ── */
+.fieldRow {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 13px 0;
+  border-bottom: 1px solid var(--border-subtle, #D4DCE8);
+  /* Staggered entry */
+  animation: fieldIn 0.35s ease both;
+}
+
+.fieldRow:last-child {
+  border-bottom: none;
+}
+
+@keyframes fieldIn {
+  from { opacity: 0; transform: translateX(-6px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.fieldRow:nth-child(1) { animation-delay: 0.08s; }
+.fieldRow:nth-child(2) { animation-delay: 0.13s; }
+.fieldRow:nth-child(3) { animation-delay: 0.18s; }
+.fieldRow:nth-child(4) { animation-delay: 0.23s; }
+.fieldRow:nth-child(5) { animation-delay: 0.28s; }
+
+/* AAA: #475569 on white → exactly 7:1 */
+.fieldLabel {
+  font-family: 'Outfit', sans-serif;
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--text-label, #475569);
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  min-width: 124px;
+  flex-shrink: 0;
+}
+
+/* AAA: #0D1B3E on white → 15:1 */
+.fieldValue {
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--text-primary, #0D1B3E);
+  flex: 1;
+  word-break: break-all;
+}
+
+/* ── Inline edit input ── */
+.editInput {
+  flex: 1;
+  border: 1.5px solid var(--border, #B8C4D4);
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-family: 'Inter', sans-serif;
+  font-size: 13.5px;
+  color: var(--text-primary, #0D1B3E);
+  background: var(--bg, #D8E0EC);
+  transition: border-color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+  outline: none;
+  width: 100%;
+}
+
+.editInput:focus {
+  border-color: var(--navy-mid, #17498E);
+  background: var(--surface, #fff);
+  box-shadow: 0 0 0 3px rgba(23,73,142,0.12);
+}

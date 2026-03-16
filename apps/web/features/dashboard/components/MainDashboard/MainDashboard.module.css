@@ -1,0 +1,247 @@
+/* ════════════════════════════════════════
+   Main Dashboard
+   ════════════════════════════════════════ */
+
+.container {
+  width: 100%;
+  min-height: calc(100vh - var(--topbar-height, 60px));
+  overflow-y: auto;
+  padding: 28px 32px 56px;
+  background: var(--bg);
+}
+
+/* ════════════════════════════════════════
+   Page header
+   ════════════════════════════════════════ */
+.pageHeader {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 22px;
+  gap: 16px;
+}
+
+.pageHeaderLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.pageTitle {
+  font-family: 'Outfit', sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.4px;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.pageSubtitle {
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--text-secondary);
+}
+
+.pageHeaderRight {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+/* ── Active period pill ── */
+.activePeriod {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 99px;
+  padding: 5px 8px 5px 12px;
+  box-shadow: var(--shadow-xs);
+}
+
+.periodValue {
+  font-family: 'Outfit', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.periodSep {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.clearBtn {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--border);
+  color: var(--text-secondary);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  flex-shrink: 0;
+  transition: background 0.15s, color 0.15s;
+}
+.clearBtn:hover { background: var(--error); color: var(--text-on-dark); }
+
+/* ── Filter button ── */
+.filterBtn {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  height: 36px;
+  padding: 0 16px;
+  background: var(--navy-mid);
+  border: none;
+  border-radius: 9px;
+  color: var(--text-on-dark);
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(23,73,142,0.28);
+  transition: background 0.15s, box-shadow 0.15s;
+  white-space: nowrap;
+}
+.filterBtn:hover {
+  background: var(--navy);
+  box-shadow: 0 4px 14px rgba(23,73,142,0.35);
+}
+
+/* ════════════════════════════════════════
+   KPI Strip
+   ════════════════════════════════════════ */
+.kpiStrip {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-bottom: 22px;
+}
+
+.kpiCard {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--navy-mid);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  transition: box-shadow 0.2s, transform 0.18s;
+}
+.kpiCard:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.kpiCardError { border-left-color: var(--navy-mid); }
+
+.kpiIcon {
+  width: 42px;
+  height: 42px;
+  min-width: 42px;
+  border-radius: 10px;
+  background: rgba(23,73,142,0.08);
+  border: 1px solid rgba(23,73,142,0.14);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--navy-mid);
+  flex-shrink: 0;
+}
+
+.kpiIconError {
+  background: rgba(23,73,142,0.08);
+  border-color: rgba(23,73,142,0.14);
+  color: var(--navy-mid);
+}
+
+.kpiContent {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  min-width: 0;
+}
+
+.kpiValue {
+  font-family: 'Outfit', sans-serif;
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--navy);
+  letter-spacing: -1px;
+  line-height: 1;
+}
+
+.kpiValueError { color: var(--error-dark); }
+
+.kpiLabel {
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-top: 3px;
+}
+
+.kpiSub {
+  font-family: 'Inter', sans-serif;
+  font-size: 10.5px;
+  font-weight: 400;
+  color: var(--text-secondary);
+  margin-top: 1px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ════════════════════════════════════════
+   Cards grid
+   ════════════════════════════════════════ */
+.contentWrapper {
+  display: grid;
+  grid-template-columns: 1.35fr 1fr 1.2fr;
+  align-items: start;
+  gap: 20px;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+.middleCard {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+}
+
+.flexy {
+  display: flex;
+  column-gap: 20px;
+  width: 100%;
+}
+
+/* ── Tablet ── */
+@media screen and (max-width: 1100px) {
+  .container { padding: 24px 20px 48px; }
+  .contentWrapper { grid-template-columns: 1fr 1fr; gap: 16px; }
+  .kpiStrip { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ── Mobile ── */
+@media screen and (max-width: 700px) {
+  .container { padding: 16px 14px 40px; }
+  .contentWrapper { grid-template-columns: 1fr; gap: 14px; }
+  .middleCard { flex-direction: row; flex-wrap: wrap; }
+  .flexy { flex-direction: column; gap: 14px; }
+  .kpiStrip { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .pageHeader { flex-direction: column; align-items: flex-start; gap: 12px; }
+  .pageHeaderRight { width: 100%; justify-content: space-between; }
+  .kpiValue { font-size: 22px; }
+}

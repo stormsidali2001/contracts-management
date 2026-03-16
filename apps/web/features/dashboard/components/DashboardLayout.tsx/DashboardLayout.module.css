@@ -1,0 +1,23 @@
+/* ── Shell: sidebar + main area ── */
+.layout {
+  display: grid;
+  grid-template-columns: var(--sidebar-width, 260px) 1fr;
+  min-height: 100vh;
+  background: var(--bg, #D8E0EC);
+}
+
+/* ── Right side: topbar + scrollable content ── */
+.content {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+@media screen and (max-width: 900px) {
+  .layout { grid-template-columns: 68px 1fr; }
+}
+
+@media screen and (max-width: 600px) {
+  .layout { grid-template-columns: 60px 1fr; }
+}

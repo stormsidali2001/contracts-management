@@ -1,0 +1,202 @@
+/* ════════════════════════════════════════
+   Users Card — "Utilisateurs"
+   ════════════════════════════════════════ */
+
+/* ── Compact card ── */
+.container {
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  cursor: pointer;
+  transition: box-shadow 0.2s ease, transform 0.18s ease;
+  display: flex;
+  flex-direction: column;
+}
+.container:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+/* ── Card header ── */
+.cardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 13px 18px;
+  border-bottom: 1px solid var(--border-subtle);
+  position: relative;
+  flex-shrink: 0;
+}
+.cardHeader::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 20%; bottom: 20%;
+  width: 3px;
+  background: var(--navy-mid);
+  border-radius: 0 3px 3px 0;
+}
+
+.cardHeaderLeft {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+/* ── Expand button ── */
+.expandButton {
+  width: 26px;
+  height: 26px;
+  cursor: pointer;
+  padding: 0;
+  border-radius: 7px;
+  background: var(--bg);
+  color: var(--navy-mid);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.15s;
+}
+.expandButton:hover { background: var(--navy-light); }
+
+/* ── Title ── */
+.title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.2px;
+}
+
+/* ── Total badge ── */
+.totalCount {
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+/* ── Card body ── */
+.cardBody {
+  padding: 12px 14px 14px;
+}
+
+/* ── Role percentages ── */
+.percentages {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.percentage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 6px 8px;
+  background: var(--bg);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-subtle);
+  transition: background 0.15s, border-color 0.15s;
+}
+.percentage:hover {
+  background: var(--navy-light);
+  border-color: var(--border);
+}
+
+.percentage > span:first-of-type {
+  font-family: 'Outfit', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.roleLabel {
+  font-family: 'Inter', sans-serif;
+  font-size: 9.5px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  text-align: center;
+}
+
+/* ════════════════════════════════════════
+   Expanded card
+   ════════════════════════════════════════ */
+.expandedCard {
+  width: 100vw;
+  height: 100vh;
+  background: var(--bg);
+  position: fixed;
+  top: 0; left: 0;
+  padding: 32px 40px;
+  z-index: 1000;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.closeButton {
+  position: absolute;
+  right: 32px; top: 32px;
+  width: 40px; height: 40px;
+  background: var(--error);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: none;
+  color: var(--text-on-dark);
+  transition: opacity 0.15s;
+}
+.closeButton:hover { opacity: 0.85; }
+
+.datesContainer {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+.dateIntervalle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--surface);
+  padding: 12px 24px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-xs);
+}
+.dateIntervalle > span:nth-child(odd) {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+.dateIntervalle > span:nth-child(even) {
+  font-family: 'Outfit', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+  padding: 5px 14px;
+  background: var(--navy-light);
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.dateIntervalle > span:nth-child(even):hover { background: var(--bg); }
+
+.chartContainer {
+  flex: 1;
+  min-height: 320px;
+  background: var(--surface);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  padding: 24px;
+  position: relative;
+}

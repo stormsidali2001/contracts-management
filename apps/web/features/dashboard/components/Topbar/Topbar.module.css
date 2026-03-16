@@ -1,0 +1,117 @@
+/* ── Topbar ── */
+.container {
+  height: var(--topbar-height, 60px);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 28px;
+  background: var(--surface, #fff);
+  border-bottom: 1px solid var(--border, #B8C4D4);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  flex-shrink: 0;
+}
+
+/* ── Page context (left) ── */
+.indications {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+/* Page title */
+.indications > span:first-of-type {
+  font-family: 'Outfit', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary, #0D1B3E);
+  letter-spacing: -0.3px;
+  line-height: 1.2;
+}
+
+/* Role badge */
+.indications > span:last-of-type {
+  font-family: 'Inter', sans-serif;
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--text-muted, #96A3B5);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* ── Right side controls ── */
+.rightButtons {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ── Notification badge ── */
+.notificationBdge {
+  position: relative;
+}
+.notificationBdge > span {
+  position: absolute;
+  top: 1px; right: 1px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 99px;
+  background: var(--error, #DC2626);
+  color: var(--text-on-dark, #fff);
+  font-size: 10px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+/* ── Avatar button ── */
+.profilImgContainer {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  position: relative;
+  overflow: hidden;
+  border: 2px solid var(--border, #B8C4D4);
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+.profilImgContainer:hover { border-color: var(--navy-mid, #17498E); }
+.profilImgContainer img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+/* ── Chevron on avatar ── */
+.chevron {
+  position: absolute;
+  bottom: -1px; right: -1px;
+  background: var(--surface, #fff);
+  border-radius: 50%;
+  width: 14px;
+  height: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── Popover panel ── */
+.popoverStyles {
+  background: var(--surface, #fff) !important;
+  border: 1px solid var(--border, #B8C4D4) !important;
+  border-radius: var(--radius, 12px) !important;
+  box-shadow: var(--shadow-lg) !important;
+  padding: 8px !important;
+  min-width: 200px !important;
+  overflow: hidden !important;
+  animation: popIn 0.14s ease;
+}
+@keyframes popIn {
+  from { opacity: 0; transform: translateY(6px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}

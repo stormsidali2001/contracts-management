@@ -1,0 +1,6 @@
+/* ── User row actions ── */
+.container {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
