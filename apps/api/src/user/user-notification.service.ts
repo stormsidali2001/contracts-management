@@ -18,8 +18,9 @@ export class UserNotificationService {
     private readonly eventService: EventService,
     private readonly notificationRepository: NotificationRepository,
     private readonly socketStateService: SocketStateService,
+
     @Inject(forwardRef(() => UserService))
-    private readonly userService: UserService,
+    readonly userService: UserService,
   ) {}
 
   async getUserNotifications(userId: string) {

@@ -25,31 +25,24 @@ export class DepartementRepository {
   ): Promise<DepartementEntity | null> {
     return this.repo
       .createQueryBuilder('d')
-      .where(
-        'd.title = :title or d.abriviation = :abriviation',
-        { title, abriviation },
-      )
+      .where('d.title = :title or d.abriviation = :abriviation', {
+        title,
+        abriviation,
+      })
       .andWhere('d.directionId = :directionId', { directionId })
       .getOne();
   }
 
-  async create(
-    data: Partial<DepartementEntity>,
-  ): Promise<DepartementEntity> {
+  async create(data: Partial<DepartementEntity>): Promise<DepartementEntity> {
     const entity = this.repo.create(data);
     return this.repo.save(entity);
   }
 
-  async update(
-    id: string,
-    data: UpdateDepartementDTO,
-  ): Promise<UpdateResult> {
+  async update(id: string, data: UpdateDepartementDTO): Promise<UpdateResult> {
     return this.repo.update(id, data);
   }
 
-  async findByIdWithUserCount(
-    id: string,
-  ): Promise<DepartementEntity | null> {
+  async findByIdWithUserCount(id: string): Promise<DepartementEntity | null> {
     return this.repo
       .createQueryBuilder('dp')
       .where('dp.id = :departementId', { departementId: id })
@@ -65,10 +58,7 @@ export class DepartementRepository {
     return this.repo.findOneBy({ id });
   }
 
-  async findAll(
-    offset: number = 0,
-    limit: number = 10,
-  ): Promise<DepartementEntity[]> {
+  async findAll(offset = 0, limit = 10): Promise<DepartementEntity[]> {
     return this.repo
       .createQueryBuilder('departement')
       .loadRelationCountAndMap('departement.users', 'departements.employees')

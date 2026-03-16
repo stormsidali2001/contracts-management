@@ -1,52 +1,58 @@
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { Entity as ET } from "../types/entity.enum";
-import { Operation } from "../types/operation.enum";
-import { DepartementEntity } from "./Departement.entity";
-import { DirectionEntity } from "./Direction.entity";
-
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { Entity as ET } from '../types/entity.enum';
+import { Operation } from '../types/operation.enum';
+import { DepartementEntity } from './Departement.entity';
+import { DirectionEntity } from './Direction.entity';
 
 @Entity('event')
-export class EventEntity{
+export class EventEntity {
+  @PrimaryGeneratedColumn()
+  id: string;
 
-    @PrimaryGeneratedColumn()
-    id:string;
+  @Column({
+    type: 'enum',
+    enum: ET,
+    default: ET.CONTRACT,
+  })
+  entity: ET;
 
-    @Column({
-        type:"enum",
-        enum:ET,
-        default:ET.CONTRACT
-    })
-    entity:ET;
+  @CreateDateColumn()
+  createdAt: Date;
 
-    @CreateDateColumn()
-    createdAt:Date;
+  @Column({
+    type: 'enum',
+    enum: Operation,
+    default: Operation.INSERT,
+  })
+  operation: Operation;
 
-    @Column({
-        type:"enum",
-        enum:Operation,
-        default:Operation.INSERT
-    })
-    operation:Operation;
+  @Column()
+  entityId: string;
 
-    @Column()
-    entityId:string;
+  @Column({ name: 'departementId', nullable: true })
+  departementId: string;
+  @ManyToOne((type) => DepartementEntity, (dp) => dp.employees)
+  @JoinColumn({ name: 'departementId' })
+  departement: DepartementEntity;
 
-    @Column({name:"departementId",nullable:true})
-    departementId:string;
-    @ManyToOne(type=>DepartementEntity,dp=>dp.employees) @JoinColumn({name:"departementId"})
-    departement:DepartementEntity;
+  @Column({ name: 'directionId', nullable: true })
+  directionId: string;
 
-    @Column({name:"directionId",nullable:true})
-    directionId:string;
+  @ManyToOne((type) => DirectionEntity, (dr) => dr.employees)
+  @JoinColumn({ name: 'directionId' })
+  direction: DirectionEntity;
 
-    @ManyToOne(type=>DirectionEntity,dr=>dr.employees) @JoinColumn({name:"directionId"})
-    direction:DirectionEntity;
+  @Column({ nullable: true })
+  departementAbriviation: string;
 
-    @Column({nullable:true})
-    departementAbriviation:string;
-
-    @Column({nullable:true})
-    directionAbriviation:string;
-    
-
+  @Column({ nullable: true })
+  directionAbriviation: string;
 }
+
