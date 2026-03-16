@@ -1,0 +1,75 @@
+// Shared kernel
+export { AggregateRoot } from './shared/aggregate-root';
+export { Entity } from './shared/entity';
+export { Uuid } from './shared/value-objects/uuid';
+export { CreatedAt } from './shared/value-objects/created-at';
+
+// ─── Agreement ───────────────────────────────────────────────────────────────
+export { Agreement } from './agreement/agreement/agreement';
+export type { AgreementProps, CreateAgreementProps } from './agreement/agreement/agreement';
+export { AgreementExecutionJob } from './agreement/agreement/entities/agreement-execution-job';
+export type { AgreementExecutionJobProps } from './agreement/agreement/entities/agreement-execution-job';
+export { AgreementId } from './agreement/agreement/value-objects/agreement-id';
+export { AgreementNumber } from './agreement/agreement/value-objects/agreement-number';
+export { AgreementType, AgreementTypeEnum } from './agreement/agreement/value-objects/agreement-type';
+export { AgreementStatus, AgreementStatusEnum } from './agreement/agreement/value-objects/agreement-status';
+export { ContractPeriod } from './agreement/agreement/value-objects/contract-period';
+export { ExecutionPeriod } from './agreement/agreement/value-objects/execution-period';
+export { MoneyAmount } from './agreement/agreement/value-objects/money-amount';
+export { DocumentUrl } from './agreement/agreement/value-objects/document-url';
+export { Observation } from './agreement/agreement/value-objects/observation';
+export type { AgreementRepository } from './agreement/agreement/persistence/agreement-repository';
+export { AgreementExecutionService } from './agreement/agreement/services/agreement-execution.service';
+
+// ─── Vendor ──────────────────────────────────────────────────────────────────
+export { Vendor } from './vendor/vendor/vendor';
+export type { VendorProps, CreateVendorProps, UpdateVendorProps } from './vendor/vendor/vendor';
+export { VendorId } from './vendor/vendor/value-objects/vendor-id';
+export { VendorNumber } from './vendor/vendor/value-objects/vendor-number';
+export { CompanyName } from './vendor/vendor/value-objects/company-name';
+export { FiscalIdentifiers } from './vendor/vendor/value-objects/fiscal-identifiers';
+export { PhoneNumbers } from './vendor/vendor/value-objects/phone-numbers';
+export { Address } from './vendor/vendor/value-objects/address';
+export type { VendorRepository } from './vendor/vendor/persistence/vendor-repository';
+
+// ─── Organization ─────────────────────────────────────────────────────────────
+export { Direction } from './organization/direction/direction';
+export type { DirectionProps, CreateDirectionProps } from './organization/direction/direction';
+export { Departement } from './organization/direction/entities/departement';
+export type { DepartementProps, CreateDepartementProps } from './organization/direction/entities/departement';
+export { DirectionId } from './organization/direction/value-objects/direction-id';
+export { DepartementId } from './organization/direction/value-objects/departement-id';
+export { OrganizationTitle } from './organization/direction/value-objects/organization-title';
+export { Abbreviation } from './organization/direction/value-objects/abbreviation';
+export type { DirectionRepository } from './organization/direction/persistence/direction-repository';
+
+// ─── Identity ────────────────────────────────────────────────────────────────
+export { User } from './identity/user/user';
+export type { UserProps, CreateUserProps } from './identity/user/user';
+export { PasswordResetToken } from './identity/user/entities/password-reset-token';
+export type { PasswordResetTokenProps } from './identity/user/entities/password-reset-token';
+export { UserId } from './identity/user/value-objects/user-id';
+export { EmailAddress } from './identity/user/value-objects/email-address';
+export { Username } from './identity/user/value-objects/username';
+export { PasswordHash } from './identity/user/value-objects/password-hash';
+export { UserRole, UserRoleEnum } from './identity/user/value-objects/user-role';
+export { UserProfile } from './identity/user/value-objects/user-profile';
+export { NotificationPreference } from './identity/user/value-objects/notification-preference';
+export { OrganizationMembership } from './identity/user/value-objects/organization-membership';
+export { RefreshTokenHash } from './identity/user/value-objects/refresh-token-hash';
+export type { UserRepository } from './identity/user/persistence/user-repository';
+
+// ─── Notification ─────────────────────────────────────────────────────────────
+export { Notification } from './notification/notification/notification';
+export type { NotificationProps } from './notification/notification/notification';
+export { NotificationId } from './notification/notification/value-objects/notification-id';
+export { NotificationMessage } from './notification/notification/value-objects/notification-message';
+export type { NotificationRepository } from './notification/notification/persistence/notification-repository';
+
+// ─── Audit ───────────────────────────────────────────────────────────────────
+export { AuditEvent } from './audit/audit-event/audit-event';
+export type { AuditEventProps } from './audit/audit-event/audit-event';
+export { EntityType, EntityTypeEnum } from './audit/audit-event/value-objects/entity-type';
+export { OperationType, OperationTypeEnum } from './audit/audit-event/value-objects/operation-type';
+export { OrganizationContext } from './audit/audit-event/value-objects/organization-context';
+export type { AuditEventRepository } from './audit/audit-event/persistence/audit-event-repository';

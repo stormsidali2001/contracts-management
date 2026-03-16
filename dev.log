@@ -1,0 +1,686 @@
+
+> contracts-management@1.0.0 dev /Users/mac/Desktop/projects/contracts-management
+> turbo run dev start:dev --log-order\=stream --no-cache --continue --no-daemon
+
+ WARNING  --no-cache is deprecated and will be removed in a future major version. Use --cache=local:r,remote:r
+ WARNING  --no-daemon is deprecated and will be removed in version 3.0. The daemon is no longer used for `turbo run`.
+• turbo 2.8.17
+ WARNING  the `daemon` configuration option is deprecated and will be removed in version 3.0. The daemon is no longer used for `turbo run`.
+• Packages in scope: backend, fake-data, frontend
+• Running dev, start:dev in 3 packages
+• Remote caching disabled
+frontend:dev: cache bypass, force executing 8db3e8c9db09c2f5
+backend:start:dev: cache bypass, force executing 9160a61b14057dc6
+frontend:dev: 
+frontend:dev: > frontend@0.1.0 dev /Users/mac/Desktop/projects/contracts-management/apps/web
+frontend:dev: > next dev
+frontend:dev: 
+backend:start:dev: 
+backend:start:dev: > backend@0.0.1 start:dev /Users/mac/Desktop/projects/contracts-management/apps/api
+backend:start:dev: > nest start --watch
+backend:start:dev: 
+backend:start:dev: c[[90m2:49:40 PM[0m] Starting compilation in watch mode...
+backend:start:dev: 
+frontend:dev: ⚠ Invalid next.config.js options detected: 
+frontend:dev: ⚠     Unrecognized key(s) in object: 'swcMinify'
+frontend:dev: ⚠ See more info here: https://nextjs.org/docs/messages/invalid-next-config
+frontend:dev: ⚠ Warning: Next.js inferred your workspace root, but it may not be correct.
+frontend:dev:  We detected multiple lockfiles and selected the directory of /Users/mac/pnpm-lock.yaml as the root directory.
+frontend:dev:  To silence this warning, set `turbopack.root` in your Next.js config, or consider removing one of the lockfiles if it's not needed.
+frontend:dev:    See https://nextjs.org/docs/app/api-reference/config/next-config-js/turbopack#root-directory for more information.
+frontend:dev:  Detected additional lockfiles: 
+frontend:dev:    * /Users/mac/Desktop/projects/contracts-management/apps/web/pnpm-lock.yaml
+frontend:dev:    * /Users/mac/Desktop/projects/contracts-management/pnpm-lock.yaml
+frontend:dev: 
+frontend:dev: ▲ Next.js 16.1.6 (Turbopack)
+frontend:dev: - Local:         http://localhost:3000
+frontend:dev: - Network:       http://192.168.8.103:3000
+frontend:dev: 
+frontend:dev: ✓ Starting...
+frontend:dev:   skipping / (conflict)
+frontend:dev: 
+frontend:dev:   We detected TypeScript in your project and reconfigured your tsconfig.json file for you.
+frontend:dev:   The following suggested values were added to your tsconfig.json. These values can be changed to fit your project's needs:
+frontend:dev: 
+frontend:dev:   	- include was updated to add '.next/types/**/*.ts'
+frontend:dev:   	- include was updated to add '.next/dev/types/**/*.ts'
+frontend:dev:   	- plugins was updated to add { name: 'next' }
+frontend:dev: 
+frontend:dev: ✓ Ready in 961ms
+backend:start:dev: [[90m2:49:42 PM[0m] Found 0 errors. Watching for file changes.
+backend:start:dev: 
+backend:start:dev: (node:20946) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+backend:start:dev: (Use `node --trace-deprecation ...` to show where the warning was created)
+backend:start:dev: [32m[Nest] 21082  - [39m03/14/2026, 2:49:43 PM [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+backend:start:dev: Warning: MySQL driver instance provided directly without specifying connectorPackage. This may lead to unexpected JSON parsing behavior differences between mysql and mysql2. Consider explicitly setting connectorPackage: 'mysql' or 'mysql2' in your configuration.
+backend:start:dev: [95m[Nest] 21082  - [39m03/14/2026, 2:49:43 PM [95m  DEBUG[39m [38;5;3m[SocketStateService] [39m[95minitialized[39m
+backend:start:dev: [32m[Nest] 21082  - [39m03/14/2026, 2:49:43 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +1ms[39m
+backend:start:dev: [32m[Nest] 21082  - [39m03/14/2026, 2:49:43 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+backend:start:dev: [32m[Nest] 21082  - [39m03/14/2026, 2:49:43 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mSocketStateModule dependencies initialized[39m[38;5;3m +0ms[39m
+backend:start:dev: [32m[Nest] 21082  - [39m03/14/2026, 2:49:43 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigHostModule dependencies initialized[39m[38;5;3m +0ms[39m
+backend:start:dev: [32m[Nest] 21082  - [39m03/14/2026, 2:49:43 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mJwtModule dependencies initialized[39m[38;5;3m +0ms[39m
+backend:start:dev: [32m[Nest] 21082  - [39m03/14/2026, 2:49:43 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mDiscoveryModule dependencies initialized[39m[38;5;3m +0ms[39m
+backend:start:dev: [32m[Nest] 21082  - [39m03/14/2026, 2:49:43 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +1ms[39m
+backend:start:dev: [32m[Nest] 21082  - [39m03/14/2026, 2:49:43 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mScheduleModule dependencies initialized[39m[38;5;3m +0ms[39m
+backend:start:dev: [32m[Nest] 21082  - [39m03/14/2026, 2:49:43 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAuthModule dependencies initialized[39m[38;5;3m +0ms[39m
+backend:start:dev: [90m[4mquery:[24m[39m [94mSELECT[0m [95mversion[0m[37m([0m[37m)[0m
+backend:start:dev: [90m[4mquery:[24m[39m [37mSTART[0m [37mTRANSACTION[0m
+backend:start:dev: [90m[4mquery:[24m[39m [94mSELECT[0m [94mDATABASE[0m[37m([0m[37m)[0m [94mAS[0m [37m`db_name`[0m
+backend:start:dev: [90m[4mquery:[24m[39m [94mSELECT[0m [37m`TABLE_SCHEMA`[0m[37m,[0m [37m`TABLE_NAME`[0m[37m,[0m [37m`TABLE_COMMENT`[0m [94mFROM[0m [37m`INFORMATION_SCHEMA`[0m[37m.[0m[37m`TABLES`[0m [94mWHERE[0m [37m`TABLE_SCHEMA`[0m [37m=[0m [37m'contracts_management'[0m [94mAND[0m [37m`TABLE_NAME`[0m [37m=[0m [37m'event'[0m [94mUNION[0m [94mSELECT[0m [37m`TABLE_SCHEMA`[0m[37m,[0m [37m`TABLE_NAME`[0m[37m,[0m [37m`TABLE_COMMENT`[0m [94mFROM[0m [37m`INFORMATION_SCHEMA`[0m[37m.[0m[37m`TABLES`[0m [94mWHERE[0m [37m`TABLE_SCHEMA`[0m [37m=[0m [37m'contracts_management'[0m [94mAND[0m [37m`TABLE_NAME`[0m [37m=[0m [37m'directions'[0m [94mUNION[0m [94mSELECT[0m [37m`TABLE_SCHEMA`[0m[37m,[0m [37m`TABLE_NAME`[0m[37m,[0m [37m`TABLE_COMMENT`[0m [94mFROM[0m [37m`INFORMATION_SCHEMA`[0m[37m.[0m[37m`TABLES`[0m [94mWHERE[0m [37m`TABLE_SCHEMA`[0m [37m=[0m [37m'contracts_management'[0m [94mAND[0m [37m`TABLE_NAME`[0m [37m=[0m [37m'vendors'[0m [94mUNION[0m [94mSELECT[0m [37m`TABLE_SCHEMA`[0m[37m,[0m [37m`TABLE_NAME`[0m[37m,[0m [37m`TABLE_COMMENT`[0m [94mFROM[0m [37m`INFORMATION_SCHEMA`[0m[37m.[0m[37m`TABLES`[0m [94mWHERE[0m [37m`TABLE_SCHEMA`[0m [37m=[0m [37m'contracts_management'[0m [94mAND[0m [37m`TABLE_NAME`[0m [37m=[0m [37m'agreements'[0m [94mUNION[0m [94mSELECT[0m [37m`TABLE_SCHEMA`[0m[37m,[0m [37m`TABLE_NAME`[0m[37m,[0m [37m`TABLE_COMMENT`[0m [94mFROM[0m [37m`INFORMATION_SCHEMA`[0m[37m.[0m[37m`TABLES`[0m [94mWHERE[0m [37m`TABLE_SCHEMA`[0m [37m=[0m [37m'contracts_management'[0m [94mAND[0m [37m`TABLE_NAME`[0m [37m=[0m [37m'departements'[0m [94mUNION[0m [94mSELECT[0m [37m`TABLE_SCHEMA`[0m[37m,[0m [37m`TABLE_NAME`[0m[37m,[0m [37m`TABLE_COMMENT`[0m [94mFROM[0m [37m`INFORMATION_SCHEMA`[0m[37m.[0m[37m`TABLES`[0m [94mWHERE[0m [37m`TABLE_SCHEMA`[0m [37m=[0m [37m'contracts_management'[0m [94mAND[0m [37m`TABLE_NAME`[0m [37m=[0m [37m'password_token'[0m [94mUNION[0m [94mSELECT[0m [37m`TABLE_SCHEMA`[0m[37m,[0m [37m`TABLE_NAME`[0m[37m,[0m [37m`TABLE_COMMENT`[0m [94mFROM[0m [37m`INFORMATION_SCHEMA`[0m[37m.[0m[37m`TABLES`[0m [94mWHERE[0m [37m`TABLE_SCHEMA`[0m [37m=[0m [37m'contracts_management'[0m [94mAND[0m [37m`TABLE_NAME`[0m [37m=[0m [37m'users'[0m [94mUNION[0m [94mSELECT[0m [37m`TABLE_SCHEMA`[0m[37m,[0m [37m`TABLE_NAME`[0m[37m,[0m [37m`TABLE_COMMENT`[0m [94mFROM[0m [37m`INFORMATION_SCHEMA`[0m[37m.[0m[37m`TABLES`[0m [94mWHERE[0m [37m`TABLE_SCHEMA`[0m [37m=[0m [37m'contracts_management'[0m [94mAND[0m [37m`TABLE_NAME`[0m [37m=[0m [37m'notifications'[0m [94mUNION[0m [94mSELECT[0m [37m`TABLE_SCHEMA`[0m[37m,[0m [37m`TABLE_NAME`[0m[37m,[0m [37m`TABLE_COMMENT`[0m [94mFROM[0m [37m`INFORMATION_SCHEMA`[0m[37m.[0m[37m`TABLES`[0m [94mWHERE[0m [37m`TABLE_SCHEMA`[0m [37m=[0m [37m'contracts_management'[0m [94mAND[0m [37m`TABLE_NAME`[0m [37m=[0m [37m'agreements_exec_jobs'[0m [94mUNION[0m [94mSELECT[0m [37m`TABLE_SCHEMA`[0m[37m,[0m [37m`TABLE_NAME`[0m[37m,[0m [37m`TABLE_COMMENT`[0m [94mFROM[0m [37m`INFORMATION_SCHEMA`[0m[37m.[0m[37m`TABLES`[0m [94mWHERE[0m [37m`TABLE_SCHEMA`[0m [37m=[0m [37m'contracts_management'[0m [94mAND[0m [37m`TABLE_NAME`[0m [37m=[0m [37m'vendor_stats'[0m
+backend:start:dev: [90m[4mquery:[24m[39m 
+backend:start:dev:                 [94mSELECT[0m
+backend:start:dev:                     [37m*[0m
+backend:start:dev:                 [94mFROM[0m
+backend:start:dev:                     [37m`INFORMATION_SCHEMA`[0m[37m.[0m[37m`COLUMNS`[0m
+backend:start:dev:                 [94mWHERE[0m
+backend:start:dev:                     [37m`TABLE_SCHEMA`[0m [37m=[0m [37m'contracts_management'[0m
+backend:start:dev:                     [94mAND[0m
+backend:start:dev:                     [37m`TABLE_NAME`[0m [37m=[0m [37m'event'[0m
+backend:start:dev:                  [94mUNION[0m 
+backend:start:dev:                 [94mSELECT[0m
+backend:start:dev:                     [37m*[0m
+backend:start:dev:                 [94mFROM[0m
+backend:start:dev:                     [37m`INFORMATION_SCHEMA`[0m[37m.[0m[37m`COLUMNS`[0m
+backend:start:dev:                 [94mWHERE[0m
+backend:start:dev:                     [37m`TABLE_SCHEMA`[0m [37m=[0m [37m'contracts_management'[0m
+backend:start:dev:                     [94mAND[0m
+backend:start:dev:                     [37m`TABLE_NAME`[0m [37m=[0m [37m'directions'[0m
+backend:start:dev:                  [94mUNION[0m 
+backend:start:dev:                 [94mSELECT[0m
+backend:start:dev:                     [37m*[0m
+backend:start:dev:                 [94mFROM[0m
+backend:start:dev:                     [37m`INFORMATION_SCHEMA`[0m[37m.[0m[37m`COLUMNS`[0m
+backend:start:dev:                 [94mWHERE[0m
+backend:start:dev:                     [37m`TABLE_SCHEMA`[0m [37m=[0m [37m'contracts_management'[0m
+backend:start:dev:                     [94mAND[0m
+backend:start:dev:                     [37m`TABLE_NAME`[0m [37m=[0m [37m'vendors'[0m
+backend:start:dev:                  [94mUNION[0m 
+backend:start:dev:                 [94mSELECT[0m
+backend:start:dev:                     [37m*[0m
+backend:start:dev:                 [94mFROM[0m
+backend:start:dev:                     [37m`INFORMATION_SCHEMA`[0m[37m.[0m[37m`COLUMNS`[0m
+backend:start:dev:                 [94mWHERE[0m
+backend:start:dev:                     [37m`TABLE_SCHEMA`[0m [37m=[0m [37m'contracts_management'[0m
+backend:start:dev:                     [94mAND[0m
+backend:start:dev:                     [37m`TABLE_NAME`[0m [37m=[0m [37m'agreements'[0m
+backend:start:dev:                  [94mUNION[0m 
+backend:start:dev:                 [94mSELECT[0m
+backend:start:dev:                     [37m*[0m
+backend:start:dev:                 [94mFROM[0m
+backend:start:dev:                     [37m`INFORMATION_SCHEMA`[0m[37m.[0m[37m`COLUMNS`[0m
+backend:start:dev:                 [94mWHERE[0m
+backend:start:dev:                     [37m`TABLE_SCHEMA`[0m [37m=[0m [37m'contracts_management'[0m
+backend:start:dev:                     [94mAND[0m
+backend:start:dev:                     [37m`TABLE_NAME`[0m [37m=[0m [37m'departements'[0m
+backend:start:dev:                  [94mUNION[0m 
+backend:start:dev:                 [94mSELECT[0m
+backend:start:dev:                     [37m*[0m
+backend:start:dev:                 [94mFROM[0m
+backend:start:dev:                     [37m`INFORMATION_SCHEMA`[0m[37m.[0m[37m`COLUMNS`[0m
+backend:start:dev:                 [94mWHERE[0m
+backend:start:dev:                     [37m`TABLE_SCHEMA`[0m [37m=[0m [37m'contracts_management'[0m
+backend:start:dev:                     [94mAND[0m
+backend:start:dev:                     [37m`TABLE_NAME`[0m [37m=[0m [37m'password_token'[0m
+backend:start:dev:                  [94mUNION[0m 
+backend:start:dev:                 [94mSELECT[0m
+backend:start:dev:                     [37m*[0m
+backend:start:dev:                 [94mFROM[0m
+backend:start:dev:                     [37m`INFORMATION_SCHEMA`[0m[37m.[0m[37m`COLUMNS`[0m
+backend:start:dev:                 [94mWHERE[0m
+backend:start:dev:                     [37m`TABLE_SCHEMA`[0m [37m=[0m [37m'contracts_management'[0m
+backend:start:dev:                     [94mAND[0m
+backend:start:dev:                     [37m`TABLE_NAME`[0m [37m=[0m [37m'users'[0m
+backend:start:dev:                  [94mUNION[0m 
+backend:start:dev:                 [94mSELECT[0m
+backend:start:dev:                     [37m*[0m
+backend:start:dev:                 [94mFROM[0m
+backend:start:dev:                     [37m`INFORMATION_SCHEMA`[0m[37m.[0m[37m`COLUMNS`[0m
+backend:start:dev:                 [94mWHERE[0m
+backend:start:dev:                     [37m`TABLE_SCHEMA`[0m [37m=[0m [37m'contracts_management'[0m
+backend:start:dev:                     [94mAND[0m
+backend:start:dev:                     [37m`TABLE_NAME`[0m [37m=[0m [37m'notifications'[0m
+backend:start:dev:                  [94mUNION[0m 
+backend:start:dev:                 [94mSELECT[0m
+backend:start:dev:                     [37m*[0m
+backend:start:dev:                 [94mFROM[0m
+backend:start:dev:                     [37m`INFORMATION_SCHEMA`[0m[37m.[0m[37m`COLUMNS`[0m
+backend:start:dev:                 [94mWHERE[0m
+backend:start:dev:                     [37m`TABLE_SCHEMA`[0m [37m=[0m [37m'contracts_management'[0m
+backend:start:dev:                     [94mAND[0m
+backend:start:dev:                     [37m`TABLE_NAME`[0m [37m=[0m [37m'agreements_exec_jobs'[0m
+backend:start:dev:                  [94mUNION[0m 
+backend:start:dev:                 [94mSELECT[0m
+backend:start:dev:                     [37m*[0m
+backend:start:dev:                 [94mFROM[0m
+backend:start:dev:                     [37m`INFORMATION_SCHEMA`[0m[37m.[0m[37m`COLUMNS`[0m
+backend:start:dev:                 [94mWHERE[0m
+backend:start:dev:                     [37m`TABLE_SCHEMA`[0m [37m=[0m [37m'contracts_management'[0m
+backend:start:dev:                     [94mAND[0m
+backend:start:dev:                     [37m`TABLE_NAME`[0m [37m=[0m [37m'vendor_stats'[0m
+backend:start:dev:                 
+backend:start:dev: [90m[4mquery:[24m[39m [94mSELECT[0m [37m*[0m [94mFROM[0m [37m([0m
+backend:start:dev:                 [94mSELECT[0m
+backend:start:dev:                     [37m*[0m
+backend:start:dev:                 [94mFROM[0m [37m`INFORMATION_SCHEMA`[0m[37m.[0m[37m`KEY_COLUMN_USAGE`[0m [37m`kcu`[0m
+backend:start:dev:                 [94mWHERE[0m
+backend:start:dev:                     [37m`kcu`[0m[37m.[0m[37m`TABLE_SCHEMA`[0m [37m=[0m [37m'contracts_management'[0m
+backend:start:dev:                     [94mAND[0m
+backend:start:dev:                     [37m`kcu`[0m[37m.[0m[37m`TABLE_NAME`[0m [37m=[0m [37m'event'[0m
+backend:start:dev:              [94mUNION[0m 
+backend:start:dev:                 [94mSELECT[0m
+backend:start:dev:                     [37m*[0m
+backend:start:dev:                 [94mFROM[0m [37m`INFORMATION_SCHEMA`[0m[37m.[0m[37m`KEY_COLUMN_USAGE`[0m [37m`kcu`[0m
+backend:start:dev:                 [94mWHERE[0m
+backend:start:dev:                     [37m`kcu`[0m[37m.[0m[37m`TABLE_SCHEMA`[0m [37m=[0m [37m'contracts_management'[0m
+backend:start:dev:                     [94mAND[0m
+backend:start:dev:                     [37m`kcu`[0m[37m.[0m[37m`TABLE_NAME`[0m [37m=[0m [37m'directions'[0m
+backend:start:dev:              [94mUNION[0m 
+backend:start:dev:                 [94mSELECT[0m
+backend:start:dev:                     [37m*[0m
+backend:start:dev:                 [94mFROM[0m [37m`INFORMATION_SCHEMA`[0m[37m.[0m[37m`KEY_COLUMN_USAGE`[0m [37m`kcu`[0m
+backend:start:dev:                 [94mWHERE[0m
+backend:start:dev:                     [37m`kcu`[0m[37m.[0m[37m`TABLE_SCHEMA`[0m [37m=[0m [37m'contracts_management'[0m
+backend:start:dev:                     [94mAND[0m
+backend:start:dev:                     [37m`kcu`[0m[37m.[0m[37m`TABLE_NAME`[0m [37m=[0m [37m'vendors'[0m
+backend:start:dev:              [94mUNION[0m 
+backend:start:dev:                 [94mSELECT[0m
+backend:start:dev:                     [37m*[0m
+backend:start:dev:                 [94mFROM[0m [37m`INFORMATION_SCHEMA`[0m[37m.[0m[37m`KEY_COLUMN_USAGE`[0m [37m`kcu`[0m
+backend:start:dev:                 [94mWHERE[0m
+backend:start:dev:                     [37m`kcu`[0m[37m.[0m[37m`TABLE_SCHEMA`[0m [37m=[0m [37m'contracts_management'[0m
+backend:start:dev:                     [94mAND[0m
+backend:start:dev:                     [37m`kcu`[0m[37m.[0m[37m`TABLE_NAME`[0m [37m=[0m [37m'agreements'[0m
+backend:start:dev:              [94mUNION[0m 
+backend:start:dev:                 [94mSELECT[0m
+backend:start:dev:                     [37m*[0m
+backend:start:dev:                 [94mFROM[0m [37m`INFORMATION_SCHEMA`[0m[37m.[0m[37m`KEY_COLUMN_USAGE`[0m [37m`kcu`[0m
+backend:start:dev:                 [94mWHERE[0m
+backend:start:dev:                     [37m`kcu`[0m[37m.[0m[37m`TABLE_SCHEMA`[0m [37m=[0m [37m'contracts_management'[0m
+backend:start:dev:                     [94mAND[0m
+backend:start:dev:                     [37m`kcu`[0m[37m.[0m[37m`TABLE_NAME`[0m [37m=[0m [37m'departements'[0m
+backend:start:dev:              [94mUNION[0m 
+backend:start:dev:                 [94mSELECT[0m
+backend:start:dev:                     [37m*[0m
+backend:start:dev:                 [94mFROM[0m [37m`INFORMATION_SCHEMA`[0m[37m.[0m[37m`KEY_COLUMN_USAGE`[0m [37m`kcu`[0m
+backend:start:dev:                 [94mWHERE[0m
+backend:start:dev:                     [37m`kcu`[0m[37m.[0m[37m`TABLE_SCHEMA`[0m [37m=[0m [37m'contracts_management'[0m
+backend:start:dev:                     [94mAND[0m
+backend:start:dev:                     [37m`kcu`[0m[37m.[0m[37m`TABLE_NAME`[0m [37m=[0m [37m'password_token'[0m
+backend:start:dev:              [94mUNION[0m 
+backend:start:dev:                 [94mSELECT[0m
+backend:start:dev:                     [37m*[0m
+backend:start:dev:                 [94mFROM[0m [37m`INFORMATION_SCHEMA`[0m[37m.[0m[37m`KEY_COLUMN_USAGE`[0m [37m`kcu`[0m
+backend:start:dev:                 [94mWHERE[0m
+backend:start:dev:                     [37m`kcu`[0m[37m.[0m[37m`TABLE_SCHEMA`[0m [37m=[0m [37m'contracts_management'[0m
+backend:start:dev:                     [94mAND[0m
+backend:start:dev:                     [37m`kcu`[0m[37m.[0m[37m`TABLE_NAME`[0m [37m=[0m [37m'users'[0m
+backend:start:dev:              [94mUNION[0m 
+backend:start:dev:                 [94mSELECT[0m
+backend:start:dev:                     [37m*[0m
+backend:start:dev:                 [94mFROM[0m [37m`INFORMATION_SCHEMA`[0m[37m.[0m[37m`KEY_COLUMN_USAGE`[0m [37m`kcu`[0m
+backend:start:dev:                 [94mWHERE[0m
+backend:start:dev:                     [37m`kcu`[0m[37m.[0m[37m`TABLE_SCHEMA`[0m [37m=[0m [37m'contracts_management'[0m
+backend:start:dev:                     [94mAND[0m
+backend:start:dev:                     [37m`kcu`[0m[37m.[0m[37m`TABLE_NAME`[0m [37m=[0m [37m'notifications'[0m
+backend:start:dev:              [94mUNION[0m 
+backend:start:dev:                 [94mSELECT[0m
+backend:start:dev:                     [37m*[0m
+backend:start:dev:                 [94mFROM[0m [37m`INFORMATION_SCHEMA`[0m[37m.[0m[37m`KEY_COLUMN_USAGE`[0m [37m`kcu`[0m
+backend:start:dev:                 [94mWHERE[0m
+backend:start:dev:                     [37m`kcu`[0m[37m.[0m[37m`TABLE_SCHEMA`[0m [37m=[0m [37m'contracts_management'[0m
+backend:start:dev:                     [94mAND[0m
+backend:start:dev:                     [37m`kcu`[0m[37m.[0m[37m`TABLE_NAME`[0m [37m=[0m [37m'agreements_exec_jobs'[0m
+backend:start:dev:              [94mUNION[0m 
+backend:start:dev:                 [94mSELECT[0m
+backend:start:dev:                     [37m*[0m
+backend:start:dev:                 [94mFROM[0m [37m`INFORMATION_SCHEMA`[0m[37m.[0m[37m`KEY_COLUMN_USAGE`[0m [37m`kcu`[0m
+backend:start:dev:                 [94mWHERE[0m
+backend:start:dev:                     [37m`kcu`[0m[37m.[0m[37m`TABLE_SCHEMA`[0m [37m=[0m [37m'contracts_management'[0m
+backend:start:dev:                     [94mAND[0m
+backend:start:dev:                     [37m`kcu`[0m[37m.[0m[37m`TABLE_NAME`[0m [37m=[0m [37m'vendor_stats'[0m
+backend:start:dev:             [37m)[0m [37m`kcu`[0m [94mWHERE[0m [37m`CONSTRAINT_NAME`[0m [37m=[0m [37m'PRIMARY'[0m
+backend:start:dev: [90m[4mquery:[24m[39m 
+backend:start:dev:             [94mSELECT[0m
+backend:start:dev:                 [37m`SCHEMA_NAME`[0m[37m,[0m
+backend:start:dev:                 [37m`DEFAULT_CHARACTER_SET_NAME`[0m [94mas[0m [37m`CHARSET`[0m[37m,[0m
+backend:start:dev:                 [37m`DEFAULT_COLLATION_NAME`[0m [94mAS[0m [37m`COLLATION`[0m
+backend:start:dev:             [94mFROM[0m [37m`INFORMATION_SCHEMA`[0m[37m.[0m[37m`SCHEMATA`[0m
+backend:start:dev:             
+backend:start:dev: [90m[4mquery:[24m[39m 
+backend:start:dev:             [94mSELECT[0m
+backend:start:dev:                 [37m`s`[0m[37m.[0m[37m*[0m
+backend:start:dev:             [94mFROM[0m [37m([0m
+backend:start:dev:                 [94mSELECT[0m
+backend:start:dev:                     [37m*[0m
+backend:start:dev:                 [94mFROM[0m [37m`INFORMATION_SCHEMA`[0m[37m.[0m[37m`STATISTICS`[0m
+backend:start:dev:                 [94mWHERE[0m
+backend:start:dev:                     [37m`TABLE_SCHEMA`[0m [37m=[0m [37m'contracts_management'[0m
+backend:start:dev:                     [94mAND[0m
+backend:start:dev:                     [37m`TABLE_NAME`[0m [37m=[0m [37m'event'[0m
+backend:start:dev:              [94mUNION[0m 
+backend:start:dev:                 [94mSELECT[0m
+backend:start:dev:                     [37m*[0m
+backend:start:dev:                 [94mFROM[0m [37m`INFORMATION_SCHEMA`[0m[37m.[0m[37m`STATISTICS`[0m
+backend:start:dev:                 [94mWHERE[0m
+backend:start:dev:                     [37m`TABLE_SCHEMA`[0m [37m=[0m [37m'contracts_management'[0m
+backend:start:dev:                     [94mAND[0m
+backend:start:dev:                     [37m`TABLE_NAME`[0m [37m=[0m [37m'directions'[0m
+backend:start:dev:              [94mUNION[0m 
+backend:start:dev:                 [94mSELECT[0m
+backend:start:dev:                     [37m*[0m
+backend:start:dev:                 [94mFROM[0m [37m`INFORMATION_SCHEMA`[0m[37m.[0m[37m`STATISTICS`[0m
+backend:start:dev:                 [94mWHERE[0m
+backend:start:dev:                     [37m`TABLE_SCHEMA`[0m [37m=[0m [37m'contracts_management'[0m
+backend:start:dev:                     [94mAND[0m
+backend:start:dev:                     [37m`TABLE_NAME`[0m [37m=[0m [37m'vendors'[0m
+backend:start:dev:              [94mUNION[0m 
+backend:start:dev:                 [94mSELECT[0m
+backend:start:dev:                     [37m*[0m
+backend:start:dev:                 [94mFROM[0m [37m`INFORMATION_SCHEMA`[0m[37m.[0m[37m`STATISTICS`[0m
+backend:start:dev:                 [94mWHERE[0m
+backend:start:dev:                     [37m`TABLE_SCHEMA`[0m [37m=[0m [37m'contracts_management'[0m
+backend:start:dev:                     [94mAND[0m
+backend:start:dev:                     [37m`TABLE_NAME`[0m [37m=[0m [37m'agreements'[0m
+backend:start:dev:              [94mUNION[0m 
+backend:start:dev:                 [94mSELECT[0m
+backend:start:dev:                     [37m*[0m
+backend:start:dev:                 [94mFROM[0m [37m`INFORMATION_SCHEMA`[0m[37m.[0m[37m`STATISTICS`[0m
+backend:start:dev:                 [94mWHERE[0m
+backend:start:dev:                     [37m`TABLE_SCHEMA`[0m [37m=[0m [37m'contracts_management'[0m
+backend:start:dev:                     [94mAND[0m
+backend:start:dev:                     [37m`TABLE_NAME`[0m [37m=[0m [37m'departements'[0m
+backend:start:dev:              [94mUNION[0m 
+backend:start:dev:                 [94mSELECT[0m
+backend:start:dev:                     [37m*[0m
+backend:start:dev:                 [94mFROM[0m [37m`INFORMATION_SCHEMA`[0m[37m.[0m[37m`STATISTICS`[0m
+backend:start:dev:                 [94mWHERE[0m
+backend:start:dev:                     [37m`TABLE_SCHEMA`[0m [37m=[0m [37m'contracts_management'[0m
+backend:start:dev:                     [94mAND[0m
+backend:start:dev:                     [37m`TABLE_NAME`[0m [37m=[0m [37m'password_token'[0m
+backend:start:dev:              [94mUNION[0m 
+backend:start:dev:                 [94mSELECT[0m
+backend:start:dev:                     [37m*[0m
+backend:start:dev:                 [94mFROM[0m [37m`INFORMATION_SCHEMA`[0m[37m.[0m[37m`STATISTICS`[0m
+backend:start:dev:                 [94mWHERE[0m
+backend:start:dev:                     [37m`TABLE_SCHEMA`[0m [37m=[0m [37m'contracts_management'[0m
+backend:start:dev:                     [94mAND[0m
+backend:start:dev:                     [37m`TABLE_NAME`[0m [37m=[0m [37m'users'[0m
+backend:start:dev:              [94mUNION[0m 
+backend:start:dev:                 [94mSELECT[0m
+backend:start:dev:                     [37m*[0m
+backend:start:dev:                 [94mFROM[0m [37m`INFORMATION_SCHEMA`[0m[37m.[0m[37m`STATISTICS`[0m
+backend:start:dev:                 [94mWHERE[0m
+backend:start:dev:                     [37m`TABLE_SCHEMA`[0m [37m=[0m [37m'contracts_management'[0m
+backend:start:dev:                     [94mAND[0m
+backend:start:dev:                     [37m`TABLE_NAME`[0m [37m=[0m [37m'notifications'[0m
+backend:start:dev:              [94mUNION[0m 
+backend:start:dev:                 [94mSELECT[0m
+backend:start:dev:                     [37m*[0m
+backend:start:dev:                 [94mFROM[0m [37m`INFORMATION_SCHEMA`[0m[37m.[0m[37m`STATISTICS`[0m
+backend:start:dev:                 [94mWHERE[0m
+backend:start:dev:                     [37m`TABLE_SCHEMA`[0m [37m=[0m [37m'contracts_management'[0m
+backend:start:dev:                     [94mAND[0m
+backend:start:dev:                     [37m`TABLE_NAME`[0m [37m=[0m [37m'agreements_exec_jobs'[0m
+backend:start:dev:              [94mUNION[0m 
+backend:start:dev:                 [94mSELECT[0m
+backend:start:dev:                     [37m*[0m
+backend:start:dev:                 [94mFROM[0m [37m`INFORMATION_SCHEMA`[0m[37m.[0m[37m`STATISTICS`[0m
+backend:start:dev:                 [94mWHERE[0m
+backend:start:dev:                     [37m`TABLE_SCHEMA`[0m [37m=[0m [37m'contracts_management'[0m
+backend:start:dev:                     [94mAND[0m
+backend:start:dev:                     [37m`TABLE_NAME`[0m [37m=[0m [37m'vendor_stats'[0m
+backend:start:dev:             [37m)[0m [37m`s`[0m
+backend:start:dev:             [94mLEFT JOIN[0m [37m([0m
+backend:start:dev:                 [94mSELECT[0m
+backend:start:dev:                     [37m*[0m
+backend:start:dev:                 [94mFROM[0m [37m`INFORMATION_SCHEMA`[0m[37m.[0m[37m`REFERENTIAL_CONSTRAINTS`[0m
+backend:start:dev:                 [94mWHERE[0m
+backend:start:dev:                     [37m`CONSTRAINT_SCHEMA`[0m [37m=[0m [37m'contracts_management'[0m
+backend:start:dev:                     [94mAND[0m
+backend:start:dev:                     [37m`TABLE_NAME`[0m [37m=[0m [37m'event'[0m
+backend:start:dev:              [94mUNION[0m 
+backend:start:dev:                 [94mSELECT[0m
+backend:start:dev:                     [37m*[0m
+backend:start:dev:                 [94mFROM[0m [37m`INFORMATION_SCHEMA`[0m[37m.[0m[37m`REFERENTIAL_CONSTRAINTS`[0m
+backend:start:dev:                 [94mWHERE[0m
+backend:start:dev:                     [37m`CONSTRAINT_SCHEMA`[0m [37m=[0m [37m'contracts_management'[0m
+backend:start:dev:                     [94mAND[0m
+backend:start:dev:                     [37m`TABLE_NAME`[0m [37m=[0m [37m'directions'[0m
+backend:start:dev:              [94mUNION[0m 
+backend:start:dev:                 [94mSELECT[0m
+backend:start:dev:                     [37m*[0m
+backend:start:dev:                 [94mFROM[0m [37m`INFORMATION_SCHEMA`[0m[37m.[0m[37m`REFERENTIAL_CONSTRAINTS`[0m
+backend:start:dev:                 [94mWHERE[0m
+backend:start:dev:                     [37m`CONSTRAINT_SCHEMA`[0m [37m=[0m [37m'contracts_management'[0m
+backend:start:dev:                     [94mAND[0m
+backend:start:dev:                     [37m`TABLE_NAME`[0m [37m=[0m [37m'vendors'[0m
+backend:start:dev:              [94mUNION[0m 
+backend:start:dev:                 [94mSELECT[0m
+backend:start:dev:                     [37m*[0m
+backend:start:dev:                 [94mFROM[0m [37m`INFORMATION_SCHEMA`[0m[37m.[0m[37m`REFERENTIAL_CONSTRAINTS`[0m
+backend:start:dev:                 [94mWHERE[0m
+backend:start:dev:                     [37m`CONSTRAINT_SCHEMA`[0m [37m=[0m [37m'contracts_management'[0m
+backend:start:dev:                     [94mAND[0m
+backend:start:dev:                     [37m`TABLE_NAME`[0m [37m=[0m [37m'agreements'[0m
+backend:start:dev:              [94mUNION[0m 
+backend:start:dev:                 [94mSELECT[0m
+backend:start:dev:                     [37m*[0m
+backend:start:dev:                 [94mFROM[0m [37m`INFORMATION_SCHEMA`[0m[37m.[0m[37m`REFERENTIAL_CONSTRAINTS`[0m
+backend:start:dev:                 [94mWHERE[0m
+backend:start:dev:                     [37m`CONSTRAINT_SCHEMA`[0m [37m=[0m [37m'contracts_management'[0m
+backend:start:dev:                     [94mAND[0m
+backend:start:dev:                     [37m`TABLE_NAME`[0m [37m=[0m [37m'departements'[0m
+backend:start:dev:              [94mUNION[0m 
+backend:start:dev:                 [94mSELECT[0m
+backend:start:dev:                     [37m*[0m
+backend:start:dev:                 [94mFROM[0m [37m`INFORMATION_SCHEMA`[0m[37m.[0m[37m`REFERENTIAL_CONSTRAINTS`[0m
+backend:start:dev:                 [94mWHERE[0m
+backend:start:dev:                     [37m`CONSTRAINT_SCHEMA`[0m [37m=[0m [37m'contracts_management'[0m
+backend:start:dev:                     [94mAND[0m
+backend:start:dev:                     [37m`TABLE_NAME`[0m [37m=[0m [37m'password_token'[0m
+backend:start:dev:              [94mUNION[0m 
+backend:start:dev:                 [94mSELECT[0m
+backend:start:dev:                     [37m*[0m
+backend:start:dev:                 [94mFROM[0m [37m`INFORMATION_SCHEMA`[0m[37m.[0m[37m`REFERENTIAL_CONSTRAINTS`[0m
+backend:start:dev:                 [94mWHERE[0m
+backend:start:dev:                     [37m`CONSTRAINT_SCHEMA`[0m [37m=[0m [37m'contracts_management'[0m
+backend:start:dev:                     [94mAND[0m
+backend:start:dev:                     [37m`TABLE_NAME`[0m [37m=[0m [37m'users'[0m
+backend:start:dev:              [94mUNION[0m 
+backend:start:dev:                 [94mSELECT[0m
+backend:start:dev:                     [37m*[0m
+backend:start:dev:                 [94mFROM[0m [37m`INFORMATION_SCHEMA`[0m[37m.[0m[37m`REFERENTIAL_CONSTRAINTS`[0m
+backend:start:dev:                 [94mWHERE[0m
+backend:start:dev:                     [37m`CONSTRAINT_SCHEMA`[0m [37m=[0m [37m'contracts_management'[0m
+backend:start:dev:                     [94mAND[0m
+backend:start:dev:                     [37m`TABLE_NAME`[0m [37m=[0m [37m'notifications'[0m
+backend:start:dev:              [94mUNION[0m 
+backend:start:dev:                 [94mSELECT[0m
+backend:start:dev:                     [37m*[0m
+backend:start:dev:                 [94mFROM[0m [37m`INFORMATION_SCHEMA`[0m[37m.[0m[37m`REFERENTIAL_CONSTRAINTS`[0m
+backend:start:dev:                 [94mWHERE[0m
+backend:start:dev:                     [37m`CONSTRAINT_SCHEMA`[0m [37m=[0m [37m'contracts_management'[0m
+backend:start:dev:                     [94mAND[0m
+backend:start:dev:                     [37m`TABLE_NAME`[0m [37m=[0m [37m'agreements_exec_jobs'[0m
+backend:start:dev:              [94mUNION[0m 
+backend:start:dev:                 [94mSELECT[0m
+backend:start:dev:                     [37m*[0m
+backend:start:dev:                 [94mFROM[0m [37m`INFORMATION_SCHEMA`[0m[37m.[0m[37m`REFERENTIAL_CONSTRAINTS`[0m
+backend:start:dev:                 [94mWHERE[0m
+backend:start:dev:                     [37m`CONSTRAINT_SCHEMA`[0m [37m=[0m [37m'contracts_management'[0m
+backend:start:dev:                     [94mAND[0m
+backend:start:dev:                     [37m`TABLE_NAME`[0m [37m=[0m [37m'vendor_stats'[0m
+backend:start:dev:             [37m)[0m [37m`rc`[0m
+backend:start:dev:                 [94mON[0m
+backend:start:dev:                     [37m`s`[0m[37m.[0m[37m`INDEX_NAME`[0m [37m=[0m [37m`rc`[0m[37m.[0m[37m`CONSTRAINT_NAME`[0m
+backend:start:dev:                     [94mAND[0m
+backend:start:dev:                     [37m`s`[0m[37m.[0m[37m`TABLE_SCHEMA`[0m [37m=[0m [37m`rc`[0m[37m.[0m[37m`CONSTRAINT_SCHEMA`[0m
+backend:start:dev:             [94mWHERE[0m
+backend:start:dev:                 [37m`s`[0m[37m.[0m[37m`INDEX_NAME`[0m [37m!=[0m [37m'PRIMARY'[0m
+backend:start:dev:                 [94mAND[0m
+backend:start:dev:                 [37m`rc`[0m[37m.[0m[37m`CONSTRAINT_NAME`[0m [94mIS NULL[0m
+backend:start:dev:             
+backend:start:dev: [90m[4mquery:[24m[39m 
+backend:start:dev:             [94mSELECT[0m
+backend:start:dev:                 [37m`kcu`[0m[37m.[0m[37m`TABLE_SCHEMA`[0m[37m,[0m
+backend:start:dev:                 [37m`kcu`[0m[37m.[0m[37m`TABLE_NAME`[0m[37m,[0m
+backend:start:dev:                 [37m`kcu`[0m[37m.[0m[37m`CONSTRAINT_NAME`[0m[37m,[0m
+backend:start:dev:                 [37m`kcu`[0m[37m.[0m[37m`COLUMN_NAME`[0m[37m,[0m
+backend:start:dev:                 [37m`kcu`[0m[37m.[0m[37m`REFERENCED_TABLE_SCHEMA`[0m[37m,[0m
+backend:start:dev:                 [37m`kcu`[0m[37m.[0m[37m`REFERENCED_TABLE_NAME`[0m[37m,[0m
+backend:start:dev:                 [37m`kcu`[0m[37m.[0m[37m`REFERENCED_COLUMN_NAME`[0m[37m,[0m
+backend:start:dev:                 [37m`rc`[0m[37m.[0m[37m`DELETE_RULE`[0m [37m`ON_DELETE`[0m[37m,[0m
+backend:start:dev:                 [37m`rc`[0m[37m.[0m[37m`UPDATE_RULE`[0m [37m`ON_UPDATE`[0m
+backend:start:dev:             [94mFROM[0m [37m([0m
+backend:start:dev:                 [94mSELECT[0m
+backend:start:dev:                     [37m*[0m
+backend:start:dev:                 [94mFROM[0m [37m`INFORMATION_SCHEMA`[0m[37m.[0m[37m`KEY_COLUMN_USAGE`[0m [37m`kcu`[0m
+backend:start:dev:                 [94mWHERE[0m
+backend:start:dev:                     [37m`kcu`[0m[37m.[0m[37m`TABLE_SCHEMA`[0m [37m=[0m [37m'contracts_management'[0m
+backend:start:dev:                     [94mAND[0m
+backend:start:dev:                     [37m`kcu`[0m[37m.[0m[37m`TABLE_NAME`[0m [37m=[0m [37m'event'[0m
+backend:start:dev:              [94mUNION[0m 
+backend:start:dev:                 [94mSELECT[0m
+backend:start:dev:                     [37m*[0m
+backend:start:dev:                 [94mFROM[0m [37m`INFORMATION_SCHEMA`[0m[37m.[0m[37m`KEY_COLUMN_USAGE`[0m [37m`kcu`[0m
+backend:start:dev:                 [94mWHERE[0m
+backend:start:dev:                     [37m`kcu`[0m[37m.[0m[37m`TABLE_SCHEMA`[0m [37m=[0m [37m'contracts_management'[0m
+backend:start:dev:                     [94mAND[0m
+backend:start:dev:                     [37m`kcu`[0m[37m.[0m[37m`TABLE_NAME`[0m [37m=[0m [37m'directions'[0m
+backend:start:dev:              [94mUNION[0m 
+backend:start:dev:                 [94mSELECT[0m
+backend:start:dev:                     [37m*[0m
+backend:start:dev:                 [94mFROM[0m [37m`INFORMATION_SCHEMA`[0m[37m.[0m[37m`KEY_COLUMN_USAGE`[0m [37m`kcu`[0m
+backend:start:dev:                 [94mWHERE[0m
+backend:start:dev:                     [37m`kcu`[0m[37m.[0m[37m`TABLE_SCHEMA`[0m [37m=[0m [37m'contracts_management'[0m
+backend:start:dev:                     [94mAND[0m
+backend:start:dev:                     [37m`kcu`[0m[37m.[0m[37m`TABLE_NAME`[0m [37m=[0m [37m'vendors'[0m
+backend:start:dev:              [94mUNION[0m 
+backend:start:dev:                 [94mSELECT[0m
+backend:start:dev:                     [37m*[0m
+backend:start:dev:                 [94mFROM[0m [37m`INFORMATION_SCHEMA`[0m[37m.[0m[37m`KEY_COLUMN_USAGE`[0m [37m`kcu`[0m
+backend:start:dev:                 [94mWHERE[0m
+backend:start:dev:                     [37m`kcu`[0m[37m.[0m[37m`TABLE_SCHEMA`[0m [37m=[0m [37m'contracts_management'[0m
+backend:start:dev:                     [94mAND[0m
+backend:start:dev:                     [37m`kcu`[0m[37m.[0m[37m`TABLE_NAME`[0m [37m=[0m [37m'agreements'[0m
+backend:start:dev:              [94mUNION[0m 
+backend:start:dev:                 [94mSELECT[0m
+backend:start:dev:                     [37m*[0m
+backend:start:dev:                 [94mFROM[0m [37m`INFORMATION_SCHEMA`[0m[37m.[0m[37m`KEY_COLUMN_USAGE`[0m [37m`kcu`[0m
+backend:start:dev:                 [94mWHERE[0m
+backend:start:dev:                     [37m`kcu`[0m[37m.[0m[37m`TABLE_SCHEMA`[0m [37m=[0m [37m'contracts_management'[0m
+backend:start:dev:                     [94mAND[0m
+backend:start:dev:                     [37m`kcu`[0m[37m.[0m[37m`TABLE_NAME`[0m [37m=[0m [37m'departements'[0m
+backend:start:dev:              [94mUNION[0m 
+backend:start:dev:                 [94mSELECT[0m
+backend:start:dev:                     [37m*[0m
+backend:start:dev:                 [94mFROM[0m [37m`INFORMATION_SCHEMA`[0m[37m.[0m[37m`KEY_COLUMN_USAGE`[0m [37m`kcu`[0m
+backend:start:dev:                 [94mWHERE[0m
+backend:start:dev:                     [37m`kcu`[0m[37m.[0m[37m`TABLE_SCHEMA`[0m [37m=[0m [37m'contracts_management'[0m
+backend:start:dev:                     [94mAND[0m
+backend:start:dev:                     [37m`kcu`[0m[37m.[0m[37m`TABLE_NAME`[0m [37m=[0m [37m'password_token'[0m
+backend:start:dev:              [94mUNION[0m 
+backend:start:dev:                 [94mSELECT[0m
+backend:start:dev:                     [37m*[0m
+backend:start:dev:                 [94mFROM[0m [37m`INFORMATION_SCHEMA`[0m[37m.[0m[37m`KEY_COLUMN_USAGE`[0m [37m`kcu`[0m
+backend:start:dev:                 [94mWHERE[0m
+backend:start:dev:                     [37m`kcu`[0m[37m.[0m[37m`TABLE_SCHEMA`[0m [37m=[0m [37m'contracts_management'[0m
+backend:start:dev:                     [94mAND[0m
+backend:start:dev:                     [37m`kcu`[0m[37m.[0m[37m`TABLE_NAME`[0m [37m=[0m [37m'users'[0m
+backend:start:dev:              [94mUNION[0m 
+backend:start:dev:                 [94mSELECT[0m
+backend:start:dev:                     [37m*[0m
+backend:start:dev:                 [94mFROM[0m [37m`INFORMATION_SCHEMA`[0m[37m.[0m[37m`KEY_COLUMN_USAGE`[0m [37m`kcu`[0m
+backend:start:dev:                 [94mWHERE[0m
+backend:start:dev:                     [37m`kcu`[0m[37m.[0m[37m`TABLE_SCHEMA`[0m [37m=[0m [37m'contracts_management'[0m
+backend:start:dev:                     [94mAND[0m
+backend:start:dev:                     [37m`kcu`[0m[37m.[0m[37m`TABLE_NAME`[0m [37m=[0m [37m'notifications'[0m
+backend:start:dev:              [94mUNION[0m 
+backend:start:dev:                 [94mSELECT[0m
+backend:start:dev:                     [37m*[0m
+backend:start:dev:                 [94mFROM[0m [37m`INFORMATION_SCHEMA`[0m[37m.[0m[37m`KEY_COLUMN_USAGE`[0m [37m`kcu`[0m
+backend:start:dev:                 [94mWHERE[0m
+backend:start:dev:                     [37m`kcu`[0m[37m.[0m[37m`TABLE_SCHEMA`[0m [37m=[0m [37m'contracts_management'[0m
+backend:start:dev:                     [94mAND[0m
+backend:start:dev:                     [37m`kcu`[0m[37m.[0m[37m`TABLE_NAME`[0m [37m=[0m [37m'agreements_exec_jobs'[0m
+backend:start:dev:              [94mUNION[0m 
+backend:start:dev:                 [94mSELECT[0m
+backend:start:dev:                     [37m*[0m
+backend:start:dev:                 [94mFROM[0m [37m`INFORMATION_SCHEMA`[0m[37m.[0m[37m`KEY_COLUMN_USAGE`[0m [37m`kcu`[0m
+backend:start:dev:                 [94mWHERE[0m
+backend:start:dev:                     [37m`kcu`[0m[37m.[0m[37m`TABLE_SCHEMA`[0m [37m=[0m [37m'contracts_management'[0m
+backend:start:dev:                     [94mAND[0m
+backend:start:dev:                     [37m`kcu`[0m[37m.[0m[37m`TABLE_NAME`[0m [37m=[0m [37m'vendor_stats'[0m
+backend:start:dev:             [37m)[0m [37m`kcu`[0m
+backend:start:dev:             [94mINNER JOIN[0m [37m([0m
+backend:start:dev:                 [94mSELECT[0m
+backend:start:dev:                     [37m*[0m
+backend:start:dev:                 [94mFROM[0m [37m`INFORMATION_SCHEMA`[0m[37m.[0m[37m`REFERENTIAL_CONSTRAINTS`[0m
+backend:start:dev:                 [94mWHERE[0m
+backend:start:dev:                     [37m`CONSTRAINT_SCHEMA`[0m [37m=[0m [37m'contracts_management'[0m
+backend:start:dev:                     [94mAND[0m
+backend:start:dev:                     [37m`TABLE_NAME`[0m [37m=[0m [37m'event'[0m
+backend:start:dev:              [94mUNION[0m 
+backend:start:dev:                 [94mSELECT[0m
+backend:start:dev:                     [37m*[0m
+backend:start:dev:                 [94mFROM[0m [37m`INFORMATION_SCHEMA`[0m[37m.[0m[37m`REFERENTIAL_CONSTRAINTS`[0m
+backend:start:dev:                 [94mWHERE[0m
+backend:start:dev:                     [37m`CONSTRAINT_SCHEMA`[0m [37m=[0m [37m'contracts_management'[0m
+backend:start:dev:                     [94mAND[0m
+backend:start:dev:                     [37m`TABLE_NAME`[0m [37m=[0m [37m'directions'[0m
+backend:start:dev:              [94mUNION[0m 
+backend:start:dev:                 [94mSELECT[0m
+backend:start:dev:                     [37m*[0m
+backend:start:dev:                 [94mFROM[0m [37m`INFORMATION_SCHEMA`[0m[37m.[0m[37m`REFERENTIAL_CONSTRAINTS`[0m
+backend:start:dev:                 [94mWHERE[0m
+backend:start:dev:                     [37m`CONSTRAINT_SCHEMA`[0m [37m=[0m [37m'contracts_management'[0m
+backend:start:dev:                     [94mAND[0m
+backend:start:dev:                     [37m`TABLE_NAME`[0m [37m=[0m [37m'vendors'[0m
+backend:start:dev:              [94mUNION[0m 
+backend:start:dev:                 [94mSELECT[0m
+backend:start:dev:                     [37m*[0m
+backend:start:dev:                 [94mFROM[0m [37m`INFORMATION_SCHEMA`[0m[37m.[0m[37m`REFERENTIAL_CONSTRAINTS`[0m
+backend:start:dev:                 [94mWHERE[0m
+backend:start:dev:                     [37m`CONSTRAINT_SCHEMA`[0m [37m=[0m [37m'contracts_management'[0m
+backend:start:dev:                     [94mAND[0m
+backend:start:dev:                     [37m`TABLE_NAME`[0m [37m=[0m [37m'agreements'[0m
+backend:start:dev:              [94mUNION[0m 
+backend:start:dev:                 [94mSELECT[0m
+backend:start:dev:                     [37m*[0m
+backend:start:dev:                 [94mFROM[0m [37m`INFORMATION_SCHEMA`[0m[37m.[0m[37m`REFERENTIAL_CONSTRAINTS`[0m
+backend:start:dev:                 [94mWHERE[0m
+backend:start:dev:                     [37m`CONSTRAINT_SCHEMA`[0m [37m=[0m [37m'contracts_management'[0m
+backend:start:dev:                     [94mAND[0m
+backend:start:dev:                     [37m`TABLE_NAME`[0m [37m=[0m [37m'departements'[0m
+backend:start:dev:              [94mUNION[0m 
+backend:start:dev:                 [94mSELECT[0m
+backend:start:dev:                     [37m*[0m
+backend:start:dev:                 [94mFROM[0m [37m`INFORMATION_SCHEMA`[0m[37m.[0m[37m`REFERENTIAL_CONSTRAINTS`[0m
+backend:start:dev:                 [94mWHERE[0m
+backend:start:dev:                     [37m`CONSTRAINT_SCHEMA`[0m [37m=[0m [37m'contracts_management'[0m
+backend:start:dev:                     [94mAND[0m
+backend:start:dev:                     [37m`TABLE_NAME`[0m [37m=[0m [37m'password_token'[0m
+backend:start:dev:              [94mUNION[0m 
+backend:start:dev:                 [94mSELECT[0m
+backend:start:dev:                     [37m*[0m
+backend:start:dev:                 [94mFROM[0m [37m`INFORMATION_SCHEMA`[0m[37m.[0m[37m`REFERENTIAL_CONSTRAINTS`[0m
+backend:start:dev:                 [94mWHERE[0m
+backend:start:dev:                     [37m`CONSTRAINT_SCHEMA`[0m [37m=[0m [37m'contracts_management'[0m
+backend:start:dev:                     [94mAND[0m
+backend:start:dev:                     [37m`TABLE_NAME`[0m [37m=[0m [37m'users'[0m
+backend:start:dev:              [94mUNION[0m 
+backend:start:dev:                 [94mSELECT[0m
+backend:start:dev:                     [37m*[0m
+backend:start:dev:                 [94mFROM[0m [37m`INFORMATION_SCHEMA`[0m[37m.[0m[37m`REFERENTIAL_CONSTRAINTS`[0m
+backend:start:dev:                 [94mWHERE[0m
+backend:start:dev:                     [37m`CONSTRAINT_SCHEMA`[0m [37m=[0m [37m'contracts_management'[0m
+backend:start:dev:                     [94mAND[0m
+backend:start:dev:                     [37m`TABLE_NAME`[0m [37m=[0m [37m'notifications'[0m
+backend:start:dev:              [94mUNION[0m 
+backend:start:dev:                 [94mSELECT[0m
+backend:start:dev:                     [37m*[0m
+backend:start:dev:                 [94mFROM[0m [37m`INFORMATION_SCHEMA`[0m[37m.[0m[37m`REFERENTIAL_CONSTRAINTS`[0m
+backend:start:dev:                 [94mWHERE[0m
+backend:start:dev:                     [37m`CONSTRAINT_SCHEMA`[0m [37m=[0m [37m'contracts_management'[0m
+backend:start:dev:                     [94mAND[0m
+backend:start:dev:                     [37m`TABLE_NAME`[0m [37m=[0m [37m'agreements_exec_jobs'[0m
+backend:start:dev:              [94mUNION[0m 
+backend:start:dev:                 [94mSELECT[0m
+backend:start:dev:                     [37m*[0m
+backend:start:dev:                 [94mFROM[0m [37m`INFORMATION_SCHEMA`[0m[37m.[0m[37m`REFERENTIAL_CONSTRAINTS`[0m
+backend:start:dev:                 [94mWHERE[0m
+backend:start:dev:                     [37m`CONSTRAINT_SCHEMA`[0m [37m=[0m [37m'contracts_management'[0m
+backend:start:dev:                     [94mAND[0m
+backend:start:dev:                     [37m`TABLE_NAME`[0m [37m=[0m [37m'vendor_stats'[0m
+backend:start:dev:             [37m)[0m [37m`rc`[0m
+backend:start:dev:                 [94mON[0m
+backend:start:dev:                     [37m`rc`[0m[37m.[0m[37m`CONSTRAINT_SCHEMA`[0m [37m=[0m [37m`kcu`[0m[37m.[0m[37m`CONSTRAINT_SCHEMA`[0m
+backend:start:dev:                     [94mAND[0m
+backend:start:dev:                     [37m`rc`[0m[37m.[0m[37m`TABLE_NAME`[0m [37m=[0m [37m`kcu`[0m[37m.[0m[37m`TABLE_NAME`[0m
+backend:start:dev:                     [94mAND[0m
+backend:start:dev:                     [37m`rc`[0m[37m.[0m[37m`CONSTRAINT_NAME`[0m [37m=[0m [37m`kcu`[0m[37m.[0m[37m`CONSTRAINT_NAME`[0m
+backend:start:dev:             
+backend:start:dev: [90m[4mquery:[24m[39m [94mSELECT[0m [37m*[0m [94mFROM[0m [37m`INFORMATION_SCHEMA`[0m[37m.[0m[37m`COLUMNS`[0m [94mWHERE[0m [37m`TABLE_SCHEMA`[0m [37m=[0m [37m'contracts_management'[0m [94mAND[0m [37m`TABLE_NAME`[0m [37m=[0m [37m'typeorm_metadata'[0m
+backend:start:dev: [90m[4mquery:[24m[39m [94mALTER TABLE[0m [37m`vendors`[0m [94mADD[0m [94mUNIQUE[0m [94mINDEX[0m [37m`IDX_2b18e322b255d76f245e6c4d6c`[0m [37m([0m[37m`num`[0m[37m)[0m
+backend:start:dev: [90m[4mquery:[24m[39m [94mALTER TABLE[0m [37m`vendors`[0m [94mADD[0m [94mUNIQUE[0m [94mINDEX[0m [37m`IDX_5f688882b80f7bafcc0ab46ef1`[0m [37m([0m[37m`company_name`[0m[37m)[0m
+backend:start:dev: [90m[4mquery:[24m[39m [94mALTER TABLE[0m [37m`vendors`[0m [94mADD[0m [94mUNIQUE[0m [94mINDEX[0m [37m`IDX_b6680a694dc5f22a4352a4f54e`[0m [37m([0m[37m`nif`[0m[37m)[0m
+backend:start:dev: [90m[4mquery:[24m[39m [94mALTER TABLE[0m [37m`vendors`[0m [94mADD[0m [94mUNIQUE[0m [94mINDEX[0m [37m`IDX_9387a68df0fff249ff574b7e59`[0m [37m([0m[37m`nrc`[0m[37m)[0m
+backend:start:dev: [90m[4mquery:[24m[39m [94mALTER TABLE[0m [37m`agreements`[0m [94mADD[0m [94mUNIQUE[0m [94mINDEX[0m [37m`IDX_c800fea32de457e4c2974bce78`[0m [37m([0m[37m`number`[0m[37m)[0m
+backend:start:dev: [90m[4mquery:[24m[39m [94mALTER TABLE[0m [37m`users`[0m [94mADD[0m [94mUNIQUE[0m [94mINDEX[0m [37m`IDX_97672ac88f789774dd47f7c8be`[0m [37m([0m[37m`email`[0m[37m)[0m
+backend:start:dev: [90m[4mquery:[24m[39m [94mALTER TABLE[0m [37m`users`[0m [94mADD[0m [94mUNIQUE[0m [94mINDEX[0m [37m`IDX_fe0bb3f6520ee0469504521e71`[0m [37m([0m[37m`username`[0m[37m)[0m
+backend:start:dev: [90m[4mquery:[24m[39m [94mCOMMIT[0m
+backend:start:dev: [32m[Nest] 21082  - [39m03/14/2026, 2:49:43 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmCoreModule dependencies initialized[39m[38;5;3m +288ms[39m
+backend:start:dev: [32m[Nest] 21082  - [39m03/14/2026, 2:49:43 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+backend:start:dev: [32m[Nest] 21082  - [39m03/14/2026, 2:49:43 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+backend:start:dev: [32m[Nest] 21082  - [39m03/14/2026, 2:49:43 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+backend:start:dev: [32m[Nest] 21082  - [39m03/14/2026, 2:49:43 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+backend:start:dev: [32m[Nest] 21082  - [39m03/14/2026, 2:49:43 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mEventModule dependencies initialized[39m[38;5;3m +0ms[39m
+backend:start:dev: [32m[Nest] 21082  - [39m03/14/2026, 2:49:43 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mDirectionModule dependencies initialized[39m[38;5;3m +1ms[39m
+backend:start:dev: [32m[Nest] 21082  - [39m03/14/2026, 2:49:43 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mUserModule dependencies initialized[39m[38;5;3m +0ms[39m
+backend:start:dev: [32m[Nest] 21082  - [39m03/14/2026, 2:49:43 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAgreementModule dependencies initialized[39m[38;5;3m +0ms[39m
+backend:start:dev: [32m[Nest] 21082  - [39m03/14/2026, 2:49:43 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mStatisticsModule dependencies initialized[39m[38;5;3m +0ms[39m
+backend:start:dev: [32m[Nest] 21082  - [39m03/14/2026, 2:49:43 PM [32m    LOG[39m [38;5;3m[SocketIoAdapter] [39m[32mCreating socket.io server with cors configurations : url = http://localhost:3000 or url = 
+backend:start:dev:  /\/^http:\/\/192.168.1.([1-9]|[1-9]d):3000$\//[39m
+backend:start:dev: [32m[Nest] 21082  - [39m03/14/2026, 2:49:43 PM [32m    LOG[39m [38;5;3m[SocketIoAdapter] [39m[32mserver is created and middlwares are set[39m
+backend:start:dev: [32m[Nest] 21082  - [39m03/14/2026, 2:49:43 PM [32m    LOG[39m [38;5;3m[NotificationsGateWay] [39m[32mnotification gatway initialized !!![39m
+backend:start:dev: [32m[Nest] 21082  - [39m03/14/2026, 2:49:43 PM [32m    LOG[39m [38;5;3m[WebSocketsController] [39m[32mNotificationsGateWay subscribed to the "request_all_notifications" message[39m[38;5;3m +0ms[39m
+backend:start:dev: [32m[Nest] 21082  - [39m03/14/2026, 2:49:43 PM [32m    LOG[39m [38;5;3m[WebSocketsController] [39m[32mNotificationsGateWay subscribed to the "REQUEST_ALL_EVENTS" message[39m[38;5;3m +0ms[39m
+backend:start:dev: [32m[Nest] 21082  - [39m03/14/2026, 2:49:43 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAuthController {/api/auth}:[39m[38;5;3m +1ms[39m
+backend:start:dev: [32m[Nest] 21082  - [39m03/14/2026, 2:49:43 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/register, POST} route[39m[38;5;3m +1ms[39m
+backend:start:dev: [32m[Nest] 21082  - [39m03/14/2026, 2:49:43 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/login, POST} route[39m[38;5;3m +0ms[39m
+backend:start:dev: [32m[Nest] 21082  - [39m03/14/2026, 2:49:43 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/verify-access-token, GET} route[39m[38;5;3m +0ms[39m
+backend:start:dev: [32m[Nest] 21082  - [39m03/14/2026, 2:49:43 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/refresh_token, GET} route[39m[38;5;3m +0ms[39m
+backend:start:dev: [32m[Nest] 21082  - [39m03/14/2026, 2:49:43 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/logout, POST} route[39m[38;5;3m +0ms[39m
+backend:start:dev: [32m[Nest] 21082  - [39m03/14/2026, 2:49:43 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/forgot-password, POST} route[39m[38;5;3m +0ms[39m
+backend:start:dev: [32m[Nest] 21082  - [39m03/14/2026, 2:49:43 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/reset-password, POST} route[39m[38;5;3m +0ms[39m
+backend:start:dev: [32m[Nest] 21082  - [39m03/14/2026, 2:49:43 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/connected-user/reset-password, POST} route[39m[38;5;3m +0ms[39m
+backend:start:dev: [32m[Nest] 21082  - [39m03/14/2026, 2:49:43 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/register/test, POST} route[39m[38;5;3m +0ms[39m
+backend:start:dev: [32m[Nest] 21082  - [39m03/14/2026, 2:49:43 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mUserController {/api/users}:[39m[38;5;3m +0ms[39m
+backend:start:dev: [32m[Nest] 21082  - [39m03/14/2026, 2:49:43 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/users, GET} route[39m[38;5;3m +1ms[39m
+backend:start:dev: [32m[Nest] 21082  - [39m03/14/2026, 2:49:43 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/users/:id, GET} route[39m[38;5;3m +0ms[39m
+backend:start:dev: [32m[Nest] 21082  - [39m03/14/2026, 2:49:43 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/users/:id, DELETE} route[39m[38;5;3m +0ms[39m
+backend:start:dev: [32m[Nest] 21082  - [39m03/14/2026, 2:49:43 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/users/:id, PUT} route[39m[38;5;3m +0ms[39m
+backend:start:dev: [32m[Nest] 21082  - [39m03/14/2026, 2:49:43 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/users/recieve-notifications, PATCH} route[39m[38;5;3m +0ms[39m
+backend:start:dev: [32m[Nest] 21082  - [39m03/14/2026, 2:49:43 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mUserImageController {/api/users/image}:[39m[38;5;3m +0ms[39m
+backend:start:dev: [32m[Nest] 21082  - [39m03/14/2026, 2:49:43 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/users/image/upload, PUT} route[39m[38;5;3m +0ms[39m
+backend:start:dev: [32m[Nest] 21082  - [39m03/14/2026, 2:49:43 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/users/image/upload, POST} route[39m[38;5;3m +0ms[39m
+backend:start:dev: [32m[Nest] 21082  - [39m03/14/2026, 2:49:43 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/users/image/:fileName, GET} route[39m[38;5;3m +0ms[39m
+backend:start:dev: [32m[Nest] 21082  - [39m03/14/2026, 2:49:43 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mDepartementController {/api/departements}:[39m[38;5;3m +0ms[39m
+backend:start:dev: [32m[Nest] 21082  - [39m03/14/2026, 2:49:43 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/departements, POST} route[39m[38;5;3m +0ms[39m
+backend:start:dev: [32m[Nest] 21082  - [39m03/14/2026, 2:49:43 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/departements/:id, PUT} route[39m[38;5;3m +0ms[39m
+backend:start:dev: [32m[Nest] 21082  - [39m03/14/2026, 2:49:43 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/departements/:id, DELETE} route[39m[38;5;3m +0ms[39m
+backend:start:dev: [32m[Nest] 21082  - [39m03/14/2026, 2:49:43 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/departements/:id, GET} route[39m[38;5;3m +0ms[39m
+backend:start:dev: [32m[Nest] 21082  - [39m03/14/2026, 2:49:43 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/departements, GET} route[39m[38;5;3m +0ms[39m
+backend:start:dev: [32m[Nest] 21082  - [39m03/14/2026, 2:49:43 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mDirectionController {/api/directions}:[39m[38;5;3m +0ms[39m
+backend:start:dev: [32m[Nest] 21082  - [39m03/14/2026, 2:49:43 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/directions, POST} route[39m[38;5;3m +0ms[39m
+backend:start:dev: [32m[Nest] 21082  - [39m03/14/2026, 2:49:43 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/directions, GET} route[39m[38;5;3m +1ms[39m
+backend:start:dev: [32m[Nest] 21082  - [39m03/14/2026, 2:49:43 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/directions/:id, DELETE} route[39m[38;5;3m +0ms[39m
+backend:start:dev: [32m[Nest] 21082  - [39m03/14/2026, 2:49:43 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/directions/:id, PUT} route[39m[38;5;3m +0ms[39m
+backend:start:dev: [32m[Nest] 21082  - [39m03/14/2026, 2:49:43 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/directions/test, POST} route[39m[38;5;3m +0ms[39m
+backend:start:dev: [32m[Nest] 21082  - [39m03/14/2026, 2:49:43 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mEventController {/api/events}:[39m[38;5;3m +0ms[39m
+backend:start:dev: [32m[Nest] 21082  - [39m03/14/2026, 2:49:43 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mStatisticsController {/api/statistics}:[39m[38;5;3m +0ms[39m
+backend:start:dev: [32m[Nest] 21082  - [39m03/14/2026, 2:49:43 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/statistics, GET} route[39m[38;5;3m +0ms[39m
+backend:start:dev: [32m[Nest] 21082  - [39m03/14/2026, 2:49:43 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAgreementController {/api/Agreements}:[39m[38;5;3m +0ms[39m
+backend:start:dev: [32m[Nest] 21082  - [39m03/14/2026, 2:49:43 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/Agreements, POST} route[39m[38;5;3m +0ms[39m
+backend:start:dev: [32m[Nest] 21082  - [39m03/14/2026, 2:49:43 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/Agreements/:id, GET} route[39m[38;5;3m +0ms[39m
+backend:start:dev: [32m[Nest] 21082  - [39m03/14/2026, 2:49:43 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/Agreements, GET} route[39m[38;5;3m +0ms[39m
+backend:start:dev: [32m[Nest] 21082  - [39m03/14/2026, 2:49:43 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/Agreements/exec, PATCH} route[39m[38;5;3m +0ms[39m
+backend:start:dev: [32m[Nest] 21082  - [39m03/14/2026, 2:49:43 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/Agreements/test, POST} route[39m[38;5;3m +0ms[39m
+backend:start:dev: [32m[Nest] 21082  - [39m03/14/2026, 2:49:43 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mVendorController {/api/vendors}:[39m[38;5;3m +0ms[39m
+backend:start:dev: [32m[Nest] 21082  - [39m03/14/2026, 2:49:43 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/vendors, POST} route[39m[38;5;3m +0ms[39m
+backend:start:dev: [32m[Nest] 21082  - [39m03/14/2026, 2:49:43 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/vendors/stats, GET} route[39m[38;5;3m +0ms[39m
+backend:start:dev: [32m[Nest] 21082  - [39m03/14/2026, 2:49:43 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/vendors/:id, GET} route[39m[38;5;3m +0ms[39m
+backend:start:dev: [32m[Nest] 21082  - [39m03/14/2026, 2:49:43 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/vendors, GET} route[39m[38;5;3m +0ms[39m
+backend:start:dev: [32m[Nest] 21082  - [39m03/14/2026, 2:49:43 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/vendors/:id, PATCH} route[39m[38;5;3m +0ms[39m
+backend:start:dev: [32m[Nest] 21082  - [39m03/14/2026, 2:49:43 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/vendors/:id, DELETE} route[39m[38;5;3m +0ms[39m
+backend:start:dev: [32m[Nest] 21082  - [39m03/14/2026, 2:49:43 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/vendors/test, POST} route[39m[38;5;3m +0ms[39m
+backend:start:dev: [32m[Nest] 21082  - [39m03/14/2026, 2:49:43 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAgreementFileController {/api/agreements/files}:[39m[38;5;3m +1ms[39m
+backend:start:dev: [32m[Nest] 21082  - [39m03/14/2026, 2:49:43 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/agreements/files/upload, POST} route[39m[38;5;3m +0ms[39m
+backend:start:dev: [32m[Nest] 21082  - [39m03/14/2026, 2:49:43 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/agreements/files/:fileName, GET} route[39m[38;5;3m +0ms[39m
+backend:start:dev: [32m[Nest] 21082  - [39m03/14/2026, 2:49:43 PM [32m    LOG[39m [38;5;3m[AgreementService] [39m[32minitializing the percisted agreement related cron jobs:[39m
+backend:start:dev: [90m[4mquery:[24m[39m [94mSELECT[0m [37m`AgreementExecJobsEntity`[0m[37m.[0m[37m`id`[0m [94mAS[0m [37m`AgreementExecJobsEntity_id`[0m[37m,[0m [37m`AgreementExecJobsEntity`[0m[37m.[0m[37m`newStatus`[0m [94mAS[0m [37m`AgreementExecJobsEntity_newStatus`[0m[37m,[0m [37m`AgreementExecJobsEntity`[0m[37m.[0m[37m`date`[0m [94mAS[0m [37m`AgreementExecJobsEntity_date`[0m[37m,[0m [37m`AgreementExecJobsEntity`[0m[37m.[0m[37m`agreementId`[0m [94mAS[0m [37m`AgreementExecJobsEntity_agreementId`[0m[37m,[0m [37m`AgreementExecJobsEntity`[0m[37m.[0m[37m`name`[0m [94mAS[0m [37m`AgreementExecJobsEntity_name`[0m [94mFROM[0m [37m`agreements_exec_jobs`[0m [37m`AgreementExecJobsEntity`[0m
+backend:start:dev: [32m[Nest] 21082  - [39m03/14/2026, 2:49:43 PM [32m    LOG[39m [38;5;3m[AgreementService] [39m[32m0 percisted jobs are running[39m
+backend:start:dev: [32m[Nest] 21082  - [39m03/14/2026, 2:49:43 PM [32m    LOG[39m [38;5;3m[NestApplication] [39m[32mNest application successfully started[39m[38;5;3m +1ms[39m
+ ELIFECYCLE  Command failed.
+frontend:dev: [?25h
+ ERROR  run failed: command  exited (1)

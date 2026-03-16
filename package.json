@@ -1,0 +1,21 @@
+{
+  "name": "contracts-management",
+  "version": "1.0.0",
+  "private": true,
+  "packageManager": "pnpm@10.6.3",
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev start:dev",
+    "lint": "turbo run lint",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "generate:directions": "pnpm --filter fake-data generate:directions",
+    "generate:users": "pnpm --filter fake-data generate:users",
+    "generate:vendors": "pnpm --filter fake-data generate:vendors",
+    "generate:agreements": "pnpm --filter fake-data generate:agreements",
+    "generate:accounts": "pnpm --filter fake-data generate:accounts"
+  },
+  "devDependencies": {
+    "turbo": "latest",
+    "prettier": "latest"
+  }
+}
