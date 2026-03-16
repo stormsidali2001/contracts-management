@@ -4,22 +4,20 @@
 ```
 git clone https://github.com/stormsidali2001/contracts-management
 ```
+
+### database setup
+If you have Docker installed, you can spin up the required MySQL database by running:
+```
+docker compose up -d
+```
+
 ### install the packages
-1. open each folder of the 3 main folders: **fake data generator** , **backend** , **frontend** and type on the cli:
+Run pnpm install at the root:
 ```
-npm install
-```
-> or if you have yarn installed
-```
-yarn
-```
-2. optional
->to install yarn type
-```
-npm install --global yarn
+pnpm install
 ```
 ### filling the backend .env file with credentials
-> create a .env file in the backend directory 
+> create a .env file in the `apps/api` directory 
 > use the .env-example template or copy paste the following code
 ```.env
 ### mysql database connection credentials
@@ -45,7 +43,7 @@ ethereal_password = password
 ```
 
 ### filling the fake data generator .env file with credentials
-> create a .env file in the fake data generator directory 
+> create a .env file in the `apps/data-generator` directory 
 > use the .env-example template or copy paste the following code
 ```.env
 ### mysql database connection credentials
@@ -57,141 +55,50 @@ MYSQL_DATABASE_NAME =contracts_management
 ```
 
 ### launching the backend & frontend processes
-#### frontend process:
-* in the main directory type
+To start both the backend and frontend simultaneously using Turborepo:
 ```
-cd frontend
+pnpm dev
 ```
-1. with yarn
-```
-yarn run dev
-```
-2. with npm
-```
-npm run dev
-```
-#### frontend process:
-* in the main directory type
-```
-cd backend
-```
-1. with yarn
-```
-yarn start:dev
-```
-2. with npm
-```
-npm start:dev
-```
+This will run `next dev` for the frontend and `nest start --watch` for the backend.
 
+### other commands
+* **Build all projects:** `pnpm build`
+* **Lint all projects:** `pnpm lint`
+* **Format code:** `pnpm format`
 
 ###  generate fake data 
-1. go to the fake data generator folder
+You can generate fake data using the following commands from the root directory:
+
+1. **Generate directions:**
 ```
-cd 'fake data generator'
-```
-2. generate some directions with their inner departements for testing .
-```
-node directions.js
+pnpm generate:directions
 ```
 
-```javascript
-{
-  title: 'direction generale',
-  abriviation: 'DRG',
-  departements: [
-    { title: 'departement 1', abriviation: 'DP1' },
-    { title: 'departement 2', abriviation: 'DP2' },
-    { title: 'departement 3', abriviation: 'DP3' }
-  ]
-}
-...
+2. **Generate users:**
 ```
-> your output should be something like this
+pnpm generate:users -- 200
+```
+*(directions step is required first)*
 
-3. generate random users (directions step is required)
+3. **Generate vendors:**
 ```
-node users.js 200
+pnpm generate:vendors -- 300
 ```
-> adding 200 random user
 
-```javascript
-{
-  username: 'Théodose.Thomas',
-  firstName: 'Corentin',
-  lastName: 'Roche',
-  email: 'Bernard_Breton59@yahoo.fr',
-  role: 'EMPLOYEE',
-  departementId: '65bcb45a-02e8-4fad-8f63-4dffcc076800',
-  directionId: '34aad234-c03a-4b0d-900b-f5bf347303b9',
-  password: '123456'
-}
-...
+4. **Generate agreements:**
 ```
-> your output should be something like this
+pnpm generate:agreements -- 500
+```
 
-4. generate random vendors (suppliers)
+5. **Create testing accounts:**
 ```
-node vendor.js 300
+pnpm generate:accounts
 ```
-> adding 200 random vendor
-```javascript
-{
-  nif: 'R4021357B',
-  company_name: 'Roger SAS',
-  nrc: 'IKPGXWVPGP',
-  num: 'RYMOTWMKYJ',
-  address: 'MarocÎle-de-FranceBoulogne-Billancourt',
-  mobile_phone_number: '0647556550',
-  home_phone_number: '0396324966',
-  createdAt: '2022-11-01'
-}
-...
-```
-> your output should be something like this
 
-5. generate random contracts or convensions
+Alternatively, you can go to the fake data generator folder:
 ```
-node agreements.js 500
+cd apps/data-generator
 ```
-> adding 500 random contracts or convensions
-
-```javascript
-{
-  number: 'VF6,5,1,7,4,8,2,8',
-  type: 'contract',
-  amount: 976,
-  signature_date: '2022-11-06',
-  expiration_date: '2023-01-06',
-  status: 'not_executed',
-  url: '2ad66aba-d2b1-4c63-9b46-fd4b6be94388.pdf',
-  object: "un champ reservee pour l'object",
-  directionId: '1e64be81-10d4-4d78-bc8b-e5ce458d2e38',
-  departementId: '4ad0cd65-b5a4-4a40-852f-e2b400b4dced',
-  vendorId: '819c3f29-4634-46e3-8c8a-962dd3e2f7be'
-}
-{
-  number: 'BY5,5,0,2,1,1,8,7',
-  type: 'convension',
-  amount: 1180,
-  signature_date: '2022-11-06',
-  expiration_date: '2023-01-06',
-  status: 'not_executed',
-  url: '2ad66aba-d2b1-4c63-9b46-fd4b6be94388.pdf',
-  object: "un champ reservee pour l'object",
-  directionId: '6f4f175a-752d-4d9e-9e5d-6ff4e9a78686',
-  departementId: '58911004-4120-4c38-b55e-0013c99726cf',
-  vendorId: 'de3b8ee5-43ef-4d05-a5cc-152673f828e1'
-}
-....
-```
-> your output should be something like this
-
-### Create the testing accounts
- ```
- cd 'fake data generator'
- node testing-accounts
- ```
  > then you will get an account foreach user role to use in your exploring journey
  ```javascript
  {

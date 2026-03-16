@@ -1,0 +1,1 @@
+{"version":3,"file":"organization-title.d.ts","sourceRoot":"","sources":["../../../../src/organization/direction/value-objects/organization-title.ts"],"names":[],"mappings":"AAAA,qBAAa,iBAAiB;IAC5B,QAAQ,CAAC,KAAK,EAAE,MAAM,CAAC;gBAEX,KAAK,EAAE,MAAM;IAOzB,MAAM,CAAC,KAAK,EAAE,iBAAiB,GAAG,OAAO;IAIzC,QAAQ,IAAI,MAAM;CAGnB"}
