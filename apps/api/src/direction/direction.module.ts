@@ -1,4 +1,4 @@
-import {forwardRef, Logger, Module} from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AgreementEntity } from 'src/core/entities/Agreement.entity';
 import { DepartementEntity } from 'src/core/entities/Departement.entity';
@@ -7,21 +7,28 @@ import { VendorEntity } from 'src/core/entities/Vendor.entity';
 import { AuthModule } from '../auth/auth.module';
 import { DepartementController } from './controllers/departement.controller';
 import { DirectionController } from './controllers/direction.controller';
+import { DepartementRepository } from './departement.repository';
+import { DirectionRepository } from './direction.repository';
 import { DepartementService } from './services/departement.service';
 import { DirectionService } from './services/direction.service';
-import { TypeOrmDirectionRepository } from './typeorm-direction.repository';
-import { TypeOrmDepartementRepository } from './typeorm-departement.repository';
 
 @Module({
-    imports:[forwardRef(() => AuthModule),TypeOrmModule.forFeature([DepartementEntity,DirectionEntity,AgreementEntity,VendorEntity])],
-    controllers:[DepartementController,DirectionController],
-    providers:[
-        DepartementService,
-        DirectionService,
-        { provide: 'IDirectionRepository', useClass: TypeOrmDirectionRepository },
-        { provide: 'IDepartementRepository', useClass: TypeOrmDepartementRepository },
-    ],
-    exports:[DepartementService,DirectionService]
+  imports: [
+    forwardRef(() => AuthModule),
+    TypeOrmModule.forFeature([
+      DepartementEntity,
+      DirectionEntity,
+      AgreementEntity,
+      VendorEntity,
+    ]),
+  ],
+  controllers: [DepartementController, DirectionController],
+  providers: [
+    DirectionRepository,
+    DepartementRepository,
+    DepartementService,
+    DirectionService,
+  ],
+  exports: [DepartementService, DirectionService],
 })
-
-export class DirectionModule{}
+export class DirectionModule {}

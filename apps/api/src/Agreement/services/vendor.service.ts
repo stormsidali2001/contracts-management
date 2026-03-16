@@ -1,6 +1,8 @@
-import {Inject,Injectable,BadRequestException, ForbiddenException, Logger, NotFoundException} from '@nestjs/common'
-import { v4 as uuidv4 } from 'uuid';
-import { Vendor } from '@contracts/domain';
+import {
+  Injectable,
+  ForbiddenException,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateVendorDTO, UpdateVendorDTO } from 'src/core/dtos/vendor.dto';
 import { VendorEntity } from 'src/core/entities/Vendor.entity';
 import { Entity } from 'src/core/types/entity.enum';
@@ -9,114 +11,130 @@ import { PaginationResponse } from 'src/core/types/paginationResponse.interface'
 import { StatsParamsDTO } from 'src/statistics/models/statsPramsDTO.interface';
 import { UserNotificationService } from 'src/user/user-notification.service';
 import { FindOptionsWhere } from 'typeorm';
-import { VendorMapper } from '../vendor.mapper';
-import { TypeOrmVendorRepository } from '../typeorm-vendor.repository';
+import { VendorRepository } from '../vendor.repository';
 
 @Injectable()
-export class VendorService{
+export class VendorService {
+  constructor(
+    private readonly vendorRepository: VendorRepository,
+    private notificationService: UserNotificationService,
+  ) {}
 
-    constructor(
-        @Inject('IVendorRepository') private readonly vendorRepo: TypeOrmVendorRepository,
-        private notificationService:UserNotificationService,
-    ){}
+  async createVendor(vendor: CreateVendorDTO): Promise<VendorEntity> {
+    const { address, home_phone_number, mobile_phone_number, createdAt, ...uniques } =
+      vendor;
+    let condition = '';
+    const uniquesKeys = Object.keys(uniques);
+    uniquesKeys.forEach((k, index) => {
+      if (!uniques[k]) delete uniques[k];
+      if (uniques[k])
+        condition += `v.${k} = :${k} ${index !== uniquesKeys.length - 1 ? 'or ' : ''}`;
+    });
 
-    async createVendor(dto:CreateVendorDTO):Promise<VendorEntity>{
-        const {address,home_phone_number,mobile_phone_number,createdAt,...uniques} = dto;
-        let condition = '';
-        const uniquesKeys = Object.keys(uniques);
-        uniquesKeys.forEach((k,index)=>{
-            if(!uniques[k]) delete uniques[k];
-            if(uniques[k]) condition += `v.${k} = :${k} ${(index !==uniquesKeys.length-1)?"or ":""}`
-        })
+    const vendorDb = await this.vendorRepository.findOneByUniqueCondition(
+      condition,
+      uniques,
+    );
+    if (vendorDb)
+      throw new ForbiddenException('nif , nrc , company_name  ,num doit etre unique');
 
-        const vendorDb = await this.vendorRepo.findByUniqueCondition(condition, {...uniques});
+    const createdVendor = await this.vendorRepository.createWithStats(
+      {
+        address,
+        createdAt: createdAt ? createdAt : new Date(),
+        home_phone_number,
+        mobile_phone_number,
+        ...uniques,
+      },
+      createdAt,
+    );
 
-        if(vendorDb) throw new ForbiddenException("nif , nrc , company_name  ,num doit etre unique")
+    await this.notificationService.sendEventToAllUsers({
+      entity: Entity.VENDOR,
+      operation: Operation.INSERT,
+      entityId: createdVendor.id,
+      createdAt: new Date(),
+    });
 
-        // Create domain object — validates all invariants
-        const vendor = Vendor.create({
-            id: uuidv4(),
-            num: dto.num,
-            name: dto.company_name,
-            nif: dto.nif,
-            nrc: dto.nrc,
-            address: dto.address,
-            mobilePhone: dto.mobile_phone_number,
-            homePhone: dto.home_phone_number,
-        });
+    return createdVendor;
+  }
 
-        const createdVendor = await this.vendorRepo.createVendorWithStats(
-            {
-                ...VendorMapper.toPersistence(vendor),
-                createdAt: createdAt ? createdAt : new Date(),
-            },
-            createdAt ? createdAt : new Date(),
-        );
+  async findBy(options: FindOptionsWhere<VendorEntity>) {
+    return this.vendorRepository.findOneBy(options);
+  }
 
-        await this.notificationService.sendEventToAllUsers({entity:Entity.VENDOR,operation:Operation.INSERT,entityId:createdVendor.id,createdAt:new Date()})
-        return createdVendor;
-    }
+  async findAll(
+    offset: number = 0,
+    limit: number = 10,
+    orderBy: string = undefined,
+    searchQuery: string = undefined,
+  ): Promise<PaginationResponse<VendorEntity>> {
+    return this.vendorRepository.findPaginated(offset, limit, orderBy, searchQuery);
+  }
 
-    async findBy(options:FindOptionsWhere<VendorEntity>){
-        return this.vendorRepo.findOneBy(options);
-    }
+  async findByIdWithRelations(id: string) {
+    return this.vendorRepository.findByIdWithRelations(id);
+  }
 
-    async findAll(offset:number = 0,limit:number = 10,orderBy:string = undefined,searchQuery:string = undefined):Promise<PaginationResponse<VendorEntity>>{
-        return this.vendorRepo.findPaginated(offset, limit, orderBy, searchQuery);
-    }
+  async updateVendor(id: string, newVendor: UpdateVendorDTO) {
+    const { address, home_phone_number, mobile_phone_number, ...uniques } =
+      newVendor;
+    let condition = '';
+    const uniquesKeys = Object.keys(uniques);
+    uniquesKeys.forEach((k, index) => {
+      if (!uniques[k]) delete uniques[k];
+      if (uniques[k])
+        condition += `v.${k} = :${k} ${index !== uniquesKeys.length - 1 ? 'or ' : ''}`;
+    });
 
-    async findByIdWithRelations(id:string){
-        return this.vendorRepo.findByIdWithRelationCounts(id);
-    }
+    const vendorDb = await this.vendorRepository.findOneByUniqueCondition(
+      condition,
+      uniques,
+    );
+    if (vendorDb && vendorDb.id !== id)
+      throw new ForbiddenException('nif , nrc , company_name  ,num doit etre unique');
 
-    async updateVendor(id:string,dto:UpdateVendorDTO){
-        const {address,home_phone_number,mobile_phone_number,...uniques} = dto;
-        let condition = '';
-        const uniquesKeys = Object.keys(uniques);
-        uniquesKeys.forEach((k,index)=>{
-            if(!uniques[k]) delete uniques[k];
-            if(uniques[k]) condition += `v.${k} = :${k} ${(index !==uniquesKeys.length-1)?"or ":""}`
-        })
-        const vendorDb = await this.vendorRepo.findByUniqueCondition(condition, {...uniques});
-        if(vendorDb && vendorDb.id !== id) throw new ForbiddenException("nif , nrc , company_name  ,num doit etre unique")
+    const res = await this.vendorRepository.save({ ...newVendor, id });
+    await this.notificationService.sendEventToAllUsers({
+      entity: Entity.VENDOR,
+      operation: Operation.UPDATE,
+      entityId: res.id,
+      createdAt: new Date(),
+      departementAbriviation: '',
+      directionId: null,
+      departementId: null,
+      directionAbriviation: '',
+    });
 
-        // Load domain object and apply update
-        const existing = await this.vendorRepo.findById(id);
-        if(!existing) throw new NotFoundException('fournisseur non trouvé');
-        existing.update({
-            num: dto.num,
-            name: dto.company_name,
-            nif: dto.nif,
-            nrc: dto.nrc,
-            address: dto.address,
-            mobilePhone: dto.mobile_phone_number,
-            homePhone: dto.home_phone_number,
-        });
-        await this.vendorRepo.save(existing);
+    return res;
+  }
 
-        await this.notificationService.sendEventToAllUsers({entity:Entity.VENDOR,operation:Operation.UPDATE,entityId:id,createdAt:new Date(),departementAbriviation:"",directionId:null,departementId:null,directionAbriviation:""})
-        // Return the updated entity for the existing HTTP contract
-        return this.vendorRepo.findOneBy({ id });
-    }
+  async getVendorsStats({ startDate, endDate }: StatsParamsDTO) {
+    console.log('k....k', startDate, endDate);
+    return this.vendorRepository.getVendorStats(startDate, endDate);
+  }
 
-    async getVendorsStats({startDate,endDate}:StatsParamsDTO){
-        return this.vendorRepo.getVendorsStats({ startDate, endDate });
-    }
+  async deleteVendor(vendorId: string) {
+    const vendorDb =
+      await this.vendorRepository.findByIdWithAgreementCount(vendorId);
 
-    async deleteVendor(vendorId:string){
-        const vendorDb = await this.vendorRepo.findByIdWithAgreementCount(vendorId);
+    if (!vendorDb) throw new NotFoundException('fournisseur non trouvé');
+    const agreementCount = (vendorDb as any).agreementCount as number;
+    if (agreementCount > 0)
+      throw new NotFoundException(
+        `le fournisseur ne peut pas etre supprimer car il a ${agreementCount} accords`,
+      );
 
-        if(!vendorDb) throw new NotFoundException("fournisseur non trouvé");
-
-        // Use domain to enforce the deletion invariant
-        const vendor = VendorMapper.toDomain(vendorDb);
-        //@ts-ignore
-        if(!vendor.canBeDeleted(vendorDb.agreementCount)){
-            //@ts-ignore
-            throw new NotFoundException(`le fournisseur ne peut pas etre supprimer car il a ${vendorDb.agreementCount} accords`);
-        }
-
-        await this.vendorRepo.deleteById(vendorId);
-        await this.notificationService.sendEventToAllUsers({entity:Entity.VENDOR,operation:Operation.DELETE,entityId:vendorDb.id,createdAt:new Date(),departementAbriviation:"",directionId:null,departementId:null,directionAbriviation:""})
-    }
+    await this.vendorRepository.delete(vendorId);
+    await this.notificationService.sendEventToAllUsers({
+      entity: Entity.VENDOR,
+      operation: Operation.DELETE,
+      entityId: vendorDb.id,
+      createdAt: new Date(),
+      departementAbriviation: '',
+      directionId: null,
+      departementId: null,
+      directionAbriviation: '',
+    });
+  }
 }

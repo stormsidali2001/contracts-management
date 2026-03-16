@@ -24,7 +24,6 @@ import { StatisticsModule } from './statistics/statistics.module';
     username:process.env.MYSQL_USERNAME,
     password:process.env.MYSQL_PASSWORD,
     type:"mysql",
-    driver: require('mysql2'),
     host:process.env.MYSQL_DATABASE_HOST,
     port:+process.env.MYSQL_DATABASE_PORT,
     database:process.env.MYSQL_DATABASE_NAME,

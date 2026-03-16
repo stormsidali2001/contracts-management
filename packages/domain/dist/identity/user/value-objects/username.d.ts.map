@@ -1,1 +1,0 @@
-{"version":3,"file":"username.d.ts","sourceRoot":"","sources":["../../../../src/identity/user/value-objects/username.ts"],"names":[],"mappings":"AAEA,qBAAa,QAAQ;IACnB,QAAQ,CAAC,KAAK,EAAE,MAAM,CAAC;gBAEX,KAAK,EAAE,MAAM;IAUzB,MAAM,CAAC,KAAK,EAAE,QAAQ,GAAG,OAAO;IAIhC,QAAQ,IAAI,MAAM;CAGnB"}

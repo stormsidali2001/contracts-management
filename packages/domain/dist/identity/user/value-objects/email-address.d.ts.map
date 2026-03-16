@@ -1,1 +1,0 @@
-{"version":3,"file":"email-address.d.ts","sourceRoot":"","sources":["../../../../src/identity/user/value-objects/email-address.ts"],"names":[],"mappings":"AAEA,qBAAa,YAAY;IACvB,QAAQ,CAAC,KAAK,EAAE,MAAM,CAAC;gBAEX,KAAK,EAAE,MAAM;IAQzB,MAAM,CAAC,KAAK,EAAE,YAAY,GAAG,OAAO;IAIpC,QAAQ,IAAI,MAAM;CAGnB"}
