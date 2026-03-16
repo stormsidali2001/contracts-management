@@ -1,0 +1,147 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap');
+
+/**
+ * CSS custom properties — mirror of lib/tokens.ts
+ * Keep these values in sync with the tokens object.
+ * MUI components are themed via theme.ts / ThemeProvider.
+ * CSS Modules use these vars for non-MUI elements.
+ */
+:root {
+  /* Surfaces */
+  --bg:              #D8E0EC;   /* was #EFF2F7 — darkened so white cards pop (contrast ≈ 1.55:1) */
+  --surface:         #FFFFFF;
+  --surface-subtle:  #F4F6FA;
+  --surface-raised:  #FFFFFF;
+
+  /* Brand */
+  --navy:            #0D1B3E;
+  --navy-mid:        #17498E;
+  --navy-light:      #EAF0FA;
+  --amber:           #F59E0B;
+  --amber-light:     #FEF3C7;
+
+  /* Text */
+  --text-primary:    #0D1B3E;
+  --text-secondary:  #52627A;
+  --text-body:       #3D4A5C;   /* AAA on --bg (#D8E0EC): 7.41:1 */
+  --text-label:      #475569;   /* AAA on --surface (#fff): 7:1  */
+  --text-muted:      #96A3B5;
+  --text-on-dark:    #FFFFFF;
+
+  /* Semantic dark — for text on tinted light backgrounds (WCAG AA/AAA) */
+  --error-dark:      #B91C1C;
+  --success-dark:    #15803D;
+  --warning-dark:    #B45309;
+
+  /* Semantic base */
+  --success:         #16A34A;
+  --error:           #DC2626;
+  --warning:         #D97706;
+  --info:            #17498E;
+
+  /* Borders */
+  --border:          #B8C4D4;   /* was #DDE3EC — darker so card edges are visible */
+  --border-subtle:   #D4DCE8;   /* was #EEF1F6 */
+
+  /* Shadows — increased opacity so cards have clear depth on the darker bg */
+  --shadow-xs: 0 1px 2px rgba(13,27,62,0.08);
+  --shadow-sm: 0 1px 3px rgba(13,27,62,0.12), 0 3px 10px rgba(13,27,62,0.08);
+  --shadow-md: 0 6px 20px rgba(13,27,62,0.14), 0 2px 6px rgba(13,27,62,0.08);
+  --shadow-lg: 0 16px 48px rgba(13,27,62,0.18), 0 6px 16px rgba(13,27,62,0.10);
+
+  /* Layout */
+  --sidebar-bg:    #FFFFFF;
+  --sidebar-width: 260px;
+  --topbar-height: 60px;
+
+  /* Radius */
+  --radius-sm: 8px;
+  --radius:    12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+}
+
+/* ── Reset ── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-primary);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* ── MUI X DataGrid overrides (not configurable via ThemeProvider) ── */
+.MuiDataGrid-root {
+  border: none !important;
+  font-family: 'Inter', sans-serif !important;
+  font-size: 13.5px !important;
+  background: var(--surface) !important;
+}
+.MuiDataGrid-columnHeaders {
+  background: var(--surface-subtle) !important;
+  border-bottom: 1px solid var(--border) !important;
+  min-height: 44px !important;
+}
+.MuiDataGrid-columnHeaderTitle {
+  font-family: 'Inter', sans-serif !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  text-transform: none !important;
+  letter-spacing: 0 !important;
+  color: var(--text-label) !important;
+}
+.MuiDataGrid-cell {
+  border-bottom: 1px solid var(--border-subtle) !important;
+  color: var(--text-primary) !important;
+  display: flex !important;
+  align-items: center !important;
+}
+/* Remove focus outlines — keyboard users get row highlight instead */
+.MuiDataGrid-cell:focus,
+.MuiDataGrid-cell:focus-within,
+.MuiDataGrid-columnHeader:focus,
+.MuiDataGrid-columnHeader:focus-within { outline: none !important; }
+.MuiDataGrid-row:hover { background: var(--navy-light) !important; }
+.MuiDataGrid-row.Mui-selected,
+.MuiDataGrid-row.Mui-selected:hover { background: var(--navy-light) !important; }
+.MuiDataGrid-footerContainer {
+  border-top: 1px solid var(--border) !important;
+  background: var(--surface) !important;
+  min-height: 48px !important;
+}
+.MuiTablePagination-root {
+  font-family: 'Inter', sans-serif !important;
+  font-size: 13px !important;
+  color: var(--text-secondary) !important;
+}
+.MuiDataGrid-overlay {
+  font-family: 'Inter', sans-serif !important;
+  font-size: 13px !important;
+  color: var(--text-muted) !important;
+}
+
+/* ── Thin scrollbar ── */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+*::-webkit-scrollbar { width: 4px; height: 4px; }
+*::-webkit-scrollbar-track { background: transparent; }
+*::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 99px;
+}
+*::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }

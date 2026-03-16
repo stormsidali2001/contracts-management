@@ -1,0 +1,495 @@
+/* ════════════════════════════════════════
+   UsersFilter — User Filter Modal
+   ════════════════════════════════════════ */
+
+.container {
+  width: min(460px, 94vw);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  max-height: calc(100vh - 48px);
+}
+
+/* ── Navy header band ── */
+.modalHeader {
+  background: var(--navy);
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.modalHeader::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: repeating-linear-gradient(
+    45deg,
+    rgba(255,255,255,0.025) 0px,
+    rgba(255,255,255,0.025) 1px,
+    transparent 1px,
+    transparent 14px
+  );
+  pointer-events: none;
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  z-index: 1;
+}
+
+.headerIcon {
+  width: 42px;
+  height: 42px;
+  background: rgba(255,255,255,0.10);
+  border: 1.5px solid rgba(255,255,255,0.18);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #fff;
+}
+
+.headerText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  z-index: 1;
+}
+
+.headerTitle {
+  font-family: 'Outfit', sans-serif;
+  font-size: 17px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: -0.2px;
+  line-height: 1.2;
+}
+
+.headerSubtitle {
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  color: rgba(255,255,255,0.60);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.headerBadge {
+  background: rgba(255,255,255,0.18);
+  border: 1px solid rgba(255,255,255,0.28);
+  border-radius: 99px;
+  padding: 3px 10px;
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+  z-index: 1;
+  flex-shrink: 0;
+}
+
+/* ── Sections body ── */
+.sectionsBody {
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow-y: auto;
+}
+
+.sectionsBody::-webkit-scrollbar { width: 4px; }
+.sectionsBody::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+/* ── Filter section card ── */
+.filterSection {
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  background: var(--bg);
+  transition: border-color 0.2s, box-shadow 0.2s, opacity 0.2s;
+  overflow: hidden;
+  position: relative;
+}
+
+.filterSection.filterSectionActive {
+  border-color: var(--navy-mid);
+  box-shadow: 0 0 0 3px rgba(23,73,142,0.07);
+  background: var(--navy-light);
+}
+
+.filterSectionActive::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 6px;
+  bottom: 6px;
+  width: 3px;
+  border-radius: 0 2px 2px 0;
+  background: var(--navy-mid);
+  z-index: 1;
+}
+
+/* Locked (N/A) state for direction when role = admin/juridical */
+.filterSection.filterSectionLocked {
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+/* ── Section header row ── */
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  gap: 10px;
+}
+
+.sectionHeaderLeft {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+
+.sectionIcon {
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+  background: rgba(23,73,142,0.07);
+  border: 1px solid rgba(23,73,142,0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--navy-mid);
+  flex-shrink: 0;
+  transition: background 0.15s;
+}
+
+.filterSectionActive .sectionIcon {
+  background: rgba(23,73,142,0.15);
+  border-color: rgba(23,73,142,0.25);
+}
+
+.sectionTitle {
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  transition: color 0.15s;
+}
+
+.filterSectionActive .sectionTitle {
+  color: var(--text-primary);
+}
+
+.lockedPill {
+  font-family: 'Inter', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-muted);
+  background: var(--border-subtle);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 1px 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  flex-shrink: 0;
+}
+
+/* ── Toggle switch ── */
+.toggle {
+  position: relative;
+  width: 38px;
+  height: 22px;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.toggle input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+  position: absolute;
+}
+
+.toggleTrack {
+  position: absolute;
+  inset: 0;
+  border-radius: 99px;
+  background: var(--border);
+  transition: background 0.2s;
+}
+
+.toggle input:checked + .toggleTrack {
+  background: var(--navy-mid);
+}
+
+.toggleThumb {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--surface);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.22);
+  transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.toggle input:checked ~ .toggleThumb {
+  transform: translateX(16px);
+}
+
+.toggleDisabled {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+/* ── Animated section body ── */
+.sectionBody {
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  transition: max-height 0.28s ease, opacity 0.22s ease, padding 0.22s ease;
+  padding: 0 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sectionBody.sectionBodyVisible {
+  max-height: 220px;
+  opacity: 1;
+  padding: 0 14px 14px;
+}
+
+/* ── Role chips ── */
+.roleChips {
+  display: flex;
+  gap: 8px;
+}
+
+.roleChip {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  padding: 10px 8px;
+  border-radius: 10px;
+  border: 1.5px solid var(--border-subtle);
+  background: var(--surface);
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s, transform 0.1s;
+  position: relative;
+}
+
+.roleChip:hover:not(:disabled) {
+  border-color: var(--navy-mid);
+  background: var(--navy-light);
+  transform: translateY(-1px);
+}
+
+.roleChip:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.roleChip.roleChipActive {
+  border-color: var(--navy-mid);
+  background: var(--navy-light);
+  box-shadow: 0 0 0 3px rgba(23,73,142,0.09);
+}
+
+.roleChipIcon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: rgba(23,73,142,0.07);
+  border: 1px solid rgba(23,73,142,0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--navy-mid);
+  transition: background 0.15s;
+}
+
+.roleChipActive .roleChipIcon {
+  background: rgba(23,73,142,0.18);
+  border-color: rgba(23,73,142,0.28);
+}
+
+.roleChip span {
+  font-family: 'Inter', sans-serif;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.roleChipCheck {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  color: var(--navy-mid) !important;
+}
+
+/* Note about admin/juridical */
+.roleNote {
+  font-family: 'Inter', sans-serif;
+  font-size: 11.5px;
+  color: var(--text-secondary);
+  background: rgba(23,73,142,0.05);
+  border: 1px solid rgba(23,73,142,0.12);
+  border-radius: 7px;
+  padding: 8px 10px;
+  line-height: 1.5;
+}
+
+/* ── Account state chips ── */
+.stateChips {
+  display: flex;
+  gap: 8px;
+}
+
+.stateChip {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 8px 14px;
+  border-radius: 99px;
+  border: 1.5px solid var(--border-subtle);
+  background: var(--surface);
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s, color 0.15s, transform 0.1s;
+}
+
+.stateChip:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.stateChip:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Active = green */
+.stateChip.stateChipActiveGreen {
+  background: rgba(22,163,74,0.08);
+  border-color: rgba(22,163,74,0.30);
+  color: #15803D;
+  font-weight: 700;
+}
+
+/* Inactive = red */
+.stateChip.stateChipActiveRed {
+  background: rgba(220,38,38,0.08);
+  border-color: rgba(220,38,38,0.28);
+  color: #B91C1C;
+  font-weight: 700;
+}
+
+/* ── Action row ── */
+.actionRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  border-top: 1px solid var(--border-subtle);
+  background: var(--surface-subtle, #F4F6FA);
+  flex-shrink: 0;
+  gap: 8px;
+}
+
+.actionRight {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.resetBtn {
+  height: 34px;
+  padding: 0 12px;
+  border-radius: 8px;
+  background: transparent;
+  border: 1px solid var(--border-subtle);
+  color: var(--text-muted);
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.resetBtn:hover {
+  background: var(--bg);
+  border-color: var(--border);
+  color: var(--text-secondary);
+}
+
+.cancelBtn {
+  height: 36px;
+  padding: 0 16px;
+  border-radius: 8px;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.cancelBtn:hover {
+  background: var(--bg);
+}
+
+.applyBtn {
+  height: 36px;
+  padding: 0 20px;
+  border-radius: 8px;
+  background: var(--navy-mid);
+  border: none;
+  color: #fff;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: background 0.15s, transform 0.1s;
+}
+
+.applyBtn:hover {
+  background: var(--navy);
+  transform: translateY(-1px);
+}
+
+.applyBtn:active {
+  transform: translateY(0);
+}
