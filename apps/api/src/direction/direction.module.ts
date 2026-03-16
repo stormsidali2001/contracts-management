@@ -30,3 +30,4 @@ import { DirectionService } from './services/direction.service';
   exports: [DepartementService, DirectionService],
 })
 export class DirectionModule {}
+

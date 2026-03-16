@@ -6,12 +6,7 @@ import {
 } from 'src/core/dtos/direction.dto';
 import { DepartementEntity } from 'src/core/entities/Departement.entity';
 import { DirectionEntity } from 'src/core/entities/Direction.entity';
-import {
-  DataSource,
-  EntityManager,
-  Repository,
-  UpdateResult,
-} from 'typeorm';
+import { DataSource, EntityManager, Repository, UpdateResult } from 'typeorm';
 
 @Injectable()
 export class DirectionRepository {
@@ -38,7 +33,10 @@ export class DirectionRepository {
   async createWithDepartements(
     directionData: Omit<CreateDirectionDTO, 'departements'>,
     departements: CreateDirectionDTO['departements'],
-  ): Promise<{ direction: DirectionEntity; departements: DepartementEntity[] }> {
+  ): Promise<{
+    direction: DirectionEntity;
+    departements: DepartementEntity[];
+  }> {
     return this.dataSource.manager.transaction(
       async (entityManager: EntityManager) => {
         const directionRepo = entityManager.getRepository(DirectionEntity);

@@ -21,14 +21,21 @@ export class VendorService {
   ) {}
 
   async createVendor(vendor: CreateVendorDTO): Promise<VendorEntity> {
-    const { address, home_phone_number, mobile_phone_number, createdAt, ...uniques } =
-      vendor;
+    const {
+      address,
+      home_phone_number,
+      mobile_phone_number,
+      createdAt,
+      ...uniques
+    } = vendor;
     let condition = '';
     const uniquesKeys = Object.keys(uniques);
     uniquesKeys.forEach((k, index) => {
       if (!uniques[k]) delete uniques[k];
       if (uniques[k])
-        condition += `v.${k} = :${k} ${index !== uniquesKeys.length - 1 ? 'or ' : ''}`;
+        condition += `v.${k} = :${k} ${
+          index !== uniquesKeys.length - 1 ? 'or ' : ''
+        }`;
     });
 
     const vendorDb = await this.vendorRepository.findOneByUniqueCondition(
@@ -36,7 +43,9 @@ export class VendorService {
       uniques,
     );
     if (vendorDb)
-      throw new ForbiddenException('nif , nrc , company_name  ,num doit etre unique');
+      throw new ForbiddenException(
+        'nif , nrc , company_name  ,num doit etre unique',
+      );
 
     const createdVendor = await this.vendorRepository.createWithStats(
       {
@@ -69,7 +78,12 @@ export class VendorService {
     orderBy: string = undefined,
     searchQuery: string = undefined,
   ): Promise<PaginationResponse<VendorEntity>> {
-    return this.vendorRepository.findPaginated(offset, limit, orderBy, searchQuery);
+    return this.vendorRepository.findPaginated(
+      offset,
+      limit,
+      orderBy,
+      searchQuery,
+    );
   }
 
   async findByIdWithRelations(id: string) {
@@ -84,7 +98,9 @@ export class VendorService {
     uniquesKeys.forEach((k, index) => {
       if (!uniques[k]) delete uniques[k];
       if (uniques[k])
-        condition += `v.${k} = :${k} ${index !== uniquesKeys.length - 1 ? 'or ' : ''}`;
+        condition += `v.${k} = :${k} ${
+          index !== uniquesKeys.length - 1 ? 'or ' : ''
+        }`;
     });
 
     const vendorDb = await this.vendorRepository.findOneByUniqueCondition(
@@ -92,7 +108,9 @@ export class VendorService {
       uniques,
     );
     if (vendorDb && vendorDb.id !== id)
-      throw new ForbiddenException('nif , nrc , company_name  ,num doit etre unique');
+      throw new ForbiddenException(
+        'nif , nrc , company_name  ,num doit etre unique',
+      );
 
     const res = await this.vendorRepository.save({ ...newVendor, id });
     await this.notificationService.sendEventToAllUsers({
@@ -115,8 +133,9 @@ export class VendorService {
   }
 
   async deleteVendor(vendorId: string) {
-    const vendorDb =
-      await this.vendorRepository.findByIdWithAgreementCount(vendorId);
+    const vendorDb = await this.vendorRepository.findByIdWithAgreementCount(
+      vendorId,
+    );
 
     if (!vendorDb) throw new NotFoundException('fournisseur non trouvé');
     const agreementCount = (vendorDb as any).agreementCount as number;

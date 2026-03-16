@@ -93,8 +93,8 @@ export class UserRepository {
   }
 
   async findPaginated(
-    offset: number = 0,
-    limit: number = 10,
+    offset = 0,
+    limit = 10,
     orderBy?: string,
     searchQuery?: string,
     departementId?: string,
@@ -102,10 +102,7 @@ export class UserRepository {
     active?: 'active' | 'not_active',
     role?: UserRole,
   ): Promise<PaginationResponse<UserEntity>> {
-    let query = this.repo
-      .createQueryBuilder('user')
-      .skip(offset)
-      .take(limit);
+    let query = this.repo.createQueryBuilder('user').skip(offset).take(limit);
 
     if (searchQuery && searchQuery.length >= 2) {
       query = query.andWhere(`(
@@ -121,7 +118,9 @@ export class UserRepository {
       });
     }
     if (directionId) {
-      query = query.andWhere('user.directionId = :directionId', { directionId });
+      query = query.andWhere('user.directionId = :directionId', {
+        directionId,
+      });
     }
     if (active) {
       query = query.andWhere('user.active = :active', {
