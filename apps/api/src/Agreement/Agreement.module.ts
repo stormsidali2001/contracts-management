@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AuthModule } from 'src/auth/auth.module';
 import { AgreementEntity } from 'src/core/entities/Agreement.entity';
 import { AgreementExecJobsEntity } from 'src/core/entities/agreementExecJobs';
 import { DepartementEntity } from 'src/core/entities/Departement.entity';
@@ -26,7 +25,6 @@ import { VendorService } from './services/vendor.service';
       VendorStatsEntity,
       AgreementExecJobsEntity,
     ]),
-    AuthModule,
     DirectionModule,
   ],
   providers: [
