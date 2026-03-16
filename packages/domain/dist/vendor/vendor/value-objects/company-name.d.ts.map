@@ -1,1 +1,0 @@
-{"version":3,"file":"company-name.d.ts","sourceRoot":"","sources":["../../../../src/vendor/vendor/value-objects/company-name.ts"],"names":[],"mappings":"AAAA,qBAAa,WAAW;IACtB,QAAQ,CAAC,KAAK,EAAE,MAAM,CAAC;gBAEX,KAAK,EAAE,MAAM;IAOzB,MAAM,CAAC,KAAK,EAAE,WAAW,GAAG,OAAO;IAInC,QAAQ,IAAI,MAAM;CAGnB"}

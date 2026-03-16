@@ -1,1 +1,0 @@
-{"version":3,"file":"notification-message.d.ts","sourceRoot":"","sources":["../../../../src/notification/notification/value-objects/notification-message.ts"],"names":[],"mappings":"AAAA,qBAAa,mBAAmB;IAC9B,QAAQ,CAAC,KAAK,EAAE,MAAM,CAAC;gBAEX,KAAK,EAAE,MAAM;IAOzB,MAAM,CAAC,KAAK,EAAE,mBAAmB,GAAG,OAAO;IAI3C,QAAQ,IAAI,MAAM;CAGnB"}

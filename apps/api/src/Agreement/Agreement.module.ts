@@ -8,14 +8,13 @@ import { DirectionEntity } from 'src/core/entities/Direction.entity';
 import { VendorEntity } from 'src/core/entities/Vendor.entity';
 import { VendorStatsEntity } from 'src/core/entities/VendorStats.entity';
 import { DirectionModule } from 'src/direction/direction.module';
-import { DirectionService } from 'src/direction/services/direction.service';
 import { AgreementController } from './controllers/Agreement.controller';
 import { AgreementFileController } from './controllers/AgreementFile.controller';
 import { VendorController } from './controllers/Vendor.controller';
+import { AgreementRepository } from './agreement.repository';
+import { VendorRepository } from './vendor.repository';
 import { AgreementService } from './services/Agreement.service';
 import { VendorService } from './services/vendor.service';
-import { TypeOrmVendorRepository } from './typeorm-vendor.repository';
-import { TypeOrmAgreementRepository } from './typeorm-agreement.repository';
 
 @Module({
   imports: [
@@ -31,10 +30,10 @@ import { TypeOrmAgreementRepository } from './typeorm-agreement.repository';
     DirectionModule,
   ],
   providers: [
+    AgreementRepository,
+    VendorRepository,
     AgreementService,
     VendorService,
-    { provide: 'IVendorRepository', useClass: TypeOrmVendorRepository },
-    { provide: 'IAgreementRepository', useClass: TypeOrmAgreementRepository },
   ],
   exports: [AgreementService, VendorService],
   controllers: [AgreementController, VendorController, AgreementFileController],

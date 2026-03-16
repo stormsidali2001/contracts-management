@@ -8,9 +8,10 @@ import {
   Inject,
   NotFoundException,
 } from '@nestjs/common';
-import { v4 as uuidv4 } from 'uuid';
-import { User, UserRoleEnum } from '@contracts/domain';
+import { FindOptionsWhere, UpdateResult } from 'typeorm';
+import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import {
+  ConnectedUserResetPassword,
   CreateUserDTO,
   UpdateUserDTO,
 } from 'src/core/dtos/user.dto';
@@ -23,19 +24,17 @@ import { PaginationResponse } from 'src/core/types/paginationResponse.interface'
 import { UserRole } from 'src/core/types/UserRole.enum';
 import { DirectionService } from 'src/direction/services/direction.service';
 import { StatsParamsDTO } from 'src/statistics/models/statsPramsDTO.interface';
-import { FindOptionsWhere, UpdateResult } from 'typeorm';
-import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import {
   NotificationBody,
   UserNotificationService,
 } from './user-notification.service';
-import { TypeOrmUserRepository } from './typeorm-user.repository';
-
+import { UserRepository } from './user.repository';
 @Injectable()
 export class UserService {
+  private logger = new Logger(UserService.name);
+
   constructor(
-    @Inject('IUserRepository')
-    private readonly userRepo: TypeOrmUserRepository,
+    private readonly userRepository: UserRepository,
     private readonly directionService: DirectionService,
     @Inject(forwardRef(() => UserNotificationService))
     private readonly notificationService: UserNotificationService,
@@ -44,43 +43,26 @@ export class UserService {
   async create(newUser: CreateUserDTO): Promise<UserEntity> {
     const { departementId = null, directionId = null, ...userData } = newUser;
     let direction: DirectionEntity, departement: DepartementEntity;
+
     if (directionId && departementId) {
       direction = await this.directionService.findDirectionWithDepartement(
         directionId,
         departementId,
       );
-      if (!direction) {
-        throw new BadRequestException('direction not found');
-      }
+      if (!direction) throw new BadRequestException('direction not found');
       departement =
         direction.departements.length > 0 ? direction.departements[0] : null;
-      if (!departement) {
+      if (!departement)
         throw new BadRequestException('departement is not in direction');
-      }
     }
 
-    // Validate domain invariants early
-    User.create({
-      id: uuidv4(),
-      email: newUser.email,
-      username: newUser.username,
-      password: newUser.password ?? '$2b$12$placeholder',
-      role: newUser.role as unknown as UserRoleEnum,
-      firstName: newUser.firstName,
-      lastName: newUser.lastName,
-      imageUrl: newUser.imageUrl,
-      directionId,
-      departementId,
-    });
-
-    const res = await this.userRepo.saveEntity({
+    const res = await this.userRepository.save({
       ...userData,
       direction,
       departement,
     });
-    console.log('testoooooooo', direction);
 
-    const adminUsers = await this.userRepo.findAdminUsers();
+    const adminUsers = await this.userRepository.findAdminUsers();
     const extraMessage =
       departement && direction
         ? `au ${departement.abriviation} de ${direction.abriviation}`
@@ -95,7 +77,7 @@ export class UserService {
     await this.notificationService.emitDataToAdminsOnly({
       entity: res.role as unknown as Entity,
       operation: Operation.INSERT,
-      departementId: departementId,
+      departementId,
       directionId,
       entityId: res.id,
       departementAbriviation: departement?.abriviation ?? '',
@@ -109,19 +91,19 @@ export class UserService {
   }
 
   async findBy(options: FindOptionsWhere<UserEntity>): Promise<UserEntity> {
-    return this.userRepo.findOneBy(options);
+    return this.userRepository.findAllBy(options).then((r) => r[0] ?? null);
   }
 
   async getUserPassword(id: string): Promise<UserEntity> {
-    return this.userRepo.getUserPassword(id);
+    return this.userRepository.getUserPassword(id);
   }
 
   async findByEmailWithToken(email: string): Promise<UserEntity> {
-    return this.userRepo.findByEmailWithToken(email);
+    return this.userRepository.findByEmailWithToken(email);
   }
 
   async findByIdWithToken(userId: string): Promise<UserEntity> {
-    return this.userRepo.findByIdWithToken(userId);
+    return this.userRepository.findByIdWithToken(userId);
   }
 
   async findByEmailOrUsername({
@@ -132,7 +114,7 @@ export class UserService {
     username: string;
   }): Promise<UserEntity> {
     try {
-      return this.userRepo.findByEmailOrUsername({ email, username });
+      return this.userRepository.findByEmailOrUsername(email, username);
     } catch (err) {
       throw new InternalServerErrorException(err);
     }
@@ -142,12 +124,12 @@ export class UserService {
     userId: string,
     partialEntity: QueryDeepPartialEntity<UserEntity>,
   ): Promise<UpdateResult> {
-    return this.userRepo.update(userId, partialEntity);
+    return this.userRepository.update(userId, partialEntity);
   }
 
   async findAll(
-    offset: number = 0,
-    limit: number = 10,
+    offset = 0,
+    limit = 10,
     orderBy: string = undefined,
     searchQuery: string = undefined,
     departementId: string = undefined,
@@ -155,7 +137,7 @@ export class UserService {
     active: 'active' | 'not_active' = undefined,
     role: UserRole = undefined,
   ): Promise<PaginationResponse<UserEntity>> {
-    return this.userRepo.findPaginatedWithFilters(
+    return this.userRepository.findPaginated(
       offset,
       limit,
       orderBy,
@@ -172,25 +154,30 @@ export class UserService {
     newUser: UpdateUserDTO,
     currentUserId: string,
   ): Promise<UpdateResult> {
-    const currentUser = await this.userRepo.findOneBy({ id: currentUserId });
+    const currentUser = await this.userRepository.findById(currentUserId);
     if (!currentUser)
       throw new InternalServerErrorException('connected user not found');
 
-    const userDb = await this.userRepo.findByUsernameOrEmailWithRelations(
-      newUser.username,
-      newUser.email,
-    );
-    const departement = userDb?.departement;
-    const direction = userDb?.direction;
+    const userDb = await this.userRepository
+      .findByEmailOrUsername(newUser.email, newUser.username)
+      .then(async (u) => {
+        if (!u) return null;
+        // re-fetch with relations for notification data
+        return this.userRepository.findByIdWithDepartementAndDirection(u.id);
+      });
+
     if (!userDb) throw new NotFoundException("l'utilisateur n'existe pas");
     if (currentUser.role !== UserRole.ADMIN && userDb.id !== currentUser.id)
       throw new ForbiddenException('permission denied');
-    if (userDb && userDb.id !== id)
+    if (userDb.id !== id)
       throw new ForbiddenException("username et l'email   exists deja");
 
     const { imageUrl } = newUser;
     if (!imageUrl) delete newUser.imageUrl;
-    const res = await this.userRepo.updateById(id, { ...newUser });
+    const res = await this.userRepository.update(id, { ...newUser });
+
+    const departement = userDb.departement;
+    const direction = userDb.direction;
 
     await this.notificationService.emitDataToAdminsOnly({
       entity: userDb.role as unknown as Entity,
@@ -198,11 +185,11 @@ export class UserService {
       operation: Operation.UPDATE,
       departementId: userDb.departementId,
       directionId: userDb.directionId,
-      departementAbriviation: userDb?.departement?.abriviation ?? '',
-      directionAbriviation: userDb?.direction?.abriviation ?? '',
+      departementAbriviation: departement?.abriviation ?? '',
+      directionAbriviation: direction?.abriviation ?? '',
     });
 
-    const adminUsers = await this.userRepo.findAdminUsers();
+    const adminUsers = await this.userRepository.findAdminUsers();
     const extraMessage =
       departement && direction
         ? `au ${departement.abriviation} de ${direction.abriviation}`
@@ -231,41 +218,34 @@ export class UserService {
     return res;
   }
 
-  async findByIdWithDepartementAndDirection(id: string) {
-    return this.userRepo.findByIdWithDepartementAndDirection(id);
+  async findByIdWithDepartementAndDirection(id: string): Promise<UserEntity> {
+    return this.userRepository.findByIdWithDepartementAndDirection(id);
   }
 
   async findAllBy(
     options: FindOptionsWhere<UserEntity> | FindOptionsWhere<UserEntity>[],
-  ) {
-    return this.userRepo.findManyBy(options);
+  ): Promise<UserEntity[]> {
+    return this.userRepository.findAllBy(options);
   }
 
-  async getUserTypesStats(
-    { startDate, endDate }: StatsParamsDTO,
-    _user: UserEntity,
-  ) {
-    const stats = await this.userRepo.getUserTypesStats({ startDate, endDate });
-
-    const response: any = {
-      juridical: 0,
-      employee: 0,
-      admin: 0,
-      total: 0,
-    };
+  async getUserTypesStats(params: StatsParamsDTO, _user: UserEntity) {
+    const stats = await this.userRepository.getUserTypesStats(params);
+    const response: any = { juridical: 0, employee: 0, admin: 0, total: 0 };
     stats.forEach((st) => {
-      response[(st.role as unknown as String).toLowerCase()] = parseInt(st.total);
+      response[(st.role as unknown as string).toLowerCase()] = parseInt(
+        st.total,
+      );
     });
     response.total = response.juridical + response.admin + response.employee;
     return response;
   }
 
-  async updateUserPasswordToken(token: string, userId: string) {
-    await this.userRepo.updatePasswordToken(token, userId);
+  async updateUserPasswordToken(token: string, userId: string): Promise<void> {
+    await this.userRepository.savePasswordToken(token, userId);
   }
 
-  async deleteUserPasswordToken(id: string, userId: string) {
-    await this.userRepo.deletePasswordToken(id, userId);
+  async deleteUserPasswordToken(id: string, userId: string): Promise<void> {
+    await this.userRepository.deletePasswordToken(id, userId);
   }
 
   async deleteUserPasswordTokenAndUpdatePassword(
@@ -275,10 +255,15 @@ export class UserService {
     directionId: string,
     departementId: string,
     userRole: UserRole,
-  ) {
-    await this.userRepo.deletePasswordTokenAndUpdatePassword(id, userId, password);
+  ): Promise<void> {
+    await this.userRepository.deletePasswordTokenAndUpdatePassword(
+      id,
+      userId,
+      password,
+    );
 
-    const userDb = await this.userRepo.findByIdWithDeptAndDirByUserId(userId);
+    const userDb =
+      await this.userRepository.findByIdWithDepartementAndDirection(userId);
     await this.notificationService.emitDataToAdminsOnly({
       entity: userRole as unknown as Entity,
       entityId: userId,
@@ -288,7 +273,8 @@ export class UserService {
       departementAbriviation: userDb?.departement?.abriviation ?? '',
       directionAbriviation: userDb?.direction?.abriviation ?? '',
     });
-    const adminUsers = await this.userRepo.findAdminUsers();
+
+    const adminUsers = await this.userRepository.findAdminUsers();
     const departement = userDb?.departement;
     const direction = userDb?.direction;
     const extraMessage =
@@ -317,16 +303,20 @@ export class UserService {
     });
   }
 
-  async updateUserPassword(id: string, hashed_password: string) {
-    return this.userRepo.updateById(id, { password: hashed_password });
+  async updateUserPassword(
+    id: string,
+    hashed_password: string,
+  ): Promise<UpdateResult> {
+    return this.userRepository.updatePassword(id, hashed_password);
   }
 
-  async recieveNotifications(userId: string, recieve_notifications: boolean) {
-    const userDb = await this.userRepo.findByIdWithDeptAndDirByUserId(userId);
-    //@ts-ignore
-    await this.userRepo.updateById(userId, {
-      recieve_notifications: () => '!recieve_notifications',
-    });
+  async recieveNotifications(
+    userId: string,
+    recieve_notifications: boolean,
+  ): Promise<boolean> {
+    const userDb =
+      await this.userRepository.findByIdWithDepartementAndDirection(userId);
+    await this.userRepository.toggleNotifications(userId);
     await this.notificationService.emitDataToAdminsOnly({
       entity: userDb.role as unknown as Entity,
       entityId: userId,
@@ -339,14 +329,15 @@ export class UserService {
     return !recieve_notifications;
   }
 
-  async deleteUser(userId: string) {
-    const userDb = await this.userRepo.findByIdWithDeptAndDirByUserId(userId);
+  async deleteUser(userId: string): Promise<void> {
+    const userDb =
+      await this.userRepository.findByIdWithDepartementAndDirection(userId);
     const departement = userDb?.departement;
     const direction = userDb?.direction;
     Logger.debug(userId + '---->' + JSON.stringify(userDb), 'deleteUser');
     if (!userDb) throw new NotFoundException("l'utilisateur n'est pas trouvé");
 
-    await this.userRepo.deleteUserWithNotifications(userId);
+    await this.userRepository.delete(userId);
 
     await this.notificationService.emitDataToAdminsOnly({
       entity: userDb.role as unknown as Entity,
@@ -357,7 +348,7 @@ export class UserService {
       departementAbriviation: userDb?.departement?.abriviation ?? '',
       directionAbriviation: userDb?.direction?.abriviation ?? '',
     });
-    const adminUsers = await this.userRepo.findAdminUsers();
+    const adminUsers = await this.userRepository.findAdminUsers();
     const extraMessage =
       departement && direction
         ? `au ${departement.abriviation} de ${direction.abriviation}`
