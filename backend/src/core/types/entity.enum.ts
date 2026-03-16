@@ -1,8 +1,0 @@
-export enum Entity{
-    CONTRACT = 'CONTRACT',
-    CONVENSION = 'CONVENSION',
-    EMPLOYEE = 'EMPLOYEE',
-    JURIDICAL = 'JURIDICAL',
-    ADMIN = 'ADMIN',
-    VENDOR = 'VENDOR',
-}
