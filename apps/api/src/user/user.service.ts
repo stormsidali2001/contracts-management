@@ -15,8 +15,8 @@ import {
   CreateUserDTO,
   UpdateUserDTO,
 } from 'src/core/dtos/user.dto';
-import { DepartementEntity } from 'src/core/entities/Departement.entity';
-import { DirectionEntity } from 'src/core/entities/Direction.entity';
+import { Departement } from 'src/direction/domain/departement';
+import { Direction } from 'src/direction/domain/direction';
 import { UserEntity } from 'src/core/entities/User.entity';
 import { Entity } from 'src/core/types/entity.enum';
 import { Operation } from 'src/core/types/operation.enum';
@@ -43,10 +43,10 @@ export class UserService {
 
   async create(newUser: CreateUserDTO): Promise<UserView> {
     const { departementId = null, directionId = null, ...userData } = newUser;
-    let direction: DirectionEntity, departement: DepartementEntity;
+    let direction: Direction, departement: Departement;
 
     if (directionId && departementId) {
-      direction = await this.directionService.findDirectionWithDepartement(
+      direction = await this.directionService.findWithDepartement(
         directionId,
         departementId,
       );
@@ -59,8 +59,8 @@ export class UserService {
 
     const res = await this.userRepository.save({
       ...userData,
-      direction,
-      departement,
+      direction: direction ? ({ id: direction.id } as any) : undefined,
+      departement: departement ? ({ id: departement.id } as any) : undefined,
     });
 
     const adminUsers = await this.userRepository.findAdminUsers();

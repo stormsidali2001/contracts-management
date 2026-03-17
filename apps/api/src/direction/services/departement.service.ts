@@ -1,76 +1,68 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+import { v4 as uuid } from 'uuid';
 import {
   CreateDepartementDTO,
   UpdateDepartementDTO,
 } from 'src/core/dtos/departement.dto';
 import { DepartementView } from 'src/core/views/departement.view';
-import { DeleteResult, UpdateResult } from 'typeorm';
-import { DepartementRepository } from '../departement.repository';
+import {
+  DIRECTION_REPOSITORY,
+  IDirectionRepository,
+} from '../domain/direction.repository';
 
 @Injectable()
 export class DepartementService {
-  constructor(private readonly departementRepository: DepartementRepository) {}
+  constructor(
+    @Inject(DIRECTION_REPOSITORY)
+    private readonly directionRepository: IDirectionRepository,
+  ) {}
 
-  async createDepartement(
-    departement: CreateDepartementDTO,
-  ): Promise<DepartementView> {
-    const { directionId, ...otherDepartementData } = departement;
-
-    const direction = await this.departementRepository.findDirectionById(
-      directionId,
-    );
+  async createDepartement(dto: CreateDepartementDTO): Promise<DepartementView> {
+    const direction = await this.directionRepository.findById(dto.directionId);
     if (!direction)
       throw new BadRequestException(
         'une erreur lors de la creation de departement',
       );
 
-    const existing = await this.departementRepository.findByUniqueInDirection(
-      otherDepartementData.title,
-      otherDepartementData.abriviation,
-      directionId,
-    );
-    if (existing)
-      throw new BadRequestException(
-        'un departement avec les memes identifiant exist deja dans cette direction',
-      );
-
-    const entity = await this.departementRepository.create({
-      ...otherDepartementData,
-      direction,
-    });
-    return DepartementView.from(entity);
+    const newId = uuid();
+    direction.addDepartement(newId, dto.title, dto.abriviation);
+    await this.directionRepository.save(direction);
+    return DepartementView.from(direction.getDepartement(newId)!);
   }
 
   async updateDepartement(
     id: string,
-    departement: UpdateDepartementDTO,
-  ): Promise<UpdateResult> {
-    return this.departementRepository.update(id, departement);
-  }
-
-  async deleteDepartement(id: string): Promise<DeleteResult> {
-    const departementDb =
-      await this.departementRepository.findByIdWithUserCount(id);
-
-    if (!departementDb)
+    dto: UpdateDepartementDTO,
+  ): Promise<DepartementView> {
+    const direction = await this.directionRepository.findByDepartementId(id);
+    if (!direction)
       throw new BadRequestException("le departement n'existe pas.");
 
-    // @ts-ignore — users count is loaded via loadRelationCountAndMap
-    if (departementDb.users > 0)
-      throw new BadRequestException(
-        'vous ne pouvez pas supprimer le departement car il contient des utilisateur',
-      );
+    direction.updateDepartement(id, dto.title, dto.abriviation);
+    await this.directionRepository.save(direction);
+    return DepartementView.from(direction.getDepartement(id)!);
+  }
 
-    return this.departementRepository.delete(id);
+  async deleteDepartement(id: string): Promise<string> {
+    const direction = await this.directionRepository.findByDepartementId(id);
+    if (!direction)
+      throw new BadRequestException("le departement n'existe pas.");
+
+    direction.removeDepartement(id);
+    await this.directionRepository.save(direction);
+    return 'done';
   }
 
   async findById(id: string): Promise<DepartementView | null> {
-    const entity = await this.departementRepository.findById(id);
-    return entity ? DepartementView.from(entity) : null;
+    const dept = await this.directionRepository.findDepartementById(id);
+    return dept ? DepartementView.from(dept) : null;
   }
 
   async findAll(offset = 0, limit = 10): Promise<DepartementView[]> {
-    const entities = await this.departementRepository.findAll(offset, limit);
-    return DepartementView.fromMany(entities);
+    const depts = await this.directionRepository.findAllDepartements(
+      offset,
+      limit,
+    );
+    return DepartementView.fromMany(depts);
   }
 }

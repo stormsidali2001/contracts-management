@@ -1,96 +1,98 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+import { v4 as uuid } from 'uuid';
 import {
   CreateDirectionDTO,
   updateDirectionDTO,
 } from 'src/core/dtos/direction.dto';
-import { DirectionEntity } from 'src/core/entities/Direction.entity';
 import { DepartementView } from 'src/core/views/departement.view';
 import { DirectionView } from 'src/core/views/direction.view';
-import { UpdateResult } from 'typeorm';
-import { DirectionRepository } from '../direction.repository';
+import { Direction } from '../domain/direction';
+import {
+  DIRECTION_REPOSITORY,
+  IDirectionRepository,
+} from '../domain/direction.repository';
 
 @Injectable()
 export class DirectionService {
-  constructor(private readonly directionRepository: DirectionRepository) {}
+  constructor(
+    @Inject(DIRECTION_REPOSITORY)
+    private readonly directionRepository: IDirectionRepository,
+  ) {}
 
   async createDirection(
-    direction: CreateDirectionDTO,
+    dto: CreateDirectionDTO,
   ): Promise<{ direction: DirectionView; departements: DepartementView[] }> {
-    const { departements, ...otherDirectionData } = direction;
-
-    const existing = await this.directionRepository.findOneByTitleOrAbriviation(
-      otherDirectionData.title,
-      otherDirectionData.abriviation,
+    const existing = await this.directionRepository.findByTitleOrAbriviation(
+      dto.title,
+      dto.abriviation,
     );
     if (existing)
       throw new BadRequestException(
         "l'abriviation ou le nom de la direction exist deja",
       );
 
-    const result = await this.directionRepository.createWithDepartements(
-      otherDirectionData,
-      departements,
-    );
+    const direction = Direction.create({
+      id: uuid(),
+      title: dto.title,
+      abriviation: dto.abriviation,
+    });
+    for (const dp of dto.departements) {
+      direction.addDepartement(uuid(), dp.title, dp.abriviation);
+    }
+    const saved = await this.directionRepository.save(direction);
     return {
-      direction: DirectionView.from(result.direction),
-      departements: result.departements.map((d) => DepartementView.from(d)),
+      direction: DirectionView.from(saved),
+      departements: saved.departements.map((d) => DepartementView.from(d)),
     };
   }
 
   async findAll(offset: number, limit: number): Promise<DirectionView[]> {
-    console.log(offset, limit, 'limit offset');
-    console.log('.........', offset, limit, typeof offset, typeof limit);
-    const entities = await this.directionRepository.findAll(offset, limit);
-    return DirectionView.fromMany(entities);
+    const directions = await this.directionRepository.findAll(offset, limit);
+    return DirectionView.fromMany(directions);
   }
 
-  // Internal use only — callers need the entity to persist relations
-  async findDirectionWithDepartement(
+  async find(id: string): Promise<DirectionView | null> {
+    const direction = await this.directionRepository.findById(id);
+    return direction ? DirectionView.from(direction) : null;
+  }
+
+  // Internal use — callers (UserService, AgreementService) use direction.id and
+  // departements[0].id for TypeORM relation assignment until those services are
+  // refactored to DDD.
+  async findWithDepartement(
     directionId: string,
     departementId: string,
-  ): Promise<DirectionEntity | null> {
-    return this.directionRepository.findDirectionWithDepartement(
+  ): Promise<Direction | null> {
+    return this.directionRepository.findWithDepartement(
       directionId,
       departementId,
     );
   }
 
-  async find(id: string): Promise<DirectionView | null> {
-    const entity = await this.directionRepository.findById(id);
-    return entity ? DirectionView.from(entity) : null;
-  }
-
   async deleteDirection(id: string): Promise<string> {
-    const direction =
-      await this.directionRepository.findByIdWithDepartementsAndUserCounts(id);
-
+    const direction = await this.directionRepository.findById(id);
     if (!direction) throw new BadRequestException('la direction éxiste pas');
-
-    // @ts-ignore — users count is loaded via loadRelationCountAndMap
-    if (direction.departements.some((d) => d.users > 0))
+    if (!direction.canBeDeleted())
       throw new BadRequestException(
         "l'un des departement de la direction contient des utilisateurs",
       );
-
-    if (direction.departements.length > 0) {
-      await this.directionRepository.deleteDepartementsByIds(
-        direction.departements.map((dp) => dp.id),
-      );
-    }
-
-    await this.directionRepository.deleteById(id);
+    await this.directionRepository.delete(id);
     return 'done';
   }
 
   async updateDirection(
     id: string,
-    direction: updateDirectionDTO,
-  ): Promise<UpdateResult> {
-    return this.directionRepository.update(id, direction);
+    dto: updateDirectionDTO,
+  ): Promise<DirectionView> {
+    const direction = await this.directionRepository.findById(id);
+    if (!direction) throw new BadRequestException('la direction éxiste pas');
+    direction.rename(dto.title, direction.abriviation);
+    const saved = await this.directionRepository.save(direction);
+    return DirectionView.from(saved);
   }
 
   async getTopDirection(): Promise<DirectionView[]> {
-    const entities = await this.directionRepository.getTopDirection();
-    return DirectionView.fromMany(entities);
+    const directions = await this.directionRepository.getTopDirections();
+    return DirectionView.fromMany(directions);
   }
 }

@@ -1,4 +1,5 @@
 import { NotificationEntity } from '../entities/Notification.entity';
+import { stripPrivateKeys } from './strip-private-keys.util';
 
 export class NotificationView {
   id: string;
@@ -7,7 +8,7 @@ export class NotificationView {
 
   static from(e: NotificationEntity): NotificationView {
     const { user: _u, ...safe } = e as any;
-    return Object.assign(new NotificationView(), safe);
+    return Object.assign(new NotificationView(), stripPrivateKeys(safe));
   }
 
   static fromMany(entities: NotificationEntity[]): NotificationView[] {

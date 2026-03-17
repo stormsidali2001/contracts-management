@@ -1,4 +1,9 @@
+import { Direction } from 'src/direction/domain/direction';
 import { DirectionEntity } from '../entities/Direction.entity';
+import { DepartementView } from './departement.view';
+import { stripPrivateKeys } from './strip-private-keys.util';
+
+type DirectionLike = DirectionEntity | Direction;
 
 export class DirectionView {
   id: string;
@@ -8,11 +13,15 @@ export class DirectionView {
   departement_cheif?: any;
   agreementCount?: number;
 
-  static from(entity: DirectionEntity): DirectionView {
-    return Object.assign(new DirectionView(), entity);
+  static from(source: DirectionLike): DirectionView {
+    const view = Object.assign(new DirectionView(), stripPrivateKeys(source));
+    if (view.departements?.length) {
+      view.departements = view.departements.map((d) => DepartementView.from(d));
+    }
+    return view;
   }
 
-  static fromMany(entities: DirectionEntity[]): DirectionView[] {
-    return entities.map(DirectionView.from);
+  static fromMany(sources: DirectionLike[]): DirectionView[] {
+    return sources.map(DirectionView.from);
   }
 }
