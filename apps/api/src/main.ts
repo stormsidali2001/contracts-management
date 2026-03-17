@@ -1,4 +1,6 @@
-import { ValidationPipe } from '@nestjs/common';
+import 'tsconfig-paths/register';
+import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
@@ -12,6 +14,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.setGlobalPrefix('api')
   app.useGlobalPipes(new ValidationPipe({transform:true,disableErrorMessages:false,whitelist:true}))
+  app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)))
   app.enableCors({credentials:true,origin:["http://localhost:3000"],methods:['POST','GET','PUT','PATCH','DELETE']});
   app.use(cookieParser()) // to parse the cookie  in the request
   const config = new DocumentBuilder().setTitle('Contracts Management')

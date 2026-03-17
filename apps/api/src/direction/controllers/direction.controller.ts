@@ -1,6 +1,6 @@
 import {Controller,Post,Body, Query, Get, ParseIntPipe, Delete,Param,Put, UseGuards} from '@nestjs/common';
 import { CreateDirectionDTO, updateDirectionDTO } from 'src/core/dtos/direction.dto';
-import { DirectionEntity } from 'src/core/entities/Direction.entity';
+import { DirectionView } from 'src/core/views/direction.view';
 import { UpdateResult } from 'typeorm';
 import { DirectionService } from '../services/direction.service';
 import {ApiTags} from '@nestjs/swagger';
@@ -25,7 +25,7 @@ export class DirectionController{
 
     @UseGuards(JwtAccessTokenGuard)
     @Get('')
-    async findAll(@Query('offset') offset:number ,@Query('limit') limit:number ):Promise<DirectionEntity[]>{
+    async findAll(@Query('offset') offset:number ,@Query('limit') limit:number ):Promise<DirectionView[]>{
         return await this.directionService.findAll(offset,limit);
     }   
     @RequiredRoles(UserRole.ADMIN)

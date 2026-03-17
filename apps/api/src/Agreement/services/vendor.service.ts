@@ -6,6 +6,8 @@ import {
 import { CreateVendorDTO, UpdateVendorDTO } from 'src/core/dtos/vendor.dto';
 import { VendorEntity } from 'src/core/entities/Vendor.entity';
 import { Entity } from 'src/core/types/entity.enum';
+import { VendorStatsView } from 'src/core/views/vendor-stats.view';
+import { VendorView } from 'src/core/views/vendor.view';
 import { Operation } from 'src/core/types/operation.enum';
 import { PaginationResponse } from 'src/core/types/paginationResponse.interface';
 import { StatsParamsDTO } from 'src/statistics/models/statsPramsDTO.interface';
@@ -20,7 +22,7 @@ export class VendorService {
     private notificationService: UserNotificationService,
   ) {}
 
-  async createVendor(vendor: CreateVendorDTO): Promise<VendorEntity> {
+  async createVendor(vendor: CreateVendorDTO): Promise<VendorView> {
     const {
       address,
       home_phone_number,
@@ -65,7 +67,7 @@ export class VendorService {
       createdAt: new Date(),
     });
 
-    return createdVendor;
+    return VendorView.from(createdVendor);
   }
 
   async findBy(options: FindOptionsWhere<VendorEntity>) {
@@ -73,24 +75,29 @@ export class VendorService {
   }
 
   async findAll(
-    offset: number = 0,
-    limit: number = 10,
+    offset = 0,
+    limit = 10,
     orderBy: string = undefined,
     searchQuery: string = undefined,
-  ): Promise<PaginationResponse<VendorEntity>> {
-    return this.vendorRepository.findPaginated(
+  ): Promise<PaginationResponse<VendorView>> {
+    const result = await this.vendorRepository.findPaginated(
       offset,
       limit,
       orderBy,
       searchQuery,
     );
+    return { total: result.total, data: VendorView.fromMany(result.data) };
   }
 
-  async findByIdWithRelations(id: string) {
-    return this.vendorRepository.findByIdWithRelations(id);
+  async findByIdWithRelations(id: string): Promise<VendorView | null> {
+    const entity = await this.vendorRepository.findByIdWithRelations(id);
+    return entity ? VendorView.from(entity) : null;
   }
 
-  async updateVendor(id: string, newVendor: UpdateVendorDTO) {
+  async updateVendor(
+    id: string,
+    newVendor: UpdateVendorDTO,
+  ): Promise<VendorView> {
     const { address, home_phone_number, mobile_phone_number, ...uniques } =
       newVendor;
     let condition = '';
@@ -124,12 +131,19 @@ export class VendorService {
       directionAbriviation: '',
     });
 
-    return res;
+    return VendorView.from(res);
   }
 
-  async getVendorsStats({ startDate, endDate }: StatsParamsDTO) {
+  async getVendorsStats({
+    startDate,
+    endDate,
+  }: StatsParamsDTO): Promise<VendorStatsView[]> {
     console.log('k....k', startDate, endDate);
-    return this.vendorRepository.getVendorStats(startDate, endDate);
+    const entities = await this.vendorRepository.getVendorStats(
+      startDate,
+      endDate,
+    );
+    return VendorStatsView.fromMany(entities);
   }
 
   async deleteVendor(vendorId: string) {

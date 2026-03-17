@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AgreementEntity } from 'src/core/entities/Agreement.entity';
-import { AgreementExecJobsEntity } from 'src/core/entities/agreementExecJobs';
+import { AgreementExecJobsEntity } from 'src/core/entities/AgreementExecJobs';
 import { DepartementEntity } from 'src/core/entities/Departement.entity';
 import { DirectionEntity } from 'src/core/entities/Direction.entity';
 import { VendorEntity } from 'src/core/entities/Vendor.entity';

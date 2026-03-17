@@ -24,6 +24,7 @@ import { PaginationResponse } from 'src/core/types/paginationResponse.interface'
 import { UserRole } from 'src/core/types/UserRole.enum';
 import { DirectionService } from 'src/direction/services/direction.service';
 import { StatsParamsDTO } from 'src/statistics/models/statsPramsDTO.interface';
+import { UserView } from 'src/core/views/user.view';
 import {
   NotificationBody,
   UserNotificationService,
@@ -40,7 +41,7 @@ export class UserService {
     private readonly notificationService: UserNotificationService,
   ) {}
 
-  async create(newUser: CreateUserDTO): Promise<UserEntity> {
+  async create(newUser: CreateUserDTO): Promise<UserView> {
     const { departementId = null, directionId = null, ...userData } = newUser;
     let direction: DirectionEntity, departement: DepartementEntity;
 
@@ -87,7 +88,7 @@ export class UserService {
       type: res.role as unknown as Entity,
       operation: Operation.INSERT,
     });
-    return res;
+    return UserView.from(res);
   }
 
   async findBy(options: FindOptionsWhere<UserEntity>): Promise<UserEntity> {
@@ -136,8 +137,8 @@ export class UserService {
     directionId: string = undefined,
     active: 'active' | 'not_active' = undefined,
     role: UserRole = undefined,
-  ): Promise<PaginationResponse<UserEntity>> {
-    return this.userRepository.findPaginated(
+  ): Promise<PaginationResponse<UserView>> {
+    const result = await this.userRepository.findPaginated(
       offset,
       limit,
       orderBy,
@@ -147,6 +148,7 @@ export class UserService {
       active,
       role,
     );
+    return { total: result.total, data: UserView.fromMany(result.data) };
   }
 
   async updateUserUniqueCheck(
@@ -162,7 +164,6 @@ export class UserService {
       .findByEmailOrUsername(newUser.email, newUser.username)
       .then(async (u) => {
         if (!u) return null;
-        // re-fetch with relations for notification data
         return this.userRepository.findByIdWithDepartementAndDirection(u.id);
       });
 
@@ -218,8 +219,9 @@ export class UserService {
     return res;
   }
 
-  async findByIdWithDepartementAndDirection(id: string): Promise<UserEntity> {
-    return this.userRepository.findByIdWithDepartementAndDirection(id);
+  async findByIdWithDepartementAndDirection(id: string): Promise<UserView> {
+    const entity = await this.userRepository.findByIdWithDepartementAndDirection(id);
+    return UserView.from(entity);
   }
 
   async findAllBy(

@@ -12,7 +12,7 @@ Account manament:
 
 Contracts:
     juridical:
-        1-crud on endors
+        1-crud on vendors
         2-crud on contracts or  convensions
         3-get a notifiation when an agreement: get added , is going to expire and change its status.
         4-browse the event history

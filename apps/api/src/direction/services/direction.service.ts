@@ -4,6 +4,8 @@ import {
   updateDirectionDTO,
 } from 'src/core/dtos/direction.dto';
 import { DirectionEntity } from 'src/core/entities/Direction.entity';
+import { DepartementView } from 'src/core/views/departement.view';
+import { DirectionView } from 'src/core/views/direction.view';
 import { UpdateResult } from 'typeorm';
 import { DirectionRepository } from '../direction.repository';
 
@@ -11,7 +13,9 @@ import { DirectionRepository } from '../direction.repository';
 export class DirectionService {
   constructor(private readonly directionRepository: DirectionRepository) {}
 
-  async createDirection(direction: CreateDirectionDTO) {
+  async createDirection(
+    direction: CreateDirectionDTO,
+  ): Promise<{ direction: DirectionView; departements: DepartementView[] }> {
     const { departements, ...otherDirectionData } = direction;
 
     const existing = await this.directionRepository.findOneByTitleOrAbriviation(
@@ -23,30 +27,37 @@ export class DirectionService {
         "l'abriviation ou le nom de la direction exist deja",
       );
 
-    return this.directionRepository.createWithDepartements(
+    const result = await this.directionRepository.createWithDepartements(
       otherDirectionData,
       departements,
     );
+    return {
+      direction: DirectionView.from(result.direction),
+      departements: result.departements.map((d) => DepartementView.from(d)),
+    };
   }
 
-  async findAll(offset: number, limit: number): Promise<DirectionEntity[]> {
+  async findAll(offset: number, limit: number): Promise<DirectionView[]> {
     console.log(offset, limit, 'limit offset');
     console.log('.........', offset, limit, typeof offset, typeof limit);
-    return this.directionRepository.findAll(offset, limit);
+    const entities = await this.directionRepository.findAll(offset, limit);
+    return DirectionView.fromMany(entities);
   }
 
+  // Internal use only — callers need the entity to persist relations
   async findDirectionWithDepartement(
     directionId: string,
     departementId: string,
-  ) {
+  ): Promise<DirectionEntity | null> {
     return this.directionRepository.findDirectionWithDepartement(
       directionId,
       departementId,
     );
   }
 
-  async find(id: string): Promise<DirectionEntity> {
-    return this.directionRepository.findById(id);
+  async find(id: string): Promise<DirectionView | null> {
+    const entity = await this.directionRepository.findById(id);
+    return entity ? DirectionView.from(entity) : null;
   }
 
   async deleteDirection(id: string): Promise<string> {
@@ -78,7 +89,8 @@ export class DirectionService {
     return this.directionRepository.update(id, direction);
   }
 
-  async getTopDirection() {
-    return this.directionRepository.getTopDirection();
+  async getTopDirection(): Promise<DirectionView[]> {
+    const entities = await this.directionRepository.getTopDirection();
+    return DirectionView.fromMany(entities);
   }
 }

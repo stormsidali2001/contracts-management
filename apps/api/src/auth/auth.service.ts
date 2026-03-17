@@ -16,9 +16,9 @@ import {
   LoginUserDTO,
   ResetPasswordDTO,
 } from 'src/core/dtos/user.dto';
-import { UserEntity } from 'src/core/entities/User.entity';
 import { UserService } from 'src/user/user.service';
-import { JwtCompletePayload, JwtPayload } from './types/JwtPayload.interface';
+import { UserView } from 'src/core/views/user.view';
+import { JwtPayload } from './types/JwtPayload.interface';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { Tokens } from './types/tokens.interface';
@@ -80,7 +80,7 @@ export class AuthService {
     const refresh_token_hash = await bcrypt.hash(refresh_token, 12);
     await this.userService.findAndUpdate(userId, { refresh_token_hash });
   }
-  async register(newUser: CreateUserDTO): Promise<UserEntity> {
+  async register(newUser: CreateUserDTO): Promise<UserView> {
     const userDb = await this.userService.findByEmailOrUsername({
       email: newUser.email ?? undefined,
       username: newUser.username ?? undefined,
@@ -258,7 +258,7 @@ export class AuthService {
   }
 
   async #sendEmail(email: string, userId, token: string) {
-    let transporter = nodemailer.createTransport({
+    const transporter = nodemailer.createTransport({
       service: 'Gmail',
       auth: {
         user: this.configService.get('ethereal_user'), // generated ethereal user
@@ -266,7 +266,7 @@ export class AuthService {
       },
     });
 
-    let info = await transporter.sendMail({
+    const info = await transporter.sendMail({
       from: '"bmt" <assoulsidali@gmail.com>', // sender address
       to: email, // list of receivers separated by ,
       subject: 'Mot de pasee oublié', // Subject line
@@ -292,4 +292,3 @@ export class AuthService {
     return 'done';
   }
 }
-

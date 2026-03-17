@@ -2,6 +2,7 @@ import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
 import { CreateEventDTO } from 'src/core/entities/event.dto';
 import { Entity } from 'src/core/types/entity.enum';
 import { Operation } from 'src/core/types/operation.enum';
+import { NotificationView } from 'src/core/views/notification.view';
 import { EventService } from 'src/Event/services/Event.service';
 import { SocketStateService } from 'src/socket/SocketState.service';
 import { NotificationRepository } from './notification.repository';
@@ -23,8 +24,9 @@ export class UserNotificationService {
     readonly userService: UserService,
   ) {}
 
-  async getUserNotifications(userId: string) {
-    return this.notificationRepository.findByUserId(userId);
+  async getUserNotifications(userId: string): Promise<NotificationView[]> {
+    const entities = await this.notificationRepository.findByUserId(userId);
+    return NotificationView.fromMany(entities);
   }
 
   async sendNotifications(notifications: NotificationBody[]) {
