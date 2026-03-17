@@ -109,7 +109,7 @@ export class UserCredentialsRepository implements IUserCredentialsRepository {
       ? null
       : undefined;
 
-    return UserCredentials.create({
+    return UserCredentials.reconstitute({
       userId: entity.id,
       passwordHash: (entity as any).password,
       refreshTokenHash: entity.refresh_token_hash ?? null,

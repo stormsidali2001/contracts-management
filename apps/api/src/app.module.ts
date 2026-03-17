@@ -10,7 +10,6 @@ import { HttpExceptionFilter } from './shared/HttpException.filter';
 import { HttpLoggingInteceptor } from './shared/HttpLogging.interceptor';
 import { UserModule } from './user/user.module';
 import {SocketStateModule} from './socket/SocketState.module'
-import { ScheduleModule } from '@nestjs/schedule';
 import { StatisticsModule } from './statistics/statistics.module';
 
 @Module({
@@ -35,7 +34,7 @@ import { StatisticsModule } from './statistics/statistics.module';
    AgreementModule,
    DirectionModule,
    SocketStateModule,
-   ScheduleModule.forRoot()
+
 ],
   controllers: [],
   providers: [

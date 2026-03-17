@@ -4,15 +4,13 @@ import {
   Inject,
   NotFoundException,
 } from '@nestjs/common';
+import { EventBus } from '@nestjs/cqrs';
 import { v4 as uuid } from 'uuid';
 import { CreateVendorDTO, UpdateVendorDTO } from 'src/core/dtos/vendor.dto';
-import { Entity } from 'src/core/types/entity.enum';
 import { VendorStatsView } from 'src/core/views/vendor-stats.view';
 import { VendorView } from 'src/core/views/vendor.view';
-import { Operation } from 'src/core/types/operation.enum';
 import { PaginationResponse } from 'src/core/types/paginationResponse.interface';
 import { StatsParamsDTO } from 'src/statistics/models/statsPramsDTO.interface';
-import { UserNotificationService } from 'src/user/user-notification.service';
 import { Vendor } from '../domain/vendor';
 import {
   IVendorRepository,
@@ -24,7 +22,7 @@ export class VendorService {
   constructor(
     @Inject(VENDOR_REPOSITORY)
     private readonly vendorRepository: IVendorRepository,
-    private readonly notificationService: UserNotificationService,
+    private readonly eventBus: EventBus,
   ) {}
 
   async createVendor(vendor: CreateVendorDTO): Promise<VendorView> {
@@ -68,13 +66,7 @@ export class VendorService {
       newVendor,
       newVendor.createdAt,
     );
-
-    await this.notificationService.sendEventToAllUsers({
-      entity: Entity.VENDOR,
-      operation: Operation.INSERT,
-      entityId: created.id,
-      createdAt: new Date(),
-    });
+    this.eventBus.publishAll(newVendor.pullEvents());
 
     return VendorView.from(created);
   }
@@ -139,17 +131,7 @@ export class VendorService {
       ...uniques,
     });
     const saved = await this.vendorRepository.save(vendor);
-
-    await this.notificationService.sendEventToAllUsers({
-      entity: Entity.VENDOR,
-      operation: Operation.UPDATE,
-      entityId: saved.id,
-      createdAt: new Date(),
-      departementAbriviation: '',
-      directionId: null,
-      departementId: null,
-      directionAbriviation: '',
-    });
+    this.eventBus.publishAll(vendor.pullEvents());
 
     return VendorView.from(saved);
   }
@@ -178,16 +160,8 @@ export class VendorService {
         `le fournisseur ne peut pas etre supprimer car il a ${agreementCount} accords`,
       );
 
+    vendor.markDeleted();
     await this.vendorRepository.delete(vendorId);
-    await this.notificationService.sendEventToAllUsers({
-      entity: Entity.VENDOR,
-      operation: Operation.DELETE,
-      entityId: vendor.id,
-      createdAt: new Date(),
-      departementAbriviation: '',
-      directionId: null,
-      departementId: null,
-      directionAbriviation: '',
-    });
+    this.eventBus.publishAll(vendor.pullEvents());
   }
 }

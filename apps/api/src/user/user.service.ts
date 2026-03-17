@@ -3,17 +3,15 @@ import {
   InternalServerErrorException,
   BadRequestException,
   ForbiddenException,
-  forwardRef,
   Inject,
   NotFoundException,
 } from '@nestjs/common';
+import { EventBus } from '@nestjs/cqrs';
 import { v4 as uuid } from 'uuid';
 import {
   CreateUserDTO,
   UpdateUserDTO,
 } from 'src/core/dtos/user.dto';
-import { Entity } from 'src/core/types/entity.enum';
-import { Operation } from 'src/core/types/operation.enum';
 import { PaginationResponse } from 'src/core/types/paginationResponse.interface';
 import { UserRole } from 'src/core/types/UserRole.enum';
 import { UserView } from 'src/core/views/user.view';
@@ -24,10 +22,6 @@ import {
   IUserRepository,
   USER_REPOSITORY,
 } from './domain/user.repository';
-import {
-  NotificationBody,
-  UserNotificationService,
-} from './user-notification.service';
 
 @Injectable()
 export class UserService {
@@ -35,8 +29,7 @@ export class UserService {
     @Inject(USER_REPOSITORY)
     private readonly userRepository: IUserRepository,
     private readonly directionService: DirectionService,
-    @Inject(forwardRef(() => UserNotificationService))
-    private readonly notificationService: UserNotificationService,
+    private readonly eventBus: EventBus,
   ) {}
 
   async create(newUser: CreateUserDTO): Promise<UserView> {
@@ -65,33 +58,8 @@ export class UserService {
     });
 
     const saved = await this.userRepository.save(user);
-
-    const admins = await this.userRepository.findAdmins();
-    const extraMessage =
-      directionData && departementData
-        ? `au ${departementData.abriviation} de ${directionData.abriviation}`
-        : '';
-    const notifications: NotificationBody[] = admins.map((u) => ({
-      userId: u.id,
-      message: `l'utilisateur ${saved.email} de type ${saved.role} est ajouté ${extraMessage} avec success`,
-    }));
-
-    if (notifications.length > 0)
-      await this.notificationService.sendNotifications(notifications);
-
-    await this.notificationService.emitDataToAdminsOnly({
-      entity: saved.role as unknown as Entity,
-      operation: Operation.INSERT,
-      departementId,
-      directionId,
-      entityId: saved.id,
-      departementAbriviation: departementData?.abriviation ?? '',
-      directionAbriviation: directionData?.abriviation ?? '',
-    });
-    await this.notificationService.IncrementUsersStats({
-      type: saved.role as unknown as Entity,
-      operation: Operation.INSERT,
-    });
+    user.recordCreated(departementData?.abriviation ?? '', directionData?.abriviation ?? '');
+    this.eventBus.publishAll(user.pullEvents());
 
     return UserView.from(saved);
   }
@@ -171,42 +139,8 @@ export class UserService {
     await this.userRepository.save(user);
 
     const saved = await this.userRepository.findProfileById(id);
-    await this.notificationService.emitDataToAdminsOnly({
-      entity: saved.role as unknown as Entity,
-      entityId: id,
-      operation: Operation.UPDATE,
-      departementId: saved.departementId,
-      directionId: saved.directionId,
-      departementAbriviation: saved.departement?.abriviation ?? '',
-      directionAbriviation: saved.direction?.abriviation ?? '',
-    });
-
-    const admins = await this.userRepository.findAdmins();
-    const extraMessage =
-      saved.departement && saved.direction
-        ? `au ${saved.departement.abriviation} de ${saved.direction.abriviation}`
-        : '';
-    const notifications: NotificationBody[] = admins.map((u) => ({
-      userId: u.id,
-      message: `l'utilisateur ${saved.email} de type ${saved.role} ${extraMessage} est mis a jour avec success`,
-    }));
-
-    if (notifications.length > 0)
-      await this.notificationService.sendNotifications(notifications);
-
-    await this.notificationService.emitDataToAdminsOnly({
-      entity: saved.role as unknown as Entity,
-      operation: Operation.UPDATE,
-      departementId: saved.departement?.id,
-      directionId: saved.direction?.id,
-      entityId: saved.id,
-      departementAbriviation: saved.departement?.abriviation ?? '',
-      directionAbriviation: saved.direction?.abriviation ?? '',
-    });
-    await this.notificationService.IncrementUsersStats({
-      type: saved.role as unknown as Entity,
-      operation: Operation.UPDATE,
-    });
+    user.recordUpdated(saved.departement?.abriviation ?? '', saved.direction?.abriviation ?? '');
+    this.eventBus.publishAll(user.pullEvents());
 
     return UserView.from(saved);
   }
@@ -233,17 +167,6 @@ export class UserService {
     const user = await this.userRepository.findById(userId);
     user.toggleNotifications();
     await this.userRepository.save(user);
-
-    const profile = await this.userRepository.findProfileById(userId);
-    await this.notificationService.emitDataToAdminsOnly({
-      entity: user.role as unknown as Entity,
-      entityId: userId,
-      operation: Operation.UPDATE,
-      directionId: user.directionId,
-      departementId: user.departementId,
-      departementAbriviation: profile?.departement?.abriviation ?? '',
-      directionAbriviation: profile?.direction?.abriviation ?? '',
-    });
     return !recieve_notifications;
   }
 
@@ -251,44 +174,14 @@ export class UserService {
     const profile = await this.userRepository.findProfileById(userId);
     if (!profile) throw new NotFoundException("l'utilisateur n'est pas trouvé");
 
+    const user = await this.userRepository.findById(userId);
+    user.recordDeleted(
+      profile.departement?.abriviation ?? '',
+      profile.direction?.abriviation ?? '',
+    );
+
     await this.userRepository.delete(userId);
-
-    await this.notificationService.emitDataToAdminsOnly({
-      entity: profile.role as unknown as Entity,
-      entityId: profile.role,
-      operation: Operation.DELETE,
-      directionId: profile.direction?.id,
-      departementId: profile.departement?.id,
-      departementAbriviation: profile.departement?.abriviation ?? '',
-      directionAbriviation: profile.direction?.abriviation ?? '',
-    });
-
-    const admins = await this.userRepository.findAdmins();
-    const extraMessage =
-      profile.departement && profile.direction
-        ? `au ${profile.departement.abriviation} de ${profile.direction.abriviation}`
-        : '';
-    const notifications: NotificationBody[] = admins.map((u) => ({
-      userId: u.id,
-      message: `l'utilisateur ${profile.email} de type ${profile.role} est supprimé ${extraMessage} avec success`,
-    }));
-
-    if (notifications.length > 0)
-      await this.notificationService.sendNotifications(notifications);
-
-    await this.notificationService.emitDataToAdminsOnly({
-      entity: profile.role as unknown as Entity,
-      operation: Operation.DELETE,
-      departementId: profile.departement?.id,
-      directionId: profile.direction?.id,
-      entityId: profile.id,
-      departementAbriviation: profile.departement?.abriviation ?? '',
-      directionAbriviation: profile.direction?.abriviation ?? '',
-    });
-    await this.notificationService.IncrementUsersStats({
-      type: profile.role as unknown as Entity,
-      operation: Operation.DELETE,
-    });
+    this.eventBus.publishAll(user.pullEvents());
   }
 
   async updateImage(userId: string, imageUrl: string): Promise<void> {
@@ -296,42 +189,6 @@ export class UserService {
     if (!user) return;
     user.updateImage(imageUrl);
     await this.userRepository.save(user);
-  }
-
-  /**
-   * Emits admin notifications after a password reset.
-   * Called by AuthService after credential reset via UserCredentials aggregate.
-   */
-  async notifyPasswordChanged(userId: string): Promise<void> {
-    const saved = await this.userRepository.findProfileById(userId);
-    if (!saved) return;
-
-    const admins = await this.userRepository.findAdmins();
-    const extraMessage =
-      saved.departement && saved.direction
-        ? `au ${saved.departement.abriviation} de ${saved.direction.abriviation}`
-        : '';
-    const notifications: NotificationBody[] = admins.map((u) => ({
-      userId: u.id,
-      message: `l'utilisateur ${saved.email} de type ${saved.role} ${extraMessage} est mise a jour avec success`,
-    }));
-
-    if (notifications.length > 0)
-      await this.notificationService.sendNotifications(notifications);
-
-    await this.notificationService.emitDataToAdminsOnly({
-      entity: saved.role as unknown as Entity,
-      operation: Operation.UPDATE,
-      departementId: saved.departement?.id,
-      directionId: saved.direction?.id,
-      entityId: saved.id,
-      departementAbriviation: saved.departement?.abriviation ?? '',
-      directionAbriviation: saved.direction?.abriviation ?? '',
-    });
-    await this.notificationService.IncrementUsersStats({
-      type: saved.role as unknown as Entity,
-      operation: Operation.UPDATE,
-    });
   }
 
   // ── Read-model pass-through (used by AgreementService / NotificationService)

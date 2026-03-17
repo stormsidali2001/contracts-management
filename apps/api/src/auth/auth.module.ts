@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { CqrsModule } from '@nestjs/cqrs';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserEntity } from 'src/core/entities/User.entity';
 import { AuthController } from './auth.controller';
@@ -8,7 +9,7 @@ import { USER_CREDENTIALS_REPOSITORY } from './domain/user-credentials.repositor
 import { UserCredentialsRepository } from './user-credentials.repository';
 
 @Module({
-  imports: [JwtAuthModule, TypeOrmModule.forFeature([UserEntity])],
+  imports: [CqrsModule, JwtAuthModule, TypeOrmModule.forFeature([UserEntity])],
   providers: [
     AuthService,
     {

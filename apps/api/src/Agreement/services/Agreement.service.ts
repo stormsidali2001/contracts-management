@@ -2,12 +2,9 @@ import {
   Injectable,
   BadRequestException,
   NotFoundException,
-  Logger,
-  OnModuleInit,
   Inject,
 } from '@nestjs/common';
-import { SchedulerRegistry } from '@nestjs/schedule';
-import { CronJob } from 'cron';
+import { EventBus } from '@nestjs/cqrs';
 import {
   CreateAgreementDTO,
   ExecuteAgreementDTO,
@@ -17,17 +14,10 @@ import { User } from 'src/user/domain/user';
 import { UserEntity } from 'src/core/entities/User.entity';
 import { AgreementStatus } from 'src/core/types/agreement-status.enum';
 import { AgreementType } from 'src/core/types/agreement-type.enum';
-import { Entity } from 'src/core/types/entity.enum';
-import { Operation } from 'src/core/types/operation.enum';
 import { PaginationResponse } from 'src/core/types/paginationResponse.interface';
 import { DirectionService } from 'src/direction/services/direction.service';
 import { StatsParamsDTO } from 'src/statistics/models/statsPramsDTO.interface';
 import { UserService } from 'src/user/user.service';
-import { UserRole } from 'src/core/types/UserRole.enum';
-import {
-  NotificationBody,
-  UserNotificationService,
-} from '../../user/user-notification.service';
 import { AgreementView } from 'src/core/views/agreement.view';
 import { Agreement } from '../domain/agreement';
 import {
@@ -38,59 +28,15 @@ import { VendorService } from './vendor.service';
 import { v4 as uuid } from 'uuid';
 
 @Injectable()
-export class AgreementService implements OnModuleInit {
-  private readonly logger = new Logger(AgreementService.name);
+export class AgreementService {
   constructor(
     @Inject(AGREEMENT_REPOSITORY)
     private readonly agreementRepository: IAgreementRepository,
     private readonly vendorService: VendorService,
     private readonly directionService: DirectionService,
-    private readonly userNotificationService: UserNotificationService,
-    private readonly schdulerRegistry: SchedulerRegistry,
     private readonly userService: UserService,
+    private readonly eventBus: EventBus,
   ) {}
-
-  async onModuleInit() {
-    const format = (d: Date) => {
-      const newD = new Date(d);
-      return newD.toISOString().replace(/T[0-9:.Z]*/g, '');
-    };
-    this.logger.log('initializing the percisted agreement related cron jobs:');
-    const percistedJobs = await this.agreementRepository.findAllExecJobs();
-    for (const pJob of percistedJobs) {
-      const d1 = new Date(pJob.date);
-      const d2 = new Date(format(new Date()));
-
-      this.logger.log(
-        `trying to refresh the job: ${pJob.name} date: ${JSON.stringify(
-          pJob.date,
-        )} d1 ${JSON.stringify(d1)} d2 ${JSON.stringify(d2)}`,
-      );
-      if (d1.getUTCMilliseconds() < d2.getUTCMilliseconds()) {
-        await this.agreementRepository.deleteExecJob(pJob.name);
-        this.logger.log(`the job  ${pJob.name} expired hence deleted.`);
-        continue;
-      }
-      if (d1.getUTCMilliseconds() === d2.getUTCMilliseconds()) {
-        d1.setHours(
-          d1.getHours(),
-          d1.getMinutes() + 5,
-          d1.getSeconds() + 5,
-          d1.getMilliseconds(),
-        );
-        await this.agreementRepository.updateStatus(pJob.agreementId, pJob.newStatus);
-        await this.agreementRepository.deleteExecJob(pJob.name);
-        this.logger.log(`the job  ${pJob.name} expired hence deleted.`);
-        continue;
-      }
-
-      await this.#addAgreementCronJob(pJob.name, d1, async () => {
-        await this.agreementRepository.updateStatus(pJob.agreementId, pJob.newStatus);
-        await this.agreementRepository.deleteExecJob(pJob.name);
-      });
-    }
-    this.logger.log(`${percistedJobs.length} percisted jobs are running`);
-  }
 
   async createAgreement(dto: CreateAgreementDTO): Promise<AgreementView> {
     const { directionId, departementId, vendorId, ...agreementData } = dto;
@@ -127,49 +73,7 @@ export class AgreementService implements OnModuleInit {
     });
 
     const saved = await this.agreementRepository.save(agreement);
-
-    await this.userNotificationService.sendToUsersInDepartement(
-      departement.id,
-      `${
-        dto.type === AgreementType.CONTRACT
-          ? 'un nouveau contrat est ajoute a votre departement'
-          : 'une nouvelle convension a etee ajoutee a votre departement'
-      } avec le fournisseur: ${vendor.company_name}`,
-    );
-
-    const extraMessage = `au ${departement.abriviation} de ${direction.abriviation}`;
-    const juridicals = await this.userService.findAllBy({
-      role: UserRole.JURIDICAL,
-    });
-    const notifications: NotificationBody[] = juridicals.map((j) => ({
-      message: `${
-        dto.type === AgreementType.CONTRACT
-          ? 'un nouveau contrat est ajoute '
-          : 'une nouvelle convension a etee ajoutee '
-      } ${extraMessage} avec le fournisseur: ${vendor.company_name}`,
-      userId: j.id,
-    }));
-    await this.userNotificationService.sendNotifications(notifications);
-    await this.userNotificationService.sendNewEventaToConnectedUsersWithContrainsts(
-      {
-        entity: saved.type.toUpperCase() as unknown as Entity,
-        operation: Operation.INSERT,
-        entityId: saved.id,
-        departementId: departement.id,
-        directionId: direction.id,
-        departementAbriviation: departement.abriviation,
-        directionAbriviation: direction.abriviation,
-        createdAt: new Date(),
-      },
-      departement.id,
-    );
-    await this.userNotificationService.IncrementAgreementsStats(
-      {
-        operation: Operation.INSERT,
-        type: saved.type.toUpperCase() as unknown as Entity,
-      },
-      departement.id,
-    );
+    this.eventBus.publishAll(agreement.pullEvents());
 
     return AgreementView.from(saved);
   }
@@ -192,11 +96,16 @@ export class AgreementService implements OnModuleInit {
     id: string,
     agrreementType: AgreementType = AgreementType.CONTRACT,
   ): Promise<AgreementView | null> {
-    const agreement = await this.agreementRepository.findById(id, agrreementType);
+    const agreement = await this.agreementRepository.findById(
+      id,
+      agrreementType,
+    );
     return agreement ? AgreementView.from(agreement) : null;
   }
 
-  async executeAgreement(execData: ExecuteAgreementDTO): Promise<AgreementView> {
+  async executeAgreement(
+    execData: ExecuteAgreementDTO,
+  ): Promise<AgreementView> {
     const {
       observation = '',
       execution_start_date,
@@ -204,51 +113,18 @@ export class AgreementService implements OnModuleInit {
       agreementId,
     } = execData;
 
-    const agreement = await this.agreementRepository.findByIdForExecution(agreementId);
+    const agreement = await this.agreementRepository.findByIdForExecution(
+      agreementId,
+    );
     if (!agreement) {
       throw new NotFoundException("l'accord specifiee n'es pas touvee");
     }
 
-    const { cronStatus } = agreement.execute(
-      execution_start_date,
-      execution_end_date,
-      observation,
-    );
-
-    const cronJobName = `agreement:${agreement.type}:${agreement.id}`;
-    await this.agreementRepository.saveExecJob({
-      name: cronJobName,
-      agreementId: agreement.id,
-      date: execution_end_date,
-      newStatus: cronStatus,
-    });
-    this.#addAgreementCronJob(cronJobName, execution_end_date, async () => {
-      await this.agreementRepository.updateStatus(agreement.id, cronStatus);
-      await this.agreementRepository.deleteExecJob(cronJobName);
-    });
-
-    const orgInfo = await this.directionService.findWithDepartement(
-      agreement.directionId,
-      agreement.departementId,
-    );
-    const deptAbriviation = orgInfo?.departements[0]?.abriviation ?? '';
-    const dirAbriviation = orgInfo?.abriviation ?? '';
-
-    await this.userNotificationService.sendNewEventaToConnectedUsersWithContrainsts(
-      {
-        entity: agreement.type.toUpperCase() as unknown as Entity,
-        operation: Operation.EXECUTE,
-        entityId: agreement.id,
-        departementId: agreement.departementId,
-        directionId: agreement.directionId,
-        createdAt: new Date(),
-        departementAbriviation: deptAbriviation,
-        directionAbriviation: dirAbriviation,
-      },
-      agreement.departementId,
-    );
+    agreement.execute(execution_start_date, execution_end_date, observation);
 
     const saved = await this.agreementRepository.save(agreement);
+    this.eventBus.publishAll(agreement.pullEvents());
+
     return AgreementView.from(saved);
   }
 
@@ -292,14 +168,5 @@ export class AgreementService implements OnModuleInit {
       types: typesResponse,
       topDirections,
     };
-  }
-
-  async #addAgreementCronJob(name: string, date: Date, cb: () => void) {
-    const job = new CronJob(new Date(date), () => {
-      cb();
-    });
-    this.schdulerRegistry.addCronJob(name, job);
-    job.start();
-    this.logger.warn(`the job : ${name} is running`);
   }
 }

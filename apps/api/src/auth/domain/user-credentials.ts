@@ -32,6 +32,16 @@ export class UserCredentials {
     return new UserCredentials(props);
   }
 
+  /** Reconstitutes existing credentials from persistence — no side effects. */
+  static reconstitute(props: {
+    userId: string;
+    passwordHash: string;
+    refreshTokenHash?: string | null;
+    passwordToken?: PasswordToken | null;
+  }): UserCredentials {
+    return new UserCredentials(props);
+  }
+
   setRefreshToken(hash: string): void {
     this.refreshTokenHash = hash;
   }

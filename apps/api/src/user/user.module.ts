@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { CqrsModule } from '@nestjs/cqrs';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { NotificationEntity } from 'src/core/entities/Notification.entity';
 import { PasswordTokenEntity } from 'src/core/entities/PasswordToken';
@@ -13,9 +14,21 @@ import { NotificationRepository } from './notification.repository';
 import { UserNotificationService } from './user-notification.service';
 import { UserRepository } from './user.repository';
 import { UserService } from './user.service';
+import { UserCreatedHandler } from './handlers/user-created.handler';
+import { UserUpdatedHandler } from './handlers/user-updated.handler';
+import { UserDeletedHandler } from './handlers/user-deleted.handler';
+import { UserPasswordChangedHandler } from './handlers/user-password-changed.handler';
+
+const eventHandlers = [
+  UserCreatedHandler,
+  UserUpdatedHandler,
+  UserDeletedHandler,
+  UserPasswordChangedHandler,
+];
 
 @Module({
   imports: [
+    CqrsModule,
     TypeOrmModule.forFeature([UserEntity, NotificationEntity, PasswordTokenEntity]),
     DirectionModule,
     EventModule,
@@ -27,6 +40,7 @@ import { UserService } from './user.service';
     UserService,
     UserNotificationService,
     NotificationsGateWay,
+    ...eventHandlers,
   ],
   exports: [UserService, UserNotificationService],
 })
