@@ -1,59 +1,121 @@
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
-import {
-  CreateDirectionDTO,
-  updateDirectionDTO,
-} from 'src/core/dtos/direction.dto';
 import { DepartementEntity } from 'src/core/entities/Departement.entity';
 import { DirectionEntity } from 'src/core/entities/Direction.entity';
-import { DataSource, EntityManager, Repository, UpdateResult } from 'typeorm';
+import { DataSource, EntityManager, Repository } from 'typeorm';
+import { Departement } from './domain/departement';
+import { Direction } from './domain/direction';
+import { IDirectionRepository } from './domain/direction.repository';
 
 @Injectable()
-export class DirectionRepository {
+export class DirectionRepository implements IDirectionRepository {
   constructor(
     @InjectRepository(DirectionEntity)
     private readonly repo: Repository<DirectionEntity>,
+    @InjectRepository(DepartementEntity)
+    private readonly departementRepo: Repository<DepartementEntity>,
     @InjectDataSource()
     private readonly dataSource: DataSource,
   ) {}
 
-  async findOneByTitleOrAbriviation(
+  // ── Persistence ───────────────────────────────────────────────────────────
+
+  async save(direction: Direction): Promise<Direction> {
+    await this.dataSource.transaction(async (manager: EntityManager) => {
+      const directionRepo = manager.getRepository(DirectionEntity);
+      const departementRepo = manager.getRepository(DepartementEntity);
+
+      await directionRepo.save({
+        id: direction.id,
+        title: direction.title,
+        abriviation: direction.abriviation,
+      });
+
+      // Sync departements: diff DB state vs aggregate state
+      const existing = await departementRepo.find({
+        where: { direction: { id: direction.id } },
+      });
+      const existingIds = existing.map((d) => d.id);
+      const aggregateIds = direction.departements.map((d) => d.id);
+
+      const toDelete = existingIds.filter((id) => !aggregateIds.includes(id));
+      if (toDelete.length) {
+        await departementRepo.delete(toDelete);
+      }
+
+      if (direction.departements.length) {
+        await departementRepo.save(
+          direction.departements.map((d) => ({
+            id: d.id,
+            title: d.title,
+            abriviation: d.abriviation,
+            direction: { id: direction.id },
+          })),
+        );
+      }
+    });
+
+    return direction;
+  }
+
+  async delete(id: string): Promise<void> {
+    await this.repo.delete(id);
+  }
+
+  // ── Aggregate loaders ─────────────────────────────────────────────────────
+
+  async findById(id: string): Promise<Direction | null> {
+    const entity = await this.repo
+      .createQueryBuilder('direction')
+      .where('direction.id = :id', { id })
+      .leftJoinAndSelect('direction.departements', 'departements')
+      .loadRelationCountAndMap('departements.users', 'departements.employees')
+      .getOne();
+
+    return entity ? this.toDomain(entity) : null;
+  }
+
+  async findByDepartementId(departementId: string): Promise<Direction | null> {
+    const entity = await this.repo
+      .createQueryBuilder('direction')
+      .innerJoinAndSelect('direction.departements', 'departements')
+      .where('departements.id = :departementId', { departementId })
+      .loadRelationCountAndMap('departements.users', 'departements.employees')
+      .getOne();
+
+    return entity ? this.toDomain(entity) : null;
+  }
+
+  async findByTitleOrAbriviation(
     title: string,
     abriviation: string,
-  ): Promise<DirectionEntity | null> {
-    return this.repo
+  ): Promise<Direction | null> {
+    const entity = await this.repo
       .createQueryBuilder('d')
       .where('d.title = :title or d.abriviation = :abriviation', {
         title,
         abriviation,
       })
       .getOne();
+
+    return entity ? this.toDomain(entity) : null;
   }
 
-  async createWithDepartements(
-    directionData: Omit<CreateDirectionDTO, 'departements'>,
-    departements: CreateDirectionDTO['departements'],
-  ): Promise<{
-    direction: DirectionEntity;
-    departements: DepartementEntity[];
-  }> {
-    return this.dataSource.manager.transaction(
-      async (entityManager: EntityManager) => {
-        const directionRepo = entityManager.getRepository(DirectionEntity);
-        const departementRepo = entityManager.getRepository(DepartementEntity);
+  async findWithDepartement(
+    directionId: string,
+    departementId: string,
+  ): Promise<Direction | null> {
+    const entity = await this.repo
+      .createQueryBuilder('dr')
+      .where('dr.id = :directionId', { directionId })
+      .leftJoinAndSelect('dr.departements', 'dp')
+      .andWhere('dp.id = :departementId', { departementId })
+      .getOne();
 
-        const newDirection = await directionRepo.save({ ...directionData });
-        const savedDepartements = await departementRepo.save(
-          departements.map((dp) =>
-            departementRepo.create({ ...dp, direction: newDirection }),
-          ),
-        );
-        return { direction: newDirection, departements: savedDepartements };
-      },
-    );
+    return entity ? this.toDomain(entity) : null;
   }
 
-  async findAll(offset: number, limit: number): Promise<DirectionEntity[]> {
+  async findAll(offset: number, limit: number): Promise<Direction[]> {
     let q = this.repo
       .createQueryBuilder('direction')
       .leftJoinAndSelect('direction.departements', 'departements')
@@ -62,60 +124,71 @@ export class DirectionRepository {
     if (Number.isInteger(offset) && Number.isInteger(limit)) {
       q = q.skip(offset).take(limit);
     }
-    return q.getMany();
+
+    const entities = await q.getMany();
+    return entities.map((e) => this.toDomain(e));
   }
 
-  async findDirectionWithDepartement(
-    directionId: string,
-    departementId: string,
-  ): Promise<DirectionEntity | null> {
-    return this.repo
-      .createQueryBuilder('dr')
-      .where('dr.id = :directionId', { directionId })
-      .leftJoinAndSelect('dr.departements', 'dp')
-      .andWhere('dp.id = :departementId', { departementId })
-      .getOne();
-  }
-
-  async findById(id: string): Promise<DirectionEntity | null> {
-    return this.repo.findOneBy({ id });
-  }
-
-  async findByIdWithDepartementsAndUserCounts(
-    id: string,
-  ): Promise<DirectionEntity | null> {
-    return this.repo
-      .createQueryBuilder('direction')
-      .where('direction.id = :id', { id })
-      .leftJoinAndSelect('direction.departements', 'departements')
-      .loadRelationCountAndMap('departements.users', 'departements.employees')
-      .getOne();
-  }
-
-  async deleteDepartementsByIds(ids: string[]): Promise<void> {
-    await this.dataSource.manager
-      .getRepository(DepartementEntity)
-      .createQueryBuilder()
-      .delete()
-      .where('departements.id in (:...ids)', { ids })
-      .execute();
-  }
-
-  async deleteById(id: string): Promise<void> {
-    await this.repo.delete(id);
-  }
-
-  async update(
-    id: string,
-    direction: updateDirectionDTO,
-  ): Promise<UpdateResult> {
-    return this.repo.update(id, direction);
-  }
-
-  async getTopDirection(): Promise<DirectionEntity[]> {
-    return this.repo
+  async getTopDirections(): Promise<Direction[]> {
+    const entities = await this.repo
       .createQueryBuilder('dr')
       .loadRelationCountAndMap('dr.agreementCount', 'dr.agreements')
       .getMany();
+
+    return entities.map((e) => this.toDomain(e));
+  }
+
+  // ── Read-model queries ────────────────────────────────────────────────────
+
+  async findDepartementById(id: string): Promise<Departement | null> {
+    const entity = await this.departementRepo
+      .createQueryBuilder('dp')
+      .leftJoinAndSelect('dp.direction', 'direction')
+      .where('dp.id = :id', { id })
+      .getOne();
+
+    return entity ? this.departementToDomain(entity, entity.direction?.id) : null;
+  }
+
+  async findAllDepartements(
+    offset: number,
+    limit: number,
+  ): Promise<Departement[]> {
+    const entities = await this.departementRepo
+      .createQueryBuilder('departement')
+      .leftJoinAndSelect('departement.direction', 'direction')
+      .loadRelationCountAndMap('departement.users', 'departement.employees')
+      .skip(offset)
+      .take(limit)
+      .getMany();
+
+    return entities.map((e) => this.departementToDomain(e, e.direction?.id));
+  }
+
+  // ── Mappers ───────────────────────────────────────────────────────────────
+
+  private toDomain(entity: DirectionEntity): Direction {
+    return Direction.create({
+      id: entity.id,
+      title: entity.title,
+      abriviation: entity.abriviation,
+      departements: (entity.departements ?? []).map((d) =>
+        this.departementToDomain(d, entity.id),
+      ),
+      agreementCount: (entity as any).agreementCount,
+    });
+  }
+
+  private departementToDomain(
+    entity: DepartementEntity,
+    directionId: string,
+  ): Departement {
+    return Departement.create({
+      id: entity.id,
+      title: entity.title,
+      abriviation: entity.abriviation,
+      directionId,
+      userCount: (entity as any).users ?? 0,
+    });
   }
 }

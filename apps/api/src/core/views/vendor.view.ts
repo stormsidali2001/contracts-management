@@ -1,4 +1,5 @@
 import { VendorEntity } from '../entities/Vendor.entity';
+import { stripPrivateKeys } from './strip-private-keys.util';
 
 export class VendorView {
   id: string;
@@ -14,7 +15,7 @@ export class VendorView {
   agreementCount?: number;
 
   static from(entity: VendorEntity): VendorView {
-    return Object.assign(new VendorView(), entity);
+    return Object.assign(new VendorView(), stripPrivateKeys(entity));
   }
 
   static fromMany(entities: VendorEntity[]): VendorView[] {

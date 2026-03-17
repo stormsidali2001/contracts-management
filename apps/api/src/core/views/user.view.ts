@@ -1,5 +1,6 @@
 import { UserRole } from '../types/UserRole.enum';
 import { UserEntity } from '../entities/User.entity';
+import { stripPrivateKeys } from './strip-private-keys.util';
 
 export class UserView {
   id: string;
@@ -25,7 +26,7 @@ export class UserView {
       notifications: _n,
       ...safe
     } = entity as any;
-    return Object.assign(new UserView(), safe);
+    return Object.assign(new UserView(), stripPrivateKeys(safe));
   }
 
   static fromMany(entities: UserEntity[]): UserView[] {

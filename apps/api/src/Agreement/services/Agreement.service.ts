@@ -97,7 +97,7 @@ export class AgreementService implements OnModuleInit {
       );
     }
     const [direction, vendor] = await Promise.all([
-      this.directionService.findDirectionWithDepartement(
+      this.directionService.findWithDepartement(
         directionId,
         departementId,
       ),
@@ -124,8 +124,8 @@ export class AgreementService implements OnModuleInit {
       throw new BadRequestException('le numero est deja reserver');
     const res = await this.agreementRepository.save({
       ...agreementData,
-      direction,
-      departement,
+      direction: { id: direction.id } as any,
+      departement: { id: departement.id } as any,
       vendor,
     });
     await this.userNotificationService.sendToUsersInDepartement(

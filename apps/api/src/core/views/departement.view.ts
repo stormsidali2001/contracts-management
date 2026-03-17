@@ -1,4 +1,8 @@
+import { Departement } from 'src/direction/domain/departement';
 import { DepartementEntity } from '../entities/Departement.entity';
+import { stripPrivateKeys } from './strip-private-keys.util';
+
+type DepartementLike = DepartementEntity | Departement;
 
 export class DepartementView {
   id: string;
@@ -7,11 +11,14 @@ export class DepartementView {
   direction?: any;
   users?: number;
 
-  static from(entity: DepartementEntity): DepartementView {
-    return Object.assign(new DepartementView(), entity);
+  static from(source: DepartementLike): DepartementView {
+    const view = Object.assign(new DepartementView(), stripPrivateKeys(source));
+    // domain Departement uses `userCount`; DB results use `users` via loadRelationCountAndMap
+    if ('userCount' in source) view.users = (source as Departement).userCount;
+    return view;
   }
 
-  static fromMany(entities: DepartementEntity[]): DepartementView[] {
-    return entities.map(DepartementView.from);
+  static fromMany(sources: DepartementLike[]): DepartementView[] {
+    return sources.map(DepartementView.from);
   }
 }

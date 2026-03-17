@@ -1,7 +1,6 @@
 import {Controller,Post,Body, Query, Get, ParseIntPipe, Delete,Param,Put, UseGuards} from '@nestjs/common';
 import { CreateDirectionDTO, updateDirectionDTO } from 'src/core/dtos/direction.dto';
 import { DirectionView } from 'src/core/views/direction.view';
-import { UpdateResult } from 'typeorm';
 import { DirectionService } from '../services/direction.service';
 import {ApiTags} from '@nestjs/swagger';
 import { JwtAccessTokenGuard } from 'src/auth/guards/jwt-access-token.guard';
@@ -37,7 +36,7 @@ export class DirectionController{
     @RequiredRoles(UserRole.ADMIN)
     @UseGuards(JwtAccessTokenGuard,RoleGuard)
     @Put(':id')
-    async updateDirection(@Param('id') id:string,@Body() direction:updateDirectionDTO):Promise<UpdateResult>{
+    async updateDirection(@Param('id') id:string,@Body() direction:updateDirectionDTO):Promise<DirectionView>{
         return await this.directionService.updateDirection(id,direction)
     }
 

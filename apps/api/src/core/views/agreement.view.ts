@@ -1,6 +1,7 @@
 import { AgreementStatus } from '../types/agreement-status.enum';
 import { AgreementType } from '../types/agreement-type.enum';
 import { AgreementEntity } from '../entities/Agreement.entity';
+import { stripPrivateKeys } from './strip-private-keys.util';
 
 export class AgreementView {
   id: string;
@@ -23,7 +24,7 @@ export class AgreementView {
   vendor?: any;
 
   static from(entity: AgreementEntity): AgreementView {
-    return Object.assign(new AgreementView(), entity);
+    return Object.assign(new AgreementView(), stripPrivateKeys(entity));
   }
 
   static fromMany(entities: AgreementEntity[]): AgreementView[] {

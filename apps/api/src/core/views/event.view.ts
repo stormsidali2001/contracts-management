@@ -1,6 +1,7 @@
 import { Entity } from '../types/entity.enum';
 import { Operation } from '../types/operation.enum';
 import { EventEntity } from '../entities/Event.entity';
+import { stripPrivateKeys } from './strip-private-keys.util';
 
 export class EventView {
   id: string;
@@ -14,7 +15,7 @@ export class EventView {
   directionAbriviation: string;
 
   static from(e: EventEntity): EventView {
-    return Object.assign(new EventView(), e);
+    return Object.assign(new EventView(), stripPrivateKeys(e));
   }
 
   static fromMany(entities: EventEntity[]): EventView[] {
