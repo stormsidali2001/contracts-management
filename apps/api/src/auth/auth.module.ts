@@ -11,7 +11,10 @@ import { UserCredentialsRepository } from './user-credentials.repository';
   imports: [JwtAuthModule, TypeOrmModule.forFeature([UserEntity])],
   providers: [
     AuthService,
-    { provide: USER_CREDENTIALS_REPOSITORY, useClass: UserCredentialsRepository },
+    {
+      provide: USER_CREDENTIALS_REPOSITORY,
+      useClass: UserCredentialsRepository,
+    },
   ],
   controllers: [AuthController],
   exports: [JwtAuthModule],

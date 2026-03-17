@@ -4,10 +4,12 @@ import { VendorEntity } from 'src/core/entities/Vendor.entity';
 import { VendorStatsEntity } from 'src/core/entities/VendorStats.entity';
 import { AgreementType } from 'src/core/types/agreement-type.enum';
 import { PaginationResponse } from 'src/core/types/paginationResponse.interface';
-import { DataSource, FindOptionsWhere, Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
+import { IVendorRepository, VendorWithCounts } from './domain/vendor.repository';
+import { Vendor } from './domain/vendor';
 
 @Injectable()
-export class VendorRepository {
+export class VendorRepository implements IVendorRepository {
   constructor(
     @InjectRepository(VendorEntity)
     private readonly repo: Repository<VendorEntity>,
@@ -17,50 +19,132 @@ export class VendorRepository {
     private readonly dataSource: DataSource,
   ) {}
 
-  async findOneByUniqueCondition(
-    condition: string,
-    uniques: object,
-  ): Promise<VendorEntity | null> {
-    if (!condition) return null;
-    return this.repo.createQueryBuilder('v').where(condition, uniques).getOne();
+  async save(vendor: Vendor): Promise<Vendor> {
+    const data: Record<string, unknown> = {
+      id: vendor.id,
+      num: vendor.num,
+      company_name: vendor.company_name,
+      nif: vendor.nif,
+      nrc: vendor.nrc,
+      address: vendor.address,
+      mobile_phone_number: vendor.mobile_phone_number,
+      home_phone_number: vendor.home_phone_number,
+      createdAt: vendor.createdAt,
+    };
+    const saved = await this.repo.save(data as unknown as VendorEntity);
+    return this.toDomain(saved);
   }
 
-  async createWithStats(
-    data: Partial<VendorEntity>,
-    createdAt: Date,
-  ): Promise<VendorEntity> {
+  async createWithStats(vendor: Vendor, statsDate: Date): Promise<Vendor> {
     return this.dataSource.transaction(async (manager) => {
       const vendorRepo = manager.getRepository(VendorEntity);
       const statsRepo = manager.getRepository(VendorStatsEntity);
 
-      const created = await vendorRepo.save(data as VendorEntity);
+      const data: Record<string, unknown> = {
+        num: vendor.num,
+        company_name: vendor.company_name,
+        nif: vendor.nif,
+        nrc: vendor.nrc,
+        address: vendor.address,
+        mobile_phone_number: vendor.mobile_phone_number,
+        home_phone_number: vendor.home_phone_number,
+        createdAt: vendor.createdAt,
+      };
+      const created = await vendorRepo.save(data as unknown as VendorEntity);
 
-      const statsDb = await statsRepo.findOneBy({ date: createdAt });
+      const statsDb = await statsRepo.findOneBy({ date: statsDate });
       if (statsDb) {
         await statsRepo.update(
           { id: statsDb.id },
           { nb_vendors: () => 'nb_vendors + 1' },
         );
       } else {
-        await statsRepo.save({ date: createdAt, nb_vendors: 1 });
+        await statsRepo.save({ date: statsDate, nb_vendors: 1 });
       }
 
-      return created;
+      return this.toDomain(created);
     });
   }
 
-  async findOneBy(
-    options: FindOptionsWhere<VendorEntity>,
-  ): Promise<VendorEntity | null> {
-    return this.repo.findOneBy(options);
+  async delete(vendorId: string): Promise<void> {
+    await this.repo
+      .createQueryBuilder()
+      .delete()
+      .where('vendors.id = :vendorId', { vendorId })
+      .execute();
+  }
+
+  async findById(id: string): Promise<Vendor | null> {
+    const entity = await this.repo.findOneBy({ id });
+    return entity ? this.toDomain(entity) : null;
+  }
+
+  async findByUniqueCondition(
+    condition: string,
+    params: object,
+  ): Promise<Vendor | null> {
+    if (!condition) return null;
+    const entity = await this.repo
+      .createQueryBuilder('v')
+      .where(condition, params)
+      .getOne();
+    return entity ? this.toDomain(entity) : null;
+  }
+
+  async findByIdWithRelationCounts(id: string): Promise<VendorWithCounts | null> {
+    const entity = await this.repo
+      .createQueryBuilder('vendor')
+      .where('vendor.id = :id', { id })
+      .loadRelationCountAndMap(
+        'vendor.contractCount',
+        'vendor.agreements',
+        'agreements',
+        (qb) =>
+          qb.where('agreements.type = :agreementType', {
+            agreementType: AgreementType.CONTRACT,
+          }),
+      )
+      .loadRelationCountAndMap(
+        'vendor.convensionCount',
+        'vendor.agreements',
+        'agreements',
+        (qb) =>
+          qb.where('agreements.type = :agreementType', {
+            agreementType: AgreementType.CONVENSION,
+          }),
+      )
+      .getOne();
+
+    if (!entity) return null;
+    const vendor = this.toDomain(entity);
+    return Object.assign(vendor as unknown as VendorWithCounts, {
+      contractCount: (entity as any).contractCount ?? 0,
+      convensionCount: (entity as any).convensionCount ?? 0,
+    });
+  }
+
+  async findByIdWithAgreementCount(
+    id: string,
+  ): Promise<{ vendor: Vendor; agreementCount: number } | null> {
+    const entity = await this.repo
+      .createQueryBuilder('v')
+      .where('v.id = :id', { id })
+      .loadRelationCountAndMap('v.agreementCount', 'v.agreements')
+      .getOne();
+
+    if (!entity) return null;
+    return {
+      vendor: this.toDomain(entity),
+      agreementCount: (entity as any).agreementCount as number,
+    };
   }
 
   async findPaginated(
-    offset: number = 0,
-    limit: number = 10,
+    offset = 0,
+    limit = 10,
     orderBy?: string,
     searchQuery?: string,
-  ): Promise<PaginationResponse<VendorEntity>> {
+  ): Promise<PaginationResponse<Vendor>> {
     let query = this.repo
       .createQueryBuilder('vendor')
       .skip(offset)
@@ -91,41 +175,10 @@ export class VendorRepository {
         );
     }
 
-    if (orderBy) {
-      query = query.orderBy(`${orderBy}`);
-    }
+    if (orderBy) query = query.orderBy(orderBy);
 
     const [data, total] = await query.getManyAndCount();
-    return { total, data };
-  }
-
-  async findByIdWithRelations(id: string): Promise<VendorEntity | null> {
-    return this.repo
-      .createQueryBuilder('vendor')
-      .where('vendor.id = :id', { id })
-      .loadRelationCountAndMap(
-        'vendor.contractCount',
-        'vendor.agreements',
-        'agreements',
-        (qb) =>
-          qb.where('agreements.type = :agreementType', {
-            agreementType: AgreementType.CONTRACT,
-          }),
-      )
-      .loadRelationCountAndMap(
-        'vendor.convensionCount',
-        'vendor.agreements',
-        'agreements',
-        (qb) =>
-          qb.where('agreements.type = :agreementType', {
-            agreementType: AgreementType.CONVENSION,
-          }),
-      )
-      .getOne();
-  }
-
-  async save(data: Partial<VendorEntity>): Promise<VendorEntity> {
-    return this.repo.save(data as VendorEntity);
+    return { total, data: data.map((e) => this.toDomain(e)) };
   }
 
   async getVendorStats(
@@ -133,32 +186,24 @@ export class VendorRepository {
     endDate?: Date,
   ): Promise<VendorStatsEntity[]> {
     let query = this.vendorStatsRepo.createQueryBuilder('v').orderBy('v.date');
-
-    if (startDate) {
-      query = query.where('v.date >= :startDate', { startDate });
-    }
-    if (endDate) {
-      query = query.andWhere('v.date <= :endDate', { endDate });
-    }
-
+    if (startDate) query = query.where('v.date >= :startDate', { startDate });
+    if (endDate) query = query.andWhere('v.date <= :endDate', { endDate });
     return query.getMany();
   }
 
-  async findByIdWithAgreementCount(
-    vendorId: string,
-  ): Promise<VendorEntity | null> {
-    return this.repo
-      .createQueryBuilder('v')
-      .where('v.id = :vendorId', { vendorId })
-      .loadRelationCountAndMap('v.agreementCount', 'v.agreements')
-      .getOne();
-  }
+  // ── Mapper ───────────────────────────────────────────────────────────────
 
-  async delete(vendorId: string): Promise<void> {
-    await this.repo
-      .createQueryBuilder()
-      .delete()
-      .where('vendors.id = :vendorId', { vendorId })
-      .execute();
+  private toDomain(entity: VendorEntity): Vendor {
+    return Vendor.create({
+      id: entity.id,
+      num: entity.num,
+      company_name: entity.company_name,
+      nif: entity.nif,
+      nrc: entity.nrc,
+      address: entity.address,
+      mobile_phone_number: entity.mobile_phone_number,
+      home_phone_number: entity.home_phone_number,
+      createdAt: entity.createdAt,
+    });
   }
 }

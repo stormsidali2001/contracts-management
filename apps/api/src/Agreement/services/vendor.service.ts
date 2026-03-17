@@ -1,10 +1,11 @@
 import {
   Injectable,
   ForbiddenException,
+  Inject,
   NotFoundException,
 } from '@nestjs/common';
+import { v4 as uuid } from 'uuid';
 import { CreateVendorDTO, UpdateVendorDTO } from 'src/core/dtos/vendor.dto';
-import { VendorEntity } from 'src/core/entities/Vendor.entity';
 import { Entity } from 'src/core/types/entity.enum';
 import { VendorStatsView } from 'src/core/views/vendor-stats.view';
 import { VendorView } from 'src/core/views/vendor.view';
@@ -12,14 +13,18 @@ import { Operation } from 'src/core/types/operation.enum';
 import { PaginationResponse } from 'src/core/types/paginationResponse.interface';
 import { StatsParamsDTO } from 'src/statistics/models/statsPramsDTO.interface';
 import { UserNotificationService } from 'src/user/user-notification.service';
-import { FindOptionsWhere } from 'typeorm';
-import { VendorRepository } from '../vendor.repository';
+import { Vendor } from '../domain/vendor';
+import {
+  IVendorRepository,
+  VENDOR_REPOSITORY,
+} from '../domain/vendor.repository';
 
 @Injectable()
 export class VendorService {
   constructor(
-    private readonly vendorRepository: VendorRepository,
-    private notificationService: UserNotificationService,
+    @Inject(VENDOR_REPOSITORY)
+    private readonly vendorRepository: IVendorRepository,
+    private readonly notificationService: UserNotificationService,
   ) {}
 
   async createVendor(vendor: CreateVendorDTO): Promise<VendorView> {
@@ -30,6 +35,7 @@ export class VendorService {
       createdAt,
       ...uniques
     } = vendor;
+
     let condition = '';
     const uniquesKeys = Object.keys(uniques);
     uniquesKeys.forEach((k, index) => {
@@ -40,38 +46,42 @@ export class VendorService {
         }`;
     });
 
-    const vendorDb = await this.vendorRepository.findOneByUniqueCondition(
+    const existing = await this.vendorRepository.findByUniqueCondition(
       condition,
       uniques,
     );
-    if (vendorDb)
+    if (existing)
       throw new ForbiddenException(
         'nif , nrc , company_name  ,num doit etre unique',
       );
 
-    const createdVendor = await this.vendorRepository.createWithStats(
-      {
-        address,
-        createdAt: createdAt ? createdAt : new Date(),
-        home_phone_number,
-        mobile_phone_number,
-        ...uniques,
-      },
-      createdAt,
+    const newVendor = Vendor.create({
+      id: uuid(),
+      address,
+      home_phone_number,
+      mobile_phone_number,
+      createdAt: createdAt ?? new Date(),
+      ...uniques,
+    });
+
+    const created = await this.vendorRepository.createWithStats(
+      newVendor,
+      newVendor.createdAt,
     );
 
     await this.notificationService.sendEventToAllUsers({
       entity: Entity.VENDOR,
       operation: Operation.INSERT,
-      entityId: createdVendor.id,
+      entityId: created.id,
       createdAt: new Date(),
     });
 
-    return VendorView.from(createdVendor);
+    return VendorView.from(created);
   }
 
-  async findBy(options: FindOptionsWhere<VendorEntity>) {
-    return this.vendorRepository.findOneBy(options);
+  async findBy(options: { id?: string }): Promise<Vendor | null> {
+    if (options.id) return this.vendorRepository.findById(options.id);
+    return null;
   }
 
   async findAll(
@@ -90,8 +100,8 @@ export class VendorService {
   }
 
   async findByIdWithRelations(id: string): Promise<VendorView | null> {
-    const entity = await this.vendorRepository.findByIdWithRelations(id);
-    return entity ? VendorView.from(entity) : null;
+    const vendor = await this.vendorRepository.findByIdWithRelationCounts(id);
+    return vendor ? VendorView.from(vendor) : null;
   }
 
   async updateVendor(
@@ -100,6 +110,7 @@ export class VendorService {
   ): Promise<VendorView> {
     const { address, home_phone_number, mobile_phone_number, ...uniques } =
       newVendor;
+
     let condition = '';
     const uniquesKeys = Object.keys(uniques);
     uniquesKeys.forEach((k, index) => {
@@ -110,20 +121,29 @@ export class VendorService {
         }`;
     });
 
-    const vendorDb = await this.vendorRepository.findOneByUniqueCondition(
+    const duplicate = await this.vendorRepository.findByUniqueCondition(
       condition,
       uniques,
     );
-    if (vendorDb && vendorDb.id !== id)
+    if (duplicate && duplicate.id !== id)
       throw new ForbiddenException(
         'nif , nrc , company_name  ,num doit etre unique',
       );
 
-    const res = await this.vendorRepository.save({ ...newVendor, id });
+    const vendor = await this.vendorRepository.findById(id);
+    if (!vendor) throw new NotFoundException('fournisseur non trouvé');
+    vendor.update({
+      address,
+      home_phone_number,
+      mobile_phone_number,
+      ...uniques,
+    });
+    const saved = await this.vendorRepository.save(vendor);
+
     await this.notificationService.sendEventToAllUsers({
       entity: Entity.VENDOR,
       operation: Operation.UPDATE,
-      entityId: res.id,
+      entityId: saved.id,
       createdAt: new Date(),
       departementAbriviation: '',
       directionId: null,
@@ -131,14 +151,13 @@ export class VendorService {
       directionAbriviation: '',
     });
 
-    return VendorView.from(res);
+    return VendorView.from(saved);
   }
 
   async getVendorsStats({
     startDate,
     endDate,
   }: StatsParamsDTO): Promise<VendorStatsView[]> {
-    console.log('k....k', startDate, endDate);
     const entities = await this.vendorRepository.getVendorStats(
       startDate,
       endDate,
@@ -147,13 +166,14 @@ export class VendorService {
   }
 
   async deleteVendor(vendorId: string) {
-    const vendorDb = await this.vendorRepository.findByIdWithAgreementCount(
+    const result = await this.vendorRepository.findByIdWithAgreementCount(
       vendorId,
     );
 
-    if (!vendorDb) throw new NotFoundException('fournisseur non trouvé');
-    const agreementCount = (vendorDb as any).agreementCount as number;
-    if (agreementCount > 0)
+    if (!result) throw new NotFoundException('fournisseur non trouvé');
+    const { vendor, agreementCount } = result;
+
+    if (!vendor.canBeDeleted(agreementCount))
       throw new NotFoundException(
         `le fournisseur ne peut pas etre supprimer car il a ${agreementCount} accords`,
       );
@@ -162,7 +182,7 @@ export class VendorService {
     await this.notificationService.sendEventToAllUsers({
       entity: Entity.VENDOR,
       operation: Operation.DELETE,
-      entityId: vendorDb.id,
+      entityId: vendor.id,
       createdAt: new Date(),
       departementAbriviation: '',
       directionId: null,

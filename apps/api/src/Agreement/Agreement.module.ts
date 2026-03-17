@@ -14,6 +14,8 @@ import { AgreementRepository } from './agreement.repository';
 import { VendorRepository } from './vendor.repository';
 import { AgreementService } from './services/Agreement.service';
 import { VendorService } from './services/vendor.service';
+import { AGREEMENT_REPOSITORY } from './domain/agreement.repository';
+import { VENDOR_REPOSITORY } from './domain/vendor.repository';
 
 @Module({
   imports: [
@@ -28,8 +30,8 @@ import { VendorService } from './services/vendor.service';
     DirectionModule,
   ],
   providers: [
-    AgreementRepository,
-    VendorRepository,
+    { provide: AGREEMENT_REPOSITORY, useClass: AgreementRepository },
+    { provide: VENDOR_REPOSITORY, useClass: VendorRepository },
     AgreementService,
     VendorService,
   ],

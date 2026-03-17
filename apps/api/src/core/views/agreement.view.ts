@@ -1,7 +1,10 @@
 import { AgreementStatus } from '../types/agreement-status.enum';
 import { AgreementType } from '../types/agreement-type.enum';
-import { AgreementEntity } from '../entities/Agreement.entity';
+import { Agreement } from 'src/Agreement/domain/agreement';
+import { AgreementDetail } from 'src/Agreement/domain/agreement.repository';
 import { stripPrivateKeys } from './strip-private-keys.util';
+
+type AgreementLike = Agreement | AgreementDetail;
 
 export class AgreementView {
   id: string;
@@ -23,11 +26,11 @@ export class AgreementView {
   departement?: any;
   vendor?: any;
 
-  static from(entity: AgreementEntity): AgreementView {
-    return Object.assign(new AgreementView(), stripPrivateKeys(entity));
+  static from(source: AgreementLike): AgreementView {
+    return Object.assign(new AgreementView(), stripPrivateKeys(source));
   }
 
-  static fromMany(entities: AgreementEntity[]): AgreementView[] {
-    return entities.map(AgreementView.from);
+  static fromMany(sources: AgreementLike[]): AgreementView[] {
+    return sources.map(AgreementView.from);
   }
 }
