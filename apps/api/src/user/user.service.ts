@@ -9,7 +9,6 @@ import {
 } from '@nestjs/common';
 import { v4 as uuid } from 'uuid';
 import {
-  ConnectedUserResetPassword,
   CreateUserDTO,
   UpdateUserDTO,
 } from 'src/core/dtos/user.dto';
@@ -115,118 +114,10 @@ export class UserService {
     }
   }
 
-  async findByEmailWithToken(email: string): Promise<User | null> {
-    return this.userRepository.findByEmailWithPasswordToken(email);
-  }
-
-  async findByIdWithToken(userId: string): Promise<User | null> {
-    return this.userRepository.findByIdWithPasswordToken(userId);
-  }
-
   // Used by auth guards and socket adapters that only need basic user fields
   async findBy(options: { id?: string; role?: UserRole }): Promise<User | null> {
     if (options.id) return this.userRepository.findById(options.id);
     return null;
-  }
-
-  async setRefreshToken(userId: string, hash: string): Promise<void> {
-    const user = await this.userRepository.findById(userId);
-    if (!user) return;
-    user.setRefreshToken(hash);
-    await this.userRepository.save(user);
-  }
-
-  async clearRefreshToken(userId: string): Promise<void> {
-    const user = await this.userRepository.findById(userId);
-    if (!user) return;
-    user.clearRefreshToken();
-    await this.userRepository.save(user);
-  }
-
-  async updateUserPasswordToken(
-    hashedToken: string,
-    userId: string,
-  ): Promise<void> {
-    const user = await this.userRepository.findByIdWithPasswordToken(userId);
-    if (!user) throw new NotFoundException("l'utilisateur n'existe pas");
-    user.requestPasswordReset(
-      hashedToken,
-      new Date(Date.now() + 1000 * 60 * 15),
-    );
-    await this.userRepository.save(user);
-  }
-
-  async deleteUserPasswordToken(id: string, userId: string): Promise<void> {
-    const user = await this.userRepository.findByIdWithPasswordToken(userId);
-    if (!user) return;
-    user.clearPasswordToken();
-    await this.userRepository.save(user);
-  }
-
-  async deleteUserPasswordTokenAndUpdatePassword(
-    _tokenId: string,
-    userId: string,
-    password: string,
-    directionId: string,
-    departementId: string,
-    userRole: UserRole,
-  ): Promise<void> {
-    const user = await this.userRepository.findByIdWithPasswordToken(userId);
-    if (!user) throw new NotFoundException("l'utilisateur n'existe pas");
-    user.resetPassword(password);
-    await this.userRepository.save(user);
-
-    const saved = await this.userRepository.findProfileById(userId);
-    await this.notificationService.emitDataToAdminsOnly({
-      entity: userRole as unknown as Entity,
-      entityId: userId,
-      operation: Operation.UPDATE,
-      directionId,
-      departementId,
-      departementAbriviation: saved?.departement?.abriviation ?? '',
-      directionAbriviation: saved?.direction?.abriviation ?? '',
-    });
-
-    const admins = await this.userRepository.findAdmins();
-    const extraMessage =
-      saved?.departement && saved?.direction
-        ? `au ${saved.departement.abriviation} de ${saved.direction.abriviation}`
-        : '';
-    const notifications: NotificationBody[] = admins.map((u) => ({
-      userId: u.id,
-      message: `l'utilisateur ${saved.email} de type ${saved.role} ${extraMessage} est mise a jour avec success`,
-    }));
-
-    if (notifications.length > 0)
-      await this.notificationService.sendNotifications(notifications);
-
-    await this.notificationService.emitDataToAdminsOnly({
-      entity: saved.role as unknown as Entity,
-      operation: Operation.UPDATE,
-      departementId: saved?.departement?.id,
-      directionId: saved?.direction?.id,
-      entityId: saved.id,
-      departementAbriviation: saved?.departement?.abriviation ?? '',
-      directionAbriviation: saved?.direction?.abriviation ?? '',
-    });
-    await this.notificationService.IncrementUsersStats({
-      type: saved.role as unknown as Entity,
-      operation: Operation.UPDATE,
-    });
-  }
-
-  async getUserPassword(userId: string): Promise<User | null> {
-    return this.userRepository.findByIdWithPassword(userId);
-  }
-
-  async updateUserPassword(id: string, hashedPassword: string): Promise<void> {
-    const user = await this.userRepository.findById(id);
-    if (!user) throw new NotFoundException("l'utilisateur n'existe pas");
-    user.resetPassword(hashedPassword);
-    // resetPassword also clears password_token — ensure we don't accidentally
-    // clear an unloaded token by resetting it back to undefined (not touched)
-    user.password_token = undefined;
-    await this.userRepository.save(user);
   }
 
   async findAll(
@@ -405,6 +296,42 @@ export class UserService {
     if (!user) return;
     user.updateImage(imageUrl);
     await this.userRepository.save(user);
+  }
+
+  /**
+   * Emits admin notifications after a password reset.
+   * Called by AuthService after credential reset via UserCredentials aggregate.
+   */
+  async notifyPasswordChanged(userId: string): Promise<void> {
+    const saved = await this.userRepository.findProfileById(userId);
+    if (!saved) return;
+
+    const admins = await this.userRepository.findAdmins();
+    const extraMessage =
+      saved.departement && saved.direction
+        ? `au ${saved.departement.abriviation} de ${saved.direction.abriviation}`
+        : '';
+    const notifications: NotificationBody[] = admins.map((u) => ({
+      userId: u.id,
+      message: `l'utilisateur ${saved.email} de type ${saved.role} ${extraMessage} est mise a jour avec success`,
+    }));
+
+    if (notifications.length > 0)
+      await this.notificationService.sendNotifications(notifications);
+
+    await this.notificationService.emitDataToAdminsOnly({
+      entity: saved.role as unknown as Entity,
+      operation: Operation.UPDATE,
+      departementId: saved.departement?.id,
+      directionId: saved.direction?.id,
+      entityId: saved.id,
+      departementAbriviation: saved.departement?.abriviation ?? '',
+      directionAbriviation: saved.direction?.abriviation ?? '',
+    });
+    await this.notificationService.IncrementUsersStats({
+      type: saved.role as unknown as Entity,
+      operation: Operation.UPDATE,
+    });
   }
 
   // ── Read-model pass-through (used by AgreementService / NotificationService)

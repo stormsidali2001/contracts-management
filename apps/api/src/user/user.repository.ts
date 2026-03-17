@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
 import { NotificationEntity } from 'src/core/entities/Notification.entity';
-import { PasswordTokenEntity } from 'src/core/entities/PasswordToken';
 import { UserEntity } from 'src/core/entities/User.entity';
 import { UserRole } from 'src/core/types/UserRole.enum';
 import { PaginationResponse } from 'src/core/types/paginationResponse.interface';
@@ -22,53 +21,21 @@ export class UserRepository implements IUserRepository {
   // ── Persistence ─────────────────────────────────────────────────────────
 
   async save(user: User): Promise<User> {
-    await this.dataSource.transaction(async (manager) => {
-      const userRepo = manager.getRepository(UserEntity);
-      const tokenRepo = manager.getRepository(PasswordTokenEntity);
+    const data: Record<string, unknown> = {
+      id: user.id,
+      email: user.email,
+      username: user.username,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      imageUrl: user.imageUrl,
+      active: user.active,
+      role: user.role,
+      recieve_notifications: user.recieve_notifications,
+      directionId: user.directionId,
+      departementId: user.departementId,
+    };
 
-      const data: Record<string, unknown> = {
-        id: user.id,
-        email: user.email,
-        username: user.username,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        imageUrl: user.imageUrl,
-        active: user.active,
-        role: user.role,
-        recieve_notifications: user.recieve_notifications,
-        directionId: user.directionId,
-        departementId: user.departementId,
-      };
-      if (user.password !== undefined) data.password = user.password;
-      if (user.refresh_token_hash !== undefined)
-        data.refresh_token_hash = user.refresh_token_hash;
-
-      await userRepo.save(data as unknown as UserEntity);
-
-      // password_token: undefined = not touched, null = clear, value = set/replace
-      if (user.password_token !== undefined) {
-        const current = await userRepo
-          .createQueryBuilder('u')
-          .leftJoinAndSelect('u.password_token', 'pt')
-          .where('u.id = :id', { id: user.id })
-          .getOne();
-
-        if (current?.password_token) {
-          await userRepo.update(user.id, { password_token: null as any });
-          await tokenRepo.delete(current.password_token.id);
-        }
-
-        if (user.password_token !== null) {
-          const saved = await tokenRepo.save({
-            token: user.password_token.token,
-            expiresIn: user.password_token.expiresIn,
-          });
-          await userRepo.update(user.id, { password_token: saved });
-          user.password_token.id = saved.id;
-        }
-      }
-    });
-
+    await this.repo.save(data as unknown as UserEntity);
     return user;
   }
 
@@ -104,21 +71,6 @@ export class UserRepository implements IUserRepository {
   ): Promise<User | null> {
     const entity = await this.repo
       .createQueryBuilder('user')
-      .select([
-        'user.id',
-        'user.email',
-        'user.username',
-        'user.password',
-        'user.firstName',
-        'user.lastName',
-        'user.imageUrl',
-        'user.role',
-        'user.departementId',
-        'user.directionId',
-        'user.recieve_notifications',
-        'user.active',
-        'user.refresh_token_hash',
-      ])
       .where('user.username = :username or user.email = :email', {
         username,
         email,
@@ -147,50 +99,6 @@ export class UserRepository implements IUserRepository {
         : null,
     });
     return profile;
-  }
-
-  async findByEmailWithPasswordToken(email: string): Promise<User | null> {
-    const entity = await this.repo
-      .createQueryBuilder('u')
-      .where('u.email = :email', { email })
-      .leftJoinAndSelect('u.password_token', 'password_token')
-      .getOne();
-
-    return entity ? this.toDomain(entity) : null;
-  }
-
-  async findByIdWithPasswordToken(id: string): Promise<User | null> {
-    const entity = await this.repo
-      .createQueryBuilder('u')
-      .where('u.id = :id', { id })
-      .leftJoinAndSelect('u.password_token', 'password_token')
-      .getOne();
-
-    return entity ? this.toDomain(entity) : null;
-  }
-
-  async findByIdWithPassword(id: string): Promise<User | null> {
-    const entity = await this.repo
-      .createQueryBuilder('u')
-      .select([
-        'u.id',
-        'u.email',
-        'u.username',
-        'u.password',
-        'u.firstName',
-        'u.lastName',
-        'u.imageUrl',
-        'u.role',
-        'u.active',
-        'u.departementId',
-        'u.directionId',
-        'u.recieve_notifications',
-        'u.refresh_token_hash',
-      ])
-      .where('u.id = :id', { id })
-      .getOne();
-
-    return entity ? this.toDomain(entity) : null;
   }
 
   async findAdmins(): Promise<User[]> {
@@ -294,17 +202,6 @@ export class UserRepository implements IUserRepository {
       created_at: entity.created_at,
       directionId: entity.directionId ?? null,
       departementId: entity.departementId ?? null,
-      password: (entity as any).password,
-      refresh_token_hash: entity.refresh_token_hash,
-      password_token: entity.password_token
-        ? {
-            id: entity.password_token.id,
-            token: entity.password_token.token,
-            expiresIn: entity.password_token.expiresIn,
-          }
-        : entity.password_token === null
-        ? null
-        : undefined,
     });
   }
 }
