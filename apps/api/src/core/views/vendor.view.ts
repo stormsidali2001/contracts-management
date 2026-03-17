@@ -1,5 +1,8 @@
-import { VendorEntity } from '../entities/Vendor.entity';
+import { Vendor } from 'src/Agreement/domain/vendor';
+import { VendorWithCounts } from 'src/Agreement/domain/vendor.repository';
 import { stripPrivateKeys } from './strip-private-keys.util';
+
+type VendorLike = Vendor | VendorWithCounts;
 
 export class VendorView {
   id: string;
@@ -12,13 +15,14 @@ export class VendorView {
   home_phone_number: string;
   createdAt: Date;
   agreements?: any[];
-  agreementCount?: number;
+  contractCount?: number;
+  convensionCount?: number;
 
-  static from(entity: VendorEntity): VendorView {
-    return Object.assign(new VendorView(), stripPrivateKeys(entity));
+  static from(source: VendorLike): VendorView {
+    return Object.assign(new VendorView(), stripPrivateKeys(source));
   }
 
-  static fromMany(entities: VendorEntity[]): VendorView[] {
-    return entities.map(VendorView.from);
+  static fromMany(sources: VendorLike[]): VendorView[] {
+    return sources.map(VendorView.from);
   }
 }

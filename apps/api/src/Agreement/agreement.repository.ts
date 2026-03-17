@@ -4,13 +4,15 @@ import { AgreementEntity } from 'src/core/entities/Agreement.entity';
 import { AgreementExecJobsEntity } from 'src/core/entities/AgreementExecJobs';
 import { AgreementStatus } from 'src/core/types/agreement-status.enum';
 import { AgreementType } from 'src/core/types/agreement-type.enum';
+import { FindAllAgreementsDTO } from 'src/core/dtos/agreement.dto';
 import { PaginationResponse } from 'src/core/types/paginationResponse.interface';
 import { UserRole } from 'src/core/types/UserRole.enum';
-import { FindAllAgreementsDTO } from 'src/core/dtos/agreement.dto';
-import { Repository, UpdateResult } from 'typeorm';
+import { Repository } from 'typeorm';
+import { IAgreementRepository, ExecJob, AgreementDetail } from './domain/agreement.repository';
+import { Agreement } from './domain/agreement';
 
 @Injectable()
-export class AgreementRepository {
+export class AgreementRepository implements IAgreementRepository {
   constructor(
     @InjectRepository(AgreementEntity)
     private readonly repo: Repository<AgreementEntity>,
@@ -18,38 +20,68 @@ export class AgreementRepository {
     private readonly execJobsRepo: Repository<AgreementExecJobsEntity>,
   ) {}
 
-  async findAllExecJobs(): Promise<AgreementExecJobsEntity[]> {
-    return this.execJobsRepo.find();
-  }
+  // ── Persistence ─────────────────────────────────────────────────────────
 
-  async deleteExecJob(name: string): Promise<void> {
-    await this.execJobsRepo.delete({ name });
-  }
+  async save(agreement: Agreement): Promise<Agreement> {
+    const data: Record<string, unknown> = {
+      id: agreement.id,
+      number: agreement.number,
+      type: agreement.type,
+      object: agreement.object,
+      amount: agreement.amount,
+      expiration_date: agreement.expiration_date,
+      signature_date: agreement.signature_date,
+      execution_start_date: agreement.execution_start_date,
+      execution_end_date: agreement.execution_end_date,
+      observation: agreement.observation,
+      status: agreement.status,
+      url: agreement.url,
+      direction: { id: agreement.directionId } as any,
+      departement: { id: agreement.departementId } as any,
+      vendor: { id: agreement.vendorId } as any,
+    };
 
-  async saveExecJob(
-    data: Partial<AgreementExecJobsEntity>,
-  ): Promise<AgreementExecJobsEntity> {
-    return this.execJobsRepo.save(data as AgreementExecJobsEntity);
+    const saved = await this.repo.save(data as unknown as AgreementEntity);
+    return this.toDomain(saved);
   }
 
   async updateStatus(id: string, status: AgreementStatus): Promise<void> {
     await this.repo.update({ id }, { status });
   }
 
-  async findOneByNumber(number: string): Promise<AgreementEntity | null> {
-    return this.repo.findOneBy({ number });
-  }
+  // ── Aggregate loaders ────────────────────────────────────────────────────
 
-  async save(data: Partial<AgreementEntity>): Promise<AgreementEntity> {
-    return this.repo.save(data as AgreementEntity);
-  }
-
-  async update(
+  async findById(
     id: string,
-    partial: Partial<AgreementEntity>,
-  ): Promise<UpdateResult> {
-    return this.repo.update({ id }, partial);
+    type: AgreementType = AgreementType.CONTRACT,
+  ): Promise<AgreementDetail | null> {
+    const entity = await this.repo
+      .createQueryBuilder('ag')
+      .where('ag.type = :type', { type })
+      .andWhere('ag.id = :id', { id })
+      .leftJoinAndSelect('ag.direction', 'direction')
+      .leftJoinAndSelect('ag.departement', 'departement')
+      .leftJoinAndSelect('ag.vendor', 'vendor')
+      .getOne();
+
+    return entity ? this.toDetail(entity) : null;
   }
+
+  async findByIdForExecution(id: string): Promise<Agreement | null> {
+    const entity = await this.repo
+      .createQueryBuilder('ag')
+      .where('ag.id = :id', { id })
+      .getOne();
+
+    return entity ? this.toDomain(entity) : null;
+  }
+
+  async findOneByNumber(number: string): Promise<Agreement | null> {
+    const entity = await this.repo.findOneBy({ number });
+    return entity ? this.toDomain(entity) : null;
+  }
+
+  // ── Read-model queries ───────────────────────────────────────────────────
 
   async findPaginated(
     {
@@ -70,7 +102,7 @@ export class AgreementRepository {
     userRole: UserRole,
     userDepartementId?: string,
     userDirectionId?: string,
-  ): Promise<PaginationResponse<AgreementEntity>> {
+  ): Promise<PaginationResponse<Agreement>> {
     let query = this.repo
       .createQueryBuilder('ag')
       .where('ag.type = :type', { type: agreementType })
@@ -111,54 +143,21 @@ export class AgreementRepository {
       );
     }
 
-    if (status) {
-      query = query.andWhere('ag.status = :status', { status });
-    }
-
-    if (vendorId) {
-      query = query.andWhere('ag.vendorId = :vendorId', { vendorId });
-    }
+    if (status) query = query.andWhere('ag.status = :status', { status });
+    if (vendorId) query = query.andWhere('ag.vendorId = :vendorId', { vendorId });
 
     if (searchQuery && searchQuery.length >= 2) {
-      query = query.andWhere(`
-            (
-                MATCH(ag.number) AGAINST ('${searchQuery}' IN BOOLEAN MODE)
-                or MATCH(ag.object) AGAINST ('${searchQuery}' IN BOOLEAN MODE)
-                or MATCH(ag.observation) AGAINST ('${searchQuery}' IN BOOLEAN MODE)
-            )`);
+      query = query.andWhere(`(
+        MATCH(ag.number) AGAINST ('${searchQuery}' IN BOOLEAN MODE)
+        or MATCH(ag.object) AGAINST ('${searchQuery}' IN BOOLEAN MODE)
+        or MATCH(ag.observation) AGAINST ('${searchQuery}' IN BOOLEAN MODE)
+      )`);
     }
 
-    if (orderBy && orderBy !== 'type') {
-      query = query.orderBy(`${orderBy}`);
-    }
+    if (orderBy && orderBy !== 'type') query = query.orderBy(orderBy);
 
     const [data, total] = await query.getManyAndCount();
-    return { total, data };
-  }
-
-  async findById(
-    id: string,
-    type: AgreementType = AgreementType.CONTRACT,
-  ): Promise<AgreementEntity | null> {
-    return this.repo
-      .createQueryBuilder('ag')
-      .where('ag.type = :type', { type })
-      .andWhere('ag.id = :id', { id })
-      .leftJoinAndSelect('ag.direction', 'direction')
-      .leftJoinAndSelect('ag.departement', 'departement')
-      .leftJoinAndSelect('ag.vendor', 'vendor')
-      .getOne();
-  }
-
-  async findByIdForExecution(
-    agreementId: string,
-  ): Promise<AgreementEntity | null> {
-    return this.repo
-      .createQueryBuilder('ag')
-      .where('ag.id = :agreementId', { agreementId })
-      .leftJoinAndSelect('ag.direction', 'dr')
-      .leftJoinAndSelect('ag.departement', 'dp')
-      .getOne();
+    return { total, data: data.map((e) => this.toDomain(e)) };
   }
 
   async getStatusStats(
@@ -181,13 +180,8 @@ export class AgreementRepository {
       );
     }
 
-    if (startDate) {
-      query = query.andWhere('ag.createdAt >= :startDate', { startDate });
-    }
-
-    if (endDate) {
-      query = query.andWhere('ag.createdAt <= :endDate', { endDate });
-    }
+    if (startDate) query = query.andWhere('ag.createdAt >= :startDate', { startDate });
+    if (endDate) query = query.andWhere('ag.createdAt <= :endDate', { endDate });
 
     return query.getRawMany();
   }
@@ -211,5 +205,68 @@ export class AgreementRepository {
     }
 
     return query.getRawMany();
+  }
+
+  // ── Exec jobs ────────────────────────────────────────────────────────────
+
+  async findAllExecJobs(): Promise<ExecJob[]> {
+    const entities = await this.execJobsRepo.find();
+    return entities.map((e) => ({
+      id: e.id,
+      name: e.name,
+      agreementId: e.agreementId,
+      date: e.date,
+      newStatus: e.newStatus,
+    }));
+  }
+
+  async saveExecJob(job: Omit<ExecJob, 'id'>): Promise<ExecJob> {
+    const saved = await this.execJobsRepo.save(
+      job as AgreementExecJobsEntity,
+    );
+    return { id: saved.id, name: saved.name, agreementId: saved.agreementId, date: saved.date, newStatus: saved.newStatus };
+  }
+
+  async deleteExecJob(name: string): Promise<void> {
+    await this.execJobsRepo.delete({ name });
+  }
+
+  // ── Mappers ──────────────────────────────────────────────────────────────
+
+  private toDomain(entity: AgreementEntity): Agreement {
+    return Agreement.create({
+      id: entity.id,
+      number: entity.number,
+      type: entity.type,
+      object: entity.object,
+      amount: entity.amount,
+      expiration_date: entity.expiration_date,
+      signature_date: entity.signature_date,
+      createdAt: entity.createdAt,
+      execution_start_date: entity.execution_start_date,
+      execution_end_date: entity.execution_end_date,
+      observation: entity.observation,
+      status: entity.status,
+      url: entity.url,
+      departementId: entity.departementId,
+      directionId: entity.directionId,
+      vendorId: (entity as any).vendorId ?? entity.vendor?.id,
+    });
+  }
+
+  /** Maps entity with joined relations to the AgreementDetail read model. */
+  private toDetail(entity: AgreementEntity): AgreementDetail {
+    const base = this.toDomain(entity);
+    const detail: AgreementDetail = base as unknown as AgreementDetail;
+    detail.vendor = entity.vendor
+      ? { id: entity.vendor.id, company_name: entity.vendor.company_name }
+      : undefined;
+    detail.direction = entity.direction
+      ? { id: entity.direction.id, abriviation: entity.direction.abriviation }
+      : undefined;
+    detail.departement = entity.departement
+      ? { id: entity.departement.id, abriviation: entity.departement.abriviation }
+      : undefined;
+    return detail;
   }
 }
