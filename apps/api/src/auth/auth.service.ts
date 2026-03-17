@@ -78,7 +78,7 @@ export class AuthService {
     refresh_token: string,
   ): Promise<void> {
     const refresh_token_hash = await bcrypt.hash(refresh_token, 12);
-    await this.userService.findAndUpdate(userId, { refresh_token_hash });
+    await this.userService.setRefreshToken(userId, refresh_token_hash);
   }
   async register(newUser: CreateUserDTO): Promise<UserView> {
     const userDb = await this.userService.findByEmailOrUsername({
@@ -194,9 +194,7 @@ export class AuthService {
   }
 
   async logout(userId: string) {
-    return await this.userService.findAndUpdate(userId, {
-      refresh_token_hash: null,
-    });
+    await this.userService.clearRefreshToken(userId);
   }
   async forgotPassword({ email }: ForgotPasswordDTO) {
     const userDb = await this.userService.findByEmailWithToken(email);

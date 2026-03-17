@@ -7,7 +7,6 @@ import { RoleGuard } from "src/auth/guards/Role.guard";
 import { PaginationResponse } from "src/core/types/paginationResponse.interface";
 import { UserRole } from "src/core/types/UserRole.enum";
 import { UserView } from "src/core/views/user.view";
-import { UpdateResult } from "typeorm";
 import { UpdateUserDTO } from "../../core/dtos/user.dto";
 import { UserService } from "../user.service";
 
@@ -49,7 +48,7 @@ export class UserController{
 
     @UseGuards(JwtAccessTokenGuard)
     @Put(':id')
-    async updateUser(@Param('id') id:string,@Body() user:UpdateUserDTO ,@CurrentUserId() currentUserId:string):Promise<UpdateResult>{
+    async updateUser(@Param('id') id:string,@Body() user:UpdateUserDTO ,@CurrentUserId() currentUserId:string):Promise<UserView>{
         return await this.userService.updateUserUniqueCheck(id,user,currentUserId)
     }
 

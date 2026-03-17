@@ -1,41 +1,40 @@
 import {
   Injectable,
   InternalServerErrorException,
-  Logger,
   BadRequestException,
   ForbiddenException,
   forwardRef,
   Inject,
   NotFoundException,
 } from '@nestjs/common';
-import { FindOptionsWhere, UpdateResult } from 'typeorm';
-import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
+import { v4 as uuid } from 'uuid';
 import {
   ConnectedUserResetPassword,
   CreateUserDTO,
   UpdateUserDTO,
 } from 'src/core/dtos/user.dto';
-import { Departement } from 'src/direction/domain/departement';
-import { Direction } from 'src/direction/domain/direction';
-import { UserEntity } from 'src/core/entities/User.entity';
 import { Entity } from 'src/core/types/entity.enum';
 import { Operation } from 'src/core/types/operation.enum';
 import { PaginationResponse } from 'src/core/types/paginationResponse.interface';
 import { UserRole } from 'src/core/types/UserRole.enum';
+import { UserView } from 'src/core/views/user.view';
 import { DirectionService } from 'src/direction/services/direction.service';
 import { StatsParamsDTO } from 'src/statistics/models/statsPramsDTO.interface';
-import { UserView } from 'src/core/views/user.view';
+import { User } from './domain/user';
+import {
+  IUserRepository,
+  USER_REPOSITORY,
+} from './domain/user.repository';
 import {
   NotificationBody,
   UserNotificationService,
 } from './user-notification.service';
-import { UserRepository } from './user.repository';
+
 @Injectable()
 export class UserService {
-  private logger = new Logger(UserService.name);
-
   constructor(
-    private readonly userRepository: UserRepository,
+    @Inject(USER_REPOSITORY)
+    private readonly userRepository: IUserRepository,
     private readonly directionService: DirectionService,
     @Inject(forwardRef(() => UserNotificationService))
     private readonly notificationService: UserNotificationService,
@@ -43,68 +42,63 @@ export class UserService {
 
   async create(newUser: CreateUserDTO): Promise<UserView> {
     const { departementId = null, directionId = null, ...userData } = newUser;
-    let direction: Direction, departement: Departement;
+    let directionData: { id: string; abriviation: string } | null = null;
+    let departementData: { id: string; abriviation: string } | null = null;
 
     if (directionId && departementId) {
-      direction = await this.directionService.findWithDepartement(
+      const direction = await this.directionService.findWithDepartement(
         directionId,
         departementId,
       );
       if (!direction) throw new BadRequestException('direction not found');
-      departement =
-        direction.departements.length > 0 ? direction.departements[0] : null;
-      if (!departement)
-        throw new BadRequestException('departement is not in direction');
+      const dept = direction.departements[0];
+      if (!dept) throw new BadRequestException('departement is not in direction');
+      directionData = { id: direction.id, abriviation: direction.abriviation };
+      departementData = { id: dept.id, abriviation: dept.abriviation };
     }
 
-    const res = await this.userRepository.save({
+    const user = User.create({
+      id: uuid(),
       ...userData,
-      direction: direction ? ({ id: direction.id } as any) : undefined,
-      departement: departement ? ({ id: departement.id } as any) : undefined,
+      role: userData.role ?? UserRole.EMPLOYEE,
+      directionId,
+      departementId,
     });
 
-    const adminUsers = await this.userRepository.findAdminUsers();
+    const saved = await this.userRepository.save(user);
+
+    const admins = await this.userRepository.findAdmins();
     const extraMessage =
-      departement && direction
-        ? `au ${departement.abriviation} de ${direction.abriviation}`
+      directionData && departementData
+        ? `au ${departementData.abriviation} de ${directionData.abriviation}`
         : '';
-    const notifications: NotificationBody[] = adminUsers.map((u) => ({
+    const notifications: NotificationBody[] = admins.map((u) => ({
       userId: u.id,
-      message: `l'utilisateur ${res.email} de type ${res.role} est ajouté ${extraMessage} avec success`,
+      message: `l'utilisateur ${saved.email} de type ${saved.role} est ajouté ${extraMessage} avec success`,
     }));
 
     if (notifications.length > 0)
       await this.notificationService.sendNotifications(notifications);
+
     await this.notificationService.emitDataToAdminsOnly({
-      entity: res.role as unknown as Entity,
+      entity: saved.role as unknown as Entity,
       operation: Operation.INSERT,
       departementId,
       directionId,
-      entityId: res.id,
-      departementAbriviation: departement?.abriviation ?? '',
-      directionAbriviation: direction?.abriviation ?? '',
+      entityId: saved.id,
+      departementAbriviation: departementData?.abriviation ?? '',
+      directionAbriviation: directionData?.abriviation ?? '',
     });
     await this.notificationService.IncrementUsersStats({
-      type: res.role as unknown as Entity,
+      type: saved.role as unknown as Entity,
       operation: Operation.INSERT,
     });
-    return UserView.from(res);
+
+    return UserView.from(saved);
   }
 
-  async findBy(options: FindOptionsWhere<UserEntity>): Promise<UserEntity> {
-    return this.userRepository.findAllBy(options).then((r) => r[0] ?? null);
-  }
-
-  async getUserPassword(id: string): Promise<UserEntity> {
-    return this.userRepository.getUserPassword(id);
-  }
-
-  async findByEmailWithToken(email: string): Promise<UserEntity> {
-    return this.userRepository.findByEmailWithToken(email);
-  }
-
-  async findByIdWithToken(userId: string): Promise<UserEntity> {
-    return this.userRepository.findByIdWithToken(userId);
+  async findById(id: string): Promise<User | null> {
+    return this.userRepository.findById(id);
   }
 
   async findByEmailOrUsername({
@@ -113,7 +107,7 @@ export class UserService {
   }: {
     email: string;
     username: string;
-  }): Promise<UserEntity> {
+  }): Promise<User | null> {
     try {
       return this.userRepository.findByEmailOrUsername(email, username);
     } catch (err) {
@@ -121,22 +115,129 @@ export class UserService {
     }
   }
 
-  async findAndUpdate(
+  async findByEmailWithToken(email: string): Promise<User | null> {
+    return this.userRepository.findByEmailWithPasswordToken(email);
+  }
+
+  async findByIdWithToken(userId: string): Promise<User | null> {
+    return this.userRepository.findByIdWithPasswordToken(userId);
+  }
+
+  // Used by auth guards and socket adapters that only need basic user fields
+  async findBy(options: { id?: string; role?: UserRole }): Promise<User | null> {
+    if (options.id) return this.userRepository.findById(options.id);
+    return null;
+  }
+
+  async setRefreshToken(userId: string, hash: string): Promise<void> {
+    const user = await this.userRepository.findById(userId);
+    if (!user) return;
+    user.setRefreshToken(hash);
+    await this.userRepository.save(user);
+  }
+
+  async clearRefreshToken(userId: string): Promise<void> {
+    const user = await this.userRepository.findById(userId);
+    if (!user) return;
+    user.clearRefreshToken();
+    await this.userRepository.save(user);
+  }
+
+  async updateUserPasswordToken(
+    hashedToken: string,
     userId: string,
-    partialEntity: QueryDeepPartialEntity<UserEntity>,
-  ): Promise<UpdateResult> {
-    return this.userRepository.update(userId, partialEntity);
+  ): Promise<void> {
+    const user = await this.userRepository.findByIdWithPasswordToken(userId);
+    if (!user) throw new NotFoundException("l'utilisateur n'existe pas");
+    user.requestPasswordReset(
+      hashedToken,
+      new Date(Date.now() + 1000 * 60 * 15),
+    );
+    await this.userRepository.save(user);
+  }
+
+  async deleteUserPasswordToken(id: string, userId: string): Promise<void> {
+    const user = await this.userRepository.findByIdWithPasswordToken(userId);
+    if (!user) return;
+    user.clearPasswordToken();
+    await this.userRepository.save(user);
+  }
+
+  async deleteUserPasswordTokenAndUpdatePassword(
+    _tokenId: string,
+    userId: string,
+    password: string,
+    directionId: string,
+    departementId: string,
+    userRole: UserRole,
+  ): Promise<void> {
+    const user = await this.userRepository.findByIdWithPasswordToken(userId);
+    if (!user) throw new NotFoundException("l'utilisateur n'existe pas");
+    user.resetPassword(password);
+    await this.userRepository.save(user);
+
+    const saved = await this.userRepository.findProfileById(userId);
+    await this.notificationService.emitDataToAdminsOnly({
+      entity: userRole as unknown as Entity,
+      entityId: userId,
+      operation: Operation.UPDATE,
+      directionId,
+      departementId,
+      departementAbriviation: saved?.departement?.abriviation ?? '',
+      directionAbriviation: saved?.direction?.abriviation ?? '',
+    });
+
+    const admins = await this.userRepository.findAdmins();
+    const extraMessage =
+      saved?.departement && saved?.direction
+        ? `au ${saved.departement.abriviation} de ${saved.direction.abriviation}`
+        : '';
+    const notifications: NotificationBody[] = admins.map((u) => ({
+      userId: u.id,
+      message: `l'utilisateur ${saved.email} de type ${saved.role} ${extraMessage} est mise a jour avec success`,
+    }));
+
+    if (notifications.length > 0)
+      await this.notificationService.sendNotifications(notifications);
+
+    await this.notificationService.emitDataToAdminsOnly({
+      entity: saved.role as unknown as Entity,
+      operation: Operation.UPDATE,
+      departementId: saved?.departement?.id,
+      directionId: saved?.direction?.id,
+      entityId: saved.id,
+      departementAbriviation: saved?.departement?.abriviation ?? '',
+      directionAbriviation: saved?.direction?.abriviation ?? '',
+    });
+    await this.notificationService.IncrementUsersStats({
+      type: saved.role as unknown as Entity,
+      operation: Operation.UPDATE,
+    });
+  }
+
+  async getUserPassword(userId: string): Promise<User | null> {
+    return this.userRepository.findByIdWithPassword(userId);
+  }
+
+  async updateUserPassword(id: string, hashedPassword: string): Promise<void> {
+    const user = await this.userRepository.findById(id);
+    if (!user) throw new NotFoundException("l'utilisateur n'existe pas");
+    user.resetPassword(hashedPassword);
+    // resetPassword also clears password_token — ensure we don't accidentally
+    // clear an unloaded token by resetting it back to undefined (not touched)
+    user.password_token = undefined;
+    await this.userRepository.save(user);
   }
 
   async findAll(
     offset = 0,
     limit = 10,
-    orderBy: string = undefined,
-    searchQuery: string = undefined,
-    departementId: string = undefined,
-    directionId: string = undefined,
-    active: 'active' | 'not_active' = undefined,
-    role: UserRole = undefined,
+    orderBy?: string,
+    searchQuery?: string,
+    departementId?: string,
+    directionId?: string,
+    active?: 'active' | 'not_active',
+    role?: UserRole,
   ): Promise<PaginationResponse<UserView>> {
     const result = await this.userRepository.findPaginated(
       offset,
@@ -153,227 +254,176 @@ export class UserService {
 
   async updateUserUniqueCheck(
     id: string,
-    newUser: UpdateUserDTO,
+    dto: UpdateUserDTO,
     currentUserId: string,
-  ): Promise<UpdateResult> {
+  ): Promise<UserView> {
     const currentUser = await this.userRepository.findById(currentUserId);
     if (!currentUser)
       throw new InternalServerErrorException('connected user not found');
 
-    const userDb = await this.userRepository
-      .findByEmailOrUsername(newUser.email, newUser.username)
+    const duplicate = await this.userRepository
+      .findByEmailOrUsername(dto.email ?? '', dto.username ?? '')
       .then(async (u) => {
         if (!u) return null;
-        return this.userRepository.findByIdWithDepartementAndDirection(u.id);
+        return this.userRepository.findProfileById(u.id);
       });
 
-    if (!userDb) throw new NotFoundException("l'utilisateur n'existe pas");
-    if (currentUser.role !== UserRole.ADMIN && userDb.id !== currentUser.id)
+    if (!duplicate) throw new NotFoundException("l'utilisateur n'existe pas");
+    if (currentUser.role !== UserRole.ADMIN && duplicate.id !== currentUser.id)
       throw new ForbiddenException('permission denied');
-    if (userDb.id !== id)
+    if (duplicate.id !== id)
       throw new ForbiddenException("username et l'email   exists deja");
 
-    const { imageUrl } = newUser;
-    if (!imageUrl) delete newUser.imageUrl;
-    const res = await this.userRepository.update(id, { ...newUser });
+    const user = await this.userRepository.findById(id);
+    if (!dto.imageUrl) delete dto.imageUrl;
+    user.update(dto);
+    await this.userRepository.save(user);
 
-    const departement = userDb.departement;
-    const direction = userDb.direction;
-
+    const saved = await this.userRepository.findProfileById(id);
     await this.notificationService.emitDataToAdminsOnly({
-      entity: userDb.role as unknown as Entity,
+      entity: saved.role as unknown as Entity,
       entityId: id,
       operation: Operation.UPDATE,
-      departementId: userDb.departementId,
-      directionId: userDb.directionId,
-      departementAbriviation: departement?.abriviation ?? '',
-      directionAbriviation: direction?.abriviation ?? '',
+      departementId: saved.departementId,
+      directionId: saved.directionId,
+      departementAbriviation: saved.departement?.abriviation ?? '',
+      directionAbriviation: saved.direction?.abriviation ?? '',
     });
 
-    const adminUsers = await this.userRepository.findAdminUsers();
+    const admins = await this.userRepository.findAdmins();
     const extraMessage =
-      departement && direction
-        ? `au ${departement.abriviation} de ${direction.abriviation}`
+      saved.departement && saved.direction
+        ? `au ${saved.departement.abriviation} de ${saved.direction.abriviation}`
         : '';
-    const notifications: NotificationBody[] = adminUsers.map((u) => ({
+    const notifications: NotificationBody[] = admins.map((u) => ({
       userId: u.id,
-      message: `l'utilisateur ${userDb.email} de type ${userDb.role}  ${extraMessage} est mis a jour avec success`,
+      message: `l'utilisateur ${saved.email} de type ${saved.role} ${extraMessage} est mis a jour avec success`,
     }));
 
     if (notifications.length > 0)
       await this.notificationService.sendNotifications(notifications);
+
     await this.notificationService.emitDataToAdminsOnly({
-      entity: userDb.role as unknown as Entity,
+      entity: saved.role as unknown as Entity,
       operation: Operation.UPDATE,
-      departementId: departement?.id,
-      directionId: direction?.id,
-      entityId: userDb.id,
-      departementAbriviation: departement?.abriviation ?? '',
-      directionAbriviation: direction?.abriviation ?? '',
+      departementId: saved.departement?.id,
+      directionId: saved.direction?.id,
+      entityId: saved.id,
+      departementAbriviation: saved.departement?.abriviation ?? '',
+      directionAbriviation: saved.direction?.abriviation ?? '',
     });
     await this.notificationService.IncrementUsersStats({
-      type: userDb.role as unknown as Entity,
+      type: saved.role as unknown as Entity,
       operation: Operation.UPDATE,
     });
 
-    return res;
+    return UserView.from(saved);
   }
 
   async findByIdWithDepartementAndDirection(id: string): Promise<UserView> {
-    const entity = await this.userRepository.findByIdWithDepartementAndDirection(id);
-    return UserView.from(entity);
+    const user = await this.userRepository.findProfileById(id);
+    return UserView.from(user);
   }
 
-  async findAllBy(
-    options: FindOptionsWhere<UserEntity> | FindOptionsWhere<UserEntity>[],
-  ): Promise<UserEntity[]> {
-    return this.userRepository.findAllBy(options);
-  }
-
-  async getUserTypesStats(params: StatsParamsDTO, _user: UserEntity) {
+  async getUserTypesStats(params: StatsParamsDTO, _user: User) {
     const stats = await this.userRepository.getUserTypesStats(params);
     const response: any = { juridical: 0, employee: 0, admin: 0, total: 0 };
     stats.forEach((st) => {
-      response[(st.role as unknown as string).toLowerCase()] = parseInt(
-        st.total,
-      );
+      response[(st.role as unknown as string).toLowerCase()] = parseInt(st.total);
     });
     response.total = response.juridical + response.admin + response.employee;
     return response;
-  }
-
-  async updateUserPasswordToken(token: string, userId: string): Promise<void> {
-    await this.userRepository.savePasswordToken(token, userId);
-  }
-
-  async deleteUserPasswordToken(id: string, userId: string): Promise<void> {
-    await this.userRepository.deletePasswordToken(id, userId);
-  }
-
-  async deleteUserPasswordTokenAndUpdatePassword(
-    id: string,
-    userId: string,
-    password: string,
-    directionId: string,
-    departementId: string,
-    userRole: UserRole,
-  ): Promise<void> {
-    await this.userRepository.deletePasswordTokenAndUpdatePassword(
-      id,
-      userId,
-      password,
-    );
-
-    const userDb =
-      await this.userRepository.findByIdWithDepartementAndDirection(userId);
-    await this.notificationService.emitDataToAdminsOnly({
-      entity: userRole as unknown as Entity,
-      entityId: userId,
-      operation: Operation.UPDATE,
-      directionId,
-      departementId,
-      departementAbriviation: userDb?.departement?.abriviation ?? '',
-      directionAbriviation: userDb?.direction?.abriviation ?? '',
-    });
-
-    const adminUsers = await this.userRepository.findAdminUsers();
-    const departement = userDb?.departement;
-    const direction = userDb?.direction;
-    const extraMessage =
-      departement && direction
-        ? `au ${departement.abriviation} de ${direction.abriviation}`
-        : '';
-    const notifications: NotificationBody[] = adminUsers.map((u) => ({
-      userId: u.id,
-      message: `l'utilisateur ${userDb.email} de type ${userDb.role}  ${extraMessage} est mise a jour avec success`,
-    }));
-
-    if (notifications.length > 0)
-      await this.notificationService.sendNotifications(notifications);
-    await this.notificationService.emitDataToAdminsOnly({
-      entity: userDb.role as unknown as Entity,
-      operation: Operation.UPDATE,
-      departementId: departement?.id,
-      directionId: direction?.id,
-      entityId: userDb.id,
-      departementAbriviation: departement?.abriviation ?? '',
-      directionAbriviation: direction?.abriviation ?? '',
-    });
-    await this.notificationService.IncrementUsersStats({
-      type: userDb.role as unknown as Entity,
-      operation: Operation.UPDATE,
-    });
-  }
-
-  async updateUserPassword(
-    id: string,
-    hashed_password: string,
-  ): Promise<UpdateResult> {
-    return this.userRepository.updatePassword(id, hashed_password);
   }
 
   async recieveNotifications(
     userId: string,
     recieve_notifications: boolean,
   ): Promise<boolean> {
-    const userDb =
-      await this.userRepository.findByIdWithDepartementAndDirection(userId);
-    await this.userRepository.toggleNotifications(userId);
+    const user = await this.userRepository.findById(userId);
+    user.toggleNotifications();
+    await this.userRepository.save(user);
+
+    const profile = await this.userRepository.findProfileById(userId);
     await this.notificationService.emitDataToAdminsOnly({
-      entity: userDb.role as unknown as Entity,
+      entity: user.role as unknown as Entity,
       entityId: userId,
       operation: Operation.UPDATE,
-      directionId: userDb.directionId,
-      departementId: userDb.departementId,
-      departementAbriviation: userDb?.departement?.abriviation ?? '',
-      directionAbriviation: userDb?.direction?.abriviation ?? '',
+      directionId: user.directionId,
+      departementId: user.departementId,
+      departementAbriviation: profile?.departement?.abriviation ?? '',
+      directionAbriviation: profile?.direction?.abriviation ?? '',
     });
     return !recieve_notifications;
   }
 
   async deleteUser(userId: string): Promise<void> {
-    const userDb =
-      await this.userRepository.findByIdWithDepartementAndDirection(userId);
-    const departement = userDb?.departement;
-    const direction = userDb?.direction;
-    Logger.debug(userId + '---->' + JSON.stringify(userDb), 'deleteUser');
-    if (!userDb) throw new NotFoundException("l'utilisateur n'est pas trouvé");
+    const profile = await this.userRepository.findProfileById(userId);
+    if (!profile) throw new NotFoundException("l'utilisateur n'est pas trouvé");
 
     await this.userRepository.delete(userId);
 
     await this.notificationService.emitDataToAdminsOnly({
-      entity: userDb.role as unknown as Entity,
-      entityId: userDb.role,
+      entity: profile.role as unknown as Entity,
+      entityId: profile.role,
       operation: Operation.DELETE,
-      directionId: direction?.id,
-      departementId: departement?.id,
-      departementAbriviation: userDb?.departement?.abriviation ?? '',
-      directionAbriviation: userDb?.direction?.abriviation ?? '',
+      directionId: profile.direction?.id,
+      departementId: profile.departement?.id,
+      departementAbriviation: profile.departement?.abriviation ?? '',
+      directionAbriviation: profile.direction?.abriviation ?? '',
     });
-    const adminUsers = await this.userRepository.findAdminUsers();
+
+    const admins = await this.userRepository.findAdmins();
     const extraMessage =
-      departement && direction
-        ? `au ${departement.abriviation} de ${direction.abriviation}`
+      profile.departement && profile.direction
+        ? `au ${profile.departement.abriviation} de ${profile.direction.abriviation}`
         : '';
-    const notifications: NotificationBody[] = adminUsers.map((u) => ({
+    const notifications: NotificationBody[] = admins.map((u) => ({
       userId: u.id,
-      message: `l'utilisateur ${userDb.email} de type ${userDb.role} est supprimé ${extraMessage} avec success`,
+      message: `l'utilisateur ${profile.email} de type ${profile.role} est supprimé ${extraMessage} avec success`,
     }));
 
     if (notifications.length > 0)
       await this.notificationService.sendNotifications(notifications);
+
     await this.notificationService.emitDataToAdminsOnly({
-      entity: userDb.role as unknown as Entity,
+      entity: profile.role as unknown as Entity,
       operation: Operation.DELETE,
-      departementId: departement?.id,
-      directionId: direction?.id,
-      entityId: userDb.id,
-      departementAbriviation: departement?.abriviation ?? '',
-      directionAbriviation: direction?.abriviation ?? '',
+      departementId: profile.departement?.id,
+      directionId: profile.direction?.id,
+      entityId: profile.id,
+      departementAbriviation: profile.departement?.abriviation ?? '',
+      directionAbriviation: profile.direction?.abriviation ?? '',
     });
     await this.notificationService.IncrementUsersStats({
-      type: userDb.role as unknown as Entity,
+      type: profile.role as unknown as Entity,
       operation: Operation.DELETE,
     });
+  }
+
+  async updateImage(userId: string, imageUrl: string): Promise<void> {
+    const user = await this.userRepository.findById(userId);
+    if (!user) return;
+    user.updateImage(imageUrl);
+    await this.userRepository.save(user);
+  }
+
+  // ── Read-model pass-through (used by AgreementService / NotificationService)
+
+  async findAllBy(options: {
+    departementId?: string;
+    directionId?: string;
+    role?: UserRole;
+    departement?: { id: string };
+  }): Promise<User[]> {
+    if (options.departement?.id) {
+      return this.userRepository.findByDepartementId(options.departement.id);
+    }
+    if (options.role === UserRole.JURIDICAL && options.departementId) {
+      return this.userRepository.findJuridicalsByOrg(
+        options.departementId,
+        options.directionId,
+      );
+    }
+    return [];
   }
 }

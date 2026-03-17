@@ -41,7 +41,7 @@ export class UserImageController{
                  removeFile(fullImagePath);
                  throw new ForbiddenException("file content does not match the extension")
             }
-             await this.userService.findAndUpdate(userId,{imageUrl:filename})
+             await this.userService.updateImage(userId, filename)
             return {filename};
 
         }catch(err){
