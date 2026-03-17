@@ -7,7 +7,7 @@ import { UserRole } from 'src/core/types/UserRole.enum';
 import { VendorService } from '../services/vendor.service';
 import {ApiTags} from '@nestjs/swagger';
 import { PaginationResponse } from 'src/core/types/paginationResponse.interface';
-import { VendorEntity } from 'src/core/entities/Vendor.entity';
+import { VendorView } from 'src/core/views/vendor.view';
 import { UpdateResult } from 'typeorm';
 import { StatsParamsDTO } from 'src/statistics/models/statsPramsDTO.interface';
 @ApiTags('vendors')
@@ -40,7 +40,7 @@ export class VendorController{
   
     @UseGuards(JwtAccessTokenGuard)
     @Get('')
-    async findAll(@Query('offset') offset:number = 0 ,@Query('limit') limit:number = 10 ,@Query('orderBy') orderBy:string  = undefined ,@Query("searchQuery") searchQuery:string = undefined):Promise<PaginationResponse<VendorEntity>>{
+    async findAll(@Query('offset') offset:number = 0 ,@Query('limit') limit:number = 10 ,@Query('orderBy') orderBy:string  = undefined ,@Query("searchQuery") searchQuery:string = undefined):Promise<PaginationResponse<VendorView>>{
         return await  this.vendorService.findAll(offset,limit,orderBy ,searchQuery );
     }   
 

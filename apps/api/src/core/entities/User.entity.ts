@@ -1,4 +1,15 @@
-import {Entity , PrimaryGeneratedColumn , Column, ManyToOne, Index, CreateDateColumn, OneToMany, OneToOne, JoinColumn} from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  Index,
+  CreateDateColumn,
+  OneToMany,
+  OneToOne,
+  JoinColumn,
+} from 'typeorm';
+import { Exclude } from 'class-transformer';
 import { UserRole } from '../types/UserRole.enum';
 import { DepartementEntity } from './Departement.entity';
 import { DirectionEntity } from './Direction.entity';
@@ -22,70 +33,69 @@ import { PasswordTokenEntity } from './PasswordToken';
 //
 @Index('users-email-unique-idx', { synchronize: false })
 @Index('users-username-unique-idx', { synchronize: false })
-export class UserEntity{
-    @PrimaryGeneratedColumn('uuid')
-    id:string;
+export class UserEntity {
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-   
-    @Column()
-    email:string;
+  @Column()
+  email: string;
 
-    @Column({select:false})
-    password:string;
+  @Exclude()
+  @Column({ select: false })
+  password: string;
 
-    @Column()
-    username:string;
+  @Column()
+  username: string;
 
-    @Column()
-    firstName:string;
+  @Column()
+  firstName: string;
 
-    @Column()
-    lastName:string;
-    
-    @Column({default:""})
-    imageUrl:string;
+  @Column()
+  lastName: string;
 
-    @Column({default:true})
-    active:boolean;
+  @Column({ default: '' })
+  imageUrl: string;
 
+  @Column({ default: true })
+  active: boolean;
 
-    @Column({nullable:true})
-    refresh_token_hash:string;
+  @Exclude()
+  @Column({ nullable: true })
+  refresh_token_hash: string;
 
-   
+  @Column({
+    type: 'enum',
+    enum: UserRole,
+    default: UserRole.EMPLOYEE,
+  })
+  role: UserRole;
 
-    @Column({
-        type:'enum',
-        enum:UserRole,
-        default:UserRole.EMPLOYEE
-    })
-    role:UserRole;
+  @Column({ default: false })
+  recieve_notifications: boolean;
 
-    @Column({default:false})
-    
-    recieve_notifications:boolean;
+  @CreateDateColumn({ type: 'datetime' })
+  created_at: Date;
+  //relations
+  @Column({ name: 'departementId', nullable: true })
+  departementId: string;
+  @ManyToOne((type) => DepartementEntity, (dp) => dp.employees)
+  @JoinColumn({ name: 'departementId' })
+  departement: DepartementEntity;
 
+  @Column({ name: 'directionId', nullable: true })
+  directionId: string;
 
+  @ManyToOne((type) => DirectionEntity, (dr) => dr.employees)
+  @JoinColumn({ name: 'directionId' })
+  direction: DirectionEntity;
 
-    @CreateDateColumn({type:'datetime'})
-    created_at:Date;
-    //relations
-    @Column({name:"departementId",nullable:true})
-    departementId:string;
-    @ManyToOne(type=>DepartementEntity,dp=>dp.employees) @JoinColumn({name:"departementId"})
-    departement:DepartementEntity;
+  @Exclude()
+  @OneToMany((type) => NotificationEntity, (n) => n.user)
+  notifications: NotificationEntity[];
 
-    @Column({name:"directionId",nullable:true})
-    directionId:string;
-
-    @ManyToOne(type=>DirectionEntity,dr=>dr.employees) @JoinColumn({name:"directionId"})
-    direction:DirectionEntity;
-
-    @OneToMany(type=>NotificationEntity,n=>n.user)
-    notifications:NotificationEntity[];
-
-
-    
-    @OneToOne(type=>PasswordTokenEntity) @JoinColumn()
-    password_token:PasswordTokenEntity;
+  @Exclude()
+  @OneToOne((type) => PasswordTokenEntity)
+  @JoinColumn()
+  password_token: PasswordTokenEntity;
 }
+

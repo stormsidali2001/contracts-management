@@ -12,7 +12,6 @@ import {
   ExecuteAgreementDTO,
   FindAllAgreementsDTO,
 } from 'src/core/dtos/agreement.dto';
-import { AgreementEntity } from 'src/core/entities/Agreement.entity';
 import { UserEntity } from 'src/core/entities/User.entity';
 import { AgreementStatus } from 'src/core/types/agreement-status.enum';
 import { AgreementType } from 'src/core/types/agreement-type.enum';
@@ -27,6 +26,7 @@ import {
   NotificationBody,
   UserNotificationService,
 } from '../../user/user-notification.service';
+import { AgreementView } from 'src/core/views/agreement.view';
 import { AgreementRepository } from '../agreement.repository';
 import { VendorService } from './vendor.service';
 
@@ -88,9 +88,7 @@ export class AgreementService implements OnModuleInit {
     }
     this.logger.log(`${percistedJobs.length} percisted jobs are running`);
   }
-  async createAgreement(
-    agreement: CreateAgreementDTO,
-  ): Promise<AgreementEntity> {
+  async createAgreement(agreement: CreateAgreementDTO): Promise<AgreementView> {
     const { directionId, departementId, vendorId, ...agreementData } =
       agreement;
     if (agreementData.signature_date > agreementData.expiration_date) {
@@ -175,13 +173,13 @@ export class AgreementService implements OnModuleInit {
       },
       departement.id,
     );
-    return res;
+    return AgreementView.from(res);
   }
 
   async findAll(
     params: FindAllAgreementsDTO,
     userId: string,
-  ): Promise<PaginationResponse<AgreementEntity>> {
+  ): Promise<PaginationResponse<AgreementView>> {
     const user = await this.userService.findBy({ id: userId });
     Logger.debug(
       `start date m end date ${JSON.stringify({
@@ -191,22 +189,26 @@ export class AgreementService implements OnModuleInit {
       })}`,
       'kkkkkkkkkkaaaaaaaa',
     );
-    return this.agreementRepository.findPaginated(
+    const result = await this.agreementRepository.findPaginated(
       params,
       user.role,
       user.departementId,
       user.directionId,
     );
+    return { total: result.total, data: AgreementView.fromMany(result.data) };
   }
 
   async findById(
     id: string,
     agrreementType: AgreementType = AgreementType.CONTRACT,
-  ) {
-    return this.agreementRepository.findById(id, agrreementType);
+  ): Promise<AgreementView | null> {
+    const entity = await this.agreementRepository.findById(id, agrreementType);
+    return entity ? AgreementView.from(entity) : null;
   }
 
-  async executeAgreement(execData: ExecuteAgreementDTO) {
+  async executeAgreement(
+    execData: ExecuteAgreementDTO,
+  ): Promise<AgreementView> {
     const {
       observation = '',
       execution_start_date,
@@ -277,7 +279,8 @@ export class AgreementService implements OnModuleInit {
       },
       agreement.departementId,
     );
-    return this.agreementRepository.save(agreement);
+    const saved = await this.agreementRepository.save(agreement);
+    return AgreementView.from(saved);
   }
 
   async getAgreementsStats(

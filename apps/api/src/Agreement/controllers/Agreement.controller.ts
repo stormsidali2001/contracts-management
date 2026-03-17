@@ -2,8 +2,8 @@ import { Controller , Post , Body ,UseGuards , Query , Get, Param, Patch} from "
 import { CreateAgreementDTO, ExecuteAgreementDTO, FindAllAgreementsDTO } from "../../core/dtos/agreement.dto";
 import { AgreementService } from "../services/Agreement.service";
 import { ApiQuery, ApiTags} from '@nestjs/swagger';
-import { AgreementEntity } from "src/core/entities/Agreement.entity";
 import { PaginationResponse } from "src/core/types/paginationResponse.interface";
+import { AgreementView } from "src/core/views/agreement.view";
 import { AgreementType } from "src/core/types/agreement-type.enum";
 import { AgreementStatus } from "src/core/types/agreement-status.enum";
 import { StatsParamsDTO } from "src/statistics/models/statsPramsDTO.interface";
@@ -42,7 +42,7 @@ export class AgreementController{
             @Query() params:FindAllAgreementsDTO,
             @CurrentUserId() userId:string
             )
-            :Promise<PaginationResponse<AgreementEntity>>
+            :Promise<PaginationResponse<AgreementView>>
             {
         return await  this.AgreementService.findAll(params,userId);
     }   

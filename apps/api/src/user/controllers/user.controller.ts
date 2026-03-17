@@ -1,14 +1,12 @@
-import { Body, Controller, Delete, Get, Logger, Param, ParseIntPipe, Patch, Put, Query, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Patch, Put, Query, UseGuards } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
-import { IsNotEmpty } from "class-validator";
 import { CurrentUserId } from "src/auth/decorators/currentUserId.decorator";
 import { RequiredRoles } from "src/auth/decorators/RequiredRoles.decorator";
 import { JwtAccessTokenGuard } from "src/auth/guards/jwt-access-token.guard";
 import { RoleGuard } from "src/auth/guards/Role.guard";
-import { UserEntity } from "src/core/entities/User.entity";
 import { PaginationResponse } from "src/core/types/paginationResponse.interface";
 import { UserRole } from "src/core/types/UserRole.enum";
-import { StatsParamsDTO } from "src/statistics/models/statsPramsDTO.interface";
+import { UserView } from "src/core/views/user.view";
 import { UpdateResult } from "typeorm";
 import { UpdateUserDTO } from "../../core/dtos/user.dto";
 import { UserService } from "../user.service";
@@ -31,7 +29,7 @@ export class UserController{
             @Query('directionId') directionId:string,
             @Query("role") role:UserRole = undefined,
             @Query("active") active:"active" | "not_active"
-    ):Promise<PaginationResponse<UserEntity>>{
+    ):Promise<PaginationResponse<UserView>>{
 
         return await  this.userService.findAll(offset,limit,orderBy,searchQuery,departementId,directionId,active,role);
     }   

@@ -1,31 +1,32 @@
-import { IsEnum, IsOptional, IsUUID } from "class-validator";
-import { Entity } from "../types/entity.enum";
-import { Operation } from "../types/operation.enum";
+import { IsEnum, IsOptional, IsUUID } from 'class-validator';
+import { Entity } from '../types/entity.enum';
+import { Operation } from '../types/operation.enum';
 
-export class CreateEventDTO{
-    @IsUUID()
-    entityId:string;
+export class CreateEventDTO {
+  @IsUUID()
+  entityId: string;
 
-    @IsEnum(Operation)
-    operation:Operation;
+  @IsEnum(Operation)
+  operation: Operation;
 
-    @IsEnum(Entity)
-    entity:Entity;
+  @IsEnum(Entity)
+  entity: Entity;
 
-    @IsOptional()
-    @IsUUID()
-    departementId?:string;
+  @IsOptional()
+  @IsUUID()
+  departementId?: string;
 
-    @IsOptional()
-    @IsUUID()
-    directionId?:string;
+  @IsOptional()
+  @IsUUID()
+  directionId?: string;
 
-    @IsOptional()
-    departementAbriviation?:string;
+  @IsOptional()
+  departementAbriviation?: string;
 
-    @IsOptional()
-    directionAbriviation?:string;
+  @IsOptional()
+  directionAbriviation?: string;
 
-    @IsOptional()
-    createdAt?:Date;
+  @IsOptional()
+  createdAt?: Date;
 }
+

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AgreementEntity } from 'src/core/entities/Agreement.entity';
-import { AgreementExecJobsEntity } from 'src/core/entities/agreementExecJobs';
+import { AgreementExecJobsEntity } from 'src/core/entities/AgreementExecJobs';
 import { AgreementStatus } from 'src/core/types/agreement-status.enum';
 import { AgreementType } from 'src/core/types/agreement-type.enum';
 import { PaginationResponse } from 'src/core/types/paginationResponse.interface';

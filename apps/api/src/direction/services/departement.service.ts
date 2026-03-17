@@ -3,7 +3,7 @@ import {
   CreateDepartementDTO,
   UpdateDepartementDTO,
 } from 'src/core/dtos/departement.dto';
-import { DepartementEntity } from 'src/core/entities/Departement.entity';
+import { DepartementView } from 'src/core/views/departement.view';
 import { DeleteResult, UpdateResult } from 'typeorm';
 import { DepartementRepository } from '../departement.repository';
 
@@ -13,7 +13,7 @@ export class DepartementService {
 
   async createDepartement(
     departement: CreateDepartementDTO,
-  ): Promise<DepartementEntity> {
+  ): Promise<DepartementView> {
     const { directionId, ...otherDepartementData } = departement;
 
     const direction = await this.departementRepository.findDirectionById(
@@ -34,10 +34,11 @@ export class DepartementService {
         'un departement avec les memes identifiant exist deja dans cette direction',
       );
 
-    return this.departementRepository.create({
+    const entity = await this.departementRepository.create({
       ...otherDepartementData,
       direction,
     });
+    return DepartementView.from(entity);
   }
 
   async updateDepartement(
@@ -63,11 +64,13 @@ export class DepartementService {
     return this.departementRepository.delete(id);
   }
 
-  async findById(id: string): Promise<DepartementEntity> {
-    return this.departementRepository.findById(id);
+  async findById(id: string): Promise<DepartementView | null> {
+    const entity = await this.departementRepository.findById(id);
+    return entity ? DepartementView.from(entity) : null;
   }
 
-  async findAll(offset = 0, limit = 10): Promise<DepartementEntity[]> {
-    return this.departementRepository.findAll(offset, limit);
+  async findAll(offset = 0, limit = 10): Promise<DepartementView[]> {
+    const entities = await this.departementRepository.findAll(offset, limit);
+    return DepartementView.fromMany(entities);
   }
 }
