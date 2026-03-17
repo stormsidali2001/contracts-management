@@ -4,8 +4,7 @@ import { Button, TextField, Typography } from '@mui/material';
 import { Stack } from '@mui/system';
 import { useState } from 'react'
 import styles from './ExecutionModal.module.css'
-import axios from '@/api/axios'
-import { ExecuteAgreement } from '@/features/contract/models/ExecuteAgreement.interface';
+import { useExecuteAgreement } from '@/features/contract/queries/contract.queries';
 import { useAppDispatch } from '@/hooks/redux/hooks';
 import { showSnackbar } from '@/features/ui/UiSlice';
 
@@ -28,26 +27,26 @@ const ExecutionModal = ({agreementId,handleClose,type}:PropType) => {
     const [endDate,setEndDate] = useState<any>(format(getTomorrow(new Date(Date.now()))));
     const [observation,setObservation] = useState<any>('');
     const dispatch = useAppDispatch();
+    const { mutate: executeAgreement } = useExecuteAgreement();
     const handleAgreementExecution = ()=>{
-        const newExecAgreement:ExecuteAgreement = {
-            execution_start_date:format(startDate),
-            execution_end_date:format(endDate),
-            agreementId,
-            observation
-        }
-         axios.patch('/Agreements/exec',{...newExecAgreement})
-         .then(res=>{
-             handleClose()
-             const e = type === 'contract'?'':'e'
-             dispatch(showSnackbar({message:`${type === 'contract' ?"le contrat":"la convension"} a eté${e} executé${e} avec success`,severty:"success"}))
-             setTimeout(()=>{
-                 window.location.reload()
-             },3000)
-         })
-         .catch(err=>{
-             //@ts-ignore
-            dispatch(showSnackbar({message:err?.response?.data?.error ?? "erreur inconnue"}))
-         })
+        executeAgreement(
+            {
+                execution_start_date:format(startDate),
+                execution_end_date:format(endDate),
+                agreementId,
+                observation
+            },
+            {
+                onSuccess: () => {
+                    handleClose()
+                    const e = type === 'contract'?'':'e'
+                    dispatch(showSnackbar({message:`${type === 'contract' ?"le contrat":"la convension"} a eté${e} executé${e} avec success`,severty:"success"}))
+                },
+                onError: (err:any) => {
+                    dispatch(showSnackbar({message:err?.response?.data?.error ?? "erreur inconnue"}))
+                },
+            }
+        )
     }
   return (
     <div className={styles.container}>

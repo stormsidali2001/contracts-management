@@ -27,7 +27,9 @@ export class AgreementView {
   vendor?: any;
 
   static from(source: AgreementLike): AgreementView {
-    return Object.assign(new AgreementView(), stripPrivateKeys(source));
+    const view = Object.assign(new AgreementView(), stripPrivateKeys(source));
+    view.status = source.status;
+    return view;
   }
 
   static fromMany(sources: AgreementLike[]): AgreementView[] {
