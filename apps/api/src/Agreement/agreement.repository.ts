@@ -1,14 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AgreementEntity } from 'src/core/entities/Agreement.entity';
-import { AgreementExecJobsEntity } from 'src/core/entities/AgreementExecJobs';
-import { AgreementStatus } from 'src/core/types/agreement-status.enum';
 import { AgreementType } from 'src/core/types/agreement-type.enum';
 import { FindAllAgreementsDTO } from 'src/core/dtos/agreement.dto';
 import { PaginationResponse } from 'src/core/types/paginationResponse.interface';
 import { UserRole } from 'src/core/types/UserRole.enum';
 import { Repository } from 'typeorm';
-import { IAgreementRepository, ExecJob, AgreementDetail } from './domain/agreement.repository';
+import { IAgreementRepository, AgreementDetail } from './domain/agreement.repository';
 import { Agreement } from './domain/agreement';
 
 @Injectable()
@@ -16,8 +14,6 @@ export class AgreementRepository implements IAgreementRepository {
   constructor(
     @InjectRepository(AgreementEntity)
     private readonly repo: Repository<AgreementEntity>,
-    @InjectRepository(AgreementExecJobsEntity)
-    private readonly execJobsRepo: Repository<AgreementExecJobsEntity>,
   ) {}
 
   // ── Persistence ─────────────────────────────────────────────────────────
@@ -43,10 +39,6 @@ export class AgreementRepository implements IAgreementRepository {
 
     const saved = await this.repo.save(data as unknown as AgreementEntity);
     return this.toDomain(saved);
-  }
-
-  async updateStatus(id: string, status: AgreementStatus): Promise<void> {
-    await this.repo.update({ id }, { status });
   }
 
   // ── Aggregate loaders ────────────────────────────────────────────────────
@@ -95,9 +87,9 @@ export class AgreementRepository implements IAgreementRepository {
       offset,
       orderBy,
       searchQuery,
-      start_date,
       status,
       vendorId,
+      start_date,
     }: FindAllAgreementsDTO,
     userRole: UserRole,
     userDepartementId?: string,
@@ -167,11 +159,22 @@ export class AgreementRepository implements IAgreementRepository {
     startDate?: Date,
     endDate?: Date,
   ): Promise<{ status: string; total: string }[]> {
+    // Status is derived from date fields — no stored status column needed for accuracy
+    const derivedStatus = `
+      CASE
+        WHEN ag.execution_start_date IS NULL THEN 'not_executed'
+        WHEN ag.execution_end_date > NOW() AND ag.execution_start_date < ag.expiration_date THEN 'in_execution'
+        WHEN ag.execution_end_date > NOW() AND ag.execution_start_date >= ag.expiration_date THEN 'in_execution_with_delay'
+        WHEN ag.execution_end_date <= NOW() AND ag.execution_start_date < ag.expiration_date THEN 'executed'
+        WHEN ag.execution_end_date <= NOW() AND ag.execution_start_date >= ag.expiration_date THEN 'executed_with_delay'
+      END
+    `;
+
     let query = this.repo
       .createQueryBuilder('ag')
-      .select('count(ag.id)', 'total')
-      .groupBy('ag.status')
-      .addSelect('ag.status', 'status');
+      .select(`(${derivedStatus})`, 'status')
+      .addSelect('COUNT(ag.id)', 'total')
+      .groupBy(derivedStatus);
 
     if (userRole === UserRole.EMPLOYEE) {
       query = query.where(
@@ -207,34 +210,10 @@ export class AgreementRepository implements IAgreementRepository {
     return query.getRawMany();
   }
 
-  // ── Exec jobs ────────────────────────────────────────────────────────────
-
-  async findAllExecJobs(): Promise<ExecJob[]> {
-    const entities = await this.execJobsRepo.find();
-    return entities.map((e) => ({
-      id: e.id,
-      name: e.name,
-      agreementId: e.agreementId,
-      date: e.date,
-      newStatus: e.newStatus,
-    }));
-  }
-
-  async saveExecJob(job: Omit<ExecJob, 'id'>): Promise<ExecJob> {
-    const saved = await this.execJobsRepo.save(
-      job as AgreementExecJobsEntity,
-    );
-    return { id: saved.id, name: saved.name, agreementId: saved.agreementId, date: saved.date, newStatus: saved.newStatus };
-  }
-
-  async deleteExecJob(name: string): Promise<void> {
-    await this.execJobsRepo.delete({ name });
-  }
-
   // ── Mappers ──────────────────────────────────────────────────────────────
 
   private toDomain(entity: AgreementEntity): Agreement {
-    return Agreement.create({
+    return Agreement.reconstitute({
       id: entity.id,
       number: entity.number,
       type: entity.type,
@@ -246,7 +225,6 @@ export class AgreementRepository implements IAgreementRepository {
       execution_start_date: entity.execution_start_date,
       execution_end_date: entity.execution_end_date,
       observation: entity.observation,
-      status: entity.status,
       url: entity.url,
       departementId: entity.departementId,
       directionId: entity.directionId,

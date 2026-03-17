@@ -1,17 +1,8 @@
-import { AgreementStatus } from 'src/core/types/agreement-status.enum';
 import { AgreementType } from 'src/core/types/agreement-type.enum';
 import { FindAllAgreementsDTO } from 'src/core/dtos/agreement.dto';
 import { PaginationResponse } from 'src/core/types/paginationResponse.interface';
 import { UserRole } from 'src/core/types/UserRole.enum';
 import { Agreement } from './agreement';
-
-export interface ExecJob {
-  id?: string;
-  name: string;
-  agreementId: string;
-  date: Date;
-  newStatus: AgreementStatus;
-}
 
 /**
  * Read model — assembles agreement data with relation info for detail views.
@@ -26,9 +17,6 @@ export interface AgreementDetail extends Omit<Agreement, 'execute'> {
 export interface IAgreementRepository {
   // ── Persistence ────────────────────────────────────────────────────────────
   save(agreement: Agreement): Promise<Agreement>;
-
-  /** Lightweight status-only update used by cron job callbacks. */
-  updateStatus(id: string, status: AgreementStatus): Promise<void>;
 
   // ── Aggregate loaders ──────────────────────────────────────────────────────
 
@@ -68,12 +56,6 @@ export interface IAgreementRepository {
     userDepartementId?: string,
     userDirectionId?: string,
   ): Promise<{ type: string; total: string }[]>;
-
-  // ── Exec jobs ──────────────────────────────────────────────────────────────
-
-  findAllExecJobs(): Promise<ExecJob[]>;
-  saveExecJob(job: Omit<ExecJob, 'id'>): Promise<ExecJob>;
-  deleteExecJob(name: string): Promise<void>;
 }
 
 export const AGREEMENT_REPOSITORY = Symbol('IAgreementRepository');

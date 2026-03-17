@@ -189,7 +189,7 @@ export class UserRepository implements IUserRepository {
   // ── Mapper ───────────────────────────────────────────────────────────────
 
   private toDomain(entity: UserEntity): User {
-    return User.create({
+    return User.reconstitute({
       id: entity.id,
       email: entity.email,
       username: entity.username,

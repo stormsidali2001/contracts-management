@@ -1,8 +1,11 @@
 import { AgreementStatus } from 'src/core/types/agreement-status.enum';
 import { AgreementType } from 'src/core/types/agreement-type.enum';
 import { BadRequestException } from '@nestjs/common';
+import { AggregateRoot } from 'src/shared/domain/aggregate-root';
+import { AgreementCreatedEvent } from './events/agreement-created.event';
+import { AgreementExecutedEvent } from './events/agreement-executed.event';
 
-export class Agreement {
+export class Agreement extends AggregateRoot {
   readonly id: string;
   number: string;
   type: AgreementType;
@@ -14,7 +17,6 @@ export class Agreement {
   execution_start_date?: Date;
   execution_end_date?: Date;
   observation?: string;
-  status: AgreementStatus;
   url: string;
   // Reference other aggregates by ID only — DDD rule
   departementId: string;
@@ -33,12 +35,12 @@ export class Agreement {
     execution_start_date?: Date;
     execution_end_date?: Date;
     observation?: string;
-    status?: AgreementStatus;
     url: string;
     departementId: string;
     directionId: string;
     vendorId: string;
   }) {
+    super();
     this.id = props.id;
     this.number = props.number;
     this.type = props.type ?? AgreementType.CONTRACT;
@@ -50,11 +52,28 @@ export class Agreement {
     this.execution_start_date = props.execution_start_date;
     this.execution_end_date = props.execution_end_date;
     this.observation = props.observation;
-    this.status = props.status ?? AgreementStatus.NOT_EXECUTED;
     this.url = props.url;
     this.departementId = props.departementId;
     this.directionId = props.directionId;
     this.vendorId = props.vendorId;
+  }
+
+  /** Derived from date fields — no stored state needed. */
+  get status(): AgreementStatus {
+    if (!this.execution_start_date || !this.execution_end_date) {
+      return AgreementStatus.NOT_EXECUTED;
+    }
+    const isDelayed =
+      new Date(this.execution_start_date) >= new Date(this.expiration_date);
+    const isEnded = new Date() >= new Date(this.execution_end_date);
+    if (isEnded) {
+      return isDelayed
+        ? AgreementStatus.EXECUTED_WITH_DELAY
+        : AgreementStatus.EXECUTED;
+    }
+    return isDelayed
+      ? AgreementStatus.IN_EXECUTION_WITH_DELAY
+      : AgreementStatus.IN_EXECUTION;
   }
 
   static create(props: {
@@ -69,7 +88,37 @@ export class Agreement {
     execution_start_date?: Date;
     execution_end_date?: Date;
     observation?: string;
-    status?: AgreementStatus;
+    url: string;
+    departementId: string;
+    directionId: string;
+    vendorId: string;
+  }): Agreement {
+    const instance = new Agreement(props);
+    instance.addEvent(
+      new AgreementCreatedEvent(
+        instance.id,
+        instance.type,
+        instance.departementId,
+        instance.directionId,
+        instance.vendorId,
+      ),
+    );
+    return instance;
+  }
+
+  /** Reconstitutes an existing agreement from persistence — no events emitted. */
+  static reconstitute(props: {
+    id: string;
+    number: string;
+    type?: AgreementType;
+    object: string;
+    amount: number;
+    expiration_date: Date;
+    signature_date: Date;
+    createdAt?: Date;
+    execution_start_date?: Date;
+    execution_end_date?: Date;
+    observation?: string;
     url: string;
     departementId: string;
     directionId: string;
@@ -78,15 +127,8 @@ export class Agreement {
     return new Agreement(props);
   }
 
-  /**
-   * Validates execution dates and sets execution fields + status.
-   * Returns the status the cron job should apply when the execution period ends.
-   */
-  execute(
-    startDate: Date,
-    endDate: Date,
-    observation: string,
-  ): { cronStatus: AgreementStatus } {
+  /** Validates execution dates and sets execution fields. */
+  execute(startDate: Date, endDate: Date, observation: string): void {
     if (new Date(startDate) >= new Date(endDate)) {
       throw new BadRequestException("l'intervalle d'execution est non valide");
     }
@@ -100,15 +142,13 @@ export class Agreement {
     this.execution_end_date = endDate;
     this.observation = observation;
 
-    const isDelayed = new Date(startDate) >= new Date(this.expiration_date);
-    this.status = isDelayed
-      ? AgreementStatus.IN_EXECUTION_WITH_DELAY
-      : AgreementStatus.IN_EXECUTION;
-
-    return {
-      cronStatus: isDelayed
-        ? AgreementStatus.EXECUTED_WITH_DELAY
-        : AgreementStatus.EXECUTED,
-    };
+    this.addEvent(
+      new AgreementExecutedEvent(
+        this.id,
+        this.type,
+        this.departementId,
+        this.directionId,
+      ),
+    );
   }
 }

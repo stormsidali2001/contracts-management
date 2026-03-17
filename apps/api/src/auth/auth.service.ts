@@ -7,6 +7,7 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
+import { EventBus } from '@nestjs/cqrs';
 import * as bcrypt from 'bcrypt';
 import {
   ConnectedUserResetPassword,
@@ -30,6 +31,7 @@ import {
   USER_CREDENTIALS_REPOSITORY,
 } from './domain/user-credentials.repository';
 import { UserCredentials } from './domain/user-credentials';
+import { UserPasswordChangedEvent } from 'src/user/domain/events/user-password-changed.event';
 
 @Injectable()
 export class AuthService {
@@ -39,6 +41,7 @@ export class AuthService {
     private readonly configService: ConfigService,
     @Inject(USER_CREDENTIALS_REPOSITORY)
     private readonly credentialsRepository: IUserCredentialsRepository,
+    private readonly eventBus: EventBus,
   ) {}
 
   async #hashPassword(password: string): Promise<string> {
@@ -282,7 +285,7 @@ export class AuthService {
     const hashed_password = await this.#hashPassword(password);
     credentials.resetPassword(hashed_password); // also clears passwordToken
     await this.credentialsRepository.save(credentials);
-    await this.userService.notifyPasswordChanged(userId);
+    this.eventBus.publish(new UserPasswordChangedEvent(userId));
 
     return 'done';
   }

@@ -194,7 +194,7 @@ export class VendorRepository implements IVendorRepository {
   // ── Mapper ───────────────────────────────────────────────────────────────
 
   private toDomain(entity: VendorEntity): Vendor {
-    return Vendor.create({
+    return Vendor.reconstitute({
       id: entity.id,
       num: entity.num,
       company_name: entity.company_name,
