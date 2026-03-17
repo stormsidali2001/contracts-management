@@ -1,10 +1,9 @@
 import {
   BadRequestException,
   ForbiddenException,
-  HttpStatus,
+  Inject,
   Injectable,
   InternalServerErrorException,
-  Logger,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -22,23 +21,30 @@ import { JwtPayload } from './types/JwtPayload.interface';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { Tokens } from './types/tokens.interface';
-import * as argon2 from 'argon2';
 import { UserRole } from 'src/core/types/UserRole.enum';
 import { randomBytes } from 'crypto';
 import { v4 as uuidv4 } from 'uuid';
 import * as nodemailer from 'nodemailer';
+import {
+  IUserCredentialsRepository,
+  USER_CREDENTIALS_REPOSITORY,
+} from './domain/user-credentials.repository';
+import { UserCredentials } from './domain/user-credentials';
 
 @Injectable()
 export class AuthService {
-  private logger = new Logger(AuthService.name);
   constructor(
-    private userService: UserService,
-    private jwtService: JwtService,
-    private configService: ConfigService,
+    private readonly userService: UserService,
+    private readonly jwtService: JwtService,
+    private readonly configService: ConfigService,
+    @Inject(USER_CREDENTIALS_REPOSITORY)
+    private readonly credentialsRepository: IUserCredentialsRepository,
   ) {}
+
   async #hashPassword(password: string): Promise<string> {
     return bcrypt.hash(password, 12);
   }
+
   async #comparePassword(
     password: string,
     passwordDb: string,
@@ -68,18 +74,9 @@ export class AuthService {
       ),
     ]);
 
-    return {
-      access_token,
-      refresh_token,
-    };
+    return { access_token, refresh_token };
   }
-  async #updateRefreshTokenHash(
-    userId: string,
-    refresh_token: string,
-  ): Promise<void> {
-    const refresh_token_hash = await bcrypt.hash(refresh_token, 12);
-    await this.userService.setRefreshToken(userId, refresh_token_hash);
-  }
+
   async register(newUser: CreateUserDTO): Promise<UserView> {
     const userDb = await this.userService.findByEmailOrUsername({
       email: newUser.email ?? undefined,
@@ -100,17 +97,31 @@ export class AuthService {
     if (!newUser.username) {
       newUser.username = newUser.firstName + uuidv4();
     }
-    if (newUser.password) {
-      newUser.password = await this.#hashPassword(newUser.password);
-    } else {
-      newUser.password = await new Promise((resolve, reject) => {
-        randomBytes(32, (err, buf) => {
-          if (err) reject(err);
-          resolve(buf.toString('hex'));
+
+    const passwordHash = newUser.password
+      ? await this.#hashPassword(newUser.password)
+      : await new Promise<string>((resolve, reject) => {
+          randomBytes(32, (err, buf) => {
+            if (err) reject(err);
+            resolve(buf.toString('hex'));
+          });
         });
-      });
-    }
-    return this.userService.create(newUser);
+
+    // Create user profile (no credentials on the User aggregate)
+    const { password: _ignored, ...userDataWithoutPassword } = newUser as any;
+    const userView = await this.userService.create(userDataWithoutPassword);
+
+    // Persist credentials separately
+    await this.credentialsRepository.save(
+      UserCredentials.create({
+        userId: userView.id,
+        passwordHash,
+        refreshTokenHash: null,
+        passwordToken: undefined,
+      }),
+    );
+
+    return userView;
   }
 
   async login(user: LoginUserDTO) {
@@ -124,9 +135,16 @@ export class AuthService {
         throw new BadRequestException("l'email n'existe pas");
       }
 
+      const credentials = await this.credentialsRepository.findByEmail(
+        userDb.email,
+      );
+      if (!credentials) {
+        throw new BadRequestException("l'email n'existe pas");
+      }
+
       const matches = await this.#comparePassword(
         user.password,
-        userDb.password,
+        credentials.passwordHash,
       );
       if (!matches) {
         throw new BadRequestException('mauvais mot de passe');
@@ -144,7 +162,11 @@ export class AuthService {
         role: userDb.role,
         recieve_notifications: userDb.recieve_notifications,
       });
-      await this.#updateRefreshTokenHash(userDb.id, tokens.refresh_token);
+
+      const refreshHash = await this.#hashPassword(tokens.refresh_token);
+      credentials.setRefreshToken(refreshHash);
+      await this.credentialsRepository.save(credentials);
+
       return tokens;
     } catch (err) {
       throw new ForbiddenException(err);
@@ -162,16 +184,19 @@ export class AuthService {
 
   async refresh_token(id: string, refresh_token: string) {
     try {
-      const userDb = await this.userService.findBy({ id });
-      if (!userDb || !userDb?.refresh_token_hash) {
-        throw new ForbiddenException('user deleted or loged out');
+      const [userDb, credentials] = await Promise.all([
+        this.userService.findBy({ id }),
+        this.credentialsRepository.findByUserId(id),
+      ]);
+
+      if (!userDb || !credentials?.refreshTokenHash) {
+        throw new ForbiddenException('user deleted or logged out');
       }
 
       const equal = await bcrypt.compare(
         refresh_token,
-        userDb.refresh_token_hash,
+        credentials.refreshTokenHash,
       );
-
       if (!equal) {
         throw new ForbiddenException('old token');
       }
@@ -186,7 +211,11 @@ export class AuthService {
         role: userDb.role,
         recieve_notifications: userDb.recieve_notifications,
       });
-      await this.#updateRefreshTokenHash(userDb.id, tokens.refresh_token);
+
+      const refreshHash = await this.#hashPassword(tokens.refresh_token);
+      credentials.setRefreshToken(refreshHash);
+      await this.credentialsRepository.save(credentials);
+
       return tokens;
     } catch (err) {
       throw new InternalServerErrorException(err);
@@ -194,81 +223,84 @@ export class AuthService {
   }
 
   async logout(userId: string) {
-    await this.userService.clearRefreshToken(userId);
+    const credentials = await this.credentialsRepository.findByUserId(userId);
+    if (!credentials) return;
+    credentials.clearRefreshToken();
+    await this.credentialsRepository.save(credentials);
   }
+
   async forgotPassword({ email }: ForgotPasswordDTO) {
-    const userDb = await this.userService.findByEmailWithToken(email);
-    if (!userDb) {
+    const credentials =
+      await this.credentialsRepository.findByEmailWithToken(email);
+    if (!credentials) {
       throw new NotFoundException(
         "l'utilisateur associe a ce email n'est pas touvee ",
       );
     }
+
     const token: string = await new Promise((resolve, reject) => {
       randomBytes(32, (err, buf) => {
         if (err) reject(err);
         resolve(buf.toString('hex'));
       });
     });
-    if (userDb.password_token) {
-      await this.userService.deleteUserPasswordToken(
-        userDb.password_token.id,
-        userDb.id,
-      );
-    }
+
     const hashed_token = await this.#hashPassword(token);
-    await this.userService.updateUserPasswordToken(hashed_token, userDb.id);
-    await this.#sendEmail(userDb.email, userDb.id, token);
+    credentials.requestPasswordReset(
+      hashed_token,
+      new Date(Date.now() + 1000 * 60 * 15),
+    );
+    await this.credentialsRepository.save(credentials);
+    await this.#sendEmail(email, credentials.userId, token);
 
     return 'sent';
   }
+
   async resetPassword({ password, token, userId }: ResetPasswordDTO) {
-    const userDb = await this.userService.findByIdWithToken(userId);
-    if (!userDb) {
+    const credentials =
+      await this.credentialsRepository.findByUserIdWithToken(userId);
+    if (!credentials) {
       throw new NotFoundException(
         "l'utilisateur associe a ce email n'est pas touvee ",
       );
     }
-    console.log(userDb);
-    const hashed_token = userDb.password_token;
-    if (!hashed_token) {
+
+    const passwordToken = credentials.passwordToken;
+    if (!passwordToken) {
       throw new UnauthorizedException('access denied (token absence)');
     }
-    const matches = await bcrypt.compare(token, hashed_token.token);
+    const matches = await bcrypt.compare(token, passwordToken.token);
     if (!matches) {
       throw new UnauthorizedException('access denied (compare))');
     }
-
-    if (new Date(Date.now()) > hashed_token.expiresIn) {
+    if (new Date(Date.now()) > passwordToken.expiresIn) {
       throw new UnauthorizedException(
         'votre demande de re-initialization a expiré',
       );
     }
+
     const hashed_password = await this.#hashPassword(password);
-    await this.userService.deleteUserPasswordTokenAndUpdatePassword(
-      userDb.password_token.id,
-      userDb.id,
-      hashed_password,
-      userDb.directionId,
-      userDb.departementId,
-      userDb.role,
-    );
+    credentials.resetPassword(hashed_password); // also clears passwordToken
+    await this.credentialsRepository.save(credentials);
+    await this.userService.notifyPasswordChanged(userId);
+
     return 'done';
   }
 
-  async #sendEmail(email: string, userId, token: string) {
+  async #sendEmail(email: string, userId: string, token: string) {
     const transporter = nodemailer.createTransport({
       service: 'Gmail',
       auth: {
-        user: this.configService.get('ethereal_user'), // generated ethereal user
-        pass: this.configService.get('ethereal_password'), // generated ethereal password
+        user: this.configService.get('ethereal_user'),
+        pass: this.configService.get('ethereal_password'),
       },
     });
 
-    const info = await transporter.sendMail({
-      from: '"bmt" <assoulsidali@gmail.com>', // sender address
-      to: email, // list of receivers separated by ,
-      subject: 'Mot de pasee oublié', // Subject line
-      html: `<b>vous avez envoyer une demmande de réinitialisation de mot de passe.</b><br/> presser sur le lien si il s'agit bien de vous </b><br/> le lien:  http://localhost:3000/reset-password?token=${token}&userId=${userId}`, // html body
+    await transporter.sendMail({
+      from: '"bmt" <assoulsidali@gmail.com>',
+      to: email,
+      subject: 'Mot de pasee oublié',
+      html: `<b>vous avez envoyer une demmande de réinitialisation de mot de passe.</b><br/> presser sur le lien si il s'agit bien de vous </b><br/> le lien:  http://localhost:3000/reset-password?token=${token}&userId=${userId}`,
     });
   }
 
@@ -276,16 +308,18 @@ export class AuthService {
     { actualPassword, password }: ConnectedUserResetPassword,
     userId: string,
   ) {
-    const connectedUser = await this.userService.getUserPassword(userId);
-    if (!connectedUser) throw new BadRequestException("couldn't find user");
+    const credentials = await this.credentialsRepository.findByUserId(userId);
+    if (!credentials) throw new BadRequestException("couldn't find user");
 
     const matches = await this.#comparePassword(
       actualPassword,
-      connectedUser.password,
+      credentials.passwordHash,
     );
     if (!matches) throw new UnauthorizedException('mot de passe icorrect');
+
     const hashed_password = await this.#hashPassword(password);
-    await this.userService.updateUserPassword(userId, hashed_password);
+    credentials.resetPassword(hashed_password);
+    await this.credentialsRepository.save(credentials);
 
     return 'done';
   }

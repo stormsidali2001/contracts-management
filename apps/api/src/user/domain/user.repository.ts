@@ -6,10 +6,9 @@ import { User } from './user';
 /**
  * Read model — assembles user data with org info for views.
  * Not a domain aggregate; used only by the presentation/notification layer.
- * References to Direction/Departement are by ID only on the User aggregate;
- * this DTO is built by a dedicated read-model query in the repository.
  */
-export interface UserProfile extends Omit<User, 'setRefreshToken' | 'clearRefreshToken' | 'requestPasswordReset' | 'resetPassword' | 'clearPasswordToken' | 'toggleNotifications' | 'update' | 'updateImage'> {
+export interface UserProfile
+  extends Omit<User, 'toggleNotifications' | 'update' | 'updateImage'> {
   direction?: { id: string; title: string; abriviation: string } | null;
   departement?: { id: string; title: string; abriviation: string } | null;
 }
@@ -23,7 +22,7 @@ export interface IUserRepository {
 
   findById(id: string): Promise<User | null>;
 
-  /** Loads user including `password` column (needed for login). */
+  /** Checks uniqueness of email/username — does NOT load password. */
   findByEmailOrUsername(email: string, username: string): Promise<User | null>;
 
   /**
@@ -32,15 +31,6 @@ export interface IUserRepository {
    * notification message assembly only.
    */
   findProfileById(id: string): Promise<UserProfile | null>;
-
-  /** Loads user with password_token relation (for forgot-password flow). */
-  findByEmailWithPasswordToken(email: string): Promise<User | null>;
-
-  /** Loads user with password_token relation (for reset-password flow). */
-  findByIdWithPasswordToken(id: string): Promise<User | null>;
-
-  /** Loads user with `password` column selected (for connected-user reset-password). */
-  findByIdWithPassword(id: string): Promise<User | null>;
 
   findAdmins(): Promise<User[]>;
 
