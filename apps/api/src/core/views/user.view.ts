@@ -1,6 +1,10 @@
 import { UserRole } from '../types/UserRole.enum';
 import { UserEntity } from '../entities/User.entity';
+import { User } from 'src/user/domain/user';
+import { UserProfile } from 'src/user/domain/user.repository';
 import { stripPrivateKeys } from './strip-private-keys.util';
+
+type UserLike = UserEntity | User | UserProfile;
 
 export class UserView {
   id: string;
@@ -18,18 +22,18 @@ export class UserView {
   departement?: any;
   direction?: any;
 
-  static from(entity: UserEntity): UserView {
+  static from(source: UserLike): UserView {
     const {
       password: _p,
       refresh_token_hash: _r,
       password_token: _pt,
       notifications: _n,
       ...safe
-    } = entity as any;
+    } = source as any;
     return Object.assign(new UserView(), stripPrivateKeys(safe));
   }
 
-  static fromMany(entities: UserEntity[]): UserView[] {
-    return entities.map(UserView.from);
+  static fromMany(sources: UserLike[]): UserView[] {
+    return sources.map(UserView.from);
   }
 }

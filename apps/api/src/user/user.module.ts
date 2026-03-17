@@ -7,6 +7,7 @@ import { DirectionModule } from 'src/direction/direction.module';
 import { EventModule } from 'src/Event/Event.module';
 import { UserImageController } from './controllers/user-image.controller';
 import { UserController } from './controllers/user.controller';
+import { USER_REPOSITORY } from './domain/user.repository';
 import { NotificationsGateWay } from './Notification.gateway';
 import { NotificationRepository } from './notification.repository';
 import { UserNotificationService } from './user-notification.service';
@@ -15,18 +16,14 @@ import { UserService } from './user.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([
-      UserEntity,
-      NotificationEntity,
-      PasswordTokenEntity,
-    ]),
+    TypeOrmModule.forFeature([UserEntity, NotificationEntity, PasswordTokenEntity]),
     DirectionModule,
     EventModule,
   ],
   controllers: [UserController, UserImageController],
   providers: [
+    { provide: USER_REPOSITORY, useClass: UserRepository },
     NotificationRepository,
-    UserRepository,
     UserService,
     UserNotificationService,
     NotificationsGateWay,

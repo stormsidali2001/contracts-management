@@ -13,6 +13,7 @@ import {
   FindAllAgreementsDTO,
 } from 'src/core/dtos/agreement.dto';
 import { UserEntity } from 'src/core/entities/User.entity';
+import { User } from 'src/user/domain/user';
 import { AgreementStatus } from 'src/core/types/agreement-status.enum';
 import { AgreementType } from 'src/core/types/agreement-type.enum';
 import { Entity } from 'src/core/types/entity.enum';
@@ -285,7 +286,7 @@ export class AgreementService implements OnModuleInit {
 
   async getAgreementsStats(
     { startDate, endDate }: StatsParamsDTO,
-    user: UserEntity,
+    user: UserEntity | User,
   ) {
     Logger.debug(user, 'getAgreementsStats');
 

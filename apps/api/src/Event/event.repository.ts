@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CreateEventDTO } from 'src/core/entities/event.dto';
 import { EventEntity } from 'src/core/entities/Event.entity';
 import { UserEntity } from 'src/core/entities/User.entity';
+import { User } from 'src/user/domain/user';
 import { Entity } from 'src/core/types/entity.enum';
 import { UserRole } from 'src/core/types/UserRole.enum';
 import { Repository } from 'typeorm';
@@ -38,7 +39,7 @@ export class EventRepository {
     await this.repo.save({ entity, entityId, operation });
   }
 
-  async findPaginated(limit: number, user: UserEntity): Promise<EventEntity[]> {
+  async findPaginated(limit: number, user: UserEntity | User): Promise<EventEntity[]> {
     let query = this.repo
       .createQueryBuilder('e')
       .limit(limit)
