@@ -1,28 +1,12 @@
-import { Alert, Snackbar } from '@mui/material';
-import { useEffect, useState } from 'react';
 import WithSnackbar from '@/global/withSnackbar';
-import { useAppDispatch, useAppSelector } from '@/hooks/redux/hooks';
-import { startConnecting } from '@/features/notification/notificationSlice';
-import { clear } from '@/features/ui/UiSlice';
+import { useNotificationSocket } from '@/features/notification/hooks/useNotificationSocket';
 import Sidebar from '@/features/dashboard/components/Sidebar/Sidebar';
 import Topbar from '@/features/dashboard/components/Topbar/Topbar';
 import styles from './DashboardLayout.module.css';
-const DashboardLayout = ({children}:any) => {
-  const dispatch = useAppDispatch();
-  const {jwt} = useAppSelector(state=>state.auth)
-  const {isConnected} = useAppSelector(state=>state.notification)
-  const handleClose = ()=>{
-    dispatch(clear())
-  }
-  const [runOnce,setRunOnce] = useState(false)
-  useEffect(()=>{
-    if(!jwt) return;
-    if(!runOnce ){
-      if(!isConnected) dispatch(startConnecting())
-      setRunOnce(true)
-    }
 
-  },[jwt])
+const DashboardLayout = ({ children }: any) => {
+  useNotificationSocket();
+
   return (
     <div className={styles.layout}>
       <Sidebar />
@@ -32,7 +16,6 @@ const DashboardLayout = ({children}:any) => {
       </div>
     </div>
   );
-  
-}
+};
 
-export default DashboardLayout
+export default DashboardLayout;

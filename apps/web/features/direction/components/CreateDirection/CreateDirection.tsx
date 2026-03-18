@@ -10,8 +10,7 @@ import { useState } from 'react';
 import { Departement } from '@/features/direction/models/departement.interface';
 import CreateDepartement from '@/features/direction/components/CreateDepartement/CreateDepartement';
 import { Direction } from '@/features/direction/models/direction.interface';
-import { useAppDispatch } from '@/hooks/redux/hooks';
-import { showSnackbar } from '@/features/ui/UiSlice';
+import { useSnackbarStore } from '@/features/ui/store/snackbar.store';
 import { useCreateDirection } from '@/features/direction/queries/direction.queries';
 
 interface PropTypes {
@@ -22,7 +21,7 @@ interface PropTypes {
 const CreateDirection = ({ handleDirectionModalClose }: PropTypes) => {
   const [openDepartementModal, setOpenDepartementModal] = useState(false);
   const [departements, setDepartements] = useState<Departement[]>([]);
-  const dispatch = useAppDispatch();
+  const showSnackbar = useSnackbarStore((s) => s.showSnackbar);
   const { mutate: createDirection, isPending: isLoading, isSuccess } = useCreateDirection();
 
   const {
@@ -50,11 +49,11 @@ const CreateDirection = ({ handleDirectionModalClose }: PropTypes) => {
       { title, abriviation, departements },
       {
         onSuccess: () => {
-          dispatch(showSnackbar({ message: 'la direction a été creé avec success.', severty: 'success' }));
+          showSnackbar({ message: 'la direction a été creé avec success.', severty: 'success' });
           handleDirectionModalClose();
         },
         onError: (err: any) => {
-          dispatch(showSnackbar({ message: err?.response?.data?.error ?? 'erreur inconnue' }));
+          showSnackbar({ message: err?.response?.data?.error ?? 'erreur inconnue' });
         },
       },
     );

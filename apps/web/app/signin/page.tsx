@@ -4,12 +4,12 @@ import { Button, CircularProgress, TextField } from '@mui/material';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
-import { login, reset } from '@/features/auth/authSlice';
 import { LoginUser } from '@/features/auth/models/login-user.interface';
 import { BMT_LOGO_URL } from '@/features/dashboard/data';
-import { showSnackbar } from '@/features/ui/UiSlice';
+import { useLogin } from '@/features/auth/queries/auth.queries';
+import { useAuthStore } from '@/features/auth/store/auth.store';
+import { useSnackbarStore } from '@/features/ui/store/snackbar.store';
 import useInput from '@/hooks/input/use-input';
-import { useAppDispatch, useAppSelector } from '@/hooks/redux/hooks';
 import { validateEmail } from '@/shared/utils/validation/email';
 import { validateEmailOrUsername } from '@/shared/utils/validation/emailOrUsername';
 import styles from '@/styles/Signin.module.css';
@@ -17,9 +17,10 @@ import styles from '@/styles/Signin.module.css';
 export default function SignIn() {
   const { text: email, textChangeHandler: emailChangeHandler, shouldDisplayError, inputBlurHandler: emailBlurHandler, inputClearHandler: emailClearHandler } = useInput(validateEmailOrUsername);
   const { text: password, textChangeHandler: passwordChangeHandler, inputClearHandler: passwordClearHandler } = useInput();
-  const dispatch = useAppDispatch();
   const router = useRouter();
-  const { isLoading, isAuthenticated, isSuccess, error, isError } = useAppSelector(state => state.auth);
+  const { mutate: login, isPending, isError, error } = useLogin();
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const showSnackbar = useSnackbarStore((s) => s.showSnackbar);
 
   const handleSubmit = (e: { preventDefault: () => void }) => {
     e.preventDefault();
@@ -30,24 +31,13 @@ export default function SignIn() {
     } else {
       loginUser.username = email;
     }
-    try {
-      dispatch(login(loginUser));
-    } catch (err) {
-      alert(err);
-    }
+    login(loginUser, {
+      onSuccess: () => {
+        emailClearHandler();
+        passwordClearHandler();
+      },
+    });
   };
-
-  const clearForm = () => {
-    emailClearHandler();
-    passwordClearHandler();
-  };
-
-  useEffect(() => {
-    if (isSuccess) {
-      dispatch(reset());
-      clearForm();
-    }
-  }, [isSuccess, dispatch]);
 
   useEffect(() => {
     if (!isAuthenticated) return;
@@ -55,11 +45,10 @@ export default function SignIn() {
   }, [isAuthenticated, router]);
 
   useEffect(() => {
-    //@ts-ignore
-    if (isError && error?.length > 0) {
-      dispatch(showSnackbar({ message: error }));
+    if (isError && error) {
+      showSnackbar({ message: (error as any)?.response?.data?.error ?? 'Erreur de connexion' });
     }
-  }, [isError, error, dispatch]);
+  }, [isError, error]);
 
   return (
     <div className={styles.container}>
@@ -84,7 +73,7 @@ export default function SignIn() {
             <p>Entrez vos identifiants pour accéder au tableau de bord</p>
           </div>
           <div className={styles.formWrapper}>
-            {!isLoading ? (
+            {!isPending ? (
               <form onSubmit={handleSubmit}>
                 <TextField
                   onBlur={emailBlurHandler}

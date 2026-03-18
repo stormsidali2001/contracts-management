@@ -1,25 +1,24 @@
-import { Alert, Snackbar } from '@mui/material'
-import React, { useState } from 'react'
-import { clear } from '@/features/ui/UiSlice';
-import { useAppDispatch ,useAppSelector} from '@/hooks/redux/hooks';
+import { Alert, Snackbar } from '@mui/material';
+import { useSnackbarStore } from '@/features/ui/store/snackbar.store';
 
-const WithSnackbar = ({children}:any) => {
-    const {message,open,severty} = useAppSelector(state=>state.uiSlice);
-    const dispatch = useAppDispatch();
-    const handleClose = ()=>{
-        dispatch(clear())
-      }
-    
+const WithSnackbar = ({ children }: any) => {
+  const { message, open, severty, clear } = useSnackbarStore();
+
   return (
-        <>
-            {children}
-            <Snackbar anchorOrigin={{horizontal:'center',vertical:"top"}} open={open} autoHideDuration={3000} onClose={handleClose}>
-                <Alert onClose={handleClose} severity={severty} sx={{ width: '100%' }}>
-                {message}
-                </Alert>
-            </Snackbar>
-        </>
-  )
-}
+    <>
+      {children}
+      <Snackbar
+        anchorOrigin={{ horizontal: 'center', vertical: 'top' }}
+        open={open}
+        autoHideDuration={3000}
+        onClose={clear}
+      >
+        <Alert onClose={clear} severity={severty} sx={{ width: '100%' }}>
+          {message}
+        </Alert>
+      </Snackbar>
+    </>
+  );
+};
 
-export default WithSnackbar
+export default WithSnackbar;

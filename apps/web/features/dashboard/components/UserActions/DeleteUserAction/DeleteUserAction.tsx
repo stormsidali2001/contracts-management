@@ -4,13 +4,12 @@ import { Box, CircularProgress, Button } from '@mui/material';
 import { useState } from 'react';
 import Check from '@mui/icons-material/Check';
 import { DeleteForever } from '@mui/icons-material';
-import { useAppDispatch } from '@/hooks/redux/hooks';
-import { showSnackbar } from '@/features/ui/UiSlice';
+import { useSnackbarStore } from '@/features/ui/store/snackbar.store';
 import { useDeleteUser } from '@/features/user/queries/user.queries';
 
 const DeleteUserAction = ({ params }: any) => {
   const [success, setSuccess] = useState(false);
-  const dispatch = useAppDispatch();
+  const showSnackbar = useSnackbarStore((s) => s.showSnackbar);
   const { mutate: deleteUser, isPending: loading } = useDeleteUser();
 
   const handleSubmit = () => {
@@ -18,10 +17,10 @@ const DeleteUserAction = ({ params }: any) => {
     deleteUser(id, {
       onSuccess: () => {
         setSuccess(true);
-        dispatch(showSnackbar({ message: "l'utilisateur a eté supprimé avec success", severty: 'success' }));
+        showSnackbar({ message: "l'utilisateur a eté supprimé avec success", severty: 'success' });
       },
       onError: (err: any) => {
-        dispatch(showSnackbar({ message: err?.response?.data?.error ?? 'erreur inconnu', severty: 'error' }));
+        showSnackbar({ message: err?.response?.data?.error ?? 'erreur inconnu', severty: 'error' });
       },
     });
   };

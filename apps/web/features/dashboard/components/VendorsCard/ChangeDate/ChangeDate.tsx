@@ -2,8 +2,7 @@
 import { MobileDatePicker } from '@mui/x-date-pickers';
 import dayjs, { Dayjs } from 'dayjs';
 import { useEffect, useState } from 'react';
-import { useAppDispatch } from '@/hooks/redux/hooks';
-import { setDateRange } from '@/features/statistics/StatisticsSlice';
+import { useDateRangeStore } from '@/features/statistics/store/date-range.store';
 import styles from './ChangeDate.module.css';
 import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
 import CheckOutlinedIcon from '@mui/icons-material/CheckOutlined';
@@ -22,7 +21,7 @@ const ChangeDate = ({ start_date, end_date, handleClose }: PropType) => {
   const [byEndDate,   setByEndDate]   = useState(false);
   const [startDate,   setStartDate]   = useState(start_date);
   const [endDate,     setEndDate]     = useState(end_date);
-  const dispatch = useAppDispatch();
+  const setDateRange = useDateRangeStore((s) => s.setDateRange);
 
   useEffect(() => {
     if (start_date) setByStartDate(true);
@@ -30,10 +29,10 @@ const ChangeDate = ({ start_date, end_date, handleClose }: PropType) => {
   }, []);
 
   const handleApply = () => {
-    dispatch(setDateRange({
+    setDateRange({
       startDate: byStartDate && startDate ? format(startDate.toDate()) : null,
       endDate:   byEndDate   && endDate   ? format(endDate.toDate())   : null,
-    }));
+    });
     handleClose();
   };
 

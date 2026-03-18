@@ -1,7 +1,7 @@
 'use client';
 import { CircularProgress, Modal } from '@mui/material';
 import { useState } from 'react';
-import { useAppSelector } from '@/hooks/redux/hooks';
+import { useAuthStore } from '@/features/auth/store/auth.store';
 import ChangePassword from '@/features/settings/ChangePassword/ChangePassword';
 import styles from './Settings.module.css';
 import { useToggleNotifications } from '@/features/auth/queries/auth.queries';
@@ -13,8 +13,8 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 const Settings = () => {
   const [changePasswordModal, setChangePasswordModal] = useState(false);
 
-  const { user, isLoading } = useAppSelector((state) => state.auth);
-  const { mutate: toggleNotifications } = useToggleNotifications();
+  const user = useAuthStore((s) => s.user);
+  const { mutate: toggleNotifications, isPending: isLoading } = useToggleNotifications();
 
   const ROLE_LABELS: Record<string, string> = {
     ADMIN: 'Administrateur',

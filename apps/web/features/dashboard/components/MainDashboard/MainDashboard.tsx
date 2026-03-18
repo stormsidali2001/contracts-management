@@ -12,9 +12,9 @@ import LastEventsCard from '@/features/dashboard/components/lastEventsCard/LastE
 import UsersCard from '@/features/dashboard/components/UsersCard/UsersCard';
 import VendorsCard from '@/features/dashboard/components/VendorsCard/VendorsCard';
 import ChangeDate from '@/features/dashboard/components/VendorsCard/ChangeDate/ChangeDate';
-import { useAppSelector, useAppDispatch } from '@/hooks/redux/hooks';
-import { setDateRange } from '@/features/statistics/StatisticsSlice';
+import { useDateRangeStore } from '@/features/statistics/store/date-range.store';
 import { useStatistics } from '@/features/statistics/queries/statistics.queries';
+
 import styles from './MainDashboard.module.css';
 
 const fmtDate = (d: any) => (d ? d.toDate().toISOString().replace(/T[0-9:.Z]*/g, '') : null);
@@ -22,8 +22,7 @@ const fmtDate = (d: any) => (d ? d.toDate().toISOString().replace(/T[0-9:.Z]*/g,
 const MainDashboard = () => {
   const isMedium = useMediaQuery('(max-width: 900px)');
   const [openDateModal, setOpenDateModal] = useState(false);
-  const { start_date, end_date } = useAppSelector((state) => state.StatisticsSlice);
-  const dispatch = useAppDispatch();
+  const { start_date, end_date, setDateRange } = useDateRangeStore();
 
   const { data } = useStatistics({ startDate: fmtDate(start_date), endDate: fmtDate(end_date) });
 
@@ -37,7 +36,7 @@ const MainDashboard = () => {
   const latestVendors = data?.vendorsStats?.slice(-1)?.[0]?.nb_vendors ?? null;
   const totalUsers    = data?.userTypes?.total ?? null;
 
-  const clearFilter = () => dispatch(setDateRange({ startDate: null, endDate: null }));
+  const clearFilter = () => setDateRange({ startDate: null, endDate: null });
 
   return (
     <div className={styles.container}>

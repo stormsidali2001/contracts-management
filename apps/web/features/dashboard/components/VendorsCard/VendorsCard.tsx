@@ -9,7 +9,7 @@ import { Line } from 'react-chartjs-2';
 import 'chartjs-adapter-date-fns';
 import { fr } from 'date-fns/locale';
 import { AnimateSharedLayout, motion } from 'framer-motion';
-import { useAppSelector } from '@/hooks/redux/hooks';
+import { useDateRangeStore } from '@/features/statistics/store/date-range.store';
 import { useStatistics } from '@/features/statistics/queries/statistics.queries';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, TimeScale);
@@ -19,7 +19,7 @@ const formatDate = (d: any) => (d ? d.toDate().toISOString().replace(/T[0-9:.Z]*
 const VendorsCard = () => {
   const [expanded, setExpanded] = useState(false);
   const cardId = useId();
-  const { start_date, end_date } = useAppSelector((state) => state.StatisticsSlice);
+  const { start_date, end_date } = useDateRangeStore();
   const { data } = useStatistics({ startDate: formatDate(start_date), endDate: formatDate(end_date) });
   const stats = data?.vendorsStats ?? null;
 

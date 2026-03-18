@@ -10,7 +10,7 @@ import CreateContract from '@/features/contract/components/CreateContract/Create
 import { useDebounce } from '@/hooks/useDebounce.hook';
 import Link from 'next/link';
 import ContractsFilter from '@/features/contract/components/ContractsFilter/ContractsFilter';
-import { useAppSelector } from '@/hooks/redux/hooks';
+import { useAuthStore } from '@/features/auth/store/auth.store';
 import { UserRole } from '@/features/auth/models/user-role.enum';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { useContracts } from '@/features/contract/queries/contract.queries';
@@ -68,7 +68,7 @@ const ContractsContent = () => {
   const [filterModalOpen, setFilterModalOPen] = useState(false);
   const [filters, setFilters] = useState<Filters | null>(null);
   const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: 5 });
-  const { user } = useAppSelector((state) => state.auth);
+  const user = useAuthStore((s) => s.user);
   const [searchQuery, setSearchQuery] = useState('');
   const { debounce } = useDebounce();
   const [queryOptions, setQueryOptions] = useState<{ sortModel: GridSortItem[] | null }>({ sortModel: null });

@@ -9,7 +9,7 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { useDebounce } from '@/hooks/useDebounce.hook';
 import Link from 'next/link';
 import ContractsFilter from '@/features/contract/components/ContractsFilter/ContractsFilter';
-import { useAppSelector } from '@/hooks/redux/hooks';
+import { useAuthStore } from '@/features/auth/store/auth.store';
 import { UserRole } from '@/features/auth/models/user-role.enum';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import CreateContract from '@/features/contract/components/CreateContract/CreateContract';
@@ -71,7 +71,7 @@ const ConvensionsContent = () => {
   const [queryOptions, setQueryOptions] = useState<{ sortModel: GridSortItem[] | null }>({ sortModel: null });
   const [open, setOpen] = useState(false);
   const { debounce } = useDebounce();
-  const { user } = useAppSelector((state) => state.auth);
+  const user = useAuthStore((s) => s.user);
   const [searchQuery, setSearchQuery] = useState('');
 
   const { data: statsData } = useStatistics({});

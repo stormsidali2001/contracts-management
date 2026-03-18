@@ -4,13 +4,12 @@ import { Box, CircularProgress, Button } from '@mui/material';
 import { useState } from 'react';
 import Check from '@mui/icons-material/Check';
 import { DeleteForever } from '@mui/icons-material';
-import { useAppDispatch } from '@/hooks/redux/hooks';
-import { showSnackbar } from '@/features/ui/UiSlice';
+import { useSnackbarStore } from '@/features/ui/store/snackbar.store';
 import { useDeleteVendor } from '@/features/vendor/queries/vendor.queries';
 
 const DeleteVendorAction = ({ params }: any) => {
   const [success, setSuccess] = useState(false);
-  const dispatch = useAppDispatch();
+  const showSnackbar = useSnackbarStore((s) => s.showSnackbar);
   const { mutate: deleteVendor, isPending: loading } = useDeleteVendor();
 
   const handleSubmit = () => {
@@ -18,10 +17,10 @@ const DeleteVendorAction = ({ params }: any) => {
     deleteVendor(id, {
       onSuccess: () => {
         setSuccess(true);
-        dispatch(showSnackbar({ message: 'le vendor a eté supprimé avec success', severty: 'success' }));
+        showSnackbar({ message: 'le vendor a eté supprimé avec success', severty: 'success' });
       },
       onError: (err: any) => {
-        dispatch(showSnackbar({ message: err?.response?.data?.error ?? 'erreur inconnu', severty: 'error' }));
+        showSnackbar({ message: err?.response?.data?.error ?? 'erreur inconnu', severty: 'error' });
       },
     });
   };

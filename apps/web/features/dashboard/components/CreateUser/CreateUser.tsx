@@ -8,8 +8,7 @@ import CheckIcon from '@mui/icons-material/Check';
 import styles from './CreateUser.module.css';
 import LinearProgress from '@mui/material/LinearProgress';
 import { CreateUser as CreateUserPayload } from '@/features/dashboard/models/CreateUser.interface';
-import { useAppDispatch } from '@/hooks/redux/hooks';
-import { showSnackbar } from '@/features/ui/UiSlice';
+import { useSnackbarStore } from '@/features/ui/store/snackbar.store';
 import { useDirections } from '@/features/direction/queries/direction.queries';
 import { useCreateUser, useUploadUserImage } from '@/features/user/queries/user.queries';
 import PersonOutlinedIcon from '@mui/icons-material/PersonOutlined';
@@ -53,7 +52,7 @@ const CreateUser = ({ handleClose }: Proptype) => {
   const [isImageUploading, setIsImageUploading] = useState(false);
   const [imageUploadProgress, setImageUploadProgress] = useState(0);
   const [role, setRole] = useState<string>('EMPLOYEE');
-  const dispatch = useAppDispatch();
+  const showSnackbar = useSnackbarStore((s) => s.showSnackbar);
 
   const { data: directions = [] } = useDirections();
   const { mutateAsync: uploadImage } = useUploadUserImage();
@@ -129,8 +128,8 @@ const CreateUser = ({ handleClose }: Proptype) => {
     };
 
     createUser(newUser, {
-      onSuccess: () => dispatch(showSnackbar({ message: "l'utilisateur a eté creé avec success.", severty: 'success' })),
-      onError:   (err: any) => dispatch(showSnackbar({ message: err?.response?.data?.error ?? 'erreur inconnue' })),
+      onSuccess: () => showSnackbar({ message: "l'utilisateur a eté creé avec success.", severty: 'success' }),
+      onError:   (err: any) => showSnackbar({ message: err?.response?.data?.error ?? 'erreur inconnue' }),
     });
   };
 

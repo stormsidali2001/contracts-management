@@ -10,7 +10,7 @@ import CreateVendor from '@/features/vendor/components/CreateVendor/CreateVendor
 import { useDebounce } from '@/hooks/useDebounce.hook';
 import VendorActions from '@/features/dashboard/VendorActions/VendorActions';
 import Link from 'next/link';
-import { useAppSelector } from '@/hooks/redux/hooks';
+import { useAuthStore } from '@/features/auth/store/auth.store';
 import { UserRole } from '@/features/auth/models/user-role.enum';
 import DeleteVendorAction from '@/features/dashboard/components/UserActions/DeleteVendorAction/DeleteVendorAction';
 import { useVendors } from '@/features/vendor/queries/vendor.queries';
@@ -26,7 +26,7 @@ const VendorsContent = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [queryOptions, setQueryOptions] = useState<{ sortModel: GridSortItem[] | null }>({ sortModel: null });
   const [open, setOpen] = useState(false);
-  const { user } = useAppSelector((state) => state.auth);
+  const user = useAuthStore((s) => s.user);
   const { debounce } = useDebounce();
 
   const { data: statsData } = useStatistics({});

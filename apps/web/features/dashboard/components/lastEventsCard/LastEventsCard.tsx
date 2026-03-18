@@ -2,7 +2,7 @@
 import moment from 'moment';
 import 'moment-locale-fr';
 moment.locale('fr');
-import { useAppSelector } from '@/hooks/redux/hooks';
+import { useNotificationStore } from '@/features/notification/store/notification.store';
 import { Entity } from '@/features/notification/models/Entity.enum';
 import { Operation } from '@/features/notification/models/Operation.enum';
 import styles from './LastEventsCard.module.css';
@@ -53,7 +53,7 @@ const EntityIcon = ({ entity }: { entity: Entity }) => {
 };
 
 const LastEventsCard = () => {
-  const { events } = useAppSelector((state) => state.notification);
+  const events = useNotificationStore((s) => s.events);
   return (
     <div className={styles.container}>
       <div className={styles.cardHeader}>
