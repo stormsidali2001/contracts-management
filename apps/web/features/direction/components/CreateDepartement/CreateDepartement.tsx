@@ -6,8 +6,7 @@ import styles from './CreateDepartement.module.css';
 import AccountTreeOutlinedIcon from '@mui/icons-material/AccountTreeOutlined';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import { Departement } from '@/features/direction/models/departement.interface';
-import { useAppDispatch } from '@/hooks/redux/hooks';
-import { showSnackbar } from '@/features/ui/UiSlice';
+import { useSnackbarStore } from '@/features/ui/store/snackbar.store';
 import { useState } from 'react';
 import { useCreateDepartement } from '@/features/direction/queries/direction.queries';
 
@@ -37,7 +36,7 @@ const CreateDepartement = ({
   } = useInput(validateDepartementAbriviationLength);
 
   const [isSuccess, setIsSuccess] = useState(false);
-  const dispatch = useAppDispatch();
+  const showSnackbar = useSnackbarStore((s) => s.showSnackbar);
   const { mutate: createDepartement, isPending: isLoading } = useCreateDepartement();
 
   const handleSubmit = (e: any) => {
@@ -50,12 +49,12 @@ const CreateDepartement = ({
         {
           onSuccess: (res: any) => {
             pushDepartementToDirection({ id: res.id, title, abriviation, users: 0 }, selectedDirectionId);
-            dispatch(showSnackbar({ message: 'le département a été créé avec succès', severty: 'success' }));
+            showSnackbar({ message: 'le département a été créé avec succès', severty: 'success' });
             setIsSuccess(true);
             setTimeout(() => handleCloseDepartementModal(), 2000);
           },
           onError: (err: any) => {
-            dispatch(showSnackbar({ message: err?.response?.data?.error ?? 'erreur inconnue' }));
+            showSnackbar({ message: err?.response?.data?.error ?? 'erreur inconnue' });
           },
         },
       );

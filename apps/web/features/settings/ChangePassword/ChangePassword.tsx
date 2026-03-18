@@ -1,9 +1,8 @@
 'use client';
 import { CircularProgress, TextField } from '@mui/material';
 import useInput from '@/hooks/input/use-input';
-import { useAppDispatch } from '@/hooks/redux/hooks';
 import { validatePasswordLength } from '@/shared/utils/validation/length';
-import { showSnackbar } from '@/features/ui/UiSlice';
+import { useSnackbarStore } from '@/features/ui/store/snackbar.store';
 import styles from './ChangePassword.module.css';
 import { useChangePassword } from '@/features/auth/queries/auth.queries';
 import LockResetOutlinedIcon from '@mui/icons-material/LockResetOutlined';
@@ -18,7 +17,7 @@ const ChangePassword = ({ handleClose }: PropType) => {
   const { text: password,       textChangeHandler: passwordChangeHandler,       inputBlurHandler: passwordBlurHandler,       shouldDisplayError: passwordError       } = useInput(validatePasswordLength);
   const { text: confirm,        textChangeHandler: confirmChangeHandler,        inputBlurHandler: confirmBlurHandler,        shouldDisplayError: confirmError        } = useInput(validatePasswordLength);
 
-  const dispatch = useAppDispatch();
+  const showSnackbar = useSnackbarStore((s) => s.showSnackbar);
   const { mutate: changePassword, isPending: isLoading } = useChangePassword();
 
   const passwordMismatch = confirm.length > 0 && password !== confirm;
@@ -30,11 +29,11 @@ const ChangePassword = ({ handleClose }: PropType) => {
       { actualPassword, password },
       {
         onSuccess: () => {
-          dispatch(showSnackbar({ message: 'votre mot de passe a eté re-initialiser', severty: 'success' }));
+          showSnackbar({ message: 'votre mot de passe a eté re-initialiser', severty: 'success' });
           handleClose();
         },
         onError: (err: any) => {
-          dispatch(showSnackbar({ message: err?.response?.data?.error ?? 'erreur inconnu' }));
+          showSnackbar({ message: err?.response?.data?.error ?? 'erreur inconnu' });
         },
       },
     );

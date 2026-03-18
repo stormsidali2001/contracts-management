@@ -3,7 +3,7 @@ import { FormControl, InputLabel, MenuItem, Select, SelectChangeEvent } from '@m
 import { MobileDatePicker } from '@mui/x-date-pickers';
 import dayjs, { Dayjs } from 'dayjs';
 import { useEffect, useState } from 'react';
-import { useAppSelector } from '@/hooks/redux/hooks';
+import { useAuthStore } from '@/features/auth/store/auth.store';
 import { UserRole } from '@/features/auth/models/user-role.enum';
 import styles from './ContractsFilter.module.css';
 import { useDirections } from '@/features/direction/queries/direction.queries';
@@ -58,7 +58,7 @@ const ContractsFilter = ({ handleSetFilters, handleClose, initialFilters }: Prop
   const [isByStatus,    setIsByStatus]    = useState(false);
   const [startDate,     setStartDate]     = useState<Dayjs>(dayjs(new Date()));
   const [endDate,       setEndDate]       = useState<Dayjs>(dayjs(new Date()));
-  const { user }                          = useAppSelector((state) => state.auth);
+  const user                              = useAuthStore((s) => s.user);
   const shouldDisplayFilter = () => user?.role === UserRole.ADMIN || user?.role === UserRole.JURIDICAL;
   const [isByDate,      setIsByDate]      = useState(false);
   const [isByDirection, setIsByDirection] = useState(false);

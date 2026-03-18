@@ -1,57 +1,54 @@
 import { useMutation } from '@tanstack/react-query';
-import { useAppDispatch } from '@/hooks/redux/hooks';
-import {
-  login,
-  logout,
-  forgotPassword,
-  resetPassword,
-  selectRecieveNotifications,
-} from '@/features/auth/authSlice';
+import { useAuthStore } from '@/features/auth/store/auth.store';
+import authService from '@/features/auth/services/auth.service';
 import { LoginUser } from '@/features/auth/models/login-user.interface';
 import useAxiosPrivate from '@/hooks/auth/useAxiosPrivate';
 
-// ---------------------------------------------------------------------------
-// Auth mutations wrap Redux thunks so components stay decoupled from dispatch.
-// The JWT and user state live in Redux; React Query only manages the async
-// lifecycle (isPending, isError, etc.) of each call.
-// ---------------------------------------------------------------------------
-
 export const useLogin = () => {
-  const dispatch = useAppDispatch();
+  const setCredentials = useAuthStore((s) => s.setCredentials);
   return useMutation({
-    mutationFn: (user: LoginUser) => dispatch(login(user)).unwrap(),
+    mutationFn: (user: LoginUser) => authService.login(user),
+    onSuccess: (data) => {
+      if (data.user && data.jwt) setCredentials(data.user, data.jwt);
+    },
   });
 };
 
 export const useLogout = () => {
-  const dispatch = useAppDispatch();
+  const clearCredentials = useAuthStore((s) => s.clearCredentials);
   const axios = useAxiosPrivate({});
   return useMutation({
-    mutationFn: () => dispatch(logout({ axios_instance: axios })).unwrap(),
+    mutationFn: () => authService.logout({ axios_instance: axios }),
+    onSuccess: () => clearCredentials(),
   });
 };
 
-export const useForgotPassword = () => {
-  const dispatch = useAppDispatch();
-  return useMutation({
-    mutationFn: (email: string) => dispatch(forgotPassword(email)).unwrap(),
+export const useForgotPassword = () =>
+  useMutation({
+    mutationFn: (email: string) => authService.forgotPassword(email),
   });
-};
 
-export const useResetPassword = () => {
-  const dispatch = useAppDispatch();
-  return useMutation({
+export const useResetPassword = () =>
+  useMutation({
     mutationFn: (payload: { password: string; token: string; userId: string }) =>
-      dispatch(resetPassword(payload)).unwrap(),
+      authService.resetPassword(payload),
   });
-};
 
 export const useToggleNotifications = () => {
-  const dispatch = useAppDispatch();
+  const setCredentials = useAuthStore((s) => s.setCredentials);
+  const user = useAuthStore((s) => s.user);
+  const jwt = useAuthStore((s) => s.jwt);
   const axios = useAxiosPrivate({});
   return useMutation({
-    mutationFn: () =>
-      dispatch(selectRecieveNotifications({ axios_instance: axios })).unwrap(),
+    mutationFn: () => authService.selectRecieveNotification({ axios_instance: axios }),
+    onSuccess: () => {
+      if (user && jwt) {
+        setCredentials(
+          { ...user, recieve_notifications: !user.recieve_notifications },
+          jwt,
+        );
+      }
+    },
   });
 };
 

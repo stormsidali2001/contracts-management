@@ -5,13 +5,13 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { Divider } from '@mui/material';
 import Link from 'next/link';
-import { useAppSelector } from '@/hooks/redux/hooks';
+import { useAuthStore } from '@/features/auth/store/auth.store';
 import { useMemo } from 'react';
 import { useLogout } from '@/features/auth/queries/auth.queries';
 import { BASE_URL } from '@/api/axios';
 
 const PopoverContent = () => {
-  const { user } = useAppSelector((state) => state.auth);
+  const user = useAuthStore((s) => s.user);
   const { mutate: logout } = useLogout();
   const links = useMemo(
     () => [

@@ -12,7 +12,7 @@ import UserActions from '@/features/dashboard/components/UserActions/UserActions
 import Link from 'next/link';
 import UsersFilter from '@/features/dashboard/components/UsersFilter/UsersFilter';
 import { UserRole } from '@/features/auth/models/user-role.enum';
-import { useAppSelector } from '@/hooks/redux/hooks';
+import { useAuthStore } from '@/features/auth/store/auth.store';
 import DeleteUserAction from '@/features/dashboard/components/UserActions/DeleteUserAction/DeleteUserAction';
 import { DataGrid, GridColumns, GridRenderCellParams, GridSortItem, GridSortModel } from '@mui/x-data-grid';
 import { useUsers } from '@/features/user/queries/user.queries';
@@ -61,7 +61,7 @@ const formatDate = (raw: string | null | undefined) => {
 const UsersContent = () => {
   const [filterModalOpen, setFilterModalOPen] = useState(false);
   const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: 5 });
-  const { user } = useAppSelector((state) => state.auth);
+  const user = useAuthStore((s) => s.user);
   const [filters, setFilters] = useState<Filters | null>(null);
   const [rowId, setRowId] = useState<any>(null);
   const [searchQuery, setSearchQuery] = useState('');

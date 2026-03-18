@@ -1,6 +1,6 @@
 'use client';
 import NotificationsNoneOutlinedIcon from '@mui/icons-material/NotificationsNoneOutlined';
-import { useAppSelector } from '@/hooks/redux/hooks';
+import { useNotificationStore } from '@/features/notification/store/notification.store';
 import styles from './Notifications.module.css';
 
 /** Bold the email address inside the message string */
@@ -25,7 +25,7 @@ function getAction(message: string): { label: string; cls: string } {
 }
 
 const Notifications = () => {
-  const { notifications } = useAppSelector(state => state.notification);
+  const notifications = useNotificationStore((s) => s.notifications);
 
   return (
     <div className={styles.container}>

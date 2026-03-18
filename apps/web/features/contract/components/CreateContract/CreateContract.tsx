@@ -12,8 +12,7 @@ import dayjs, { Dayjs } from 'dayjs';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import SelectVendor from '@/features/contract/components/SelectVendor/SelectVendor';
 import { CreateAgreement } from '@/features/contract/models/CreateAgreement.interface';
-import { useAppDispatch } from '@/hooks/redux/hooks';
-import { showSnackbar } from '@/features/ui/UiSlice';
+import { useSnackbarStore } from '@/features/ui/store/snackbar.store';
 import ErrorIcon from '@mui/icons-material/Error';
 import { useDirections } from '@/features/direction/queries/direction.queries';
 import { useCreateAgreement, useUploadAgreementFile } from '@/features/contract/queries/contract.queries';
@@ -34,7 +33,7 @@ const CreateContract = ({ handleClose, type = 'contract' }: Proptype) => {
   const [vendor, setVendor] = useState<any>(null);
   const [signatureDate, setSignatureDate] = useState<Dayjs>(dayjs(new Date()));
   const [expirationDate, setExpirationDate] = useState<Dayjs>(dayjs(new Date()));
-  const dispatch = useAppDispatch();
+  const showSnackbar = useSnackbarStore((s) => s.showSnackbar);
   const [fileUploadProgress, setFileUploadProgress] = useState(0);
   const [vendorModalOpen, setVendorModalOpen] = useState(false);
 
@@ -114,7 +113,7 @@ const CreateContract = ({ handleClose, type = 'contract' }: Proptype) => {
     createAgreement(newAgreement, {
       onError: (err: any) => {
         setIsAgreementDocumentFileUploading(false);
-        dispatch(showSnackbar({ message: err?.response?.data?.error ?? 'erreur inconnue' }));
+        showSnackbar({ message: err?.response?.data?.error ?? 'erreur inconnue' });
       },
     });
   };

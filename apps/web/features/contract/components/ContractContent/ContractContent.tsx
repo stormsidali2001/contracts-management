@@ -12,7 +12,7 @@ import AccessTimeOutlinedIcon from '@mui/icons-material/AccessTimeOutlined';
 import StorefrontOutlinedIcon from '@mui/icons-material/StorefrontOutlined';
 import AccountBalanceOutlinedIcon from '@mui/icons-material/AccountBalanceOutlined';
 import ExecutionModal from '@/features/contract/components/ExecutionModal/ExecutionModal';
-import { useAppSelector } from '@/hooks/redux/hooks';
+import { useAuthStore } from '@/features/auth/store/auth.store';
 import { UserRole } from '@/features/auth/models/user-role.enum';
 import { useAgreement } from '@/features/contract/queries/contract.queries';
 import { BASE_URL } from '@/api/axios';
@@ -57,7 +57,7 @@ const formatAmount = (v: number | null | undefined) =>
   v == null ? '—' : new Intl.NumberFormat('fr-DZ').format(v) + ' DA';
 
 const ContractContent = ({ type, agreementId }: PropType) => {
-  const { user } = useAppSelector((state) => state.auth);
+  const user = useAuthStore((s) => s.user);
   const [openExecutionModal, setOpenExecutionModal] = useState(false);
 
   const { data: contract, isLoading } = useAgreement(agreementId, type);

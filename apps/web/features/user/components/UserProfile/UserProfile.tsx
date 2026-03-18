@@ -3,20 +3,19 @@
 import { Avatar, Button, CircularProgress, LinearProgress } from '@mui/material';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { useAppDispatch, useAppSelector } from '@/hooks/redux/hooks';
+import { useAuthStore } from '@/features/auth/store/auth.store';
+import { useSnackbarStore } from '@/features/ui/store/snackbar.store';
 import styles from './UserProfile.module.css';
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
-import { showSnackbar } from '@/features/ui/UiSlice';
 import { Stack } from '@mui/system';
-import { setImageUrl } from '@/features/auth/authSlice';
 import { UserRole } from '@/features/auth/models/user-role.enum';
 import { useUser, useUpdateUser, useUploadUserImage } from '@/features/user/queries/user.queries';
 import { BASE_URL } from '@/api/axios';
 
 const UserProfile = () => {
-  const { user: currentUser } = useAppSelector((state) => state.auth);
-  const { user: connectedUser } = useAppSelector((state) => state.auth);
+  const currentUser = useAuthStore((s) => s.user);
+  const connectedUser = currentUser;
   const params = useParams();
   const userId = params.userId as string | undefined;
 
@@ -26,7 +25,8 @@ const UserProfile = () => {
   const [imageFile, setImageFile] = useState<any>(null);
   const [imageUploadProgress, setImageUploadProgress] = useState(0);
 
-  const dispatch = useAppDispatch();
+  const setImageUrl = useAuthStore((s) => s.setImageUrl);
+  const showSnackbar = useSnackbarStore((s) => s.showSnackbar);
 
   const { data: fetchedUser } = useUser(userId);
   const { mutate: updateUser, isPending: loading } = useUpdateUser();
@@ -65,14 +65,14 @@ const UserProfile = () => {
         onSuccess: () => {
           if (imageUrl.length > 0) {
             if (currentUser?.sub === localUser.id) {
-              dispatch(setImageUrl({ imageUrl }));
+              setImageUrl(imageUrl);
             }
             setLocalUser({ ...localUser, imageUrl });
           }
           setEdit(false);
         },
         onError: (err: any) => {
-          dispatch(showSnackbar({ message: err?.response?.data?.error ?? 'erreur inconnue' }));
+          showSnackbar({ message: err?.response?.data?.error ?? 'erreur inconnue' });
           setEdit(false);
         },
       },

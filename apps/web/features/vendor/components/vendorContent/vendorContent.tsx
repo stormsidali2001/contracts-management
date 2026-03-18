@@ -7,8 +7,8 @@ import { CircularProgress, Modal } from '@mui/material';
 import AgreementList from '@/features/vendor/components/AgreementList/AgreementList';
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
-import { useAppDispatch, useAppSelector } from '@/hooks/redux/hooks';
-import { showSnackbar } from '@/features/ui/UiSlice';
+import { useAuthStore } from '@/features/auth/store/auth.store';
+import { useSnackbarStore } from '@/features/ui/store/snackbar.store';
 import { UserRole } from '@/features/auth/models/user-role.enum';
 import { useVendor, useUpdateVendor } from '@/features/vendor/queries/vendor.queries';
 import Link from 'next/link';
@@ -26,12 +26,12 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { useStatistics } from '@/features/statistics/queries/statistics.queries';
 
 const VendorContent = () => {
-  const { user } = useAppSelector((state) => state.auth);
+  const user = useAuthStore((s) => s.user);
   const [editMode, setEditMode] = useState(false);
   const params = useParams();
   const vendorId = params.vendorId as string | undefined;
   const [localVendor, setLocalVendor] = useState<any>(null);
-  const dispatch = useAppDispatch();
+  const showSnackbar = useSnackbarStore((s) => s.showSnackbar);
   const [contractModalOpen, setContractModalOpen] = useState(false);
   const handleContractModaOpen  = () => setContractModalOpen(true);
   const handleContractModalClose = () => setContractModalOpen(false);
@@ -67,8 +67,8 @@ const VendorContent = () => {
     updateVendor(
       { id: displayVendor.id, ...displayVendor },
       {
-        onSuccess: () => { setEditMode(false); setLocalVendor(null); dispatch(showSnackbar({ message: 'le fournisseur a été mis à jour', severty: 'success' })); },
-        onError:   (err: any) => { setEditMode(false); dispatch(showSnackbar({ message: err?.response?.data?.error ?? 'erreur inconnue' })); },
+        onSuccess: () => { setEditMode(false); setLocalVendor(null); showSnackbar({ message: 'le fournisseur a été mis à jour', severty: 'success' }); },
+        onError:   (err: any) => { setEditMode(false); showSnackbar({ message: err?.response?.data?.error ?? 'erreur inconnue' }); },
       },
     );
   };

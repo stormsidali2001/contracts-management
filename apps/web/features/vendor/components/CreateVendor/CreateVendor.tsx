@@ -11,8 +11,7 @@ import { validateHomePhoneNumber } from '@/shared/utils/validation/validateHomeP
 import CheckIcon from '@mui/icons-material/Check';
 import CircularProgress from '@mui/material/CircularProgress';
 import { Vendor } from '@/features/vendor/models/vendor.interface';
-import { useAppDispatch } from '@/hooks/redux/hooks';
-import { showSnackbar } from '@/features/ui/UiSlice';
+import { useSnackbarStore } from '@/features/ui/store/snackbar.store';
 import ErrorIcon from '@mui/icons-material/Error';
 import { useCreateVendor } from '@/features/vendor/queries/vendor.queries';
 
@@ -23,7 +22,7 @@ interface PropType {
 const CreateVendor = ({ handleClose }: PropType) => {
   const steps = ['identifiants', 'Localisation', 'validation'];
   const [activeStep, setActiveStep] = useState(0);
-  const dispatch = useAppDispatch();
+  const showSnackbar = useSnackbarStore((s) => s.showSnackbar);
   const { mutate: createVendor, isPending: loading, isSuccess: done } = useCreateVendor();
 
   const { text: num, inputBlurHandler: numBlurHandler, textChangeHandler: numChangeHandler, shouldDisplayError: numShouldDisplayError, inputClearHandler: numInputClearHandler } = useInput();
@@ -58,7 +57,7 @@ const CreateVendor = ({ handleClose }: PropType) => {
         handleRestForm();
       },
       onError: (err: any) => {
-        dispatch(showSnackbar({ message: err?.response?.data?.error ?? 'erreur inconnue' }));
+        showSnackbar({ message: err?.response?.data?.error ?? 'erreur inconnue' });
       },
     });
   };

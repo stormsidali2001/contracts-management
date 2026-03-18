@@ -12,8 +12,8 @@ import PeopleOutlineIcon from '@mui/icons-material/PeopleOutline';
 import CreateDepartement from '@/features/direction/components/CreateDepartement/CreateDepartement';
 import CreateDirection from '@/features/direction/components/CreateDirection/CreateDirection';
 import DeleteDirectionModal from '@/features/direction/components/DeleteDirectionModal/DeleteDirectionModal';
-import { useAppDispatch, useAppSelector } from '@/hooks/redux/hooks';
-import { showSnackbar } from '@/features/ui/UiSlice';
+import { useAuthStore } from '@/features/auth/store/auth.store';
+import { useSnackbarStore } from '@/features/ui/store/snackbar.store';
 import { UserRole } from '@/features/auth/models/user-role.enum';
 import DepartementUsersList from '@/features/direction/components/DepartementUsersList/DepartementUsersList';
 import { useDirections, useDeleteDirection, useDeleteDepartement } from '@/features/direction/queries/direction.queries';
@@ -29,8 +29,8 @@ const dirAbbr = (title: string) => {
 const DirectionContent = () => {
   const [openDepartementUsers, setOpenDepartementUsers] = useState(false);
   const [choosenDepartementId, setChoosenDepartementId] = useState('');
-  const { user } = useAppSelector((state) => state.auth);
-  const dispatch = useAppDispatch();
+  const user = useAuthStore((s) => s.user);
+  const showSnackbar = useSnackbarStore((s) => s.showSnackbar);
 
   const { data: directions = [] } = useDirections();
   const { mutate: deleteDirection } = useDeleteDirection();
@@ -46,18 +46,18 @@ const DirectionContent = () => {
 
   const handleDeleteDepartement = (id: string) => {
     deleteDepartement(id, {
-      onSuccess: () => dispatch(showSnackbar({ message: 'la suppression de departement a reusi', severty: 'success' })),
-      onError: (err: any) => dispatch(showSnackbar({ message: err?.response?.data?.error ?? 'erreur inconnue' })),
+      onSuccess: () => showSnackbar({ message: 'la suppression de departement a reusi', severty: 'success' }),
+      onError: (err: any) => showSnackbar({ message: err?.response?.data?.error ?? 'erreur inconnue' }),
     });
   };
 
   const handleDeleteDirection = (directionId: string) => {
     deleteDirection(directionId, {
       onSuccess: () => {
-        dispatch(showSnackbar({ message: 'La direction a été supprimée avec succès', severty: 'success' }));
+        showSnackbar({ message: 'La direction a été supprimée avec succès', severty: 'success' });
         setDeleteTarget(null);
       },
-      onError: (err: any) => dispatch(showSnackbar({ message: err?.response?.data?.error ?? 'erreur inconnue' })),
+      onError: (err: any) => showSnackbar({ message: err?.response?.data?.error ?? 'erreur inconnue' }),
     });
   };
 

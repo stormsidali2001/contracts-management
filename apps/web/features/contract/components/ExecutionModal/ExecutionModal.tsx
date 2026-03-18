@@ -5,8 +5,7 @@ import { Stack } from '@mui/system';
 import { useState } from 'react'
 import styles from './ExecutionModal.module.css'
 import { useExecuteAgreement } from '@/features/contract/queries/contract.queries';
-import { useAppDispatch } from '@/hooks/redux/hooks';
-import { showSnackbar } from '@/features/ui/UiSlice';
+import { useSnackbarStore } from '@/features/ui/store/snackbar.store';
 
 const format = (d:Date)=>{
     const newD = new Date(d);
@@ -26,7 +25,7 @@ const ExecutionModal = ({agreementId,handleClose,type}:PropType) => {
     const [startDate,setStartDate] = useState<any>(format(new Date(Date.now())))
     const [endDate,setEndDate] = useState<any>(format(getTomorrow(new Date(Date.now()))));
     const [observation,setObservation] = useState<any>('');
-    const dispatch = useAppDispatch();
+    const showSnackbar = useSnackbarStore((s) => s.showSnackbar);
     const { mutate: executeAgreement } = useExecuteAgreement();
     const handleAgreementExecution = ()=>{
         executeAgreement(
@@ -40,10 +39,10 @@ const ExecutionModal = ({agreementId,handleClose,type}:PropType) => {
                 onSuccess: () => {
                     handleClose()
                     const e = type === 'contract'?'':'e'
-                    dispatch(showSnackbar({message:`${type === 'contract' ?"le contrat":"la convension"} a eté${e} executé${e} avec success`,severty:"success"}))
+                    showSnackbar({message:`${type === 'contract' ?"le contrat":"la convension"} a eté${e} executé${e} avec success`,severty:"success"})
                 },
                 onError: (err:any) => {
-                    dispatch(showSnackbar({message:err?.response?.data?.error ?? "erreur inconnue"}))
+                    showSnackbar({message:err?.response?.data?.error ?? "erreur inconnue"})
                 },
             }
         )

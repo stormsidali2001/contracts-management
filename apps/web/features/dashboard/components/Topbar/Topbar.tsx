@@ -3,7 +3,8 @@
 import { Badge, Button, IconButton, Popover } from '@mui/material'
 import { usePathname } from 'next/navigation'
 import { MouseEvent, useId, useState } from 'react'
-import { useAppSelector } from '@/hooks/redux/hooks'
+import { useAuthStore } from '@/features/auth/store/auth.store';
+import { useNotificationStore } from '@/features/notification/store/notification.store';
 import { BASE_URL } from '@/api/axios'
 import LittleChevronIcon from '@/icons/LittleChevronIcon'
 import NotificationIcon from '@/icons/NotificationIcon'
@@ -12,13 +13,13 @@ import PopoverContent from './PopoverContent/PopoverContent'
 import styles from './Topbar.module.css'
 
 const Topbar = () => {
-  const {notifications} = useAppSelector(state=>state.notification)
+  const notifications = useNotificationStore((s) => s.notifications);
   const pathname = usePathname();
   const popoverId = useId();
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const popoverIdNotification = useId();
   const [anchorElNotification, setAnchorElNotification] = useState<HTMLButtonElement | null>(null);
-  const {user} = useAppSelector(state=>state.auth)
+  const user = useAuthStore((s) => s.user);
   const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
