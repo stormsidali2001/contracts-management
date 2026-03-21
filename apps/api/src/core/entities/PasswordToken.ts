@@ -1,20 +1,16 @@
-import { Column, CreateDateColumn, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
-import { UserEntity } from "./User.entity";
+import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('password_token')
-export class PasswordTokenEntity{
-    @PrimaryGeneratedColumn()
-    id:string;
+export class PasswordTokenEntity {
+  @PrimaryGeneratedColumn()
+  id: string;
 
-    @Column()
-    token:string;
+  @Column()
+  token: string;
 
-    @CreateDateColumn()
-    createdAt:Date;
+  @CreateDateColumn()
+  createdAt: Date;
 
-    @Column()
-    expiresIn:Date;
-
-   
-
+  @Column()
+  expiresIn: Date;
 }

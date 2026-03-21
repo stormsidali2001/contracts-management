@@ -2,44 +2,62 @@ import { Injectable } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
 import { PasswordTokenEntity } from 'src/core/entities/PasswordToken';
-import { UserEntity } from 'src/core/entities/User.entity';
+import { UserCredentialsEntity } from 'src/core/entities/UserCredentials.entity';
 import { IUserCredentialsRepository } from './domain/user-credentials.repository';
 import { PasswordToken, UserCredentials } from './domain/user-credentials';
 
 @Injectable()
 export class UserCredentialsRepository implements IUserCredentialsRepository {
   constructor(
-    @InjectRepository(UserEntity)
-    private readonly repo: Repository<UserEntity>,
+    @InjectRepository(UserCredentialsEntity)
+    private readonly repo: Repository<UserCredentialsEntity>,
     @InjectDataSource()
     private readonly dataSource: DataSource,
   ) {}
 
   async save(credentials: UserCredentials): Promise<void> {
     await this.dataSource.transaction(async (manager) => {
-      const userRepo = manager.getRepository(UserEntity);
+      const credRepo = manager.getRepository(UserCredentialsEntity);
       const tokenRepo = manager.getRepository(PasswordTokenEntity);
 
-      const data: Record<string, unknown> = {
-        id: credentials.userId,
-        refresh_token_hash: credentials.refreshTokenHash,
-        password: credentials.passwordHash,
-      };
-
-      await userRepo.save(data as unknown as UserEntity);
+      const existing = await credRepo.findOneBy({ userId: credentials.userId });
+      if (existing) {
+        await credRepo
+          .createQueryBuilder()
+          .update(UserCredentialsEntity)
+          .set({
+            password: credentials.passwordHash,
+            refresh_token_hash: credentials.refreshTokenHash,
+          })
+          .where('userId = :userId', { userId: credentials.userId })
+          .execute();
+      } else {
+        await credRepo
+          .createQueryBuilder()
+          .insert()
+          .into(UserCredentialsEntity)
+          .values({
+            userId: credentials.userId,
+            password: credentials.passwordHash,
+            refresh_token_hash: credentials.refreshTokenHash,
+          })
+          .execute();
+      }
 
       // password_token: undefined = not touched, null = clear, value = set/replace
       if (credentials.passwordToken !== undefined) {
-        const current = await userRepo
-          .createQueryBuilder('u')
-          .leftJoinAndSelect('u.password_token', 'pt')
-          .where('u.id = :id', { id: credentials.userId })
+        const current = await credRepo
+          .createQueryBuilder('c')
+          .leftJoinAndSelect('c.password_token', 'pt')
+          .where('c.userId = :userId', { userId: credentials.userId })
           .getOne();
 
         if (current?.password_token) {
-          await userRepo.update(credentials.userId, {
-            password_token: null as any,
-          });
+          await credRepo
+            .createQueryBuilder()
+            .relation(UserCredentialsEntity, 'password_token')
+            .of(current.id)
+            .set(null);
           await tokenRepo.delete(current.password_token.id);
         }
 
@@ -48,7 +66,11 @@ export class UserCredentialsRepository implements IUserCredentialsRepository {
             token: credentials.passwordToken.token,
             expiresIn: credentials.passwordToken.expiresIn,
           });
-          await userRepo.update(credentials.userId, { password_token: saved });
+          await credRepo
+            .createQueryBuilder()
+            .relation(UserCredentialsEntity, 'password_token')
+            .of(current?.id ?? (await credRepo.findOneBy({ userId: credentials.userId }))!.id)
+            .set(saved);
           credentials.passwordToken.id = saved.id;
         }
       }
@@ -57,10 +79,9 @@ export class UserCredentialsRepository implements IUserCredentialsRepository {
 
   async findByUserId(userId: string): Promise<UserCredentials | null> {
     const entity = await this.repo
-      .createQueryBuilder('u')
-      .select(['u.id', 'u.refresh_token_hash'])
-      .addSelect('u.password')
-      .where('u.id = :userId', { userId })
+      .createQueryBuilder('c')
+      .addSelect('c.password')
+      .where('c.userId = :userId', { userId })
       .getOne();
 
     return entity ? this.toDomain(entity) : null;
@@ -68,9 +89,9 @@ export class UserCredentialsRepository implements IUserCredentialsRepository {
 
   async findByEmail(email: string): Promise<UserCredentials | null> {
     const entity = await this.repo
-      .createQueryBuilder('u')
-      .select(['u.id', 'u.refresh_token_hash'])
-      .addSelect('u.password')
+      .createQueryBuilder('c')
+      .addSelect('c.password')
+      .innerJoin('c.user', 'u')
       .where('u.email = :email', { email })
       .getOne();
 
@@ -79,10 +100,10 @@ export class UserCredentialsRepository implements IUserCredentialsRepository {
 
   async findByEmailWithToken(email: string): Promise<UserCredentials | null> {
     const entity = await this.repo
-      .createQueryBuilder('u')
-      .select(['u.id', 'u.refresh_token_hash'])
-      .addSelect('u.password')
-      .leftJoinAndSelect('u.password_token', 'pt')
+      .createQueryBuilder('c')
+      .addSelect('c.password')
+      .innerJoin('c.user', 'u')
+      .leftJoinAndSelect('c.password_token', 'pt')
       .where('u.email = :email', { email })
       .getOne();
 
@@ -91,17 +112,16 @@ export class UserCredentialsRepository implements IUserCredentialsRepository {
 
   async findByUserIdWithToken(userId: string): Promise<UserCredentials | null> {
     const entity = await this.repo
-      .createQueryBuilder('u')
-      .select(['u.id', 'u.refresh_token_hash'])
-      .addSelect('u.password')
-      .leftJoinAndSelect('u.password_token', 'pt')
-      .where('u.id = :userId', { userId })
+      .createQueryBuilder('c')
+      .addSelect('c.password')
+      .leftJoinAndSelect('c.password_token', 'pt')
+      .where('c.userId = :userId', { userId })
       .getOne();
 
     return entity ? this.toDomain(entity) : null;
   }
 
-  private toDomain(entity: UserEntity): UserCredentials {
+  private toDomain(entity: UserCredentialsEntity): UserCredentials {
     const pt = entity.password_token;
     const passwordToken: PasswordToken | null | undefined = pt
       ? { id: pt.id, token: pt.token, expiresIn: pt.expiresIn }
@@ -110,7 +130,7 @@ export class UserCredentialsRepository implements IUserCredentialsRepository {
       : undefined;
 
     return UserCredentials.reconstitute({
-      userId: entity.id,
+      userId: entity.userId,
       passwordHash: (entity as any).password,
       refreshTokenHash: entity.refresh_token_hash ?? null,
       passwordToken,
