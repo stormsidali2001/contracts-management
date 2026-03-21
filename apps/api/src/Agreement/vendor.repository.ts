@@ -5,7 +5,10 @@ import { VendorStatsEntity } from 'src/core/entities/VendorStats.entity';
 import { AgreementType } from 'src/core/types/agreement-type.enum';
 import { PaginationResponse } from 'src/core/types/paginationResponse.interface';
 import { DataSource, Repository } from 'typeorm';
-import { IVendorRepository, VendorWithCounts } from './domain/vendor.repository';
+import {
+  IVendorRepository,
+  VendorWithCounts,
+} from './domain/vendor.repository';
 import { Vendor } from './domain/vendor';
 
 @Injectable()
@@ -52,14 +55,15 @@ export class VendorRepository implements IVendorRepository {
       };
       const created = await vendorRepo.save(data as unknown as VendorEntity);
 
-      const statsDb = await statsRepo.findOneBy({ date: statsDate });
+      const dateOnly = statsDate.toISOString().slice(0, 10);
+      const statsDb = await statsRepo.findOneBy({ date: dateOnly as any });
       if (statsDb) {
         await statsRepo.update(
           { id: statsDb.id },
           { nb_vendors: () => 'nb_vendors + 1' },
         );
       } else {
-        await statsRepo.save({ date: statsDate, nb_vendors: 1 });
+        await statsRepo.save({ date: dateOnly as any, nb_vendors: 1 });
       }
 
       return this.toDomain(created);
@@ -91,7 +95,9 @@ export class VendorRepository implements IVendorRepository {
     return entity ? this.toDomain(entity) : null;
   }
 
-  async findByIdWithRelationCounts(id: string): Promise<VendorWithCounts | null> {
+  async findByIdWithRelationCounts(
+    id: string,
+  ): Promise<VendorWithCounts | null> {
     const entity = await this.repo
       .createQueryBuilder('vendor')
       .where('vendor.id = :id', { id })
@@ -145,22 +151,15 @@ export class VendorRepository implements IVendorRepository {
     orderBy?: string,
     searchQuery?: string,
   ): Promise<PaginationResponse<Vendor>> {
-    let query = this.repo
-      .createQueryBuilder('vendor')
-      .skip(offset)
-      .take(limit);
+    let query = this.repo.createQueryBuilder('vendor').skip(offset).take(limit);
 
     if (searchQuery && searchQuery.length >= 2) {
       query = query
         .where(
           `MATCH(vendor.company_name) AGAINST ('${searchQuery}' IN BOOLEAN MODE)`,
         )
-        .orWhere(
-          `MATCH(vendor.nif) AGAINST ('${searchQuery}' IN BOOLEAN MODE)`,
-        )
-        .orWhere(
-          `MATCH(vendor.nrc) AGAINST ('${searchQuery}' IN BOOLEAN MODE)`,
-        )
+        .orWhere(`MATCH(vendor.nif) AGAINST ('${searchQuery}' IN BOOLEAN MODE)`)
+        .orWhere(`MATCH(vendor.nrc) AGAINST ('${searchQuery}' IN BOOLEAN MODE)`)
         .orWhere(
           `MATCH(vendor.address) AGAINST ('${searchQuery}' IN BOOLEAN MODE)`,
         )

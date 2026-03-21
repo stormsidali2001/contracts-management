@@ -6,7 +6,6 @@ import {
   Index,
   CreateDateColumn,
   OneToMany,
-  OneToOne,
   JoinColumn,
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
@@ -14,7 +13,6 @@ import { UserRole } from '../types/UserRole.enum';
 import { DepartementEntity } from './Departement.entity';
 import { DirectionEntity } from './Direction.entity';
 import { NotificationEntity } from './Notification.entity';
-import { PasswordTokenEntity } from './PasswordToken';
 
 @Entity('users')
 //fulltext
@@ -40,10 +38,6 @@ export class UserEntity {
   @Column()
   email: string;
 
-  @Exclude()
-  @Column({ select: false })
-  password: string;
-
   @Column()
   username: string;
 
@@ -59,10 +53,6 @@ export class UserEntity {
   @Column({ default: true })
   active: boolean;
 
-  @Exclude()
-  @Column({ nullable: true })
-  refresh_token_hash: string;
-
   @Column({
     type: 'enum',
     enum: UserRole,
@@ -75,27 +65,22 @@ export class UserEntity {
 
   @CreateDateColumn({ type: 'datetime' })
   created_at: Date;
+
   //relations
   @Column({ name: 'departementId', nullable: true })
   departementId: string;
-  @ManyToOne((type) => DepartementEntity, (dp) => dp.employees)
+  @ManyToOne(() => DepartementEntity, (dp) => dp.employees)
   @JoinColumn({ name: 'departementId' })
   departement: DepartementEntity;
 
   @Column({ name: 'directionId', nullable: true })
   directionId: string;
 
-  @ManyToOne((type) => DirectionEntity, (dr) => dr.employees)
+  @ManyToOne(() => DirectionEntity, (dr) => dr.employees)
   @JoinColumn({ name: 'directionId' })
   direction: DirectionEntity;
 
   @Exclude()
-  @OneToMany((type) => NotificationEntity, (n) => n.user)
+  @OneToMany(() => NotificationEntity, (n) => n.user)
   notifications: NotificationEntity[];
-
-  @Exclude()
-  @OneToOne((type) => PasswordTokenEntity)
-  @JoinColumn()
-  password_token: PasswordTokenEntity;
 }
-

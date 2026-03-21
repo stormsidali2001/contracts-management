@@ -23,13 +23,7 @@ export class UserView {
   direction?: any;
 
   static from(source: UserLike): UserView {
-    const {
-      password: _p,
-      refresh_token_hash: _r,
-      password_token: _pt,
-      notifications: _n,
-      ...safe
-    } = source as any;
+    const { notifications: _n, ...safe } = source as any;
     return Object.assign(new UserView(), stripPrivateKeys(safe));
   }
 

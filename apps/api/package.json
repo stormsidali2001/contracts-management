@@ -18,7 +18,13 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "seed:directions": "ts-node -r tsconfig-paths/register src/seed/seed.ts directions",
+    "seed:vendors": "ts-node -r tsconfig-paths/register src/seed/seed.ts vendors",
+    "seed:users": "ts-node -r tsconfig-paths/register src/seed/seed.ts users",
+    "seed:agreements": "ts-node -r tsconfig-paths/register src/seed/seed.ts agreements",
+    "seed:accounts": "ts-node -r tsconfig-paths/register src/seed/seed.ts accounts",
+    "seed:all": "ts-node -r tsconfig-paths/register src/seed/seed.ts all"
   },
   "dependencies": {
     "@nestjs/common": "^11.1.16",
@@ -63,6 +69,7 @@
     "uuid": "^9.0.0"
   },
   "devDependencies": {
+    "@faker-js/faker": "^7.5.0",
     "@nestjs/cli": "^9.0.0",
     "@nestjs/schematics": "^9.0.0",
     "@nestjs/testing": "^11.1.16",
