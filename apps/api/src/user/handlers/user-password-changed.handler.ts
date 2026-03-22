@@ -2,10 +2,10 @@ import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
 import { Inject, Injectable } from '@nestjs/common';
 import { Entity } from 'src/core/types/entity.enum';
 import { Operation } from 'src/core/types/operation.enum';
-import { EventService } from 'src/Event/services/Event.service';
+import { EventService } from 'src/Event/application/Event.service';
 import { SocketStateService } from 'src/socket/SocketState.service';
 import { IUserRepository, USER_REPOSITORY } from '../domain/user.repository';
-import { UserNotificationService } from '../user-notification.service';
+import { UserNotificationService } from '../application/user-notification.service';
 import { UserPasswordChangedEvent } from '../domain/events/user-password-changed.event';
 
 @Injectable()

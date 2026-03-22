@@ -1,6 +1,6 @@
 import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { UserService } from 'src/user/user.service';
+import { UserService } from 'src/user/application/user.service';
 import { JwtPayload } from '../types/JwtPayload.interface';
 import { REQUIRED_ROLES_KEY } from '../decorators/RequiredRoles.decorator';
 

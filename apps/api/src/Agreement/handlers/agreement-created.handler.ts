@@ -4,11 +4,11 @@ import { AgreementType } from 'src/core/types/agreement-type.enum';
 import { Entity } from 'src/core/types/entity.enum';
 import { Operation } from 'src/core/types/operation.enum';
 import { UserRole } from 'src/core/types/UserRole.enum';
-import { EventService } from 'src/Event/services/Event.service';
+import { EventService } from 'src/Event/application/Event.service';
 import { SocketStateService } from 'src/socket/SocketState.service';
-import { DirectionService } from 'src/direction/services/direction.service';
-import { UserService } from 'src/user/user.service';
-import { UserNotificationService } from 'src/user/user-notification.service';
+import { DirectionService } from 'src/direction/application/direction.service';
+import { UserService } from 'src/user/application/user.service';
+import { UserNotificationService } from 'src/user/application/user-notification.service';
 import {
   IVendorRepository,
   VENDOR_REPOSITORY,
@@ -33,14 +33,14 @@ export class AgreementCreatedHandler
   async handle(event: AgreementCreatedEvent): Promise<void> {
     const { agreementId, type, departementId, directionId, vendorId } = event;
 
-    const [vendor, orgInfo] = await Promise.all([
+    const [vendor, direction] = await Promise.all([
       this.vendorRepository.findById(vendorId),
-      this.directionService.findWithDepartement(directionId, departementId),
+      this.directionService.find(directionId),
     ]);
 
     const vendorName = vendor?.company_name ?? '';
-    const deptAbriviation = orgInfo?.departements[0]?.abriviation ?? '';
-    const dirAbriviation = orgInfo?.abriviation ?? '';
+    const deptAbriviation = direction?.departements.find((d) => d.id === departementId)?.abriviation ?? '';
+    const dirAbriviation = direction?.abriviation ?? '';
     const extraMessage = `au ${deptAbriviation} de ${dirAbriviation}`;
     const isContract = type === AgreementType.CONTRACT;
     const typeLabel = isContract

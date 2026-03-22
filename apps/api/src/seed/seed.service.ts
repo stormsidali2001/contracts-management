@@ -1,9 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { faker } from '@faker-js/faker';
-import { DirectionService } from 'src/direction/services/direction.service';
-import { VendorService } from 'src/Agreement/services/vendor.service';
-import { AgreementService } from 'src/Agreement/services/Agreement.service';
-import { AuthService } from 'src/auth/auth.service';
+import { DirectionService } from 'src/direction/application/direction.service';
+import { VendorService } from 'src/Agreement/application/vendor.service';
+import { AgreementService } from 'src/Agreement/application/Agreement.service';
+import { AuthService } from 'src/auth/application/auth.service';
 import { UserRole } from 'src/core/types/UserRole.enum';
 import { AgreementType } from 'src/core/types/agreement-type.enum';
 import { AgreementStatus } from 'src/core/types/agreement-status.enum';

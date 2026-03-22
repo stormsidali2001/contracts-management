@@ -16,7 +16,9 @@ import {
   LoginUserDTO,
   ResetPasswordDTO,
 } from 'src/core/dtos/user.dto';
-import { AuthService } from './auth.service';
+import { AuthService } from './application/auth.service';
+import { UserView } from '@contracts/types';
+import { UserMapper } from 'src/core/mappers/user.mapper';
 import { ApiTags } from '@nestjs/swagger';
 import { JwtAccessTokenGuard } from './guards/jwt-access-token.guard';
 import { UserRole } from 'src/core/types/UserRole.enum';
@@ -38,7 +40,8 @@ export class AuthController {
   @UseGuards(JwtAccessTokenGuard)
   @Post('register')
   async registerUser(@Body() newUser: CreateUserDTO) {
-    return await this.authService.register(newUser);
+    const result = await this.authService.register(newUser);
+    return UserMapper.from(result);
   }
 
   @Post('login')
@@ -107,7 +110,8 @@ export class AuthController {
   //testing routes
   @Post('register/test')
   async registerUserTest(@Body() newUser: CreateUserDTO) {
-    return await this.authService.register(newUser);
+    const result = await this.authService.register(newUser);
+    return UserMapper.from(result);
   }
 }
 

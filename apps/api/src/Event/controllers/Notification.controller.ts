@@ -2,8 +2,9 @@ import { Controller, Get, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { CurrentUserId } from 'src/auth/decorators/currentUserId.decorator';
 import { JwtAccessTokenGuard } from 'src/auth/guards/jwt-access-token.guard';
-import { NotificationView } from 'src/core/views/notification.view';
-import { UserNotificationService } from 'src/user/user-notification.service';
+import { NotificationView } from '@contracts/types';
+import { NotificationMapper } from 'src/core/mappers/notification.mapper';
+import { UserNotificationService } from 'src/user/application/user-notification.service';
 
 @ApiTags('notifications')
 @Controller('notifications')
@@ -17,6 +18,7 @@ export class NotificationController {
   async getUserNotifications(
     @CurrentUserId() userId: string,
   ): Promise<NotificationView[]> {
-    return this.userNotificationService.getUserNotifications(userId);
+    const result = await this.userNotificationService.getUserNotifications(userId);
+    return NotificationMapper.fromMany(result);
   }
 }
