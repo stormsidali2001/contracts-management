@@ -1,11 +1,4 @@
-import {
-  Injectable,
-  InternalServerErrorException,
-  BadRequestException,
-  ForbiddenException,
-  Inject,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { EventBus } from '@nestjs/cqrs';
 import { v4 as uuid } from 'uuid';
 import {
@@ -22,6 +15,11 @@ import {
   IUserRepository,
   USER_REPOSITORY,
 } from './domain/user.repository';
+import {
+  ConflictError,
+  ForbiddenError,
+  NotFoundError,
+} from 'src/shared/domain/errors';
 
 @Injectable()
 export class UserService {
@@ -42,9 +40,9 @@ export class UserService {
         directionId,
         departementId,
       );
-      if (!direction) throw new BadRequestException('direction not found');
+      if (!direction) throw new NotFoundError('direction not found');
       const dept = direction.departements[0];
-      if (!dept) throw new BadRequestException('departement is not in direction');
+      if (!dept) throw new NotFoundError('departement is not in direction');
       directionData = { id: direction.id, abriviation: direction.abriviation };
       departementData = { id: dept.id, abriviation: dept.abriviation };
     }
@@ -75,11 +73,7 @@ export class UserService {
     email: string;
     username: string;
   }): Promise<User | null> {
-    try {
-      return this.userRepository.findByEmailOrUsername(email, username);
-    } catch (err) {
-      throw new InternalServerErrorException(err);
-    }
+    return this.userRepository.findByEmailOrUsername(email, username);
   }
 
   // Used by auth guards and socket adapters that only need basic user fields
@@ -118,7 +112,7 @@ export class UserService {
   ): Promise<UserView> {
     const currentUser = await this.userRepository.findById(currentUserId);
     if (!currentUser)
-      throw new InternalServerErrorException('connected user not found');
+      throw new NotFoundError('connected user not found');
 
     const duplicate = await this.userRepository
       .findByEmailOrUsername(dto.email ?? '', dto.username ?? '')
@@ -127,11 +121,11 @@ export class UserService {
         return this.userRepository.findProfileById(u.id);
       });
 
-    if (!duplicate) throw new NotFoundException("l'utilisateur n'existe pas");
+    if (!duplicate) throw new NotFoundError("l'utilisateur n'existe pas");
     if (currentUser.role !== UserRole.ADMIN && duplicate.id !== currentUser.id)
-      throw new ForbiddenException('permission denied');
+      throw new ForbiddenError('permission denied');
     if (duplicate.id !== id)
-      throw new ForbiddenException("username et l'email   exists deja");
+      throw new ConflictError("username et l'email exists deja");
 
     const user = await this.userRepository.findById(id);
     if (!dto.imageUrl) delete dto.imageUrl;
@@ -172,7 +166,7 @@ export class UserService {
 
   async deleteUser(userId: string): Promise<void> {
     const profile = await this.userRepository.findProfileById(userId);
-    if (!profile) throw new NotFoundException("l'utilisateur n'est pas trouvé");
+    if (!profile) throw new NotFoundError("l'utilisateur n'est pas trouvé");
 
     const user = await this.userRepository.findById(userId);
     user.recordDeleted(

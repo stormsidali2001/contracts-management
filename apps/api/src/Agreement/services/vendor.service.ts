@@ -1,9 +1,4 @@
-import {
-  Injectable,
-  ForbiddenException,
-  Inject,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { EventBus } from '@nestjs/cqrs';
 import { v4 as uuid } from 'uuid';
 import { CreateVendorDTO, UpdateVendorDTO } from 'src/core/dtos/vendor.dto';
@@ -16,6 +11,11 @@ import {
   IVendorRepository,
   VENDOR_REPOSITORY,
 } from '../domain/vendor.repository';
+import {
+  ConflictError,
+  ForbiddenError,
+  NotFoundError,
+} from 'src/shared/domain/errors';
 
 @Injectable()
 export class VendorService {
@@ -51,9 +51,7 @@ export class VendorService {
       uniques,
     );
     if (existing)
-      throw new ForbiddenException(
-        'nif , nrc , company_name  ,num doit etre unique',
-      );
+      throw new ConflictError('nif , nrc , company_name  ,num doit etre unique');
 
     const newVendor = Vendor.create({
       id: uuid(),
@@ -115,12 +113,10 @@ export class VendorService {
       uniques,
     );
     if (duplicate && duplicate.id !== id)
-      throw new ForbiddenException(
-        'nif , nrc , company_name  ,num doit etre unique',
-      );
+      throw new ConflictError('nif , nrc , company_name  ,num doit etre unique');
 
     const vendor = await this.vendorRepository.findById(id);
-    if (!vendor) throw new NotFoundException('fournisseur non trouvé');
+    if (!vendor) throw new NotFoundError('fournisseur non trouvé');
     vendor.update({
       address,
       home_phone_number,
@@ -149,11 +145,11 @@ export class VendorService {
       vendorId,
     );
 
-    if (!result) throw new NotFoundException('fournisseur non trouvé');
+    if (!result) throw new NotFoundError('fournisseur non trouvé');
     const { vendor, agreementCount } = result;
 
     if (!vendor.canBeDeleted(agreementCount))
-      throw new NotFoundException(
+      throw new ForbiddenError(
         `le fournisseur ne peut pas etre supprimer car il a ${agreementCount} accords`,
       );
 

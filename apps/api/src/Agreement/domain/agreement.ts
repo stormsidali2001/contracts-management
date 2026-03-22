@@ -1,6 +1,6 @@
 import { AgreementStatus } from 'src/core/types/agreement-status.enum';
 import { AgreementType } from 'src/core/types/agreement-type.enum';
-import { BadRequestException } from '@nestjs/common';
+import { ValidationError } from 'src/shared/domain/errors';
 import { AggregateRoot } from 'src/shared/domain/aggregate-root';
 import { AgreementCreatedEvent } from './events/agreement-created.event';
 import { AgreementExecutedEvent } from './events/agreement-executed.event';
@@ -130,10 +130,10 @@ export class Agreement extends AggregateRoot {
   /** Validates execution dates and sets execution fields. */
   execute(startDate: Date, endDate: Date, observation: string): void {
     if (new Date(startDate) >= new Date(endDate)) {
-      throw new BadRequestException("l'intervalle d'execution est non valide");
+      throw new ValidationError("l'intervalle d'execution est non valide");
     }
     if (new Date(startDate) < new Date(this.signature_date)) {
-      throw new BadRequestException(
+      throw new ValidationError(
         "la date de debut d'execution dout etre supperieur ou rgale a la date de signature",
       );
     }
