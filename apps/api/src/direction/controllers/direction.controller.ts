@@ -1,7 +1,8 @@
 import {Controller,Post,Body, Query, Get, ParseIntPipe, Delete,Param,Put, UseGuards} from '@nestjs/common';
 import { CreateDirectionDTO, updateDirectionDTO } from 'src/core/dtos/direction.dto';
-import { DirectionView } from 'src/core/views/direction.view';
-import { DirectionService } from '../services/direction.service';
+import { DirectionView } from '@contracts/types';
+import { DirectionMapper } from 'src/core/mappers/direction.mapper';
+import { DirectionService } from '../application/direction.service';
 import {ApiTags} from '@nestjs/swagger';
 import { JwtAccessTokenGuard } from 'src/auth/guards/jwt-access-token.guard';
 import { RoleGuard } from 'src/auth/guards/Role.guard';
@@ -19,31 +20,37 @@ export class DirectionController{
     @UseGuards(JwtAccessTokenGuard,RoleGuard)
     @Post('')
     async createDirection(@Body() direction:CreateDirectionDTO){
-        return await this.directionService.createDirection(direction)
+        const result = await this.directionService.createDirection(direction);
+        return DirectionMapper.from(result);
     }
 
     @UseGuards(JwtAccessTokenGuard)
     @Get('')
     async findAll(@Query('offset') offset:number ,@Query('limit') limit:number ):Promise<DirectionView[]>{
-        return await this.directionService.findAll(offset,limit);
-    }   
+        const result = await this.directionService.findAll(offset,limit);
+        return DirectionMapper.fromMany(result);
+    }
+
     @RequiredRoles(UserRole.ADMIN)
     @UseGuards(JwtAccessTokenGuard,RoleGuard)
     @Delete(':id')
     async deleteDirection(@Param('id') id:string): Promise<string>{
         return await this.directionService.deleteDirection(id);
     }
+
     @RequiredRoles(UserRole.ADMIN)
     @UseGuards(JwtAccessTokenGuard,RoleGuard)
     @Put(':id')
     async updateDirection(@Param('id') id:string,@Body() direction:updateDirectionDTO):Promise<DirectionView>{
-        return await this.directionService.updateDirection(id,direction)
+        const result = await this.directionService.updateDirection(id,direction);
+        return DirectionMapper.from(result);
     }
 
     /**Testing routes */
     @Post('/test')
     async createDirectionTest(@Body() direction:CreateDirectionDTO){
         console.log("...........................",JSON.stringify(direction))
-        return await this.directionService.createDirection(direction)
+        const result = await this.directionService.createDirection(direction);
+        return DirectionMapper.from(result);
     }
 }

@@ -24,15 +24,6 @@ export interface IDirectionRepository {
     abriviation: string,
   ): Promise<Direction | null>;
 
-  /**
-   * Load a direction that contains a specific departement.
-   * Used when assigning a user or agreement to a direction+departement pair.
-   */
-  findWithDepartement(
-    directionId: string,
-    departementId: string,
-  ): Promise<Direction | null>;
-
   findAll(offset: number, limit: number): Promise<Direction[]>;
 
   /** Loads directions with their agreement count for the stats use-case. */

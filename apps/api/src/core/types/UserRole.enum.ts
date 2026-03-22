@@ -1,6 +1,1 @@
-export enum UserRole {
-  EMPLOYEE = 'EMPLOYEE',
-  JURIDICAL = 'JURIDICAL',
-  ADMIN = 'ADMIN',
-}
-
+export { UserRole } from '@contracts/types';

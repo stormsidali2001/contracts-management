@@ -1,7 +1,7 @@
 import { UserRole } from 'src/core/types/UserRole.enum';
 import { PaginationResponse } from 'src/core/types/paginationResponse.interface';
 import { StatsParamsDTO } from 'src/statistics/models/statsPramsDTO.interface';
-import { User } from './user';
+import { User } from './user.aggregate';
 
 /**
  * Read model — assembles user data with org info for views.

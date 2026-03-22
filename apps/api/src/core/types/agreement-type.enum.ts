@@ -1,4 +1,1 @@
-export enum AgreementType{
-    CONTRACT = 'contract',
-    CONVENSION = 'convension'
-}
+export { AgreementType } from '@contracts/types';

@@ -2,9 +2,9 @@ import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
 import { Injectable } from '@nestjs/common';
 import { Entity } from 'src/core/types/entity.enum';
 import { Operation } from 'src/core/types/operation.enum';
-import { EventService } from 'src/Event/services/Event.service';
+import { EventService } from 'src/Event/application/Event.service';
 import { SocketStateService } from 'src/socket/SocketState.service';
-import { VendorService } from '../services/vendor.service';
+import { VendorService } from '../application/vendor.service';
 import { VendorDeletedEvent } from '../domain/events/vendor-deleted.event';
 
 @Injectable()

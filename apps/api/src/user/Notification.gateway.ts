@@ -10,10 +10,10 @@ import {
 } from '@nestjs/websockets';
 import { Namespace } from 'socket.io';
 import { SocketWithJwtPayload } from 'src/auth/types/JwtPayload.interface';
-import { EventService } from 'src/Event/services/Event.service';
+import { EventService } from 'src/Event/application/Event.service';
 import { SocketStateService } from 'src/socket/SocketState.service';
-import { UserNotificationService } from 'src/user/user-notification.service';
-import { UserService } from './user.service';
+import { UserNotificationService } from 'src/user/application/user-notification.service';
+import { UserService } from './application/user.service';
 
 @WebSocketGateway({
   namespace: 'notifications',

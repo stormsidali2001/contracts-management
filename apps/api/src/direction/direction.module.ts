@@ -6,10 +6,10 @@ import { DirectionEntity } from 'src/core/entities/Direction.entity';
 import { VendorEntity } from 'src/core/entities/Vendor.entity';
 import { DepartementController } from './controllers/departement.controller';
 import { DirectionController } from './controllers/direction.controller';
-import { DirectionRepository } from './direction.repository';
+import { DirectionRepository } from './infrastructure/direction.repository';
 import { DIRECTION_REPOSITORY } from './domain/direction.repository';
-import { DepartementService } from './services/departement.service';
-import { DirectionService } from './services/direction.service';
+import { DepartementService } from './application/departement.service';
+import { DirectionService } from './application/direction.service';
 
 @Module({
   imports: [

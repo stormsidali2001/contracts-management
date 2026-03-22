@@ -10,7 +10,7 @@ import { RoleGuard } from 'src/auth/guards/Role.guard';
 import { UserRole } from 'src/core/types/UserRole.enum';
 import { imageStorageConfig, isFileExtensionSafe, removeFile } from 'src/shared/utils/image-storage.config';
 import { FileUploadDto } from '../dto/file-upload.dto';
-import { UserService } from '../user.service';
+import { UserService } from '../application/user.service';
 interface ImageUploadResponse{
     filename:string;
 }

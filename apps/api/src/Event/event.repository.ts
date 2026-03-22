@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CreateEventDTO } from 'src/core/entities/event.dto';
 import { EventEntity } from 'src/core/entities/Event.entity';
 import { UserEntity } from 'src/core/entities/User.entity';
-import { User } from 'src/user/domain/user';
+import { User } from 'src/user/domain/user.aggregate';
 import { Entity } from 'src/core/types/entity.enum';
 import { UserRole } from 'src/core/types/UserRole.enum';
 import { Repository } from 'typeorm';

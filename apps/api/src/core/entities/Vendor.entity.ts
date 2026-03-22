@@ -71,4 +71,3 @@ export class VendorEntity {
   @OneToMany((type) => AgreementEntity, (ag) => ag.vendor)
   agreements: AgreementEntity[];
 }
-

@@ -1,6 +1,1 @@
-export enum Operation {
-    INSERT = 'INSERT',
-    UPDATE = 'UPDATE',
-    DELETE = 'DELETE',
-    EXECUTE = 'EXECUTE'
-}
+export { Operation } from '@contracts/types';

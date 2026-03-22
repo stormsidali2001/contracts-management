@@ -2,7 +2,7 @@ import { AgreementType } from 'src/core/types/agreement-type.enum';
 import { FindAllAgreementsDTO } from 'src/core/dtos/agreement.dto';
 import { PaginationResponse } from 'src/core/types/paginationResponse.interface';
 import { UserRole } from 'src/core/types/UserRole.enum';
-import { Agreement } from './agreement';
+import { Agreement } from './agreement.aggregate';
 
 /**
  * Read model — assembles agreement data with relation info for detail views.
