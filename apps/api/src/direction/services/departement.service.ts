@@ -1,4 +1,4 @@
-import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { v4 as uuid } from 'uuid';
 import {
   CreateDepartementDTO,
@@ -9,6 +9,7 @@ import {
   DIRECTION_REPOSITORY,
   IDirectionRepository,
 } from '../domain/direction.repository';
+import { NotFoundError } from 'src/shared/domain/errors';
 
 @Injectable()
 export class DepartementService {
@@ -20,9 +21,7 @@ export class DepartementService {
   async createDepartement(dto: CreateDepartementDTO): Promise<DepartementView> {
     const direction = await this.directionRepository.findById(dto.directionId);
     if (!direction)
-      throw new BadRequestException(
-        'une erreur lors de la creation de departement',
-      );
+      throw new NotFoundError('une erreur lors de la creation de departement');
 
     const newId = uuid();
     direction.addDepartement(newId, dto.title, dto.abriviation);
@@ -36,7 +35,7 @@ export class DepartementService {
   ): Promise<DepartementView> {
     const direction = await this.directionRepository.findByDepartementId(id);
     if (!direction)
-      throw new BadRequestException("le departement n'existe pas.");
+      throw new NotFoundError("le departement n'existe pas.");
 
     direction.updateDepartement(id, dto.title, dto.abriviation);
     await this.directionRepository.save(direction);
@@ -46,7 +45,7 @@ export class DepartementService {
   async deleteDepartement(id: string): Promise<string> {
     const direction = await this.directionRepository.findByDepartementId(id);
     if (!direction)
-      throw new BadRequestException("le departement n'existe pas.");
+      throw new NotFoundError("le departement n'existe pas.");
 
     direction.removeDepartement(id);
     await this.directionRepository.save(direction);

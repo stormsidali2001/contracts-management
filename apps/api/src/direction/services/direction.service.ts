@@ -1,4 +1,4 @@
-import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { v4 as uuid } from 'uuid';
 import {
   CreateDirectionDTO,
@@ -11,6 +11,11 @@ import {
   DIRECTION_REPOSITORY,
   IDirectionRepository,
 } from '../domain/direction.repository';
+import {
+  ConflictError,
+  ForbiddenError,
+  NotFoundError,
+} from 'src/shared/domain/errors';
 
 @Injectable()
 export class DirectionService {
@@ -27,7 +32,7 @@ export class DirectionService {
       dto.abriviation,
     );
     if (existing)
-      throw new BadRequestException(
+      throw new ConflictError(
         "l'abriviation ou le nom de la direction exist deja",
       );
 
@@ -71,9 +76,9 @@ export class DirectionService {
 
   async deleteDirection(id: string): Promise<string> {
     const direction = await this.directionRepository.findById(id);
-    if (!direction) throw new BadRequestException('la direction éxiste pas');
+    if (!direction) throw new NotFoundError('la direction éxiste pas');
     if (!direction.canBeDeleted())
-      throw new BadRequestException(
+      throw new ForbiddenError(
         "l'un des departement de la direction contient des utilisateurs",
       );
     await this.directionRepository.delete(id);
@@ -85,7 +90,7 @@ export class DirectionService {
     dto: updateDirectionDTO,
   ): Promise<DirectionView> {
     const direction = await this.directionRepository.findById(id);
-    if (!direction) throw new BadRequestException('la direction éxiste pas');
+    if (!direction) throw new NotFoundError('la direction éxiste pas');
     direction.rename(dto.title, direction.abriviation);
     const saved = await this.directionRepository.save(direction);
     return DirectionView.from(saved);

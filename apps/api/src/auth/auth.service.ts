@@ -1,12 +1,4 @@
-import {
-  BadRequestException,
-  ForbiddenException,
-  Inject,
-  Injectable,
-  InternalServerErrorException,
-  NotFoundException,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { EventBus } from '@nestjs/cqrs';
 import {
   ConnectedUserResetPassword,
@@ -30,6 +22,13 @@ import { UserPasswordChangedEvent } from 'src/user/domain/events/user-password-c
 import { HashService } from './services/hash.service';
 import { TokenService } from './services/token.service';
 import { EmailService } from 'src/shared/email/email.service';
+import {
+  ConflictError,
+  ForbiddenError,
+  NotFoundError,
+  UnauthorizedError,
+  ValidationError,
+} from 'src/shared/domain/errors';
 
 @Injectable()
 export class AuthService {
@@ -58,7 +57,7 @@ export class AuthService {
         if (emailsMatch) msg += ',\n';
         msg += "le nom d'utilisateur est deja pris";
       }
-      throw new BadRequestException(msg);
+      throw new ConflictError(msg);
     }
     if (!newUser.username) {
       newUser.username = newUser.firstName + uuidv4();
@@ -91,103 +90,91 @@ export class AuthService {
   }
 
   async login(user: LoginUserDTO) {
-    try {
-      const userDb = await this.userService.findByEmailOrUsername({
-        email: user.email,
-        username: user.username,
-      });
+    const userDb = await this.userService.findByEmailOrUsername({
+      email: user.email,
+      username: user.username,
+    });
 
-      if (!userDb) {
-        throw new BadRequestException("l'email n'existe pas");
-      }
-
-      const credentials = await this.credentialsRepository.findByEmail(
-        userDb.email,
-      );
-      if (!credentials) {
-        throw new BadRequestException("l'email n'existe pas");
-      }
-
-      const matches = await this.hashService.compare(
-        user.password,
-        credentials.passwordHash,
-      );
-      if (!matches) {
-        throw new BadRequestException('mauvais mot de passe');
-      }
-      if (!userDb.active)
-        throw new BadRequestException('ce compte a eté désactivé.');
-
-      const jwtPayload: JwtPayload = {
-        email: userDb.email,
-        username: userDb.username,
-        sub: userDb.id,
-        firstName: userDb.firstName,
-        lastName: userDb.lastName,
-        imageUrl: userDb.imageUrl,
-        role: userDb.role,
-        recieve_notifications: userDb.recieve_notifications,
-      };
-      const tokens = await this.tokenService.generateTokens(jwtPayload);
-
-      const refreshHash = await this.hashService.hash(tokens.refresh_token);
-      credentials.setRefreshToken(refreshHash);
-      await this.credentialsRepository.save(credentials);
-
-      return tokens;
-    } catch (err) {
-      throw new ForbiddenException(err);
+    if (!userDb) {
+      throw new NotFoundError("l'email n'existe pas");
     }
+
+    const credentials = await this.credentialsRepository.findByEmail(
+      userDb.email,
+    );
+    if (!credentials) {
+      throw new NotFoundError("l'email n'existe pas");
+    }
+
+    const matches = await this.hashService.compare(
+      user.password,
+      credentials.passwordHash,
+    );
+    if (!matches) {
+      throw new ValidationError('mauvais mot de passe');
+    }
+    if (!userDb.active)
+      throw new ForbiddenError('ce compte a eté désactivé.');
+
+    const jwtPayload: JwtPayload = {
+      email: userDb.email,
+      username: userDb.username,
+      sub: userDb.id,
+      firstName: userDb.firstName,
+      lastName: userDb.lastName,
+      imageUrl: userDb.imageUrl,
+      role: userDb.role,
+      recieve_notifications: userDb.recieve_notifications,
+    };
+    const tokens = await this.tokenService.generateTokens(jwtPayload);
+
+    const refreshHash = await this.hashService.hash(tokens.refresh_token);
+    credentials.setRefreshToken(refreshHash);
+    await this.credentialsRepository.save(credentials);
+
+    return tokens;
   }
 
   async verifyAccessToken(userId: string): Promise<{ role: UserRole }> {
-    try {
-      const user = await this.userService.findBy({ id: userId });
-      return { role: user.role };
-    } catch (err) {
-      throw new InternalServerErrorException(err);
-    }
+    const user = await this.userService.findBy({ id: userId });
+    return { role: user.role };
   }
 
   async refresh_token(id: string, refresh_token: string) {
-    try {
-      const [userDb, credentials] = await Promise.all([
-        this.userService.findBy({ id }),
-        this.credentialsRepository.findByUserId(id),
-      ]);
+    const [userDb, credentials] = await Promise.all([
+      this.userService.findBy({ id }),
+      this.credentialsRepository.findByUserId(id),
+    ]);
 
-      if (!userDb || !credentials?.refreshTokenHash) {
-        throw new ForbiddenException('user deleted or logged out');
-      }
-
-      const equal = await this.hashService.compare(
-        refresh_token,
-        credentials.refreshTokenHash,
-      );
-      if (!equal) {
-        throw new ForbiddenException('old token');
-      }
-
-      const jwtPayload: JwtPayload = {
-        email: userDb.email,
-        username: userDb.username,
-        sub: userDb.id,
-        firstName: userDb.firstName,
-        lastName: userDb.lastName,
-        imageUrl: userDb.imageUrl,
-        role: userDb.role,
-        recieve_notifications: userDb.recieve_notifications,
-      };
-      const tokens = await this.tokenService.generateTokens(jwtPayload);
-
-      const refreshHash = await this.hashService.hash(tokens.refresh_token);
-      credentials.setRefreshToken(refreshHash);
-      await this.credentialsRepository.save(credentials);
-
-      return tokens;
-    } catch (err) {
-      throw new InternalServerErrorException(err);
+    if (!userDb || !credentials?.refreshTokenHash) {
+      throw new ForbiddenError('user deleted or logged out');
     }
+
+    const equal = await this.hashService.compare(
+      refresh_token,
+      credentials.refreshTokenHash,
+    );
+    if (!equal) {
+      throw new ForbiddenError('old token');
+    }
+
+    const jwtPayload: JwtPayload = {
+      email: userDb.email,
+      username: userDb.username,
+      sub: userDb.id,
+      firstName: userDb.firstName,
+      lastName: userDb.lastName,
+      imageUrl: userDb.imageUrl,
+      role: userDb.role,
+      recieve_notifications: userDb.recieve_notifications,
+    };
+    const tokens = await this.tokenService.generateTokens(jwtPayload);
+
+    const refreshHash = await this.hashService.hash(tokens.refresh_token);
+    credentials.setRefreshToken(refreshHash);
+    await this.credentialsRepository.save(credentials);
+
+    return tokens;
   }
 
   async logout(userId: string) {
@@ -201,7 +188,7 @@ export class AuthService {
     const credentials =
       await this.credentialsRepository.findByEmailWithToken(email);
     if (!credentials) {
-      throw new NotFoundException(
+      throw new NotFoundError(
         "l'utilisateur associe a ce email n'est pas touvee ",
       );
     }
@@ -232,24 +219,21 @@ export class AuthService {
     const credentials =
       await this.credentialsRepository.findByUserIdWithToken(userId);
     if (!credentials) {
-      throw new NotFoundException(
+      throw new NotFoundError(
         "l'utilisateur associe a ce email n'est pas touvee ",
       );
     }
 
     const passwordToken = credentials.passwordToken;
     if (!passwordToken) {
-      throw new UnauthorizedException('access denied (token absence)');
+      throw new UnauthorizedError('access denied (token absence)');
     }
-    const matches = await this.hashService.compare(
-      token,
-      passwordToken.token,
-    );
+    const matches = await this.hashService.compare(token, passwordToken.token);
     if (!matches) {
-      throw new UnauthorizedException('access denied (compare))');
+      throw new UnauthorizedError('access denied (compare))');
     }
     if (new Date(Date.now()) > passwordToken.expiresIn) {
-      throw new UnauthorizedException(
+      throw new UnauthorizedError(
         'votre demande de re-initialization a expiré',
       );
     }
@@ -267,13 +251,13 @@ export class AuthService {
     userId: string,
   ) {
     const credentials = await this.credentialsRepository.findByUserId(userId);
-    if (!credentials) throw new BadRequestException("couldn't find user");
+    if (!credentials) throw new NotFoundError("couldn't find user");
 
     const matches = await this.hashService.compare(
       actualPassword,
       credentials.passwordHash,
     );
-    if (!matches) throw new UnauthorizedException('mot de passe icorrect');
+    if (!matches) throw new ValidationError('mot de passe icorrect');
 
     const hashed_password = await this.hashService.hash(password);
     credentials.resetPassword(hashed_password);

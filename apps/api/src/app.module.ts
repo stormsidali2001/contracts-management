@@ -7,6 +7,7 @@ import { AuthModule } from './auth/auth.module';
 import { DirectionModule } from './direction/direction.module';
 import { EventModule } from './Event/Event.module';
 import { HttpExceptionFilter } from './shared/HttpException.filter';
+import { DomainExceptionFilter } from './shared/domain-exception.filter';
 import { HttpLoggingInteceptor } from './shared/HttpLogging.interceptor';
 import { UserModule } from './user/user.module';
 import { SocketStateModule } from './socket/SocketState.module';
@@ -38,6 +39,7 @@ import { StatisticsModule } from './statistics/statistics.module';
   providers: [
     { provide: APP_INTERCEPTOR, useClass: HttpLoggingInteceptor },
     { provide: APP_FILTER, useClass: HttpExceptionFilter },
+    { provide: APP_FILTER, useClass: DomainExceptionFilter },
   ],
 })
 export class AppModule {}

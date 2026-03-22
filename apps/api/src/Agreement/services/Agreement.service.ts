@@ -1,7 +1,5 @@
 import {
   Injectable,
-  BadRequestException,
-  NotFoundException,
   Inject,
 } from '@nestjs/common';
 import { EventBus } from '@nestjs/cqrs';
@@ -22,6 +20,11 @@ import {
 } from '../domain/agreement.repository';
 import { VendorService } from './vendor.service';
 import { v4 as uuid } from 'uuid';
+import {
+  ConflictError,
+  NotFoundError,
+  ValidationError,
+} from 'src/shared/domain/errors';
 
 @Injectable()
 export class AgreementService {
@@ -38,7 +41,7 @@ export class AgreementService {
     const { directionId, departementId, vendorId, ...agreementData } = dto;
 
     if (agreementData.signature_date > agreementData.expiration_date) {
-      throw new BadRequestException(
+      throw new ValidationError(
         "la date d'expiration de contrat doit etre apres la date de la signature",
       );
     }
@@ -48,17 +51,17 @@ export class AgreementService {
       this.vendorService.findBy({ id: vendorId }),
     ]);
 
-    if (!direction) throw new BadRequestException('direction not found');
+    if (!direction) throw new NotFoundError('direction not found');
     const departement =
       direction.departements.length > 0 ? direction.departements[0] : null;
     if (!departement)
-      throw new BadRequestException('departement is not in direction');
-    if (!vendor) throw new BadRequestException('cound not find the vendor');
+      throw new NotFoundError('departement is not in direction');
+    if (!vendor) throw new NotFoundError('cound not find the vendor');
 
     const existing = await this.agreementRepository.findOneByNumber(
       agreementData.number,
     );
-    if (existing) throw new BadRequestException('le numero est deja reserver');
+    if (existing) throw new ConflictError('le numero est deja reserver');
 
     const agreement = Agreement.create({
       id: uuid(),
@@ -113,7 +116,7 @@ export class AgreementService {
       agreementId,
     );
     if (!agreement) {
-      throw new NotFoundException("l'accord specifiee n'es pas touvee");
+      throw new NotFoundError("l'accord specifiee n'es pas touvee");
     }
 
     agreement.execute(execution_start_date, execution_end_date, observation);
@@ -123,5 +126,4 @@ export class AgreementService {
 
     return AgreementView.from(saved);
   }
-
 }

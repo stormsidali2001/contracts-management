@@ -1,4 +1,9 @@
 import { Departement } from './departement';
+import {
+  ConflictError,
+  ForbiddenError,
+  NotFoundError,
+} from 'src/shared/domain/errors';
 
 export class Direction {
   readonly id: string;
@@ -52,7 +57,7 @@ export class Direction {
 
   addDepartement(id: string, title: string, abriviation: string): void {
     if (this.hasConflict(title, abriviation)) {
-      throw new Error(
+      throw new ConflictError(
         'un departement avec les memes identifiant exist deja dans cette direction',
       );
     }
@@ -67,7 +72,7 @@ export class Direction {
     abriviation: string,
   ): void {
     const dp = this._departements.find((d) => d.id === departementId);
-    if (!dp) throw new Error("le departement n'existe pas");
+    if (!dp) throw new NotFoundError("le departement n'existe pas");
 
     if (
       this._departements.some(
@@ -76,7 +81,7 @@ export class Direction {
           (d.title === title || d.abriviation === abriviation),
       )
     ) {
-      throw new Error(
+      throw new ConflictError(
         'un departement avec les memes identifiant exist deja dans cette direction',
       );
     }
@@ -86,9 +91,9 @@ export class Direction {
 
   removeDepartement(departementId: string): void {
     const dp = this._departements.find((d) => d.id === departementId);
-    if (!dp) throw new Error("le departement n'existe pas.");
+    if (!dp) throw new NotFoundError("le departement n'existe pas.");
     if (dp.hasEmployees())
-      throw new Error(
+      throw new ForbiddenError(
         'vous ne pouvez pas supprimer le departement car il contient des utilisateurs',
       );
     this._departements = this._departements.filter(
