@@ -34,8 +34,7 @@ export class DepartementService {
     dto: UpdateDepartementDTO,
   ): Promise<Departement> {
     const direction = await this.directionRepository.findByDepartementId(id);
-    if (!direction)
-      throw new NotFoundError("le departement n'existe pas.");
+    if (!direction) throw new NotFoundError("le departement n'existe pas.");
 
     direction.updateDepartement(id, dto.title, dto.abriviation);
     await this.directionRepository.save(direction);
@@ -44,8 +43,7 @@ export class DepartementService {
 
   async deleteDepartement(id: string): Promise<string> {
     const direction = await this.directionRepository.findByDepartementId(id);
-    if (!direction)
-      throw new NotFoundError("le departement n'existe pas.");
+    if (!direction) throw new NotFoundError("le departement n'existe pas.");
 
     direction.removeDepartement(id);
     await this.directionRepository.save(direction);

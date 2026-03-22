@@ -2,27 +2,45 @@ import { VendorService } from './vendor.service';
 import { IVendorRepository } from '../domain/vendor.repository';
 import { Vendor } from '../domain/vendor.aggregate';
 import { VendorStatsRepository } from '../infrastructure/vendor-stats.repository';
-import { ConflictError, ForbiddenError, NotFoundError } from '../../shared/domain/errors';
+import {
+  ConflictError,
+  ForbiddenError,
+  NotFoundError,
+} from '../../shared/domain/errors';
 
 // ── Typed mock factory ───────────────────────────────────────────────────────
 
 function mockOf<T>(methods: (keyof T)[]): jest.Mocked<T> {
-  return Object.fromEntries(methods.map((m) => [m, jest.fn()])) as jest.Mocked<T>;
+  return Object.fromEntries(
+    methods.map((m) => [m, jest.fn()]),
+  ) as jest.Mocked<T>;
 }
 
 // ── Fixtures ─────────────────────────────────────────────────────────────────
 
 function makeVendor(): Vendor {
   return Vendor.reconstitute({
-    id: 'vendor-1', num: 'V-001', company_name: 'Acme', nif: 'NIF-1', nrc: 'NRC-1',
-    address: '1 St', mobile_phone_number: '055', home_phone_number: '021', createdAt: new Date(),
+    id: 'vendor-1',
+    num: 'V-001',
+    company_name: 'Acme',
+    nif: 'NIF-1',
+    nrc: 'NRC-1',
+    address: '1 St',
+    mobile_phone_number: '055',
+    home_phone_number: '021',
+    createdAt: new Date(),
   });
 }
 
 function makeCreateDto(overrides: Record<string, unknown> = {}) {
   return {
-    num: 'V-001', company_name: 'Acme', nif: 'NIF-1', nrc: 'NRC-1',
-    address: '1 St', mobile_phone_number: '055', home_phone_number: '021',
+    num: 'V-001',
+    company_name: 'Acme',
+    nif: 'NIF-1',
+    nrc: 'NRC-1',
+    address: '1 St',
+    mobile_phone_number: '055',
+    home_phone_number: '021',
     createdAt: new Date(),
     ...overrides,
   };
@@ -42,9 +60,14 @@ describe('VendorService', () => {
 
   beforeEach(() => {
     vendorRepo = mockOf<IVendorRepository>([
-      'save', 'delete', 'findById', 'findByUniqueCondition',
-      'findByIdWithRelationCounts', 'findByIdWithAgreementCount',
-      'findPaginated', 'getVendorStats',
+      'save',
+      'delete',
+      'findById',
+      'findByUniqueCondition',
+      'findByIdWithRelationCounts',
+      'findByIdWithAgreementCount',
+      'findPaginated',
+      'getVendorStats',
     ]);
     statsRepo = { incrementForDate: jest.fn().mockResolvedValue(undefined) };
     eventBus = { publishAll: jest.fn() };
@@ -83,7 +106,9 @@ describe('VendorService', () => {
       it('throws ConflictError when a vendor with same unique fields exists', async () => {
         vendorRepo.findByUniqueCondition.mockResolvedValue(makeVendor());
 
-        await expect(service.createVendor(makeCreateDto() as any)).rejects.toThrow(ConflictError);
+        await expect(
+          service.createVendor(makeCreateDto() as any),
+        ).rejects.toThrow(ConflictError);
         expect(vendorRepo.save).not.toHaveBeenCalled();
         expect(statsRepo.incrementForDate).not.toHaveBeenCalled();
       });
@@ -92,7 +117,9 @@ describe('VendorService', () => {
         vendorRepo.findByUniqueCondition.mockResolvedValue(null);
         vendorRepo.save.mockRejectedValue(new Error('db error'));
 
-        await expect(service.createVendor(makeCreateDto() as any)).rejects.toThrow('db error');
+        await expect(
+          service.createVendor(makeCreateDto() as any),
+        ).rejects.toThrow('db error');
       });
     });
   });
@@ -122,15 +149,22 @@ describe('VendorService', () => {
         vendorRepo.findByUniqueCondition.mockResolvedValue(null);
         vendorRepo.findById.mockResolvedValue(null);
 
-        await expect(service.updateVendor('missing', makeUpdateDto() as any)).rejects.toThrow(NotFoundError);
+        await expect(
+          service.updateVendor('missing', makeUpdateDto() as any),
+        ).rejects.toThrow(NotFoundError);
         expect(vendorRepo.save).not.toHaveBeenCalled();
       });
 
       it('throws ConflictError when unique fields conflict with a different vendor', async () => {
-        const otherVendor = Vendor.reconstitute({ ...makeVendor(), id: 'vendor-2' } as any);
+        const otherVendor = Vendor.reconstitute({
+          ...makeVendor(),
+          id: 'vendor-2',
+        } as any);
         vendorRepo.findByUniqueCondition.mockResolvedValue(otherVendor);
 
-        await expect(service.updateVendor('vendor-1', makeUpdateDto() as any)).rejects.toThrow(ConflictError);
+        await expect(
+          service.updateVendor('vendor-1', makeUpdateDto() as any),
+        ).rejects.toThrow(ConflictError);
         expect(vendorRepo.save).not.toHaveBeenCalled();
       });
     });
@@ -158,7 +192,9 @@ describe('VendorService', () => {
       it('throws NotFoundError when vendor does not exist', async () => {
         vendorRepo.findByIdWithAgreementCount.mockResolvedValue(null);
 
-        await expect(service.deleteVendor('missing')).rejects.toThrow(NotFoundError);
+        await expect(service.deleteVendor('missing')).rejects.toThrow(
+          NotFoundError,
+        );
         expect(vendorRepo.delete).not.toHaveBeenCalled();
       });
 
@@ -168,7 +204,9 @@ describe('VendorService', () => {
           agreementCount: 3,
         });
 
-        await expect(service.deleteVendor('vendor-1')).rejects.toThrow(ForbiddenError);
+        await expect(service.deleteVendor('vendor-1')).rejects.toThrow(
+          ForbiddenError,
+        );
         expect(vendorRepo.delete).not.toHaveBeenCalled();
       });
     });

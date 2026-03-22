@@ -16,7 +16,7 @@ export class UserCredentialsEntity {
   @Column({ name: 'userId', unique: true })
   userId: string;
 
-  @OneToOne(() => UserEntity)
+  @OneToOne(() => UserEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'userId' })
   user: UserEntity;
 
