@@ -2,16 +2,20 @@ import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
 import { Injectable } from '@nestjs/common';
 import { Entity } from 'src/core/types/entity.enum';
 import { Operation } from 'src/core/types/operation.enum';
-import { UserNotificationService } from 'src/user/user-notification.service';
+import { EventService } from 'src/Event/services/Event.service';
+import { SocketStateService } from 'src/socket/SocketState.service';
 import { VendorUpdatedEvent } from '../domain/events/vendor-updated.event';
 
 @Injectable()
 @EventsHandler(VendorUpdatedEvent)
 export class VendorUpdatedHandler implements IEventHandler<VendorUpdatedEvent> {
-  constructor(private readonly notificationService: UserNotificationService) {}
+  constructor(
+    private readonly eventService: EventService,
+    private readonly socketStateService: SocketStateService,
+  ) {}
 
   async handle(event: VendorUpdatedEvent): Promise<void> {
-    await this.notificationService.sendEventToAllUsers({
+    const eventParams = {
       entity: Entity.VENDOR,
       operation: Operation.UPDATE,
       entityId: event.vendorId,
@@ -20,6 +24,8 @@ export class VendorUpdatedHandler implements IEventHandler<VendorUpdatedEvent> {
       directionId: null,
       departementId: null,
       directionAbriviation: '',
-    });
+    };
+    await this.eventService.addEvent(eventParams);
+    this.socketStateService.emitConnected(eventParams, 'SEND_EVENT');
   }
 }

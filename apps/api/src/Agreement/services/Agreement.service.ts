@@ -10,13 +10,9 @@ import {
   ExecuteAgreementDTO,
   FindAllAgreementsDTO,
 } from 'src/core/dtos/agreement.dto';
-import { User } from 'src/user/domain/user';
-import { UserEntity } from 'src/core/entities/User.entity';
-import { AgreementStatus } from 'src/core/types/agreement-status.enum';
 import { AgreementType } from 'src/core/types/agreement-type.enum';
 import { PaginationResponse } from 'src/core/types/paginationResponse.interface';
 import { DirectionService } from 'src/direction/services/direction.service';
-import { StatsParamsDTO } from 'src/statistics/models/statsPramsDTO.interface';
 import { UserService } from 'src/user/user.service';
 import { AgreementView } from 'src/core/views/agreement.view';
 import { Agreement } from '../domain/agreement';
@@ -128,45 +124,4 @@ export class AgreementService {
     return AgreementView.from(saved);
   }
 
-  async getAgreementsStats(
-    { startDate, endDate }: StatsParamsDTO,
-    user: UserEntity | User,
-  ) {
-    const status = await this.agreementRepository.getStatusStats(
-      user.role,
-      user.departementId,
-      user.directionId,
-      startDate,
-      endDate,
-    );
-
-    const statusReponse = {};
-    Object.values(AgreementStatus).forEach((v) => {
-      statusReponse[v] = 0;
-    });
-    status.forEach((st) => {
-      statusReponse[st.status] = parseInt(st.total);
-    });
-
-    const types = await this.agreementRepository.getTypeStats(
-      user.role,
-      user.departementId,
-      user.directionId,
-    );
-
-    const typesResponse = {};
-    Object.values(AgreementType).forEach((v) => {
-      typesResponse[v] = 0;
-    });
-    types.forEach((t) => {
-      typesResponse[t.type] = parseInt(t.total);
-    });
-
-    const topDirections = await this.directionService.getTopDirection();
-    return {
-      status: statusReponse,
-      types: typesResponse,
-      topDirections,
-    };
-  }
 }

@@ -8,7 +8,7 @@ import {
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets';
-import { Namespace, Socket } from 'socket.io';
+import { Namespace } from 'socket.io';
 import { SocketWithJwtPayload } from 'src/auth/types/JwtPayload.interface';
 import { EventService } from 'src/Event/services/Event.service';
 import { SocketStateService } from 'src/socket/SocketState.service';
@@ -35,19 +35,29 @@ export class NotificationsGateWay
     this.socketStateService.notificationServer = server;
   }
 
-  handleConnection(client: SocketWithJwtPayload, ...args: any[]) {
-    const sockets = this.io.sockets;
-    //@ts-ignore
-    this.logger.log(`Client connected: socketid: ${client.id} `);
-
-    this.logger.debug(`
-            Number of connected sockets is : ${sockets.size}
-        `);
+  async handleConnection(client: SocketWithJwtPayload) {
+    if (client.user) {
+      const userDb = await this.userService.findBy({ id: client.user.sub });
+      if (userDb) {
+        // Role room (admin | juridical | employee)
+        client.join(userDb.role);
+        // Per-user room for direct notifications
+        client.join(`user:${userDb.id}`);
+        // Departement room for org-scoped events
+        if (userDb.departementId) {
+          client.join(`dept:${userDb.departementId}`);
+        }
+      }
+    }
+    this.logger.log(
+      `Client connected: ${client.id} — sockets: ${this.io.sockets.size}`,
+    );
   }
-  handleDisconnect(client: any) {
-    const sockets = this.io.sockets;
-    this.logger.log(`Client disconnected: ${client.id}`);
-    this.logger.debug(`Number of connected sockets is : ${sockets.size}`);
+
+  handleDisconnect(client: SocketWithJwtPayload) {
+    this.logger.log(
+      `Client disconnected: ${client.id} — sockets: ${this.io.sockets.size}`,
+    );
   }
 
   @SubscribeMessage('request_all_notifications')

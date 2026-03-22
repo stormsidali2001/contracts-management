@@ -86,7 +86,10 @@ export class User extends AggregateRoot {
     return new User(props);
   }
 
-  recordCreated(departementAbriviation: string, directionAbriviation: string): void {
+  recordCreated(
+    departementAbriviation: string,
+    directionAbriviation: string,
+  ): void {
     this.addEvent(
       new UserCreatedEvent(
         this.id,
@@ -100,7 +103,10 @@ export class User extends AggregateRoot {
     );
   }
 
-  recordUpdated(departementAbriviation: string, directionAbriviation: string): void {
+  recordUpdated(
+    departementAbriviation: string,
+    directionAbriviation: string,
+  ): void {
     this.addEvent(
       new UserUpdatedEvent(
         this.id,
@@ -114,7 +120,10 @@ export class User extends AggregateRoot {
     );
   }
 
-  recordDeleted(departementAbriviation: string, directionAbriviation: string): void {
+  recordDeleted(
+    departementAbriviation: string,
+    directionAbriviation: string,
+  ): void {
     this.addEvent(
       new UserDeletedEvent(
         this.id,

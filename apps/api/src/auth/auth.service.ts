@@ -8,7 +8,6 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { EventBus } from '@nestjs/cqrs';
-import * as bcrypt from 'bcrypt';
 import {
   ConnectedUserResetPassword,
   CreateUserDTO,
@@ -19,66 +18,30 @@ import {
 import { UserService } from 'src/user/user.service';
 import { UserView } from 'src/core/views/user.view';
 import { JwtPayload } from './types/JwtPayload.interface';
-import { JwtService } from '@nestjs/jwt';
-import { ConfigService } from '@nestjs/config';
-import { Tokens } from './types/tokens.interface';
 import { UserRole } from 'src/core/types/UserRole.enum';
 import { randomBytes } from 'crypto';
 import { v4 as uuidv4 } from 'uuid';
-import * as nodemailer from 'nodemailer';
 import {
   IUserCredentialsRepository,
   USER_CREDENTIALS_REPOSITORY,
 } from './domain/user-credentials.repository';
 import { UserCredentials } from './domain/user-credentials';
 import { UserPasswordChangedEvent } from 'src/user/domain/events/user-password-changed.event';
+import { HashService } from './services/hash.service';
+import { TokenService } from './services/token.service';
+import { EmailService } from 'src/shared/email/email.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly userService: UserService,
-    private readonly jwtService: JwtService,
-    private readonly configService: ConfigService,
+    private readonly hashService: HashService,
+    private readonly tokenService: TokenService,
+    private readonly emailService: EmailService,
     @Inject(USER_CREDENTIALS_REPOSITORY)
     private readonly credentialsRepository: IUserCredentialsRepository,
     private readonly eventBus: EventBus,
   ) {}
-
-  async #hashPassword(password: string): Promise<string> {
-    return bcrypt.hash(password, 12);
-  }
-
-  async #comparePassword(
-    password: string,
-    passwordDb: string,
-  ): Promise<boolean> {
-    return bcrypt.compare(password, passwordDb);
-  }
-
-  async #generateTokens(jwtPayload: JwtPayload): Promise<Tokens> {
-    const [access_token, refresh_token] = await Promise.all([
-      this.jwtService.signAsync(
-        { user: jwtPayload },
-        {
-          secret: this.configService.get<string>('JWT_ACCESS_TOKEN_SECRET'),
-          expiresIn: this.configService.get<number>(
-            'JWT_ACCESS_TOKEN_EXPIRES_IN',
-          ),
-        },
-      ),
-      this.jwtService.signAsync(
-        { user: jwtPayload },
-        {
-          secret: this.configService.get<string>('JWT_REFRESH_TOKEN_SECRET'),
-          expiresIn: this.configService.get<number>(
-            'JWT_REFRESH_TOKEN_EXPIRES_IN',
-          ),
-        },
-      ),
-    ]);
-
-    return { access_token, refresh_token };
-  }
 
   async register(newUser: CreateUserDTO): Promise<UserView> {
     const userDb = await this.userService.findByEmailOrUsername({
@@ -102,7 +65,7 @@ export class AuthService {
     }
 
     const passwordHash = newUser.password
-      ? await this.#hashPassword(newUser.password)
+      ? await this.hashService.hash(newUser.password)
       : await new Promise<string>((resolve, reject) => {
           randomBytes(32, (err, buf) => {
             if (err) reject(err);
@@ -145,7 +108,7 @@ export class AuthService {
         throw new BadRequestException("l'email n'existe pas");
       }
 
-      const matches = await this.#comparePassword(
+      const matches = await this.hashService.compare(
         user.password,
         credentials.passwordHash,
       );
@@ -155,7 +118,7 @@ export class AuthService {
       if (!userDb.active)
         throw new BadRequestException('ce compte a eté désactivé.');
 
-      const tokens = await this.#generateTokens({
+      const jwtPayload: JwtPayload = {
         email: userDb.email,
         username: userDb.username,
         sub: userDb.id,
@@ -164,9 +127,10 @@ export class AuthService {
         imageUrl: userDb.imageUrl,
         role: userDb.role,
         recieve_notifications: userDb.recieve_notifications,
-      });
+      };
+      const tokens = await this.tokenService.generateTokens(jwtPayload);
 
-      const refreshHash = await this.#hashPassword(tokens.refresh_token);
+      const refreshHash = await this.hashService.hash(tokens.refresh_token);
       credentials.setRefreshToken(refreshHash);
       await this.credentialsRepository.save(credentials);
 
@@ -196,7 +160,7 @@ export class AuthService {
         throw new ForbiddenException('user deleted or logged out');
       }
 
-      const equal = await bcrypt.compare(
+      const equal = await this.hashService.compare(
         refresh_token,
         credentials.refreshTokenHash,
       );
@@ -204,7 +168,7 @@ export class AuthService {
         throw new ForbiddenException('old token');
       }
 
-      const tokens = await this.#generateTokens({
+      const jwtPayload: JwtPayload = {
         email: userDb.email,
         username: userDb.username,
         sub: userDb.id,
@@ -213,9 +177,10 @@ export class AuthService {
         imageUrl: userDb.imageUrl,
         role: userDb.role,
         recieve_notifications: userDb.recieve_notifications,
-      });
+      };
+      const tokens = await this.tokenService.generateTokens(jwtPayload);
 
-      const refreshHash = await this.#hashPassword(tokens.refresh_token);
+      const refreshHash = await this.hashService.hash(tokens.refresh_token);
       credentials.setRefreshToken(refreshHash);
       await this.credentialsRepository.save(credentials);
 
@@ -248,13 +213,17 @@ export class AuthService {
       });
     });
 
-    const hashed_token = await this.#hashPassword(token);
+    const hashed_token = await this.hashService.hash(token);
     credentials.requestPasswordReset(
       hashed_token,
       new Date(Date.now() + 1000 * 60 * 15),
     );
     await this.credentialsRepository.save(credentials);
-    await this.#sendEmail(email, credentials.userId, token);
+    await this.emailService.sendPasswordResetEmail(
+      email,
+      credentials.userId,
+      token,
+    );
 
     return 'sent';
   }
@@ -272,7 +241,10 @@ export class AuthService {
     if (!passwordToken) {
       throw new UnauthorizedException('access denied (token absence)');
     }
-    const matches = await bcrypt.compare(token, passwordToken.token);
+    const matches = await this.hashService.compare(
+      token,
+      passwordToken.token,
+    );
     if (!matches) {
       throw new UnauthorizedException('access denied (compare))');
     }
@@ -282,29 +254,12 @@ export class AuthService {
       );
     }
 
-    const hashed_password = await this.#hashPassword(password);
+    const hashed_password = await this.hashService.hash(password);
     credentials.resetPassword(hashed_password); // also clears passwordToken
     await this.credentialsRepository.save(credentials);
     this.eventBus.publish(new UserPasswordChangedEvent(userId));
 
     return 'done';
-  }
-
-  async #sendEmail(email: string, userId: string, token: string) {
-    const transporter = nodemailer.createTransport({
-      service: 'Gmail',
-      auth: {
-        user: this.configService.get('ethereal_user'),
-        pass: this.configService.get('ethereal_password'),
-      },
-    });
-
-    await transporter.sendMail({
-      from: '"bmt" <assoulsidali@gmail.com>',
-      to: email,
-      subject: 'Mot de pasee oublié',
-      html: `<b>vous avez envoyer une demmande de réinitialisation de mot de passe.</b><br/> presser sur le lien si il s'agit bien de vous </b><br/> le lien:  http://localhost:3000/reset-password?token=${token}&userId=${userId}`,
-    });
   }
 
   async connectedUserResetPassword(
@@ -314,13 +269,13 @@ export class AuthService {
     const credentials = await this.credentialsRepository.findByUserId(userId);
     if (!credentials) throw new BadRequestException("couldn't find user");
 
-    const matches = await this.#comparePassword(
+    const matches = await this.hashService.compare(
       actualPassword,
       credentials.passwordHash,
     );
     if (!matches) throw new UnauthorizedException('mot de passe icorrect');
 
-    const hashed_password = await this.#hashPassword(password);
+    const hashed_password = await this.hashService.hash(password);
     credentials.resetPassword(hashed_password);
     await this.credentialsRepository.save(credentials);
 

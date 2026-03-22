@@ -9,37 +9,35 @@ import { EventModule } from './Event/Event.module';
 import { HttpExceptionFilter } from './shared/HttpException.filter';
 import { HttpLoggingInteceptor } from './shared/HttpLogging.interceptor';
 import { UserModule } from './user/user.module';
-import {SocketStateModule} from './socket/SocketState.module'
+import { SocketStateModule } from './socket/SocketState.module';
 import { StatisticsModule } from './statistics/statistics.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({isGlobal:true}),
+    ConfigModule.forRoot({ isGlobal: true }),
     AuthModule,
     UserModule,
     EventModule,
     StatisticsModule,
     TypeOrmModule.forRoot({
-    username:process.env.MYSQL_USERNAME,
-    password:process.env.MYSQL_PASSWORD,
-    type:"mysql",
-    host:process.env.MYSQL_DATABASE_HOST,
-    port:+process.env.MYSQL_DATABASE_PORT,
-    database:process.env.MYSQL_DATABASE_NAME,
-    synchronize:true,
-    logging:true,
-    autoLoadEntities:true,
-
+      username: process.env.MYSQL_USERNAME,
+      password: process.env.MYSQL_PASSWORD,
+      type: 'mysql',
+      host: process.env.MYSQL_DATABASE_HOST,
+      port: +process.env.MYSQL_DATABASE_PORT,
+      database: process.env.MYSQL_DATABASE_NAME,
+      synchronize: true,
+      logging: false,
+      autoLoadEntities: true,
     }),
-   AgreementModule,
-   DirectionModule,
-   SocketStateModule,
-
-],
+    AgreementModule,
+    DirectionModule,
+    SocketStateModule,
+  ],
   controllers: [],
   providers: [
-    {provide:APP_INTERCEPTOR, useClass:HttpLoggingInteceptor},
-    {provide:APP_FILTER,  useClass:HttpExceptionFilter}
+    { provide: APP_INTERCEPTOR, useClass: HttpLoggingInteceptor },
+    { provide: APP_FILTER, useClass: HttpExceptionFilter },
   ],
 })
 export class AppModule {}

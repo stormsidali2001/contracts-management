@@ -17,7 +17,7 @@ import { useStatistics } from '@/features/statistics/queries/statistics.queries'
 
 import styles from './MainDashboard.module.css';
 
-const fmtDate = (d: any) => (d ? d.toDate().toISOString().replace(/T[0-9:.Z]*/g, '') : null);
+const fmtDate = (d: any) => (d ? d.toDate().toISOString().replace(/T[0-9:.Z]*/g, '') : undefined);
 
 const MainDashboard = () => {
   const isMedium = useMediaQuery('(max-width: 900px)');
