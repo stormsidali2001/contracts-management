@@ -11,8 +11,8 @@ import { Notification } from '@/features/notification/models/Notification.interf
 import { NotificationEvents } from '@/features/notification/models/NotificationEvents';
 import { UserEvent } from '@/features/notification/models/UserEvent.interface';
 import { UserEventsTypes } from '@/features/notification/models/UserEventTypes.enum';
-import { Entity } from '@/features/notification/models/Entity.enum';
-import { Operation } from '@/features/notification/models/Operation.enum';
+import { Statistics } from '@/features/statistics/queries/statistics.queries';
+import { StatsUpdatePayload } from '@/features/notification/models/StatsUpdatePayload.interface';
 
 export function useNotificationSocket() {
   const jwt = useAuthStore((s) => s.jwt);
@@ -78,13 +78,16 @@ export function useNotificationSocket() {
       receiveUserEvent(event);
     });
 
-    socket.on('INCR_USER', (_: { type: Entity; operation: Operation }) => {
+    socket.on('STATS_UPDATE', (update: StatsUpdatePayload) => {
       const { start_date, end_date } = useDateRangeStore.getState();
       if (start_date || end_date) return;
-      queryClient.invalidateQueries({ queryKey: statisticsKeys.all });
+      queryClient.setQueryData(
+        statisticsKeys.detail(undefined, undefined),
+        (old: Statistics | undefined) => (old ? { ...old, ...update } : old),
+      );
     });
 
-    socket.on('INC_AGR', (_: { type: Entity; operation: Operation }) => {
+    socket.on('INC_AGR', () => {
       const { start_date, end_date } = useDateRangeStore.getState();
       if (start_date || end_date) return;
       queryClient.invalidateQueries({ queryKey: statisticsKeys.all });

@@ -25,6 +25,13 @@ export class VendorService {
     private readonly eventBus: EventBus,
   ) {}
 
+  #buildUniquenessCondition(uniques: Record<string, unknown>): string {
+    const keys = Object.keys(uniques).filter((k) => !!uniques[k]);
+    return keys
+      .map((k, i) => `v.${k} = :${k}${i !== keys.length - 1 ? ' or ' : ''}`)
+      .join('');
+  }
+
   async createVendor(vendor: CreateVendorDTO): Promise<VendorView> {
     const {
       address,
@@ -34,15 +41,10 @@ export class VendorService {
       ...uniques
     } = vendor;
 
-    let condition = '';
-    const uniquesKeys = Object.keys(uniques);
-    uniquesKeys.forEach((k, index) => {
+    Object.keys(uniques).forEach((k) => {
       if (!uniques[k]) delete uniques[k];
-      if (uniques[k])
-        condition += `v.${k} = :${k} ${
-          index !== uniquesKeys.length - 1 ? 'or ' : ''
-        }`;
     });
+    const condition = this.#buildUniquenessCondition(uniques);
 
     const existing = await this.vendorRepository.findByUniqueCondition(
       condition,
@@ -103,15 +105,10 @@ export class VendorService {
     const { address, home_phone_number, mobile_phone_number, ...uniques } =
       newVendor;
 
-    let condition = '';
-    const uniquesKeys = Object.keys(uniques);
-    uniquesKeys.forEach((k, index) => {
+    Object.keys(uniques).forEach((k) => {
       if (!uniques[k]) delete uniques[k];
-      if (uniques[k])
-        condition += `v.${k} = :${k} ${
-          index !== uniquesKeys.length - 1 ? 'or ' : ''
-        }`;
     });
+    const condition = this.#buildUniquenessCondition(uniques);
 
     const duplicate = await this.vendorRepository.findByUniqueCondition(
       condition,

@@ -8,11 +8,21 @@ import { AuthService } from './auth.service';
 import { JwtAuthModule } from './jwt-auth.module';
 import { USER_CREDENTIALS_REPOSITORY } from './domain/user-credentials.repository';
 import { UserCredentialsRepository } from './user-credentials.repository';
+import { HashService } from './services/hash.service';
+import { TokenService } from './services/token.service';
+import { EmailModule } from 'src/shared/email/email.module';
 
 @Module({
-  imports: [CqrsModule, JwtAuthModule, TypeOrmModule.forFeature([UserCredentialsEntity, PasswordTokenEntity])],
+  imports: [
+    CqrsModule,
+    JwtAuthModule,
+    EmailModule,
+    TypeOrmModule.forFeature([UserCredentialsEntity, PasswordTokenEntity]),
+  ],
   providers: [
     AuthService,
+    HashService,
+    TokenService,
     {
       provide: USER_CREDENTIALS_REPOSITORY,
       useClass: UserCredentialsRepository,

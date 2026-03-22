@@ -36,5 +36,6 @@ export const useStatistics = (params: StatisticsParams = {}) => {
           },
         })
         .then((r) => r.data),
+    refetchOnWindowFocus: true,
   });
 };

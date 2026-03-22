@@ -7,6 +7,7 @@ import { DirectionEntity } from 'src/core/entities/Direction.entity';
 import { VendorEntity } from 'src/core/entities/Vendor.entity';
 import { VendorStatsEntity } from 'src/core/entities/VendorStats.entity';
 import { DirectionModule } from 'src/direction/direction.module';
+import { EventModule } from 'src/Event/Event.module';
 import { UserModule } from 'src/user/user.module';
 import { AgreementController } from './controllers/Agreement.controller';
 import { AgreementFileController } from './controllers/AgreementFile.controller';
@@ -42,6 +43,7 @@ const eventHandlers = [
       VendorStatsEntity,
     ]),
     DirectionModule,
+    EventModule,
     UserModule,
   ],
   providers: [
@@ -51,7 +53,7 @@ const eventHandlers = [
     VendorService,
     ...eventHandlers,
   ],
-  exports: [AgreementService, VendorService],
+  exports: [AgreementService, VendorService, AGREEMENT_REPOSITORY],
   controllers: [AgreementController, VendorController, AgreementFileController],
 })
 export class AgreementModule {}

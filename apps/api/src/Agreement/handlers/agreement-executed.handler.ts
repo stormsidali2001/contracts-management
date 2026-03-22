@@ -2,8 +2,9 @@ import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
 import { Injectable } from '@nestjs/common';
 import { Entity } from 'src/core/types/entity.enum';
 import { Operation } from 'src/core/types/operation.enum';
+import { EventService } from 'src/Event/services/Event.service';
+import { SocketStateService } from 'src/socket/SocketState.service';
 import { DirectionService } from 'src/direction/services/direction.service';
-import { UserNotificationService } from 'src/user/user-notification.service';
 import { AgreementExecutedEvent } from '../domain/events/agreement-executed.event';
 
 @Injectable()
@@ -13,7 +14,8 @@ export class AgreementExecutedHandler
 {
   constructor(
     private readonly directionService: DirectionService,
-    private readonly notificationService: UserNotificationService,
+    private readonly eventService: EventService,
+    private readonly socketStateService: SocketStateService,
   ) {}
 
   async handle(event: AgreementExecutedEvent): Promise<void> {
@@ -26,18 +28,21 @@ export class AgreementExecutedHandler
     const deptAbriviation = orgInfo?.departements[0]?.abriviation ?? '';
     const dirAbriviation = orgInfo?.abriviation ?? '';
 
-    await this.notificationService.sendNewEventaToConnectedUsersWithContrainsts(
-      {
-        entity: type.toUpperCase() as unknown as Entity,
-        operation: Operation.EXECUTE,
-        entityId: agreementId,
-        departementId,
-        directionId,
-        createdAt: new Date(),
-        departementAbriviation: deptAbriviation,
-        directionAbriviation: dirAbriviation,
-      },
+    const eventParams = {
+      entity: type.toUpperCase() as unknown as Entity,
+      operation: Operation.EXECUTE,
+      entityId: agreementId,
       departementId,
+      directionId,
+      createdAt: new Date(),
+      departementAbriviation: deptAbriviation,
+      directionAbriviation: dirAbriviation,
+    };
+    await this.eventService.addEvent(eventParams);
+    this.socketStateService.emitDataToConnectedUsersWithContrainsts(
+      'SEND_EVENT',
+      departementId,
+      eventParams,
     );
   }
 }

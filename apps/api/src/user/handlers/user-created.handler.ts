@@ -2,8 +2,11 @@ import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
 import { Inject, Injectable } from '@nestjs/common';
 import { Entity } from 'src/core/types/entity.enum';
 import { Operation } from 'src/core/types/operation.enum';
+import { EventService } from 'src/Event/services/Event.service';
+import { SocketStateService } from 'src/socket/SocketState.service';
 import { IUserRepository, USER_REPOSITORY } from '../domain/user.repository';
 import { UserNotificationService } from '../user-notification.service';
+import { UserService } from '../user.service';
 import { UserCreatedEvent } from '../domain/events/user-created.event';
 
 @Injectable()
@@ -13,6 +16,9 @@ export class UserCreatedHandler implements IEventHandler<UserCreatedEvent> {
     @Inject(USER_REPOSITORY)
     private readonly userRepository: IUserRepository,
     private readonly notificationService: UserNotificationService,
+    private readonly userService: UserService,
+    private readonly eventService: EventService,
+    private readonly socketStateService: SocketStateService,
   ) {}
 
   async handle(event: UserCreatedEvent): Promise<void> {
@@ -38,10 +44,14 @@ export class UserCreatedHandler implements IEventHandler<UserCreatedEvent> {
     }));
 
     if (notifications.length > 0) {
-      await this.notificationService.sendNotifications(notifications);
+      await this.notificationService.saveNotifications(notifications);
+      this.socketStateService.emitIfConnected(
+        notifications.map((n) => ({ userId: n.userId, data: n.message })),
+        'send_notification',
+      );
     }
 
-    await this.notificationService.emitDataToAdminsOnly({
+    const eventParams = {
       entity: role as unknown as Entity,
       operation: Operation.INSERT,
       departementId,
@@ -49,11 +59,11 @@ export class UserCreatedHandler implements IEventHandler<UserCreatedEvent> {
       entityId: userId,
       departementAbriviation,
       directionAbriviation,
-    });
+    };
+    await this.eventService.addEvent(eventParams);
+    this.socketStateService.emitDataToAdminsOnly('SEND_EVENT', eventParams);
 
-    await this.notificationService.IncrementUsersStats({
-      type: role as unknown as Entity,
-      operation: Operation.INSERT,
-    });
+    const userTypes = await this.userService.getUserTypesStats({} as any, null as any);
+    this.socketStateService.emitDataToAdminsOnly('STATS_UPDATE', { userTypes });
   }
 }

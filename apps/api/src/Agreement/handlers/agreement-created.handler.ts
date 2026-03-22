@@ -4,6 +4,8 @@ import { AgreementType } from 'src/core/types/agreement-type.enum';
 import { Entity } from 'src/core/types/entity.enum';
 import { Operation } from 'src/core/types/operation.enum';
 import { UserRole } from 'src/core/types/UserRole.enum';
+import { EventService } from 'src/Event/services/Event.service';
+import { SocketStateService } from 'src/socket/SocketState.service';
 import { DirectionService } from 'src/direction/services/direction.service';
 import { UserService } from 'src/user/user.service';
 import { UserNotificationService } from 'src/user/user-notification.service';
@@ -24,6 +26,8 @@ export class AgreementCreatedHandler
     private readonly directionService: DirectionService,
     private readonly userService: UserService,
     private readonly notificationService: UserNotificationService,
+    private readonly eventService: EventService,
+    private readonly socketStateService: SocketStateService,
   ) {}
 
   async handle(event: AgreementCreatedEvent): Promise<void> {
@@ -43,42 +47,63 @@ export class AgreementCreatedHandler
       ? 'un nouveau contrat'
       : 'une nouvelle convension';
 
-    await this.notificationService.sendToUsersInDepartement(
-      departementId,
-      `${typeLabel} est ajoute a votre departement avec le fournisseur: ${vendorName}`,
+    // Dept users — persist notifications, then emit per-user socket
+    const deptMessage = `${typeLabel} est ajoute a votre departement avec le fournisseur: ${vendorName}`;
+    const deptUserIds =
+      await this.notificationService.saveNotificationsForDepartement(
+        departementId,
+        deptMessage,
+      );
+    this.socketStateService.emitIfConnected(
+      deptUserIds.map((userId) => ({ userId, data: deptMessage })),
+      'send_notification',
     );
 
+    // Juridicals — persist notifications, then emit per-user socket
     const juridicals = await this.userService.findAllBy({
       role: UserRole.JURIDICAL,
     });
-    const notifications = juridicals.map((j) => ({
+    const juridicalNotifications = juridicals.map((j) => ({
       message: `${typeLabel} est ajoute ${extraMessage} avec le fournisseur: ${vendorName}`,
       userId: j.id,
     }));
-    if (notifications.length > 0) {
-      await this.notificationService.sendNotifications(notifications);
+    if (juridicalNotifications.length > 0) {
+      await this.notificationService.saveNotifications(juridicalNotifications);
+      this.socketStateService.emitIfConnected(
+        juridicalNotifications.map((n) => ({
+          userId: n.userId,
+          data: n.message,
+        })),
+        'send_notification',
+      );
     }
 
-    await this.notificationService.sendNewEventaToConnectedUsersWithContrainsts(
-      {
-        entity: type.toUpperCase() as unknown as Entity,
-        operation: Operation.INSERT,
-        entityId: agreementId,
-        departementId,
-        directionId,
-        departementAbriviation: deptAbriviation,
-        directionAbriviation: dirAbriviation,
-        createdAt: new Date(),
-      },
+    // Activity event — persist + broadcast to constrained rooms
+    const eventParams = {
+      entity: type.toUpperCase() as unknown as Entity,
+      operation: Operation.INSERT,
+      entityId: agreementId,
       departementId,
+      directionId,
+      departementAbriviation: deptAbriviation,
+      directionAbriviation: dirAbriviation,
+      createdAt: new Date(),
+    };
+    await this.eventService.addEvent(eventParams);
+    this.socketStateService.emitDataToConnectedUsersWithContrainsts(
+      'SEND_EVENT',
+      departementId,
+      eventParams,
     );
 
-    await this.notificationService.IncrementAgreementsStats(
+    // Stats signal — triggers re-fetch on frontend (agreement stats are role-filtered)
+    this.socketStateService.emitDataToConnectedUsersWithContrainsts(
+      'INC_AGR',
+      departementId,
       {
         operation: Operation.INSERT,
         type: type.toUpperCase() as unknown as Entity,
       },
-      departementId,
     );
   }
 }

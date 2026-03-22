@@ -1,127 +1,61 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { Namespace, Socket } from 'socket.io';
+import { Namespace } from 'socket.io';
 import { UserRole } from 'src/core/types/UserRole.enum';
+import { RedisEmitterService } from './redis-emitter.service';
 
+/**
+ * Thin wrapper that delegates all socket emission to the Redis-backed emitter.
+ * Rooms are joined by the gateway on connect, so targeting is purely room-based
+ * and works across every process that shares the same Redis instance.
+ *
+ * Room convention:
+ *   admin | juridical | employee  — role rooms
+ *   dept:<departementId>          — departement room
+ *   user:<userId>                 — per-user room
+ */
 @Injectable()
 export class SocketStateService {
-  private socketState = new Map<string, Socket[]>();
-  private userMetaData = new Map<
-    string,
-    { departementId: string; role: string }
-  >();
+  private readonly logger = new Logger(SocketStateService.name);
+
+  /** Set by NotificationsGateway.afterInit — used only for local namespace ops. */
   public notificationServer: Namespace = null;
-  constructor() {
-    Logger.debug(`initialized`, 'SocketStateService');
-  }
-  add(
-    userId: string,
-    socket: Socket,
-    params: { departementId: string; role: string } = undefined,
-  ) {
-    const sockets: Socket[] = this.socketState.get(userId) || [];
-    if (sockets.length === 0) {
-      this.userMetaData.set(userId, { ...params });
-    }
-    this.socketState.set(userId, [...sockets, socket]);
-    Logger.debug(
-      `socket :${socket.id} was added to user: ${userId} total sockets:${
-        this.get(userId).length
-      }`,
-      'SocketStateService/add',
-    );
-    return true;
+
+  constructor(private readonly redisEmitter: RedisEmitterService) {}
+
+  /** Broadcast to ALL connected clients. */
+  emitConnected(data: unknown, eventName: string): void {
+    this.logger.debug(`broadcast → ${eventName}`);
+    this.redisEmitter.broadcast(eventName, data);
   }
 
-  remove(userId: string, socket: Socket): boolean {
-    const sockets = this.socketState.get(userId);
-
-    if (!sockets) {
-      return true;
-    }
-
-    const newSockets = sockets.filter((s) => s.id !== socket.id);
-
-    if (!newSockets.length) {
-      this.socketState.delete(userId);
-      this.userMetaData.delete(userId);
-    } else {
-      this.socketState.set(userId, newSockets);
-    }
-
-    Logger.debug(
-      `socket :${socket.id} was removed from  user: ${userId}`,
-      'SocketStateService/remove',
-    );
-
-    return true;
-  }
-  get(userId: string) {
-    return this.socketState.get(userId) || [];
-  }
-  public getAll(): Socket[] {
-    let all = [];
-    this.socketState.forEach((sockets) => {
-      all = [...all, ...sockets];
-    });
-    return all;
+  /** Emit only to admin sockets. */
+  emitDataToAdminsOnly(eventName: string, data: unknown): void {
+    this.logger.debug(`→ admins: ${eventName}`);
+    this.redisEmitter.toRoom(UserRole.ADMIN, eventName, data);
   }
 
-  emitIfConnected(
-    userData: { userId: string; data: any }[],
-    eventName: string,
-  ) {
-    Logger.warn(JSON.stringify(userData), eventName);
-    userData.forEach(({ data, userId }) => {
-      const sockets = this.get(userId);
-      Logger.debug(`user: ${userId} sockets ${sockets.length} `, eventName);
-
-      sockets.forEach((socket, index) => {
-        Logger.debug(
-          `socket ${index + 1} of ${userId} revieved ${data}`,
-          eventName,
-        );
-        this.notificationServer.to(socket.id).emit(eventName, data);
-      });
-    });
-  }
-  emitConnected(data: any, eventName: string) {
-    this.getAll().forEach((socket) => {
-      socket.emit(eventName, data);
-      Logger.debug(`${socket.id} recieved ${JSON.stringify(data)}`, eventName);
-    });
-  }
-
+  /**
+   * Emit to admins, juridicals, AND members of a specific departement.
+   */
   emitDataToConnectedUsersWithContrainsts(
     eventName: string,
     departementId: string,
-    data: any,
-  ) {
-    for (const userId of this.socketState.keys()) {
-      const sockets = this.get(userId);
-      const metaData = this.userMetaData.get(userId);
-
-      if (
-        metaData?.role === UserRole.ADMIN ||
-        metaData?.role === UserRole.JURIDICAL ||
-        metaData?.departementId === departementId
-      ) {
-        sockets.forEach((socket) => {
-          this.notificationServer.to(socket.id).emit(eventName, data);
-        });
-      }
-    }
+    data: unknown,
+  ): void {
+    this.logger.debug(`→ org(${departementId}): ${eventName}`);
+    this.redisEmitter.toRoom(UserRole.ADMIN, eventName, data);
+    this.redisEmitter.toRoom(UserRole.JURIDICAL, eventName, data);
+    this.redisEmitter.toRoom(`dept:${departementId}`, eventName, data);
   }
-  emitDataToAdminsOnly(eventName: string, data: any) {
-    for (const userId of this.socketState.keys()) {
-      const sockets = this.get(userId);
-      const metaData = this.userMetaData.get(userId);
 
-      if (metaData?.role === UserRole.ADMIN) {
-        sockets.forEach((socket) => {
-          this.notificationServer.to(socket.id).emit(eventName, data);
-        });
-      }
-    }
+  /** Send to specific users by userId. */
+  emitIfConnected(
+    userData: { userId: string; data: unknown }[],
+    eventName: string,
+  ): void {
+    userData.forEach(({ userId, data }) => {
+      this.logger.debug(`→ user(${userId}): ${eventName}`);
+      this.redisEmitter.toRoom(`user:${userId}`, eventName, data);
+    });
   }
 }
-
