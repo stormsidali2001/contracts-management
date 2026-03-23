@@ -116,6 +116,10 @@
     "testEnvironment": "node",
     "moduleNameMapper": {
       "^src/(.*)$": "<rootDir>/$1"
-    }
+    },
+    "setupFiles": [
+      "<rootDir>/test-setup.ts"
+    ],
+    "testTimeout": 60000
   }
 }

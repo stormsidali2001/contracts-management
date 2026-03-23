@@ -11,4 +11,3 @@ import { StatisticsService } from './application/statistics.service';
   providers: [StatisticsService],
 })
 export class StatisticsModule {}
-

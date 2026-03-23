@@ -5,7 +5,8 @@ import { ApiTags } from '@nestjs/swagger';
 import { AgreementView } from '@contracts/types';
 import { AgreementMapper } from 'src/core/mappers/agreement.mapper';
 import { AgreementType } from "src/core/types/agreement-type.enum";
-import { CurrentUserId } from "src/auth/decorators/currentUserId.decorator";
+import { CurrentUser } from "src/auth/decorators/currentUser.decorator";
+import { JwtPayload } from "src/auth/types/JwtPayload.interface";
 import { JwtAccessTokenGuard } from "src/auth/guards/jwt-access-token.guard";
 import { RequiredRoles } from "src/auth/decorators/RequiredRoles.decorator";
 import { UserRole } from "src/core/types/UserRole.enum";
@@ -34,9 +35,14 @@ export class AgreementController {
   @Get('')
   async findAll(
     @Query() params: FindAllAgreementsDTO,
-    @CurrentUserId() userId: string,
+    @CurrentUser() user: JwtPayload,
   ) {
-    const result = await this.AgreementService.findAll(params, userId);
+    const result = await this.AgreementService.findAll(
+      params,
+      user.role,
+      user.departementId,
+      user.directionId,
+    );
     return { total: result.total, data: AgreementMapper.fromMany(result.data) };
   }
 

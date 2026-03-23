@@ -1,5 +1,5 @@
 import { PaginationResponse } from 'src/core/types/paginationResponse.interface';
-import { VendorStatsEntity } from 'src/core/entities/VendorStats.entity';
+import { VendorStat } from './vendor-stat';
 import { Vendor } from './vendor.aggregate';
 
 /**
@@ -42,10 +42,7 @@ export interface IVendorRepository {
     searchQuery?: string,
   ): Promise<PaginationResponse<Vendor>>;
 
-  getVendorStats(
-    startDate?: Date,
-    endDate?: Date,
-  ): Promise<VendorStatsEntity[]>;
+  getVendorStats(startDate?: Date, endDate?: Date): Promise<VendorStat[]>;
 }
 
 export const VENDOR_REPOSITORY = Symbol('IVendorRepository');

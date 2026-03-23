@@ -7,8 +7,7 @@ import {
 } from 'src/core/dtos/agreement.dto';
 import { AgreementType } from 'src/core/types/agreement-type.enum';
 import { PaginationResponse } from 'src/core/types/paginationResponse.interface';
-import { DirectionService } from 'src/direction/application/direction.service';
-import { UserService } from 'src/user/application/user.service';
+import { UserRole } from 'src/core/types/UserRole.enum';
 import { Agreement } from '../domain/agreement.aggregate';
 import {
   AgreementDetail,
@@ -29,8 +28,6 @@ export class AgreementService {
     @Inject(AGREEMENT_REPOSITORY)
     private readonly agreementRepository: IAgreementRepository,
     private readonly vendorService: VendorService,
-    private readonly directionService: DirectionService,
-    private readonly userService: UserService,
     private readonly eventBus: EventBus,
   ) {}
 
@@ -43,16 +40,7 @@ export class AgreementService {
       );
     }
 
-    const [direction, vendor] = await Promise.all([
-      this.directionService.find(directionId),
-      this.vendorService.findBy({ id: vendorId }),
-    ]);
-
-    if (!direction) throw new NotFoundError('direction not found');
-    const departement =
-      direction.departements.find((d) => d.id === departementId) ?? null;
-    if (!departement)
-      throw new NotFoundError('departement is not in direction');
+    const vendor = await this.vendorService.findBy({ id: vendorId });
     if (!vendor) throw new NotFoundError('cound not find the vendor');
 
     const existing = await this.agreementRepository.findOneByNumber(
@@ -63,8 +51,8 @@ export class AgreementService {
     const agreement = Agreement.create({
       id: uuid(),
       ...agreementData,
-      directionId: direction.id,
-      departementId: departement.id,
+      directionId,
+      departementId,
       vendorId: vendor.id,
     });
 
@@ -76,16 +64,16 @@ export class AgreementService {
 
   async findAll(
     params: FindAllAgreementsDTO,
-    userId: string,
+    role: string,
+    departementId: string | null,
+    directionId: string | null,
   ): Promise<PaginationResponse<Agreement>> {
-    const user = await this.userService.findBy({ id: userId });
-    const result = await this.agreementRepository.findPaginated(
+    return this.agreementRepository.findPaginated(
       params,
-      user.role,
-      user.departementId,
-      user.directionId,
+      role as UserRole,
+      departementId,
+      directionId,
     );
-    return result;
   }
 
   async findById(

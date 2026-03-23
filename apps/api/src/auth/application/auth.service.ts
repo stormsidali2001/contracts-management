@@ -125,6 +125,8 @@ export class AuthService {
       imageUrl: userDb.imageUrl,
       role: userDb.role,
       recieve_notifications: userDb.recieve_notifications,
+      departementId: userDb.departementId ?? null,
+      directionId: userDb.directionId ?? null,
     };
     const tokens = await this.tokenService.generateTokens(jwtPayload);
 
@@ -167,6 +169,8 @@ export class AuthService {
       imageUrl: userDb.imageUrl,
       role: userDb.role,
       recieve_notifications: userDb.recieve_notifications,
+      departementId: userDb.departementId ?? null,
+      directionId: userDb.directionId ?? null,
     };
     const tokens = await this.tokenService.generateTokens(jwtPayload);
 

@@ -74,24 +74,14 @@ export class UserController {
     @Body() user: UpdateUserDTO,
     @CurrentUserId() currentUserId: string,
   ): Promise<UserView> {
-    const result = await this.userService.updateUserUniqueCheck(
-      id,
-      user,
-      currentUserId,
-    );
+    const result = await this.userService.updateUser(id, user, currentUserId);
     return UserMapper.from(result);
   }
 
   @UseGuards(JwtAccessTokenGuard)
   @Patch('recieve-notifications')
-  async recieveNotifications(
-    @CurrentUserId() userId: string,
-    @Body('recieve_notifications') recieve_notifications: boolean,
-  ) {
-    return await this.userService.recieveNotifications(
-      userId,
-      recieve_notifications,
-    );
+  async recieveNotifications(@CurrentUserId() userId: string) {
+    return await this.userService.recieveNotifications(userId);
   }
 }
 

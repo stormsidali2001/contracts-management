@@ -24,17 +24,17 @@ export class StatisticsService {
 
   async getStats(params: StatsParamsDTO, userId: string) {
     const user = await this.userService.findBy({ id: userId });
-    const [userTypes, vendorsStats, agreementsStats] = await Promise.all([
-      this.userService.getUserTypesStats(params, user),
+    const [userTypesRaw, vendorsStats, agreementsStats] = await Promise.all([
+      this.userService.getUserTypesStats(params),
       this.vendorService.getVendorsStats(params),
       this.getAgreementsStats(params, user),
     ]);
 
-    return {
-      userTypes,
-      vendorsStats,
-      agreementsStats,
-    };
+    const userTypes = { juridical: 0, employee: 0, admin: 0, total: 0 };
+    userTypesRaw.forEach((s) => { userTypes[s.role.toLowerCase()] = s.total; });
+    userTypes.total = userTypes.juridical + userTypes.admin + userTypes.employee;
+
+    return { userTypes, vendorsStats, agreementsStats };
   }
 
   async getAgreementsStats(

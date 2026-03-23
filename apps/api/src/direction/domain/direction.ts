@@ -1,11 +1,17 @@
+import { AggregateRoot } from 'src/shared/domain/aggregate-root';
 import { Departement } from './departement';
 import {
   ConflictError,
   ForbiddenError,
   NotFoundError,
 } from 'src/shared/domain/errors';
+import { DirectionCreatedEvent } from './events/direction-created.event';
+import { DirectionUpdatedEvent } from './events/direction-updated.event';
+import { DepartementAddedEvent } from './events/departement-added.event';
+import { DepartementUpdatedEvent } from './events/departement-updated.event';
+import { DepartementRemovedEvent } from './events/departement-removed.event';
 
-export class Direction {
+export class Direction extends AggregateRoot {
   readonly id: string;
   title: string;
   abriviation: string;
@@ -19,6 +25,7 @@ export class Direction {
     departements: Departement[];
     agreementCount?: number;
   }) {
+    super();
     this.id = props.id;
     this.title = props.title;
     this.abriviation = props.abriviation;
@@ -29,6 +36,18 @@ export class Direction {
   // ── Factory ───────────────────────────────────────────────────────────────
 
   static create(props: {
+    id: string;
+    title: string;
+    abriviation: string;
+    departements?: Departement[];
+    agreementCount?: number;
+  }): Direction {
+    const instance = new Direction({ ...props, departements: props.departements ?? [] });
+    instance.addEvent(new DirectionCreatedEvent(instance.id));
+    return instance;
+  }
+
+  static reconstitute(props: {
     id: string;
     title: string;
     abriviation: string;
@@ -53,6 +72,7 @@ export class Direction {
   rename(title: string, abriviation: string): void {
     this.title = title;
     this.abriviation = abriviation;
+    this.addEvent(new DirectionUpdatedEvent(this.id));
   }
 
   addDepartement(id: string, title: string, abriviation: string): void {
@@ -64,6 +84,7 @@ export class Direction {
     this._departements.push(
       Departement.create({ id, title, abriviation, directionId: this.id }),
     );
+    this.addEvent(new DepartementAddedEvent(id, this.id));
   }
 
   updateDepartement(
@@ -87,6 +108,7 @@ export class Direction {
     }
 
     dp.rename(title, abriviation);
+    this.addEvent(new DepartementUpdatedEvent(departementId, this.id));
   }
 
   removeDepartement(departementId: string): void {
@@ -99,6 +121,7 @@ export class Direction {
     this._departements = this._departements.filter(
       (d) => d.id !== departementId,
     );
+    this.addEvent(new DepartementRemovedEvent(departementId, this.id));
   }
 
   canBeDeleted(): boolean {

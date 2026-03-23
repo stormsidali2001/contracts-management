@@ -101,29 +101,28 @@ export class UserService {
     );
   }
 
-  async updateUserUniqueCheck(
+  async updateUser(
     id: string,
     dto: UpdateUserDTO,
     currentUserId: string,
   ): Promise<UserProfile> {
-    const currentUser = await this.userRepository.findById(currentUserId);
-    if (!currentUser)
-      throw new NotFoundError('connected user not found');
+    const [user, currentUser] = await Promise.all([
+      this.userRepository.findById(id),
+      this.userRepository.findById(currentUserId),
+    ]);
+    if (!user) throw new NotFoundError("l'utilisateur n'existe pas");
+    if (!currentUser) throw new NotFoundError('connected user not found');
 
-    const duplicate = await this.userRepository
-      .findByEmailOrUsername(dto.email ?? '', dto.username ?? '')
-      .then(async (u) => {
-        if (!u) return null;
-        return this.userRepository.findProfileById(u.id);
-      });
-
-    if (!duplicate) throw new NotFoundError("l'utilisateur n'existe pas");
-    if (currentUser.role !== UserRole.ADMIN && duplicate.id !== currentUser.id)
+    if (currentUser.role !== UserRole.ADMIN && id !== currentUserId)
       throw new ForbiddenError('permission denied');
-    if (duplicate.id !== id)
-      throw new ConflictError("username et l'email exists deja");
 
-    const user = await this.userRepository.findById(id);
+    const conflicting = await this.userRepository.findByEmailOrUsername(
+      dto.email ?? '',
+      dto.username ?? '',
+    );
+    if (conflicting && conflicting.id !== id)
+      throw new ConflictError("username ou email déjà utilisé");
+
     if (!dto.imageUrl) delete dto.imageUrl;
     user.update(dto);
     await this.userRepository.save(user);
@@ -139,24 +138,16 @@ export class UserService {
     return this.userRepository.findProfileById(id);
   }
 
-  async getUserTypesStats(params: StatsParamsDTO, _user: User) {
-    const stats = await this.userRepository.getUserTypesStats(params);
-    const response: any = { juridical: 0, employee: 0, admin: 0, total: 0 };
-    stats.forEach((st) => {
-      response[(st.role as unknown as string).toLowerCase()] = parseInt(st.total);
-    });
-    response.total = response.juridical + response.admin + response.employee;
-    return response;
+  async getUserTypesStats(params: StatsParamsDTO): Promise<{ role: string; total: number }[]> {
+    const raw = await this.userRepository.getUserTypesStats(params);
+    return raw.map((s) => ({ role: s.role as unknown as string, total: parseInt(s.total) }));
   }
 
-  async recieveNotifications(
-    userId: string,
-    recieve_notifications: boolean,
-  ): Promise<boolean> {
+  async recieveNotifications(userId: string): Promise<boolean> {
     const user = await this.userRepository.findById(userId);
     user.toggleNotifications();
     await this.userRepository.save(user);
-    return !recieve_notifications;
+    return user.recieve_notifications;
   }
 
   async deleteUser(userId: string): Promise<void> {

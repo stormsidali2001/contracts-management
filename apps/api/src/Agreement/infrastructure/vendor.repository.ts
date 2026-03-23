@@ -10,6 +10,7 @@ import {
   VendorWithCounts,
 } from '../domain/vendor.repository';
 import { Vendor } from '../domain/vendor.aggregate';
+import { VendorStat } from '../domain/vendor-stat';
 
 @Injectable()
 export class VendorRepository implements IVendorRepository {
@@ -21,6 +22,7 @@ export class VendorRepository implements IVendorRepository {
   ) {}
 
   async save(vendor: Vendor): Promise<Vendor> {
+    const isNew = !(await this.repo.existsBy({ id: vendor.id }));
     const data: Record<string, unknown> = {
       id: vendor.id,
       num: vendor.num,
@@ -33,7 +35,21 @@ export class VendorRepository implements IVendorRepository {
       createdAt: vendor.createdAt,
     };
     const saved = await this.repo.save(data as unknown as VendorEntity);
+    if (isNew) await this.#incrementStatsForDate(vendor.createdAt);
     return this.toDomain(saved);
+  }
+
+  async #incrementStatsForDate(date: Date): Promise<void> {
+    const dateOnly = date.toISOString().slice(0, 10);
+    const existing = await this.vendorStatsRepo.findOneBy({ date: dateOnly as any });
+    if (existing) {
+      await this.vendorStatsRepo.update(
+        { id: existing.id },
+        { nb_vendors: () => 'nb_vendors + 1' },
+      );
+    } else {
+      await this.vendorStatsRepo.save({ date: dateOnly as any, nb_vendors: 1 });
+    }
   }
 
   async delete(vendorId: string): Promise<void> {
@@ -146,14 +162,12 @@ export class VendorRepository implements IVendorRepository {
     return { total, data: data.map((e) => this.toDomain(e)) };
   }
 
-  async getVendorStats(
-    startDate?: Date,
-    endDate?: Date,
-  ): Promise<VendorStatsEntity[]> {
+  async getVendorStats(startDate?: Date, endDate?: Date): Promise<VendorStat[]> {
     let query = this.vendorStatsRepo.createQueryBuilder('v').orderBy('v.date');
     if (startDate) query = query.where('v.date >= :startDate', { startDate });
     if (endDate) query = query.andWhere('v.date <= :endDate', { endDate });
-    return query.getMany();
+    const entities = await query.getMany();
+    return entities.map((e) => ({ id: e.id, date: e.date, nb_vendors: e.nb_vendors }));
   }
 
   private toDomain(entity: VendorEntity): Vendor {

@@ -2,10 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { NotificationEntity } from 'src/core/entities/Notification.entity';
 import { Notification } from 'src/user/domain/notification';
+import { INotificationRepository } from 'src/user/domain/notification.repository';
 import { Repository } from 'typeorm';
 
 @Injectable()
-export class NotificationRepository {
+export class NotificationRepository implements INotificationRepository {
   constructor(
     @InjectRepository(NotificationEntity)
     private readonly repo: Repository<NotificationEntity>,
@@ -16,9 +17,7 @@ export class NotificationRepository {
     return entities.map((e) => ({ id: e.id, message: e.message, createdAt: e.createdAt }));
   }
 
-  async saveMany(
-    items: { message: string; user: { id: string } }[],
-  ): Promise<void> {
-    await this.repo.save(items);
+  async saveMany(items: { message: string; userId: string }[]): Promise<void> {
+    await this.repo.save(items.map(({ message, userId }) => ({ message, user: { id: userId } })));
   }
 }

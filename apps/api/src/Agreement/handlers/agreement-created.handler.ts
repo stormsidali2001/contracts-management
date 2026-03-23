@@ -49,31 +49,26 @@ export class AgreementCreatedHandler
 
     // Dept users — persist notifications, then emit per-user socket
     const deptMessage = `${typeLabel} est ajoute a votre departement avec le fournisseur: ${vendorName}`;
-    const deptUserIds =
-      await this.notificationService.saveNotificationsForDepartement(
-        departementId,
-        deptMessage,
+    const deptUsers = await this.userService.findAllBy({ departement: { id: departementId } });
+    const deptNotifications = deptUsers.map((u) => ({ userId: u.id, message: deptMessage }));
+    if (deptNotifications.length > 0) {
+      await this.notificationService.saveForUsers(deptNotifications);
+      this.socketStateService.emitIfConnected(
+        deptNotifications.map((n) => ({ userId: n.userId, data: n.message })),
+        'send_notification',
       );
-    this.socketStateService.emitIfConnected(
-      deptUserIds.map((userId) => ({ userId, data: deptMessage })),
-      'send_notification',
-    );
+    }
 
     // Juridicals — persist notifications, then emit per-user socket
-    const juridicals = await this.userService.findAllBy({
-      role: UserRole.JURIDICAL,
-    });
+    const juridicals = await this.userService.findAllBy({ role: UserRole.JURIDICAL });
     const juridicalNotifications = juridicals.map((j) => ({
       message: `${typeLabel} est ajoute ${extraMessage} avec le fournisseur: ${vendorName}`,
       userId: j.id,
     }));
     if (juridicalNotifications.length > 0) {
-      await this.notificationService.saveNotifications(juridicalNotifications);
+      await this.notificationService.saveForUsers(juridicalNotifications);
       this.socketStateService.emitIfConnected(
-        juridicalNotifications.map((n) => ({
-          userId: n.userId,
-          data: n.message,
-        })),
+        juridicalNotifications.map((n) => ({ userId: n.userId, data: n.message })),
         'send_notification',
       );
     }

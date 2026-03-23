@@ -37,7 +37,7 @@ export class UserPasswordChangedHandler
     }));
 
     if (notifications.length > 0) {
-      await this.notificationService.saveNotifications(notifications);
+      await this.notificationService.saveForUsers(notifications);
       this.socketStateService.emitIfConnected(
         notifications.map((n) => ({ userId: n.userId, data: n.message })),
         'send_notification',

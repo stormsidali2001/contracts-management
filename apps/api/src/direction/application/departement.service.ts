@@ -1,4 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { EventBus } from '@nestjs/cqrs';
 import { v4 as uuid } from 'uuid';
 import {
   CreateDepartementDTO,
@@ -16,6 +17,7 @@ export class DepartementService {
   constructor(
     @Inject(DIRECTION_REPOSITORY)
     private readonly directionRepository: IDirectionRepository,
+    private readonly eventBus: EventBus,
   ) {}
 
   async createDepartement(dto: CreateDepartementDTO): Promise<Departement> {
@@ -26,6 +28,7 @@ export class DepartementService {
     const newId = uuid();
     direction.addDepartement(newId, dto.title, dto.abriviation);
     await this.directionRepository.save(direction);
+    this.eventBus.publishAll(direction.pullEvents());
     return direction.getDepartement(newId)!;
   }
 
@@ -38,6 +41,7 @@ export class DepartementService {
 
     direction.updateDepartement(id, dto.title, dto.abriviation);
     await this.directionRepository.save(direction);
+    this.eventBus.publishAll(direction.pullEvents());
     return direction.getDepartement(id)!;
   }
 
@@ -47,6 +51,7 @@ export class DepartementService {
 
     direction.removeDepartement(id);
     await this.directionRepository.save(direction);
+    this.eventBus.publishAll(direction.pullEvents());
     return 'done';
   }
 

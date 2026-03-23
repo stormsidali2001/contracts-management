@@ -1,7 +1,6 @@
 import { VendorService } from './vendor.service';
 import { IVendorRepository } from '../domain/vendor.repository';
 import { Vendor } from '../domain/vendor.aggregate';
-import { VendorStatsRepository } from '../infrastructure/vendor-stats.repository';
 import {
   ConflictError,
   ForbiddenError,
@@ -54,7 +53,6 @@ function makeUpdateDto(overrides: Record<string, unknown> = {}) {
 
 describe('VendorService', () => {
   let vendorRepo: jest.Mocked<IVendorRepository>;
-  let statsRepo: jest.Mocked<Pick<VendorStatsRepository, 'incrementForDate'>>;
   let eventBus: { publishAll: jest.Mock };
   let service: VendorService;
 
@@ -69,10 +67,9 @@ describe('VendorService', () => {
       'findPaginated',
       'getVendorStats',
     ]);
-    statsRepo = { incrementForDate: jest.fn().mockResolvedValue(undefined) };
     eventBus = { publishAll: jest.fn() };
 
-    service = new VendorService(vendorRepo, statsRepo as any, eventBus as any);
+    service = new VendorService(vendorRepo, eventBus as any);
   });
 
   // ── createVendor ────────────────────────────────────────────────────────────
@@ -84,14 +81,12 @@ describe('VendorService', () => {
         vendorRepo.save.mockImplementation(async (v) => v);
       });
 
-      it('saves new vendor, increments stats, and publishes created event', async () => {
+      it('saves new vendor and publishes created event', async () => {
         await service.createVendor(makeCreateDto() as any);
 
         expect(vendorRepo.save).toHaveBeenCalledTimes(1);
         const saved: Vendor = vendorRepo.save.mock.calls[0][0];
         expect(saved).toBeInstanceOf(Vendor);
-
-        expect(statsRepo.incrementForDate).toHaveBeenCalledTimes(1);
         expect(eventBus.publishAll).toHaveBeenCalledTimes(1);
       });
 
@@ -110,7 +105,6 @@ describe('VendorService', () => {
           service.createVendor(makeCreateDto() as any),
         ).rejects.toThrow(ConflictError);
         expect(vendorRepo.save).not.toHaveBeenCalled();
-        expect(statsRepo.incrementForDate).not.toHaveBeenCalled();
       });
 
       it('propagates repository error during save', async () => {

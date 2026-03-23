@@ -1,4 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { EventBus } from '@nestjs/cqrs';
 import { v4 as uuid } from 'uuid';
 import {
   CreateDirectionDTO,
@@ -9,6 +10,7 @@ import {
   DIRECTION_REPOSITORY,
   IDirectionRepository,
 } from '../domain/direction.repository';
+import { DirectionDeletedEvent } from '../domain/events/direction-deleted.event';
 import {
   ConflictError,
   ForbiddenError,
@@ -20,6 +22,7 @@ export class DirectionService {
   constructor(
     @Inject(DIRECTION_REPOSITORY)
     private readonly directionRepository: IDirectionRepository,
+    private readonly eventBus: EventBus,
   ) {}
 
   async createDirection(dto: CreateDirectionDTO): Promise<Direction> {
@@ -40,7 +43,9 @@ export class DirectionService {
     for (const dp of dto.departements) {
       direction.addDepartement(uuid(), dp.title, dp.abriviation);
     }
-    return this.directionRepository.save(direction);
+    const saved = await this.directionRepository.save(direction);
+    this.eventBus.publishAll(direction.pullEvents());
+    return saved;
   }
 
   async findAll(offset: number, limit: number): Promise<Direction[]> {
@@ -59,6 +64,7 @@ export class DirectionService {
         "l'un des departement de la direction contient des utilisateurs",
       );
     await this.directionRepository.delete(id);
+    this.eventBus.publish(new DirectionDeletedEvent(id));
     return 'done';
   }
 
@@ -69,7 +75,9 @@ export class DirectionService {
     const direction = await this.directionRepository.findById(id);
     if (!direction) throw new NotFoundError('la direction éxiste pas');
     direction.rename(dto.title, direction.abriviation);
-    return this.directionRepository.save(direction);
+    const saved = await this.directionRepository.save(direction);
+    this.eventBus.publishAll(direction.pullEvents());
+    return saved;
   }
 
   async getTopDirection(): Promise<Direction[]> {

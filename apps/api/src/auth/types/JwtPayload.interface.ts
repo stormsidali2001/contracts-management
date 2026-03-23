@@ -8,7 +8,8 @@ export interface JwtPayload{
     imageUrl?:string;
     role:string;
     recieve_notifications:boolean;
-
+    departementId: string | null;
+    directionId: string | null;
 }
 export interface JwtCompletePayload  {
     user:JwtPayload;

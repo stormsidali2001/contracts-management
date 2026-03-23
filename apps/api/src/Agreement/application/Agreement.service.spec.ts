@@ -2,11 +2,9 @@ import { AgreementService } from './Agreement.service';
 import { IAgreementRepository } from '../domain/agreement.repository';
 import { Agreement } from '../domain/agreement.aggregate';
 import { Vendor } from '../domain/vendor.aggregate';
-import { User } from '../../user/domain/user.aggregate';
-import { Direction } from '../../direction/domain/direction';
-import { Departement } from '../../direction/domain/departement';
 
 import { AgreementType } from '../../core/types/agreement-type.enum';
+import { UserRole } from '../../core/types/UserRole.enum';
 import {
   ConflictError,
   NotFoundError,
@@ -23,20 +21,6 @@ function mockOf<T>(methods: (keyof T)[]): jest.Mocked<T> {
 
 // ── Fixtures ─────────────────────────────────────────────────────────────────
 
-function makeDirection(): Direction {
-  const dept = Departement.create({
-    id: 'dept-1',
-    title: 'Dev',
-    abriviation: 'DD',
-    directionId: 'dir-1',
-  });
-  return Direction.create({
-    id: 'dir-1',
-    title: 'Tech',
-    abriviation: 'TD',
-    departements: [dept],
-  });
-}
 
 function makeVendor(): Vendor {
   return Vendor.reconstitute({
@@ -68,17 +52,6 @@ function makeAgreement(): Agreement {
   });
 }
 
-function makeUser(): User {
-  return User.reconstitute({
-    id: 'user-1',
-    email: 'u@x.com',
-    username: 'u',
-    firstName: 'U',
-    lastName: 'U',
-    departementId: 'dept-1',
-    directionId: 'dir-1',
-  });
-}
 
 function makeCreateDto(overrides: Record<string, unknown> = {}) {
   return {
@@ -101,8 +74,6 @@ function makeCreateDto(overrides: Record<string, unknown> = {}) {
 describe('AgreementService', () => {
   let agreementRepo: jest.Mocked<IAgreementRepository>;
   let vendorService: { findBy: jest.Mock };
-  let directionService: { find: jest.Mock };
-  let userService: { findBy: jest.Mock };
   let eventBus: { publishAll: jest.Mock };
   let service: AgreementService;
 
@@ -117,15 +88,11 @@ describe('AgreementService', () => {
       'getTypeStats',
     ]);
     vendorService = { findBy: jest.fn() };
-    directionService = { find: jest.fn() };
-    userService = { findBy: jest.fn() };
     eventBus = { publishAll: jest.fn() };
 
     service = new AgreementService(
       agreementRepo,
       vendorService as any,
-      directionService as any,
-      userService as any,
       eventBus as any,
     );
   });
@@ -135,7 +102,6 @@ describe('AgreementService', () => {
   describe('createAgreement', () => {
     describe('happy path', () => {
       beforeEach(() => {
-        directionService.find.mockResolvedValue(makeDirection());
         vendorService.findBy.mockResolvedValue(makeVendor());
         agreementRepo.findOneByNumber.mockResolvedValue(null);
         agreementRepo.save.mockImplementation(async (a) => a);
@@ -150,10 +116,9 @@ describe('AgreementService', () => {
         expect(eventBus.publishAll).toHaveBeenCalledTimes(1);
       });
 
-      it('resolves direction and vendor before checking number uniqueness', async () => {
+      it('checks vendor existence and number uniqueness', async () => {
         await service.createAgreement(makeCreateDto() as any);
 
-        expect(directionService.find).toHaveBeenCalledWith('dir-1');
         expect(vendorService.findBy).toHaveBeenCalledWith({ id: 'vendor-1' });
         expect(agreementRepo.findOneByNumber).toHaveBeenCalledWith('CTR-001');
       });
@@ -173,18 +138,7 @@ describe('AgreementService', () => {
         expect(agreementRepo.save).not.toHaveBeenCalled();
       });
 
-      it('throws NotFoundError when direction is not found', async () => {
-        directionService.find.mockResolvedValue(null);
-        vendorService.findBy.mockResolvedValue(makeVendor());
-
-        await expect(
-          service.createAgreement(makeCreateDto() as any),
-        ).rejects.toThrow(NotFoundError);
-        expect(agreementRepo.save).not.toHaveBeenCalled();
-      });
-
       it('throws NotFoundError when vendor is not found', async () => {
-        directionService.find.mockResolvedValue(makeDirection());
         vendorService.findBy.mockResolvedValue(null);
 
         await expect(
@@ -194,7 +148,6 @@ describe('AgreementService', () => {
       });
 
       it('throws ConflictError when agreement number is already taken', async () => {
-        directionService.find.mockResolvedValue(makeDirection());
         vendorService.findBy.mockResolvedValue(makeVendor());
         agreementRepo.findOneByNumber.mockResolvedValue(makeAgreement());
 
@@ -205,7 +158,6 @@ describe('AgreementService', () => {
       });
 
       it('propagates unexpected repository error', async () => {
-        directionService.find.mockResolvedValue(makeDirection());
         vendorService.findBy.mockResolvedValue(makeVendor());
         agreementRepo.findOneByNumber.mockResolvedValue(null);
         agreementRepo.save.mockRejectedValue(new Error('db error'));
@@ -302,18 +254,16 @@ describe('AgreementService', () => {
   // ── findAll ─────────────────────────────────────────────────────────────────
 
   describe('findAll', () => {
-    it('happy path – scopes query to the requesting user role and org', async () => {
-      const user = makeUser();
-      userService.findBy.mockResolvedValue(user);
+    it('happy path – passes role and org context directly to the repository', async () => {
       agreementRepo.findPaginated.mockResolvedValue({ total: 0, data: [] });
 
-      await service.findAll({} as any, 'user-1');
+      await service.findAll({} as any, UserRole.EMPLOYEE, 'dept-1', 'dir-1');
 
       expect(agreementRepo.findPaginated).toHaveBeenCalledWith(
         {},
-        user.role,
-        user.departementId,
-        user.directionId,
+        UserRole.EMPLOYEE,
+        'dept-1',
+        'dir-1',
       );
     });
   });

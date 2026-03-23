@@ -116,28 +116,27 @@ describe('UserService', () => {
     });
   });
 
-  // ── updateUserUniqueCheck ───────────────────────────────────────────────────
+  // ── updateUser ──────────────────────────────────────────────────────────────
 
-  describe('updateUserUniqueCheck', () => {
+  describe('updateUser', () => {
     const updateDto = { email: 'alice@x.com', username: 'alice', firstName: 'Alicia' };
 
     describe('happy path', () => {
       it('updates user, saves, and publishes updated event', async () => {
-        const user = makeUser();
+        const user = makeUser({ id: 'user-1' });
         const adminUser = makeUser({ id: 'admin-1', role: UserRole.ADMIN });
         const profile = makeProfile(user);
         const updateSpy = jest.spyOn(user, 'update');
 
+        // Promise.all([findById(id), findById(currentUserId)])
         userRepo.findById
-          .mockResolvedValueOnce(adminUser)  // currentUser lookup
-          .mockResolvedValueOnce(user);       // target user lookup
-        userRepo.findByEmailOrUsername.mockResolvedValue(user);
-        userRepo.findProfileById
-          .mockResolvedValueOnce(profile)    // duplicate check
-          .mockResolvedValueOnce(profile);   // post-save profile
+          .mockResolvedValueOnce(user)      // target user
+          .mockResolvedValueOnce(adminUser); // current user
+        userRepo.findByEmailOrUsername.mockResolvedValue(user); // same user — no conflict
+        userRepo.findProfileById.mockResolvedValue(profile);
         userRepo.save.mockResolvedValue(user);
 
-        await service.updateUserUniqueCheck('user-1', updateDto as any, 'admin-1');
+        await service.updateUser('user-1', updateDto as any, 'admin-1');
 
         expect(updateSpy).toHaveBeenCalledTimes(1);
         expect(userRepo.save).toHaveBeenCalledTimes(1);
@@ -146,38 +145,41 @@ describe('UserService', () => {
     });
 
     describe('failure paths', () => {
-      it('throws NotFoundError when connected user is not found', async () => {
-        userRepo.findById.mockResolvedValue(null);
+      it('throws NotFoundError when the target user is not found', async () => {
+        userRepo.findById
+          .mockResolvedValueOnce(null)                            // target user missing
+          .mockResolvedValueOnce(makeUser({ id: 'admin-1', role: UserRole.ADMIN }));
 
         await expect(
-          service.updateUserUniqueCheck('user-1', updateDto as any, 'missing-user'),
+          service.updateUser('missing-id', updateDto as any, 'admin-1'),
         ).rejects.toThrow(NotFoundError);
       });
 
       it('throws ForbiddenError when non-admin tries to update another user', async () => {
         const currentUser = makeUser({ id: 'current-1', role: UserRole.EMPLOYEE });
-        const otherUserProfile = makeProfile(makeUser({ id: 'other-1' }));
+        const targetUser = makeUser({ id: 'other-1' });
 
-        userRepo.findById.mockResolvedValue(currentUser);
-        userRepo.findByEmailOrUsername.mockResolvedValue(makeUser({ id: 'other-1' }));
-        userRepo.findProfileById.mockResolvedValue(otherUserProfile);
+        userRepo.findById
+          .mockResolvedValueOnce(targetUser)  // target user
+          .mockResolvedValueOnce(currentUser); // current user
 
         await expect(
-          service.updateUserUniqueCheck('user-1', updateDto as any, 'current-1'),
+          service.updateUser('other-1', updateDto as any, 'current-1'),
         ).rejects.toThrow(ForbiddenError);
         expect(userRepo.save).not.toHaveBeenCalled();
       });
 
-      it('throws ConflictError when email/username belongs to a different user id', async () => {
+      it('throws ConflictError when email/username belongs to a different user', async () => {
+        const user = makeUser({ id: 'user-1' });
         const adminUser = makeUser({ id: 'admin-1', role: UserRole.ADMIN });
-        const conflictProfile = makeProfile(makeUser({ id: 'other-id' }));
 
-        userRepo.findById.mockResolvedValue(adminUser);
+        userRepo.findById
+          .mockResolvedValueOnce(user)
+          .mockResolvedValueOnce(adminUser);
         userRepo.findByEmailOrUsername.mockResolvedValue(makeUser({ id: 'other-id' }));
-        userRepo.findProfileById.mockResolvedValue(conflictProfile);
 
         await expect(
-          service.updateUserUniqueCheck('user-1', updateDto as any, 'admin-1'),
+          service.updateUser('user-1', updateDto as any, 'admin-1'),
         ).rejects.toThrow(ConflictError);
         expect(userRepo.save).not.toHaveBeenCalled();
       });
@@ -221,11 +223,35 @@ describe('UserService', () => {
       userRepo.findById.mockResolvedValue(user);
       userRepo.save.mockImplementation(async (u) => u);
 
-      const result = await service.recieveNotifications('user-1', false);
+      const result = await service.recieveNotifications('user-1');
 
       expect(toggleSpy).toHaveBeenCalledTimes(1);
       expect(userRepo.save).toHaveBeenCalledTimes(1);
-      expect(result).toBe(true); // inverted from input
+      expect(result).toBe(true); // post-toggle state from the aggregate
+    });
+  });
+
+  // ── getUserTypesStats ────────────────────────────────────────────────────────
+
+  describe('getUserTypesStats', () => {
+    it('returns raw role/total pairs without reshaping', async () => {
+      userRepo.getUserTypesStats.mockResolvedValue([
+        { role: UserRole.EMPLOYEE, total: '5' } as any,
+        { role: UserRole.ADMIN, total: '2' } as any,
+      ]);
+
+      const result = await service.getUserTypesStats({} as any);
+
+      expect(result).toEqual([
+        { role: UserRole.EMPLOYEE, total: 5 },
+        { role: UserRole.ADMIN, total: 2 },
+      ]);
+    });
+
+    it('returns an empty array when there are no users', async () => {
+      userRepo.getUserTypesStats.mockResolvedValue([]);
+
+      expect(await service.getUserTypesStats({} as any)).toEqual([]);
     });
   });
 

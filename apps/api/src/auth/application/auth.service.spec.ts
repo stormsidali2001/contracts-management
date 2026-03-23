@@ -174,7 +174,10 @@ describe('AuthService', () => {
 
     describe('happy path', () => {
       it('returns tokens and stores hashed refresh token in credentials', async () => {
-        const user = makeUser();
+        const user = makeUser({
+          departementId: 'dept-1',
+          directionId: 'dir-1',
+        });
         const creds = makeCredentials();
         const setTokenSpy = jest.spyOn(creds, 'setRefreshToken');
 
@@ -190,6 +193,41 @@ describe('AuthService', () => {
         expect(setTokenSpy).toHaveBeenCalledWith('hashed-refresh');
         expect(credsRepo.save).toHaveBeenCalledTimes(1);
         expect(result).toEqual(tokens);
+      });
+
+      it('includes departementId and directionId in the JWT payload', async () => {
+        const user = makeUser({
+          departementId: 'dept-1',
+          directionId: 'dir-1',
+        });
+        userService.findByEmailOrUsername.mockResolvedValue(user);
+        credsRepo.findByEmail.mockResolvedValue(makeCredentials());
+        hashService.compare.mockResolvedValue(true);
+        tokenService.generateTokens.mockResolvedValue(tokens);
+        hashService.hash.mockResolvedValue('h');
+        credsRepo.save.mockResolvedValue(undefined);
+
+        await service.login(dto as any);
+
+        const payload = tokenService.generateTokens.mock.calls[0][0];
+        expect(payload.departementId).toBe('dept-1');
+        expect(payload.directionId).toBe('dir-1');
+      });
+
+      it('sets departementId and directionId to null when user has no org assignment', async () => {
+        const user = makeUser({ departementId: null, directionId: null });
+        userService.findByEmailOrUsername.mockResolvedValue(user);
+        credsRepo.findByEmail.mockResolvedValue(makeCredentials());
+        hashService.compare.mockResolvedValue(true);
+        tokenService.generateTokens.mockResolvedValue(tokens);
+        hashService.hash.mockResolvedValue('h');
+        credsRepo.save.mockResolvedValue(undefined);
+
+        await service.login(dto as any);
+
+        const payload = tokenService.generateTokens.mock.calls[0][0];
+        expect(payload.departementId).toBeNull();
+        expect(payload.directionId).toBeNull();
       });
     });
 

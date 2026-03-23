@@ -153,7 +153,7 @@ export class DirectionRepository implements IDirectionRepository {
   // ── Mappers ───────────────────────────────────────────────────────────────
 
   private toDomain(entity: DirectionEntity): Direction {
-    return Direction.create({
+    return Direction.reconstitute({
       id: entity.id,
       title: entity.title,
       abriviation: entity.abriviation,

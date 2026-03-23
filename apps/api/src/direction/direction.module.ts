@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { CqrsModule } from '@nestjs/cqrs';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AgreementEntity } from 'src/core/entities/Agreement.entity';
 import { DepartementEntity } from 'src/core/entities/Departement.entity';
@@ -13,6 +14,7 @@ import { DirectionService } from './application/direction.service';
 
 @Module({
   imports: [
+    CqrsModule,
     TypeOrmModule.forFeature([
       DepartementEntity,
       DirectionEntity,

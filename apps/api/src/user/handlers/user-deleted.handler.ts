@@ -44,7 +44,7 @@ export class UserDeletedHandler implements IEventHandler<UserDeletedEvent> {
     }));
 
     if (notifications.length > 0) {
-      await this.notificationService.saveNotifications(notifications);
+      await this.notificationService.saveForUsers(notifications);
       this.socketStateService.emitIfConnected(
         notifications.map((n) => ({ userId: n.userId, data: n.message })),
         'send_notification',
@@ -63,7 +63,7 @@ export class UserDeletedHandler implements IEventHandler<UserDeletedEvent> {
     await this.eventService.addEvent(eventParams);
     this.socketStateService.emitDataToAdminsOnly('SEND_EVENT', eventParams);
 
-    const userTypes = await this.userService.getUserTypesStats({} as any, null as any);
+    const userTypes = await this.userService.getUserTypesStats({} as any);
     this.socketStateService.emitDataToAdminsOnly('STATS_UPDATE', { userTypes });
   }
 }

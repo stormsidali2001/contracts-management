@@ -14,7 +14,6 @@ import { AgreementFileController } from './controllers/AgreementFile.controller'
 import { VendorController } from './controllers/Vendor.controller';
 import { AgreementRepository } from './infrastructure/agreement.repository';
 import { VendorRepository } from './infrastructure/vendor.repository';
-import { VendorStatsRepository } from './infrastructure/vendor-stats.repository';
 import { AgreementService } from './application/Agreement.service';
 import { VendorService } from './application/vendor.service';
 import { AGREEMENT_REPOSITORY } from './domain/agreement.repository';
@@ -50,7 +49,6 @@ const eventHandlers = [
   providers: [
     { provide: AGREEMENT_REPOSITORY, useClass: AgreementRepository },
     { provide: VENDOR_REPOSITORY, useClass: VendorRepository },
-    VendorStatsRepository,
     AgreementService,
     VendorService,
     ...eventHandlers,

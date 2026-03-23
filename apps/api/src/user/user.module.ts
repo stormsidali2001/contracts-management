@@ -8,6 +8,7 @@ import { EventModule } from 'src/Event/Event.module';
 import { UserImageController } from './controllers/user-image.controller';
 import { UserController } from './controllers/user.controller';
 import { USER_REPOSITORY } from './domain/user.repository';
+import { NOTIFICATION_REPOSITORY } from './domain/notification.repository';
 import { NotificationsGateWay } from './Notification.gateway';
 import { NotificationRepository } from './infrastructure/notification.repository';
 import { UserNotificationService } from './application/user-notification.service';
@@ -35,7 +36,7 @@ const eventHandlers = [
   controllers: [UserController, UserImageController],
   providers: [
     { provide: USER_REPOSITORY, useClass: UserRepository },
-    NotificationRepository,
+    { provide: NOTIFICATION_REPOSITORY, useClass: NotificationRepository },
     UserService,
     UserNotificationService,
     NotificationsGateWay,

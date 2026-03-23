@@ -4,13 +4,13 @@ import { v4 as uuid } from 'uuid';
 import { CreateVendorDTO, UpdateVendorDTO } from 'src/core/dtos/vendor.dto';
 import { PaginationResponse } from 'src/core/types/paginationResponse.interface';
 import { StatsParamsDTO } from 'src/statistics/models/statsPramsDTO.interface';
+import { VendorStat } from '../domain/vendor-stat';
 import { Vendor } from '../domain/vendor.aggregate';
 import {
   IVendorRepository,
   VendorWithCounts,
   VENDOR_REPOSITORY,
 } from '../domain/vendor.repository';
-import { VendorStatsRepository } from '../infrastructure/vendor-stats.repository';
 import {
   ConflictError,
   ForbiddenError,
@@ -22,7 +22,6 @@ export class VendorService {
   constructor(
     @Inject(VENDOR_REPOSITORY)
     private readonly vendorRepository: IVendorRepository,
-    private readonly vendorStatsRepository: VendorStatsRepository,
     private readonly eventBus: EventBus,
   ) {}
 
@@ -66,7 +65,6 @@ export class VendorService {
     });
 
     const created = await this.vendorRepository.save(newVendor);
-    await this.vendorStatsRepository.incrementForDate(newVendor.createdAt);
     this.eventBus.publishAll(newVendor.pullEvents());
 
     return created;
@@ -127,7 +125,7 @@ export class VendorService {
     return saved;
   }
 
-  async getVendorsStats({ startDate, endDate }: StatsParamsDTO) {
+  async getVendorsStats({ startDate, endDate }: StatsParamsDTO): Promise<VendorStat[]> {
     return this.vendorRepository.getVendorStats(startDate, endDate);
   }
 
