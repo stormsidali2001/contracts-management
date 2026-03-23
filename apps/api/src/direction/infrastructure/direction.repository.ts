@@ -6,6 +6,7 @@ import { DataSource, EntityManager, Repository } from 'typeorm';
 import { Departement } from '../domain/departement';
 import { Direction } from '../domain/direction';
 import { IDirectionRepository } from '../domain/direction.repository';
+import { TOP_DIRECTIONS_LIMIT } from 'src/shared/constants';
 
 @Injectable()
 export class DirectionRepository implements IDirectionRepository {
@@ -118,6 +119,11 @@ export class DirectionRepository implements IDirectionRepository {
     const entities = await this.repo
       .createQueryBuilder('dr')
       .loadRelationCountAndMap('dr.agreementCount', 'dr.agreements')
+      .leftJoin('dr.agreements', 'ag')
+      .addSelect('COUNT(ag.id)', 'agCount')
+      .groupBy('dr.id')
+      .orderBy('agCount', 'DESC')
+      .limit(TOP_DIRECTIONS_LIMIT)
       .getMany();
 
     return entities.map((e) => this.toDomain(e));

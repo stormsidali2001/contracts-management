@@ -1,144 +1,93 @@
 # contracts-management
-## installation
-###  clone the repository
-```
+
+A full-stack contract and agreement management system built with NestJS (DDD/CQRS), Next.js, MySQL, and Redis.
+
+## Prerequisites
+
+- [Docker](https://www.docker.com/) (for MySQL and Redis)
+- [pnpm](https://pnpm.io/) 10.6.3+
+- Node.js 18+
+
+## Installation
+
+### 1. Clone the repository
+```bash
 git clone https://github.com/stormsidali2001/contracts-management
+cd contracts-management
 ```
 
-### database setup
-If you have Docker installed, you can spin up the required MySQL database by running:
-```
+### 2. Start infrastructure
+```bash
 docker compose up -d
 ```
+This starts MySQL 8.0 on port 3306 and Redis 7 on port 6379.
 
-### install the packages
-Run pnpm install at the root:
-```
+### 3. Install dependencies
+```bash
 pnpm install
 ```
-### filling the backend .env file with credentials
-> create a .env file in the `apps/api` directory 
-> use the .env-example template or copy paste the following code
-```.env
-### mysql database connection credentials
-MYSQL_USERNAME =user1   
-MYSQL_PASSWORD =password
-MYSQL_DATABASE_HOST =localhost
-MYSQL_DATABASE_PORT =3306
-MYSQL_DATABASE_NAME =contracts_management
 
-### jwt configuration variables
-JWT_ACCESS_TOKEN_SECRET = super_secret_access_token
-JWT_ACCESS_TOKEN_EXPIRES_IN = 10000
+### 4. Configure environment variables
 
-JWT_REFRESH_TOKEN_SECRET = super_secret_refresh_token
-JWT_REFRESH_TOKEN_EXPIRES_IN = 100000000
+Create `apps/api/.env` (or copy from `apps/api/.env-example`):
 
-### frontend port
-CLIENT_PORT = 3000
+```env
+# MySQL
+MYSQL_USERNAME=user1
+MYSQL_PASSWORD=password
+MYSQL_DATABASE_HOST=localhost
+MYSQL_DATABASE_PORT=3306
+MYSQL_DATABASE_NAME=contracts_management
 
-### email service configuration
-ethereal_user = xxxxxxx@xxxx.com
-ethereal_password = password
+# JWT
+JWT_ACCESS_TOKEN_SECRET=super_secret_access_token
+JWT_ACCESS_TOKEN_EXPIRES_IN=10000
+JWT_REFRESH_TOKEN_SECRET=super_secret_refresh_token
+JWT_REFRESH_TOKEN_EXPIRES_IN=100000000
+
+# Frontend
+CLIENT_PORT=3000
+
+# Email (Ethereal for dev)
+ethereal_user=xxxxxxx@xxxx.com
+ethereal_password=password
+
+# Redis
+REDIS_HOST=localhost
+REDIS_PORT=6379
 ```
 
-### filling the fake data generator .env file with credentials
-> create a .env file in the `apps/data-generator` directory 
-> use the .env-example template or copy paste the following code
-```.env
-### mysql database connection credentials
-MYSQL_USERNAME =user1   
-MYSQL_PASSWORD =password
-MYSQL_DATABASE_HOST =localhost
-MYSQL_DATABASE_PORT =3306
-MYSQL_DATABASE_NAME =contracts_management
-```
-
-### launching the backend & frontend processes
-To start both the backend and frontend simultaneously using Turborepo:
-```
+### 5. Start the application
+```bash
 pnpm dev
 ```
-This will run `next dev` for the frontend and `nest start --watch` for the backend.
+This runs the NestJS backend (watch mode) and Next.js frontend simultaneously via Turborepo.
 
-### other commands
-* **Build all projects:** `pnpm build`
-* **Lint all projects:** `pnpm lint`
-* **Format code:** `pnpm format`
+## Other Commands
 
-###  generate fake data 
-You can generate fake data using the following commands from the root directory:
+| Command | Description |
+|---------|-------------|
+| `pnpm build` | Build all workspaces |
+| `pnpm lint` | Lint all workspaces |
+| `pnpm format` | Prettier format all TS/TSX/MD files |
 
-1. **Generate directions:**
-```
+## Generate Fake Data
+
+Run these commands from the root in order (the database must be running and the backend must have synced the schema at least once):
+
+```bash
 pnpm generate:directions
-```
-
-2. **Generate users:**
-```
-pnpm generate:users -- 200
-```
-*(directions step is required first)*
-
-3. **Generate vendors:**
-```
+pnpm generate:users -- 200       # requires directions first
 pnpm generate:vendors -- 300
-```
-
-4. **Generate agreements:**
-```
 pnpm generate:agreements -- 500
+pnpm generate:accounts           # creates one account per role
 ```
 
-5. **Create testing accounts:**
-```
-pnpm generate:accounts
-```
+### Test Accounts (after `pnpm generate:accounts`)
 
-Alternatively, you can go to the fake data generator folder:
-```
-cd apps/data-generator
-```
- > then you will get an account foreach user role to use in your exploring journey
- ```javascript
- {
-  username: 'storm.sidali',
-  firstName: 'sidali',
-  lastName: 'assoul',
-  email: 'assoulsidali@gmail.com',
-  role: 'EMPLOYEE',
-  departementId: '58911004-4120-4c38-b55e-0013c99726cf',
-  directionId: '6f4f175a-752d-4d9e-9e5d-6ff4e9a78686',
-  password: '123456'
-}
-{
-  username: 'admin.admin',
-  firstName: 'admin',
-  lastName: 'admin',
-  email: 'admin@gmail.com',
-  role: 'ADMIN',
-  password: '123456'
-}
-{
-  username: 'admin1.admin1',
-  firstName: 'admin1',
-  lastName: 'admin1',
-  email: 'admin1@gmail.com',
-  role: 'ADMIN',
-  password: '123456'
-}
-
-{
-  username: 'juridical.adala',
-  firstName: 'juridical',
-  lastName: 'adala',
-  email: 'juridical@gmail.com',
-  role: 'JURIDICAL',
-  password: '123456'
-}
-
-
- ```
-
-
-
+| Role | Username | Password |
+|------|----------|----------|
+| ADMIN | admin.admin | 123456 |
+| ADMIN | admin1.admin1 | 123456 |
+| EMPLOYEE | storm.sidali | 123456 |
+| JURIDICAL | juridical.adala | 123456 |

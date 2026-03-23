@@ -1,7 +1,12 @@
 'use client';
+import { useState } from 'react';
 import NotificationsNoneOutlinedIcon from '@mui/icons-material/NotificationsNoneOutlined';
 import { useNotificationStore } from '@/features/notification/store/notification.store';
 import styles from './Notifications.module.css';
+
+type ActionLabel = 'Tous' | 'Création' | 'Mise à jour' | 'Suppression' | 'Activité';
+
+const FILTERS: ActionLabel[] = ['Tous', 'Création', 'Mise à jour', 'Suppression', 'Activité'];
 
 /** Bold the email address inside the message string */
 function renderMessage(message: string) {
@@ -14,18 +19,23 @@ function renderMessage(message: string) {
 }
 
 /** Detect action type from message text */
-function getAction(message: string): { label: string; cls: string } {
+function getAction(message: string): { label: ActionLabel; cls: string } {
   const m = message.toLowerCase();
   if (m.includes('supprim'))  return { label: 'Suppression', cls: styles.chipDelete };
   if (m.includes('ajout') || m.includes('créé') || m.includes('cree'))
                                return { label: 'Création',    cls: styles.chipInsert };
   if (m.includes('mis a jour') || m.includes('mis à jour') || m.includes('mise à jour'))
                                return { label: 'Mise à jour', cls: styles.chipUpdate };
-  return                              { label: 'Activité',    cls: styles.chipUpdate };
+  return                              { label: 'Activité',    cls: styles.chipActivity };
 }
 
 const Notifications = () => {
   const notifications = useNotificationStore((s) => s.notifications);
+  const [activeFilter, setActiveFilter] = useState<ActionLabel>('Tous');
+
+  const filtered = activeFilter === 'Tous'
+    ? notifications
+    : notifications.filter((n) => getAction(n.message).label === activeFilter);
 
   return (
     <div className={styles.container}>
@@ -41,18 +51,43 @@ const Notifications = () => {
         )}
       </div>
 
+      {/* ── Filter bar ── */}
+      <div className={styles.filterBar}>
+        {FILTERS.map((f) => {
+          const count = f === 'Tous'
+            ? notifications.length
+            : notifications.filter((n) => getAction(n.message).label === f).length;
+          return (
+            <button
+              key={f}
+              className={`${styles.filterBtn} ${activeFilter === f ? styles.filterBtnActive : ''}`}
+              onClick={() => setActiveFilter(f)}
+            >
+              {f}
+              {count > 0 && (
+                <span className={`${styles.filterCount} ${activeFilter === f ? styles.filterCountActive : ''}`}>
+                  {count}
+                </span>
+              )}
+            </button>
+          );
+        })}
+      </div>
+
       {/* ── Empty state ── */}
-      {notifications.length === 0 ? (
+      {filtered.length === 0 ? (
         <div className={styles.emptyState}>
           <div className={styles.emptyIcon}>
             <NotificationsNoneOutlinedIcon sx={{ fontSize: 24 }} />
           </div>
           <span className={styles.emptyTitle}>Aucune notification</span>
-          <span className={styles.emptyDesc}>Vous êtes à jour !</span>
+          <span className={styles.emptyDesc}>
+            {activeFilter === 'Tous' ? 'Vous êtes à jour !' : `Aucune notification de type « ${activeFilter} »`}
+          </span>
         </div>
       ) : (
         <ul className={styles.list}>
-          {notifications.map((n) => {
+          {filtered.map((n) => {
             const action = getAction(n.message);
             return (
               <li key={n.id} className={styles.item}>

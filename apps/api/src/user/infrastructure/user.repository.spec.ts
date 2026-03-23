@@ -141,7 +141,10 @@ describe('UserRepository (integration)', () => {
       userIds.push(user.id);
       await repo.save(user);
 
-      const result = await repo.findByEmailOrUsername('no@test.com', user.username);
+      const result = await repo.findByEmailOrUsername(
+        'no@test.com',
+        user.username,
+      );
 
       expect(result).toBeInstanceOf(User);
       expect(result.id).toBe(user.id);
