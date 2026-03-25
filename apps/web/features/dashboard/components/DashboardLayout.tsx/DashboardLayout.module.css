@@ -3,7 +3,7 @@
   display: grid;
   grid-template-columns: var(--sidebar-width, 260px) 1fr;
   min-height: 100vh;
-  background: var(--bg, #D8E0EC);
+  background: var(--bg);
 }
 
 /* ── Right side: topbar + scrollable content ── */

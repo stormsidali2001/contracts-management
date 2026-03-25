@@ -14,5 +14,5 @@ export const sidebarLinks = [
     {text:"Contrats" , icon:ContractsIcon,link:"/contracts"},
 ];
 
-export const BMT_LOGO_URL = "/bmt.png";
+export const APP_NAME = "ContractFlow";
 

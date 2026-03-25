@@ -107,13 +107,13 @@
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
-  box-shadow: 0 2px 8px rgba(23,73,142,0.28);
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--navy-mid) 28%, transparent);
   transition: background 0.15s, box-shadow 0.15s;
   white-space: nowrap;
 }
 .filterBtn:hover {
-  background: var(--navy);
-  box-shadow: 0 4px 14px rgba(23,73,142,0.35);
+  background: var(--navy-mid);
+  box-shadow: 0 4px 14px color-mix(in srgb, var(--navy-mid) 35%, transparent);
 }
 
 /* ════════════════════════════════════════
@@ -150,8 +150,8 @@
   height: 42px;
   min-width: 42px;
   border-radius: 10px;
-  background: rgba(23,73,142,0.08);
-  border: 1px solid rgba(23,73,142,0.14);
+  background: color-mix(in srgb, var(--navy-mid) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--navy-mid) 14%, transparent);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -160,8 +160,8 @@
 }
 
 .kpiIconError {
-  background: rgba(23,73,142,0.08);
-  border-color: rgba(23,73,142,0.14);
+  background: color-mix(in srgb, var(--navy-mid) 8%, transparent);
+  border-color: color-mix(in srgb, var(--navy-mid) 14%, transparent);
   color: var(--navy-mid);
 }
 

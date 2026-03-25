@@ -1,7 +1,7 @@
 import { Button, CircularProgress, TextField } from '@mui/material';
 import useInput from '@/hooks/input/use-input';
 import { validateEmail } from '@/shared/utils/validation/email';
-import { BMT_LOGO_URL } from '@/features/dashboard/data';
+import GavelOutlinedIcon from '@mui/icons-material/GavelOutlined';
 import styles from './ForgotPassword.module.css';
 import { useForgotPassword } from '@/features/auth/queries/auth.queries';
 import { useSnackbarStore } from '@/features/ui/store/snackbar.store';
@@ -31,7 +31,7 @@ const ForgotPassword = () => {
     <div className={styles.container}>
       <div className={styles.leftWrapper}>
         <div className={styles.logo}>
-          <img src={BMT_LOGO_URL} alt="BMT Logo" />
+          <GavelOutlinedIcon sx={{ fontSize: 28 }} />
         </div>
         <div className={styles.formWrapper}>
           {!isPending ? (

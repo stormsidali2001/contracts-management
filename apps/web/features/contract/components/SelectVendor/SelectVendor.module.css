@@ -1,8 +1,8 @@
 /* ── Select vendor modal ── */
 .container {
   width: min(500px, 92vw);
-  background: var(--surface, #fff);
-  border: 1px solid var(--border, #B8C4D4);
+  background: var(--surface);
+  border: 1px solid var(--border);
   border-radius: var(--radius, 12px);
   box-shadow: var(--shadow-lg);
   position: absolute;
@@ -26,7 +26,7 @@
   font-family: 'Outfit', sans-serif;
   font-size: 17px;
   font-weight: 700;
-  color: var(--text-primary, #0D1B3E);
+  color: var(--text-primary);
   letter-spacing: -0.2px;
   margin-bottom: 16px;
 }

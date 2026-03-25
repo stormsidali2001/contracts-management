@@ -8,7 +8,7 @@
   width: 100%;
   min-height: calc(100vh - 60px);
   padding: 48px 24px 64px;
-  background: var(--bg, #D8E0EC);
+  background: var(--bg);
   display: flex;
   justify-content: center;
   align-items: flex-start;
@@ -18,13 +18,13 @@
 .userCard {
   width: 100%;
   max-width: 520px;
-  background: var(--surface, #fff);
-  border: 1px solid var(--border, #B8C4D4);
+  background: var(--surface);
+  border: 1px solid var(--border);
   border-radius: 18px;
   box-shadow:
-    0 1px 3px rgba(13,27,62,0.05),
-    0 8px 32px rgba(13,27,62,0.1),
-    0 24px 64px rgba(13,27,62,0.07);
+    0 1px 3px color-mix(in srgb, var(--navy) 5%, transparent),
+    0 8px 32px color-mix(in srgb, var(--navy) 10%, transparent),
+    0 24px 64px color-mix(in srgb, var(--navy) 7%, transparent);
   position: relative;
   overflow: hidden;
   align-self: flex-start;
@@ -39,7 +39,7 @@
 /* ── Hero header ── */
 .cardHeader {
   height: 156px;
-  background: var(--navy, #0D1B3E);
+  background: var(--navy-mid);
   /* Dot-grid texture */
   background-image:
     radial-gradient(circle at 1px 1px, rgba(255,255,255,0.07) 1px, transparent 0);
@@ -70,7 +70,7 @@
   width: 160px;
   height: 160px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(23,73,142,0.35) 0%, transparent 70%);
+  background: radial-gradient(circle, color-mix(in srgb, var(--navy-mid) 35%, transparent) 0%, transparent 70%);
   pointer-events: none;
 }
 
@@ -87,7 +87,7 @@
   padding: 0 !important;
   border-radius: 10px !important;
   background: rgba(255,255,255,0.10) !important;
-  color: var(--text-on-dark, #fff) !important;
+  color: var(--text-on-dark) !important;
   border: 1px solid rgba(255,255,255,0.20) !important;
   transition: background 0.15s ease, border-color 0.15s ease !important;
   backdrop-filter: blur(4px);
@@ -107,7 +107,7 @@
   transform: translateX(-50%);
   background: rgba(255,255,255,0.08);
   border: 1px solid rgba(245,158,11,0.45);
-  color: var(--text-on-dark, #fff);
+  color: var(--text-on-dark);
   font-family: 'Outfit', sans-serif;
   font-size: 10px;
   font-weight: 700;
@@ -155,7 +155,7 @@
   position: absolute;
   inset: 0;
   border-radius: 50%;
-  background: rgba(13,27,62,0.62);
+  background: color-mix(in srgb, var(--navy) 62%, transparent);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -164,7 +164,7 @@
   font-family: 'Outfit', sans-serif;
   font-size: 11px;
   font-weight: 700;
-  color: var(--text-on-dark, #fff);
+  color: var(--text-on-dark);
   letter-spacing: 0.06em;
   text-transform: uppercase;
 }
@@ -173,11 +173,11 @@
 .profileImg {
   width: 104px !important;
   height: 104px !important;
-  border: 4px solid var(--surface, #fff);
+  border: 4px solid var(--surface);
   box-shadow:
-    0 4px 16px rgba(13,27,62,0.18),
-    0 0 0 1px rgba(13,27,62,0.06);
-  background: var(--bg, #D8E0EC);
+    0 4px 16px color-mix(in srgb, var(--navy) 18%, transparent),
+    0 0 0 1px color-mix(in srgb, var(--navy) 6%, transparent);
+  background: var(--bg);
   transition: transform 0.2s ease;
 }
 
@@ -191,7 +191,7 @@
   font-family: 'Outfit', sans-serif;
   font-size: 22px;
   font-weight: 700;
-  color: var(--text-primary, #0D1B3E);
+  color: var(--text-primary);
   letter-spacing: -0.5px;
   text-align: center;
   line-height: 1.15;
@@ -211,16 +211,16 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: var(--bg, #D8E0EC);
-  border: 1px solid var(--border, #B8C4D4);
+  background: var(--bg);
+  border: 1px solid var(--border);
   border-radius: 99px;
   padding: 3px 12px 3px 3px;
 }
 
 /* AAA: white on navy → 15:1 */
 .orgBadgeLabel {
-  background: var(--navy, #0D1B3E);
-  color: var(--text-on-dark, #fff);
+  background: var(--navy-mid);
+  color: var(--text-on-dark);
   font-family: 'Outfit', sans-serif;
   font-size: 9px;
   font-weight: 700;
@@ -236,7 +236,7 @@
   font-family: 'Inter', sans-serif;
   font-size: 12px;
   font-weight: 600;
-  color: var(--text-body, #3D4A5C);
+  color: var(--text-body);
 }
 
 /* ── Upload progress ── */
@@ -247,7 +247,7 @@
 /* ── Fields section ── */
 .fieldsSection {
   padding: 4px 28px 28px;
-  border-top: 1px solid var(--border, #B8C4D4);
+  border-top: 1px solid var(--border);
   margin-top: 4px;
 }
 
@@ -257,7 +257,7 @@
   align-items: center;
   gap: 20px;
   padding: 13px 0;
-  border-bottom: 1px solid var(--border-subtle, #D4DCE8);
+  border-bottom: 1px solid var(--border-subtle);
   /* Staggered entry */
   animation: fieldIn 0.35s ease both;
 }
@@ -282,7 +282,7 @@
   font-family: 'Outfit', sans-serif;
   font-size: 10.5px;
   font-weight: 700;
-  color: var(--text-label, #475569);
+  color: var(--text-label);
   text-transform: uppercase;
   letter-spacing: 0.09em;
   min-width: 124px;
@@ -294,7 +294,7 @@
   font-family: 'Inter', sans-serif;
   font-size: 14px;
   font-weight: 400;
-  color: var(--text-primary, #0D1B3E);
+  color: var(--text-primary);
   flex: 1;
   word-break: break-all;
 }
@@ -302,20 +302,20 @@
 /* ── Inline edit input ── */
 .editInput {
   flex: 1;
-  border: 1.5px solid var(--border, #B8C4D4);
+  border: 1.5px solid var(--border);
   border-radius: 8px;
   padding: 6px 12px;
   font-family: 'Inter', sans-serif;
   font-size: 13.5px;
-  color: var(--text-primary, #0D1B3E);
-  background: var(--bg, #D8E0EC);
+  color: var(--text-primary);
+  background: var(--bg);
   transition: border-color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
   outline: none;
   width: 100%;
 }
 
 .editInput:focus {
-  border-color: var(--navy-mid, #17498E);
-  background: var(--surface, #fff);
-  box-shadow: 0 0 0 3px rgba(23,73,142,0.12);
+  border-color: var(--navy-mid);
+  background: var(--surface);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--navy-mid) 12%, transparent);
 }

@@ -5,7 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
 import useInput from '@/hooks/input/use-input';
 import { validatePasswordLength } from '@/shared/utils/validation/length';
-import { BMT_LOGO_URL } from '@/features/dashboard/data';
+import GavelOutlinedIcon from '@mui/icons-material/GavelOutlined';
 import styles from './ResetPassword.module.css';
 import { useResetPassword } from '@/features/auth/queries/auth.queries';
 import { useSnackbarStore } from '@/features/ui/store/snackbar.store';
@@ -39,7 +39,7 @@ const ResetPassword = () => {
     <div className={styles.container}>
       <div className={styles.leftWrapper}>
         <div className={styles.logo}>
-          <img src={BMT_LOGO_URL} alt="BMT Logo" />
+          <GavelOutlinedIcon sx={{ fontSize: 28 }} />
         </div>
         <div className={styles.formWrapper}>
           {!isPending ? (

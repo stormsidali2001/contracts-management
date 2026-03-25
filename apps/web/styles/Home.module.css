@@ -4,7 +4,7 @@
   grid-template-columns: var(--sidebar-width, 260px) 1fr;
   min-height: 100vh;
   width: 100vw;
-  background: var(--bg, #D8E0EC);
+  background: var(--bg);
 }
 
 @media screen and (max-width: 900px) {

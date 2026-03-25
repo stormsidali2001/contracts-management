@@ -102,15 +102,15 @@
   flex-shrink: 0;
 }
 .entityBadge.AgreementsCircle {
-  background: rgba(13,27,62,0.08);
+  background: color-mix(in srgb, var(--navy) 8%, transparent);
   color: var(--navy);
 }
 .entityBadge.UsersCircle {
-  background: rgba(23,73,142,0.09);
+  background: color-mix(in srgb, var(--navy-mid) 9%, transparent);
   color: var(--navy-mid);
 }
 .entityBadge.VendorCircle {
-  background: rgba(22,163,74,0.09);
+  background: color-mix(in srgb, var(--success) 9%, transparent);
   color: var(--success);
 }
 
@@ -124,16 +124,16 @@
   flex-shrink: 0;
 }
 .AgreementsCircle.circle {
-  background: var(--navy);
-  box-shadow: 0 0 0 3px rgba(13,27,62,0.15);
+  background: var(--navy-mid);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--navy) 15%, transparent);
 }
 .UsersCircle.circle {
   background: var(--navy-mid);
-  box-shadow: 0 0 0 3px rgba(23,73,142,0.14);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--navy-mid) 14%, transparent);
 }
 .VendorCircle.circle {
   background: var(--success);
-  box-shadow: 0 0 0 3px rgba(22,163,74,0.14);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--success) 14%, transparent);
 }
 
 /* ── Event body text ── */
@@ -158,10 +158,10 @@
   border-radius: 4px;
   text-transform: uppercase;
 }
-.opInsert  { background: rgba(23,73,142,0.08);  color: var(--navy-mid); }
+.opInsert  { background: color-mix(in srgb, var(--navy-mid) 8%, transparent);  color: var(--navy-mid); }
 .opDelete  { background: rgba(220,38,38,0.10);  color: var(--error-dark); }
-.opUpdate  { background: rgba(23,73,142,0.06);  color: var(--navy-mid); }
-.opExecute { background: rgba(23,73,142,0.06);  color: var(--navy-mid); }
+.opUpdate  { background: color-mix(in srgb, var(--navy-mid) 6%, transparent);  color: var(--navy-mid); }
+.opExecute { background: color-mix(in srgb, var(--navy-mid) 6%, transparent);  color: var(--navy-mid); }
 
 /* ── Timestamp ── */
 .eventDate {

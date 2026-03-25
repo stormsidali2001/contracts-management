@@ -1,10 +1,10 @@
 /* ── Modal shell ── */
 .container {
   width: min(420px, 92vw);
-  background: var(--surface, #fff);
-  border: 1px solid var(--border, #B8C4D4);
+  background: var(--surface);
+  border: 1px solid var(--border);
   border-radius: var(--radius, 12px);
-  box-shadow: var(--shadow-lg, 0 20px 60px rgba(13,27,62,0.18));
+  box-shadow: var(--shadow-lg, 0 20px 60px rgba(15,23,42,0.12));
   position: absolute;
   top: 50%;
   left: 50%;
@@ -16,7 +16,7 @@
 
 /* ── Navy header band ── */
 .modalHeader {
-  background: var(--navy, #0D1B3E);
+  background: var(--navy-mid);
   padding: 20px 24px;
   display: flex;
   align-items: center;
@@ -26,19 +26,6 @@
   flex-shrink: 0;
 }
 
-.modalHeader::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image: repeating-linear-gradient(
-    45deg,
-    rgba(255,255,255,0.025) 0px,
-    rgba(255,255,255,0.025) 1px,
-    transparent 1px,
-    transparent 14px
-  );
-  pointer-events: none;
-}
 
 .headerIcon {
   width: 38px;
@@ -99,14 +86,14 @@
 .stateText {
   font-family: 'Inter', sans-serif !important;
   font-size: 14px !important;
-  color: var(--text-secondary, #52627A) !important;
+  color: var(--text-secondary) !important;
 }
 
 .successIcon {
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  background: rgba(22, 163, 74, 0.10);
+  background: rgba(16,185,129,0.10);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -119,8 +106,8 @@
   justify-content: flex-end;
   gap: 8px;
   padding: 16px 24px;
-  border-top: 1px solid var(--border-subtle, #D4DCE8);
-  background: var(--surface-subtle, #F4F6FA);
+  border-top: 1px solid var(--border-subtle);
+  background: var(--surface-subtle);
 }
 
 .submitBtn {
@@ -144,11 +131,11 @@
   border-radius: 8px !important;
   padding: 0 14px !important;
   height: 36px;
-  color: var(--text-secondary, #52627A) !important;
+  color: var(--text-secondary) !important;
 }
 
 .cancelBtn:hover {
-  background: var(--border-subtle, #D4DCE8) !important;
+  background: var(--border-subtle) !important;
 }
 
 /* kept for backward compat - unused */

@@ -14,8 +14,8 @@
   width: 14px;
   height: 14px;
   border-radius: 50%;
-  background: var(--border, #B8C4D4);
-  border: 2px solid var(--surface, #fff);
+  background: var(--border);
+  border: 2px solid var(--surface);
   box-shadow: var(--shadow-xs);
 }
 

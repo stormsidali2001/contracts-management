@@ -12,7 +12,7 @@
   align-items: center;
   gap: 10px;
   padding: 10px 8px 12px;
-  border-bottom: 1px solid var(--border, #B8C4D4);
+  border-bottom: 1px solid var(--border);
   margin-bottom: 4px;
 }
 
@@ -22,7 +22,7 @@
   border-radius: 50%;
   overflow: hidden;
   flex-shrink: 0;
-  border: 2px solid var(--border, #B8C4D4);
+  border: 2px solid var(--border);
 }
 
 .profilImgContainer img {
@@ -43,7 +43,7 @@
   font-family: 'Inter', sans-serif;
   font-size: 13.5px;
   font-weight: 600;
-  color: var(--text-primary, #0D1B3E);
+  color: var(--text-primary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -52,7 +52,7 @@
 .userInfos > span:nth-of-type(2) {
   font-family: 'Inter', sans-serif;
   font-size: 11.5px;
-  color: var(--text-muted, #96A3B5);
+  color: var(--text-muted);
 }
 
 .userInfos > span:nth-of-type(2)::first-letter {
@@ -62,7 +62,7 @@
 .userInfos > span:nth-of-type(3) {
   font-family: 'Inter', sans-serif;
   font-size: 11.5px;
-  color: var(--text-secondary, #52627A);
+  color: var(--text-secondary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -87,11 +87,11 @@
 }
 
 .link:hover {
-  background: var(--bg, #D8E0EC);
+  background: var(--bg);
 }
 
 .iconStyle {
-  color: var(--navy-mid, #17498E);
+  color: var(--navy-mid);
   font-size: 18px !important;
   flex-shrink: 0;
 }
@@ -100,5 +100,5 @@
   font-family: 'Inter', sans-serif;
   font-size: 13px;
   font-weight: 500;
-  color: var(--text-primary, #0D1B3E);
+  color: var(--text-primary);
 }

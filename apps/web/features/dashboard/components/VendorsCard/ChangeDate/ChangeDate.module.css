@@ -19,7 +19,7 @@
 
 /* ── Navy header band ── */
 .modalHeader {
-  background: var(--navy);
+  background: var(--navy-mid);
   padding: 20px 24px;
   display: flex;
   align-items: center;
@@ -30,19 +30,6 @@
   flex-shrink: 0;
 }
 
-.modalHeader::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image: repeating-linear-gradient(
-    45deg,
-    rgba(255,255,255,0.025) 0px,
-    rgba(255,255,255,0.025) 1px,
-    transparent 1px,
-    transparent 14px
-  );
-  pointer-events: none;
-}
 
 .headerLeft {
   display: flex;
@@ -137,7 +124,7 @@
 .dateRow.active {
   background: var(--navy-light);
   border-color: var(--navy-mid);
-  box-shadow: 0 0 0 3px rgba(23,73,142,0.07);
+  box-shadow: 0 0 0 3px rgba(37,99,235,0.07);
 }
 
 /* Active left-border accent */
@@ -175,8 +162,8 @@
   width: 28px;
   height: 28px;
   border-radius: 7px;
-  background: rgba(23,73,142,0.07);
-  border: 1px solid rgba(23,73,142,0.12);
+  background: rgba(37,99,235,0.07);
+  border: 1px solid rgba(37,99,235,0.12);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -186,8 +173,8 @@
 }
 
 .dateRow.active .dateRowIcon {
-  background: rgba(23,73,142,0.15);
-  border-color: rgba(23,73,142,0.28);
+  background: rgba(37,99,235,0.15);
+  border-color: rgba(37,99,235,0.28);
 }
 
 .dateRowTitle {
@@ -299,7 +286,7 @@
   gap: 8px;
   padding: 14px 24px;
   border-top: 1px solid var(--border-subtle);
-  background: var(--surface-subtle, #F4F6FA);
+  background: var(--surface-subtle);
 }
 
 .cancelBtn {
@@ -337,7 +324,7 @@
   gap: 6px;
 }
 .applyBtn:hover:not(:disabled) {
-  background: var(--navy);
+  background: var(--navy-mid);
   transform: translateY(-1px);
 }
 .applyBtn:active:not(:disabled) {

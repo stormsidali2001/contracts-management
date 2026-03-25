@@ -190,7 +190,7 @@
 
 /* Convention — green accent */
 .convensionTile { border-left-color: var(--success); }
-.convensionTile:hover { border-color: var(--success); background: rgba(22,163,74,0.06); }
+.convensionTile:hover { border-color: var(--success); background: color-mix(in srgb, var(--success) 6%, transparent); }
 
 /* ── Icon + label row ── */
 .typeTopRow {
@@ -209,8 +209,8 @@
   justify-content: center;
   flex-shrink: 0;
 }
-.contractIconWrap  { background: rgba(23,73,142,0.10);  border: 1px solid rgba(23,73,142,0.18); }
-.convensionIconWrap { background: rgba(22,163,74,0.10); border: 1px solid rgba(22,163,74,0.20); }
+.contractIconWrap  { background: color-mix(in srgb, var(--navy-mid) 10%, transparent);  border: 1px solid color-mix(in srgb, var(--navy-mid) 18%, transparent); }
+.convensionIconWrap { background: color-mix(in srgb, var(--success) 10%, transparent); border: 1px solid color-mix(in srgb, var(--success) 20%, transparent); }
 
 .typeLabel {
   font-family: 'Inter', sans-serif;
@@ -288,7 +288,7 @@
   position: absolute;
   left: 0; top: 0; bottom: 0;
   border-radius: 8px;
-  background: rgba(23,73,142,0.04);
+  background: color-mix(in srgb, var(--navy-mid) 4%, transparent);
   transition: width 0.5s ease;
   width: var(--bar-width, 0%);
 }
@@ -311,9 +311,9 @@
   color: var(--text-on-dark);
   line-height: 1;
 }
-.rank1 { background: var(--navy);     box-shadow: 0 0 0 2px rgba(13,27,62,0.20); }
-.rank2 { background: #6B7280;          box-shadow: 0 0 0 2px rgba(107,114,128,0.20); }
-.rank3 { background: var(--text-secondary); box-shadow: 0 0 0 2px rgba(82,98,122,0.20); }
+.rank1 { background: var(--navy);     box-shadow: 0 0 0 2px color-mix(in srgb, var(--navy) 20%, transparent); }
+.rank2 { background: var(--text-label);          box-shadow: 0 0 0 2px color-mix(in srgb, var(--text-label) 20%, transparent); }
+.rank3 { background: var(--text-secondary); box-shadow: 0 0 0 2px color-mix(in srgb, var(--text-secondary) 20%, transparent); }
 .rankOther { background: var(--border); }
 .rankOther > span { color: var(--text-secondary); }
 

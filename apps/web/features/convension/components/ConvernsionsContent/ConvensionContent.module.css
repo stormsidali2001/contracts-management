@@ -3,7 +3,7 @@
   width: 100%;
   min-height: calc(100vh - 60px);
   padding: 28px 32px 56px;
-  background: var(--bg, #D8E0EC);
+  background: var(--bg);
 }
 
 /* ── Page header ── */
@@ -25,7 +25,7 @@
   font-family: 'Outfit', sans-serif;
   font-size: 22px;
   font-weight: 700;
-  color: var(--text-primary, #0D1B3E);
+  color: var(--text-primary);
   letter-spacing: -0.4px;
   margin: 0;
   line-height: 1.2;
@@ -35,7 +35,7 @@
   font-family: 'Inter', sans-serif;
   font-size: 13px;
   font-weight: 400;
-  color: var(--text-secondary, #52627A);
+  color: var(--text-secondary);
 }
 
 .pageAddButton {
@@ -60,9 +60,9 @@
 }
 
 .statCard {
-  background: var(--surface, #fff);
-  border: 1px solid var(--border, #B8C4D4);
-  border-left: 3px solid var(--navy-mid, #17498E);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--navy-mid);
   border-radius: var(--radius, 12px);
   box-shadow: var(--shadow-sm);
   padding: 14px 18px;
@@ -82,12 +82,12 @@
   height: 40px;
   min-width: 40px;
   border-radius: 10px;
-  background: rgba(23, 73, 142, 0.08);
-  border: 1px solid rgba(23, 73, 142, 0.14);
+  background: color-mix(in srgb, var(--navy-mid) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--navy-mid) 14%, transparent);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--navy-mid, #17498E);
+  color: var(--navy-mid);
   flex-shrink: 0;
 }
 
@@ -102,7 +102,7 @@
   font-family: 'Outfit', sans-serif;
   font-size: 26px;
   font-weight: 800;
-  color: var(--navy, #0D1B3E);
+  color: var(--navy);
   letter-spacing: -1px;
   line-height: 1;
 }
@@ -111,14 +111,14 @@
   font-family: 'Inter', sans-serif;
   font-size: 12px;
   font-weight: 600;
-  color: var(--text-secondary, #52627A);
+  color: var(--text-secondary);
   margin-top: 3px;
 }
 
 /* ── Main card ── */
 .wrapperBox {
-  background: var(--surface, #fff);
-  border: 1px solid var(--border, #B8C4D4);
+  background: var(--surface);
+  border: 1px solid var(--border);
   border-radius: var(--radius, 12px);
   box-shadow: var(--shadow-sm);
   display: flex;
@@ -138,7 +138,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 18px 24px;
-  border-bottom: 1px solid var(--border, #B8C4D4);
+  border-bottom: 1px solid var(--border);
   position: relative;
 }
 
@@ -149,7 +149,7 @@
   top: 20%;
   bottom: 20%;
   width: 3px;
-  background: var(--navy-mid, #17498E);
+  background: var(--navy-mid);
   border-radius: 0 3px 3px 0;
 }
 
@@ -163,7 +163,7 @@
   font-family: 'Outfit', sans-serif;
   font-size: 18px;
   font-weight: 700;
-  color: var(--text-primary, #0D1B3E);
+  color: var(--text-primary);
   letter-spacing: -0.3px;
 }
 
@@ -171,7 +171,7 @@
   font-family: 'Inter', sans-serif;
   font-size: 12px;
   font-weight: 500;
-  color: var(--text-muted, #96A3B5);
+  color: var(--text-muted);
 }
 
 /* ── Search toolbar ── */
@@ -180,8 +180,8 @@
   align-items: center;
   gap: 12px;
   padding: 12px 24px;
-  border-bottom: 1px solid var(--border-subtle, #D4DCE8);
-  background: var(--surface-subtle, #F4F6FA);
+  border-bottom: 1px solid var(--border-subtle);
+  background: var(--surface-subtle);
   width: 100%;
 }
 
@@ -200,7 +200,7 @@
 
 .input {
   height: 36px;
-  background: var(--surface, #fff);
+  background: var(--surface);
   border-radius: var(--radius-sm, 8px);
 }
 
@@ -211,7 +211,7 @@
 
 /* ── Filter badge — navy ── */
 .searchBadge > span {
-  background: var(--navy-mid, #17498E);
+  background: var(--navy-mid);
   color: var(--text-on-dark);
   font-weight: 700;
   font-size: 10px;

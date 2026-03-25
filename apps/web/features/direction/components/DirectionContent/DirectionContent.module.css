@@ -3,7 +3,7 @@
   width: 100%;
   min-height: calc(100vh - 60px);
   padding: 28px 32px 56px;
-  background: var(--bg, #D8E0EC);
+  background: var(--bg);
 }
 
 /* ── Page header ── */
@@ -26,7 +26,7 @@
   font-family: 'Outfit', sans-serif;
   font-size: 22px;
   font-weight: 700;
-  color: var(--text-primary, #0D1B3E);
+  color: var(--text-primary);
   letter-spacing: -0.4px;
   margin: 0;
   line-height: 1.2;
@@ -36,7 +36,7 @@
   font-family: 'Inter', sans-serif;
   font-size: 13px;
   font-weight: 400;
-  color: var(--text-secondary, #52627A);
+  color: var(--text-secondary);
 }
 
 .pageAddButton {
@@ -62,9 +62,9 @@
 }
 
 .statCard {
-  background: var(--surface, #fff);
-  border: 1px solid var(--border, #B8C4D4);
-  border-left: 3px solid var(--navy-mid, #17498E);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--navy-mid);
   border-radius: var(--radius, 12px);
   box-shadow: var(--shadow-sm);
   padding: 14px 18px;
@@ -84,12 +84,12 @@
   height: 40px;
   min-width: 40px;
   border-radius: 10px;
-  background: rgba(23, 73, 142, 0.08);
-  border: 1px solid rgba(23, 73, 142, 0.14);
+  background: color-mix(in srgb, var(--navy-mid) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--navy-mid) 14%, transparent);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--navy-mid, #17498E);
+  color: var(--navy-mid);
   flex-shrink: 0;
 }
 
@@ -103,7 +103,7 @@
   font-family: 'Outfit', sans-serif;
   font-size: 26px;
   font-weight: 800;
-  color: var(--navy, #0D1B3E);
+  color: var(--navy);
   letter-spacing: -1px;
   line-height: 1;
 }
@@ -112,7 +112,7 @@
   font-family: 'Inter', sans-serif;
   font-size: 12px;
   font-weight: 600;
-  color: var(--text-secondary, #52627A);
+  color: var(--text-secondary);
   margin-top: 3px;
 }
 
@@ -121,10 +121,10 @@
   width: 100%;
   max-width: 1100px;
   margin: 0 auto;
-  background: var(--surface, #fff);
-  border: 1px solid var(--border, #B8C4D4);
+  background: var(--surface);
+  border: 1px solid var(--border);
   border-radius: var(--radius, 12px);
-  box-shadow: var(--shadow-sm, 0 1px 3px rgba(13,27,62,0.06));
+  box-shadow: var(--shadow-sm, 0 1px 3px color-mix(in srgb, var(--navy) 6%, transparent));
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -142,7 +142,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 18px 24px;
-  border-bottom: 1px solid var(--border, #B8C4D4);
+  border-bottom: 1px solid var(--border);
   position: relative;
 }
 
@@ -153,7 +153,7 @@
   top: 20%;
   bottom: 20%;
   width: 3px;
-  background: var(--navy-mid, #17498E);
+  background: var(--navy-mid);
   border-radius: 0 3px 3px 0;
 }
 
@@ -167,7 +167,7 @@
   font-family: 'Outfit', sans-serif;
   font-size: 18px;
   font-weight: 700;
-  color: var(--text-primary, #0D1B3E);
+  color: var(--text-primary);
   letter-spacing: -0.3px;
 }
 
@@ -175,7 +175,7 @@
   font-family: 'Inter', sans-serif;
   font-size: 12px;
   font-weight: 500;
-  color: var(--text-muted, #96A3B5);
+  color: var(--text-muted);
 }
 
 .addButton {
@@ -200,7 +200,7 @@
 
 /* ── Direction accordion card ── */
 .directionCard {
-  border: 1px solid var(--border, #B8C4D4) !important;
+  border: 1px solid var(--border) !important;
   border-radius: var(--radius-sm, 8px) !important;
   box-shadow: none !important;
   overflow: hidden;
@@ -212,8 +212,8 @@
 }
 
 .directionCard:hover {
-  border-color: var(--navy-mid, #17498E) !important;
-  box-shadow: 0 2px 8px rgba(23, 73, 142, 0.10) !important;
+  border-color: var(--navy-mid) !important;
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--navy-mid) 10%, transparent) !important;
 }
 
 /* ── Summary row ── */
@@ -235,7 +235,7 @@
   width: 34px;
   height: 34px;
   border-radius: 8px;
-  background: rgba(23, 73, 142, 0.08);
+  background: color-mix(in srgb, var(--navy-mid) 8%, transparent);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -243,7 +243,7 @@
   font-family: 'Outfit', sans-serif;
   font-size: 13px;
   font-weight: 800;
-  color: var(--navy-mid, #17498E);
+  color: var(--navy-mid);
   letter-spacing: 0.04em;
   text-transform: uppercase;
 }
@@ -252,7 +252,7 @@
   font-family: 'Outfit', sans-serif;
   font-size: 15px;
   font-weight: 700;
-  color: var(--text-primary, #0D1B3E);
+  color: var(--text-primary);
   letter-spacing: -0.2px;
   text-transform: capitalize;
 }
@@ -261,9 +261,9 @@
   font-family: 'Inter', sans-serif;
   font-size: 11px;
   font-weight: 600;
-  color: var(--text-muted, #96A3B5);
-  background: var(--surface-subtle, #F4F6FA);
-  border: 1px solid var(--border-subtle, #D4DCE8);
+  color: var(--text-muted);
+  background: var(--surface-subtle);
+  border: 1px solid var(--border-subtle);
   border-radius: 99px;
   padding: 1px 8px;
   line-height: 1.6;
@@ -276,7 +276,7 @@
 }
 
 .deleteBtn {
-  color: var(--text-muted, #96A3B5) !important;
+  color: var(--text-muted) !important;
   min-width: 0 !important;
   padding: 5px !important;
   border-radius: 6px !important;
@@ -290,7 +290,7 @@
 
 /* ── Department section ── */
 .deptSection {
-  border-left: 3px solid var(--navy-mid, #17498E);
+  border-left: 3px solid var(--navy-mid);
   margin-left: 8px;
   padding-left: 14px;
 }
@@ -301,7 +301,7 @@
   justify-content: space-between;
   padding: 10px 0 12px;
   margin-bottom: 10px;
-  border-bottom: 1px solid var(--border-subtle, #D4DCE8);
+  border-bottom: 1px solid var(--border-subtle);
 }
 
 .deptHeaderLeft {
@@ -314,7 +314,7 @@
   font-family: 'Inter', sans-serif;
   font-size: 10px;
   font-weight: 700;
-  color: var(--text-muted, #96A3B5);
+  color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.10em;
 }
@@ -323,15 +323,15 @@
   font-family: 'Inter', sans-serif;
   font-size: 11px;
   font-weight: 600;
-  color: var(--navy-mid, #17498E);
-  background: rgba(23, 73, 142, 0.08);
+  color: var(--navy-mid);
+  background: color-mix(in srgb, var(--navy-mid) 8%, transparent);
   border-radius: 99px;
   padding: 0px 7px;
   line-height: 1.7;
 }
 
 .addDeptBtn {
-  color: var(--navy-mid, #17498E) !important;
+  color: var(--navy-mid) !important;
   min-width: 0 !important;
   padding: 3px 10px !important;
   border-radius: 6px !important;
@@ -340,12 +340,12 @@
   font-weight: 600 !important;
   text-transform: none !important;
   gap: 4px !important;
-  border: 1px solid rgba(23, 73, 142, 0.20) !important;
+  border: 1px solid color-mix(in srgb, var(--navy-mid) 20%, transparent) !important;
 }
 
 .addDeptBtn:hover {
-  background: rgba(23, 73, 142, 0.06) !important;
-  border-color: var(--navy-mid, #17498E) !important;
+  background: color-mix(in srgb, var(--navy-mid) 6%, transparent) !important;
+  border-color: var(--navy-mid) !important;
 }
 
 /* ── Department table ── */
@@ -354,23 +354,23 @@
   border-collapse: collapse;
   border-radius: var(--radius-sm, 8px);
   overflow: hidden;
-  border: 1px solid var(--border-subtle, #D4DCE8);
+  border: 1px solid var(--border-subtle);
 }
 
 .deptTable thead tr {
-  background: var(--surface-subtle, #F4F6FA);
+  background: var(--surface-subtle);
 }
 
 .deptTable thead th {
   font-family: 'Inter', sans-serif;
   font-size: 10px;
   font-weight: 700;
-  color: var(--text-muted, #96A3B5);
+  color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.08em;
   padding: 9px 14px;
   text-align: left;
-  border-bottom: 1px solid var(--border-subtle, #D4DCE8);
+  border-bottom: 1px solid var(--border-subtle);
   white-space: nowrap;
 }
 
@@ -382,17 +382,17 @@
 }
 
 .deptTable tbody tr:not(:last-child) td {
-  border-bottom: 1px solid var(--border-subtle, #D4DCE8);
+  border-bottom: 1px solid var(--border-subtle);
 }
 
 .deptTable tbody tr:hover {
-  background: rgba(23, 73, 142, 0.03);
+  background: color-mix(in srgb, var(--navy-mid) 3%, transparent);
 }
 
 .deptTable tbody td {
   font-family: 'Inter', sans-serif;
   font-size: 13px;
-  color: var(--text-primary, #0D1B3E);
+  color: var(--text-primary);
   padding: 11px 14px;
   vertical-align: middle;
 }
@@ -404,8 +404,8 @@
   display: inline-flex;
   padding: 2px 9px;
   border-radius: 99px;
-  background: rgba(23, 73, 142, 0.08);
-  color: var(--navy-mid, #17498E);
+  background: color-mix(in srgb, var(--navy-mid) 8%, transparent);
+  color: var(--navy-mid);
   font-family: 'Inter', sans-serif;
   font-size: 11px;
   font-weight: 700;
@@ -419,7 +419,7 @@
   gap: 5px;
   font-family: 'Inter', sans-serif;
   font-size: 13px;
-  color: var(--text-secondary, #52627A);
+  color: var(--text-secondary);
   font-weight: 500;
 }
 
@@ -432,18 +432,18 @@
   padding: 3px 10px !important;
   border-radius: 6px !important;
   min-width: 0 !important;
-  color: var(--navy-mid, #17498E) !important;
+  color: var(--navy-mid) !important;
 }
 
 .detailsBtn:hover {
-  background: rgba(23, 73, 142, 0.08) !important;
+  background: color-mix(in srgb, var(--navy-mid) 8%, transparent) !important;
 }
 
 /* ── Empty state ── */
 .emptyDepts {
   font-family: 'Inter', sans-serif;
   font-size: 13px;
-  color: var(--text-muted, #96A3B5);
+  color: var(--text-muted);
   text-align: center;
   padding: 18px 0;
 }

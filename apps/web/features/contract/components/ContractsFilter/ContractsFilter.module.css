@@ -20,7 +20,7 @@
 
 /* ── Navy header band ── */
 .modalHeader {
-  background: var(--navy);
+  background: var(--navy-mid);
   padding: 20px 24px;
   display: flex;
   align-items: center;
@@ -29,20 +29,6 @@
   position: relative;
   overflow: hidden;
   flex-shrink: 0;
-}
-
-.modalHeader::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image: repeating-linear-gradient(
-    45deg,
-    rgba(255,255,255,0.025) 0px,
-    rgba(255,255,255,0.025) 1px,
-    transparent 1px,
-    transparent 14px
-  );
-  pointer-events: none;
 }
 
 .headerLeft {
@@ -110,6 +96,7 @@
   flex-direction: column;
   gap: 8px;
   overflow-y: auto;
+  background: var(--surface);
 }
 
 .sectionsBody::-webkit-scrollbar { width: 4px; }
@@ -117,16 +104,16 @@
 
 /* ── Filter section ── */
 .filterSection {
-  border: 1px solid var(--border-subtle);
+  border: 1px solid var(--border);
   border-radius: 10px;
-  background: var(--bg);
+  background: var(--surface);
   transition: border-color 0.2s, box-shadow 0.2s;
   overflow: hidden;
 }
 
 .filterSection.filterSectionActive {
   border-color: var(--navy-mid);
-  box-shadow: 0 0 0 3px rgba(23,73,142,0.07);
+  box-shadow: 0 0 0 3px rgba(37,99,235,0.07);
   background: var(--navy-light);
 }
 
@@ -165,8 +152,8 @@
   width: 28px;
   height: 28px;
   border-radius: 7px;
-  background: rgba(23,73,142,0.07);
-  border: 1px solid rgba(23,73,142,0.12);
+  background: rgba(37,99,235,0.07);
+  border: 1px solid rgba(37,99,235,0.12);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -176,8 +163,8 @@
 }
 
 .filterSectionActive .sectionIcon {
-  background: rgba(23,73,142,0.15);
-  border-color: rgba(23,73,142,0.25);
+  background: rgba(37,99,235,0.15);
+  border-color: rgba(37,99,235,0.25);
 }
 
 .sectionTitle {
@@ -352,7 +339,7 @@
 
 .amountInput:focus {
   border-color: var(--navy-mid);
-  box-shadow: 0 0 0 3px rgba(23,73,142,0.10);
+  box-shadow: 0 0 0 3px rgba(37,99,235,0.10);
 }
 
 .amountInput:disabled {
@@ -386,7 +373,7 @@
   justify-content: space-between;
   padding: 14px 20px;
   border-top: 1px solid var(--border-subtle);
-  background: var(--surface-subtle, #F4F6FA);
+  background: var(--surface);
   flex-shrink: 0;
   gap: 8px;
 }
@@ -456,7 +443,7 @@
 }
 
 .applyBtn:hover {
-  background: var(--navy);
+  background: var(--navy-mid);
   transform: translateY(-1px);
 }
 

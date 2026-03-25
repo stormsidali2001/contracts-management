@@ -3,12 +3,12 @@
   grid-template-columns: 1fr 1fr;
   width: 100vw;
   height: 100vh;
-  background: var(--bg, #D8E0EC);
+  background: var(--bg);
 }
 
 /* ── Left panel: brand ── */
 .leftPanel {
-  background: var(--navy, #0D1B3E);
+  background: var(--navy);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -37,7 +37,7 @@
   width: 260px;
   height: 260px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(23,73,142,0.3) 0%, transparent 70%);
+  background: radial-gradient(circle, color-mix(in srgb, var(--navy-mid) 30%, transparent) 0%, transparent 70%);
   pointer-events: none;
 }
 
@@ -61,7 +61,7 @@
   font-family: 'Outfit', sans-serif;
   font-size: 20px;
   font-weight: 700;
-  color: var(--text-on-dark, #FFFFFF);
+  color: var(--text-on-dark);
   letter-spacing: -0.3px;
 }
 
@@ -74,7 +74,7 @@
   font-family: 'Outfit', sans-serif;
   font-size: 34px;
   font-weight: 700;
-  color: var(--text-on-dark, #FFFFFF);
+  color: var(--text-on-dark);
   line-height: 1.2;
   letter-spacing: -0.8px;
   margin-bottom: 16px;
@@ -82,7 +82,7 @@
 
 .brandTagline h2 em {
   font-style: normal;
-  color: var(--amber, #F59E0B);
+  color: var(--amber);
 }
 
 .brandTagline p {
@@ -106,7 +106,7 @@
   justify-content: center;
   align-items: center;
   padding: 48px;
-  background: var(--surface, #fff);
+  background: var(--surface);
 }
 
 .formCard {
@@ -122,14 +122,14 @@
   font-family: 'Outfit', sans-serif;
   font-size: 26px;
   font-weight: 700;
-  color: var(--text-primary, #0D1B3E);
+  color: var(--text-primary);
   letter-spacing: -0.5px;
   margin-bottom: 6px;
 }
 
 .formHeading p {
   font-size: 13.5px;
-  color: var(--text-muted, #96A3B5);
+  color: var(--text-muted);
 }
 
 .formWrapper {
@@ -158,7 +158,7 @@
 
 .forgotPassword a {
   font-size: 12.5px;
-  color: var(--navy-mid, #17498E);
+  color: var(--navy-mid);
   font-weight: 500;
   transition: opacity 0.15s;
 }

@@ -70,17 +70,17 @@
   /* ApexCharts tooltip override */
 }
 .chartContainer :global(.apexcharts-tooltip) {
-  background: var(--surface, #fff) !important;
-  border: 1px solid var(--border, #B8C4D4) !important;
+  background: var(--surface) !important;
+  border: 1px solid var(--border) !important;
   border-radius: 8px !important;
   box-shadow: var(--shadow-md) !important;
-  color: var(--text-primary, #0D1B3E) !important;
+  color: var(--text-primary) !important;
   font-family: 'Inter', sans-serif !important;
 }
 .chartContainer :global(.apexcharts-tooltip-title) {
-  background: var(--bg, #D8E0EC) !important;
-  border-bottom: 1px solid var(--border, #B8C4D4) !important;
-  color: var(--text-primary, #0D1B3E) !important;
+  background: var(--bg) !important;
+  border-bottom: 1px solid var(--border) !important;
+  color: var(--text-primary) !important;
   font-weight: 600 !important;
 }
 
@@ -106,7 +106,7 @@
 .expandedCard {
   width: 100vw;
   height: 100vh;
-  background: var(--bg, #D8E0EC);
+  background: var(--bg);
   position: fixed;
   top: 0; left: 0;
   padding: 32px 40px;
@@ -121,10 +121,10 @@
   position: absolute;
   right: 32px; top: 32px;
   width: 40px; height: 40px;
-  background: var(--error, #DC2626);
+  background: var(--error);
   border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
-  cursor: pointer; border: none; color: var(--text-on-dark, #fff);
+  cursor: pointer; border: none; color: var(--text-on-dark);
   transition: opacity 0.15s;
 }
 .closeButton:hover { opacity: 0.85; }
@@ -138,34 +138,34 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  background: var(--surface, #fff);
+  background: var(--surface);
   padding: 12px 24px;
   border-radius: var(--radius, 12px);
-  border: 1px solid var(--border, #B8C4D4);
+  border: 1px solid var(--border);
   box-shadow: var(--shadow-xs);
 }
 .dateIntervalle > span:nth-child(odd) {
-  font-size: 13px; color: var(--text-muted, #96A3B5);
+  font-size: 13px; color: var(--text-muted);
 }
 .dateIntervalle > span:nth-child(even) {
   font-family: 'Outfit', sans-serif;
   font-size: 14px; font-weight: 700;
-  color: var(--text-primary, #0D1B3E);
+  color: var(--text-primary);
   padding: 5px 14px;
-  background: var(--navy-light, #EAF0FA);
+  background: var(--navy-light);
   border-radius: 8px;
-  border: 1px solid var(--border, #B8C4D4);
+  border: 1px solid var(--border);
   cursor: pointer;
   transition: background 0.15s;
 }
-.dateIntervalle > span:nth-child(even):hover { background: var(--bg, #D8E0EC); }
+.dateIntervalle > span:nth-child(even):hover { background: var(--bg); }
 
 .expandedChartContainer {
   flex: 1;
   min-height: 320px;
-  background: var(--surface, #fff);
+  background: var(--surface);
   border-radius: var(--radius, 12px);
-  border: 1px solid var(--border, #B8C4D4);
+  border: 1px solid var(--border);
   padding: 24px;
   position: relative;
 }
@@ -175,12 +175,12 @@
   display: flex; flex-direction: column;
   justify-content: center; align-items: center;
   height: 160px;
-  color: var(--text-muted, #96A3B5);
+  color: var(--text-muted);
   font-size: 13px;
 }
 
 /* focus ring */
-.container:focus-within { border-color: var(--navy-mid, #17498E); }
+.container:focus-within { border-color: var(--navy-mid); }
 
 @keyframes dataUpdate {
   from { opacity: 0.6; transform: scale(0.99); }

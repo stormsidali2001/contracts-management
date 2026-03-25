@@ -142,13 +142,13 @@ const ContractContent = ({ type, agreementId }: PropType) => {
             <section className={styles.section}>
               <span className={styles.sectionLabel}>Parties contractantes</span>
               <div className={styles.parties}>
-                {/* BMT side */}
+                {/* Organisation side */}
                 <div className={styles.party}>
-                  <div className={styles.partyIconBmt}>
+                  <div className={styles.partyIconOrg}>
                     <AccountBalanceOutlinedIcon sx={{ fontSize: 16 }} />
                   </div>
                   <div className={styles.partyInfo}>
-                    <span className={styles.partyName}>BMT</span>
+                    <span className={styles.partyName}>Organisation</span>
                     <div className={styles.partyMeta}>
                       {contract.departement?.abriviation && (
                         <span className={styles.metaPill}>{contract.departement.abriviation}</span>

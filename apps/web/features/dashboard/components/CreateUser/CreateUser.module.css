@@ -22,7 +22,7 @@
 
 /* ── Navy header band ── */
 .modalHeader {
-  background: var(--navy);
+  background: var(--navy-mid);
   padding: 20px 24px;
   display: flex;
   align-items: center;
@@ -31,20 +31,6 @@
   position: relative;
   overflow: hidden;
   flex-shrink: 0;
-}
-
-.modalHeader::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image: repeating-linear-gradient(
-    45deg,
-    rgba(255,255,255,0.025) 0px,
-    rgba(255,255,255,0.025) 1px,
-    transparent 1px,
-    transparent 14px
-  );
-  pointer-events: none;
 }
 
 .headerLeft {
@@ -158,7 +144,7 @@
   border-color: var(--navy-mid);
   background: var(--navy-mid);
   color: #fff;
-  box-shadow: 0 0 0 4px rgba(23,73,142,0.12);
+  box-shadow: 0 0 0 4px rgba(37,99,235,0.12);
 }
 
 .step.stepDone .stepCircle {
@@ -384,15 +370,15 @@
 .roleCardActive {
   border-color: var(--navy-mid);
   background: var(--navy-light);
-  box-shadow: 0 0 0 3px rgba(23,73,142,0.09);
+  box-shadow: 0 0 0 3px rgba(37,99,235,0.09);
 }
 
 .roleCardIcon {
   width: 40px;
   height: 40px;
   border-radius: 10px;
-  background: rgba(23,73,142,0.07);
-  border: 1px solid rgba(23,73,142,0.12);
+  background: rgba(37,99,235,0.07);
+  border: 1px solid rgba(37,99,235,0.12);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -401,8 +387,8 @@
 }
 
 .roleCardActive .roleCardIcon {
-  background: rgba(23,73,142,0.18);
-  border-color: rgba(23,73,142,0.28);
+  background: rgba(37,99,235,0.18);
+  border-color: rgba(37,99,235,0.28);
 }
 
 .roleCardLabel {
@@ -449,13 +435,13 @@
 }
 
 .statusIconSuccess {
-  background: rgba(22,163,74,0.10);
-  color: #16a34a;
+  background: rgba(16,185,129,0.10);
+  color: var(--success);
 }
 
 .statusIconError {
-  background: rgba(220,38,38,0.10);
-  color: #dc2626;
+  background: rgba(239,68,68,0.10);
+  color: var(--error);
 }
 
 .statusTitle {
@@ -495,7 +481,7 @@
   justify-content: space-between;
   padding: 14px 24px;
   border-top: 1px solid var(--border-subtle);
-  background: var(--surface-subtle, #F4F6FA);
+  background: var(--surface-subtle);
   flex-shrink: 0;
 }
 
@@ -543,7 +529,7 @@
 }
 
 .nextBtn:hover:not(:disabled) {
-  background: var(--navy);
+  background: var(--navy-mid);
   transform: translateY(-1px);
 }
 

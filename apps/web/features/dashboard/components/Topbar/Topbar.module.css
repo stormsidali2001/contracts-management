@@ -1,12 +1,12 @@
 /* ── Topbar ── */
 .container {
-  height: var(--topbar-height, 60px);
+  height: var(--topbar-height);
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 0 28px;
-  background: var(--surface, #fff);
-  border-bottom: 1px solid var(--border, #B8C4D4);
+  background: var(--surface);
+  border-bottom: 1px solid var(--border-subtle);
   position: sticky;
   top: 0;
   z-index: 50;
@@ -25,7 +25,7 @@
   font-family: 'Outfit', sans-serif;
   font-size: 16px;
   font-weight: 700;
-  color: var(--text-primary, #0D1B3E);
+  color: var(--text-primary);
   letter-spacing: -0.3px;
   line-height: 1.2;
 }
@@ -35,7 +35,7 @@
   font-family: 'Inter', sans-serif;
   font-size: 10.5px;
   font-weight: 600;
-  color: var(--text-muted, #96A3B5);
+  color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.08em;
 }
@@ -58,8 +58,8 @@
   height: 16px;
   padding: 0 4px;
   border-radius: 99px;
-  background: var(--error, #DC2626);
-  color: var(--text-on-dark, #fff);
+  background: var(--error);
+  color: var(--text-on-dark);
   font-size: 10px;
   font-weight: 700;
   display: flex;
@@ -75,11 +75,11 @@
   border-radius: 50%;
   position: relative;
   overflow: hidden;
-  border: 2px solid var(--border, #B8C4D4);
+  border: 2px solid var(--border);
   cursor: pointer;
   transition: border-color 0.15s;
 }
-.profilImgContainer:hover { border-color: var(--navy-mid, #17498E); }
+.profilImgContainer:hover { border-color: var(--navy-mid); }
 .profilImgContainer img {
   width: 100%;
   height: 100%;
@@ -91,7 +91,7 @@
 .chevron {
   position: absolute;
   bottom: -1px; right: -1px;
-  background: var(--surface, #fff);
+  background: var(--surface);
   border-radius: 50%;
   width: 14px;
   height: 14px;
@@ -102,9 +102,9 @@
 
 /* ── Popover panel ── */
 .popoverStyles {
-  background: var(--surface, #fff) !important;
-  border: 1px solid var(--border, #B8C4D4) !important;
-  border-radius: var(--radius, 12px) !important;
+  background: var(--surface) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--radius) !important;
   box-shadow: var(--shadow-lg) !important;
   padding: 8px !important;
   min-width: 200px !important;

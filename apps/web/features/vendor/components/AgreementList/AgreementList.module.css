@@ -2,10 +2,10 @@
 .container {
   width: min(90vw, 900px);
   max-height: 85vh;
-  background: var(--surface, #fff);
+  background: var(--surface);
   border-radius: var(--radius, 12px);
-  box-shadow: var(--shadow-lg, 0 8px 24px rgba(13,27,62,0.12));
-  border: 1px solid var(--border, #B8C4D4);
+  box-shadow: var(--shadow-lg, 0 8px 24px color-mix(in srgb, var(--navy) 12%, transparent));
+  border: 1px solid var(--border);
   position: absolute;
   top: 50%;
   left: 50%;
@@ -33,7 +33,7 @@
   font-family: 'Outfit', sans-serif;
   font-size: 18px;
   font-weight: 700;
-  color: var(--text-primary, #0D1B3E);
+  color: var(--text-primary);
   letter-spacing: -0.3px;
   margin-bottom: 4px;
 }

@@ -2,10 +2,10 @@
 .container {
   width: 520px;
   max-width: calc(100vw - 32px);
-  background: var(--surface, #fff);
+  background: var(--surface);
   border-radius: var(--radius, 12px);
-  box-shadow: var(--shadow-lg, 0 8px 24px rgba(13,27,62,0.12));
-  border: 1px solid var(--border, #B8C4D4);
+  box-shadow: var(--shadow-lg, 0 8px 24px rgba(15,23,42,0.12));
+  border: 1px solid var(--border);
   position: absolute;
   top: 50%;
   left: 50%;
@@ -19,7 +19,7 @@
 
 .container::-webkit-scrollbar { width: 4px; }
 .container::-webkit-scrollbar-thumb {
-  background: var(--border, #B8C4D4);
+  background: var(--border);
   border-radius: 4px;
 }
 
@@ -28,7 +28,7 @@
   font-family: 'Outfit', sans-serif;
   font-size: 18px;
   font-weight: 700;
-  color: var(--text-primary, #0D1B3E);
+  color: var(--text-primary);
   letter-spacing: -0.3px;
   margin-bottom: 20px;
 }
@@ -48,7 +48,7 @@
   gap: 12px;
   margin-top: 24px;
   padding-top: 20px;
-  border-top: 1px solid var(--border, #B8C4D4);
+  border-top: 1px solid var(--border);
 }
 
 /* ── Vendor selector header ── */
@@ -58,8 +58,8 @@
   gap: 12px;
   padding: 12px;
   border-radius: var(--radius-sm, 8px);
-  background: var(--bg, #D8E0EC);
-  border: 1px solid var(--border, #B8C4D4);
+  background: var(--bg);
+  border: 1px solid var(--border);
   margin-bottom: 16px;
 }
 
@@ -79,13 +79,13 @@
   font-family: 'Inter', sans-serif;
   font-size: 14px;
   font-weight: 600;
-  color: var(--text-primary, #0D1B3E);
+  color: var(--text-primary);
 }
 
 .userInfos > span:nth-of-type(2) {
   font-family: 'Inter', sans-serif;
   font-size: 12px;
-  color: var(--text-muted, #96A3B5);
+  color: var(--text-muted);
 }
 
 .userInfos > span:nth-of-type(2)::first-letter {
@@ -95,7 +95,7 @@
 .userInfos > span:nth-of-type(3) {
   font-family: 'Inter', sans-serif;
   font-size: 12px;
-  color: var(--text-secondary, #52627A);
+  color: var(--text-secondary);
 }
 
 .profilImgContainer {
@@ -104,7 +104,7 @@
   border-radius: 50%;
   overflow: hidden;
   flex-shrink: 0;
-  border: 2px solid var(--border, #B8C4D4);
+  border: 2px solid var(--border);
 }
 
 .profilImgContainer img {
@@ -118,7 +118,7 @@
   width: 80px !important;
   height: 80px !important;
   font-size: 28px !important;
-  background: var(--navy, #0D1B3E) !important;
+  background: var(--navy-mid) !important;
 }
 
 .selectFormControl {

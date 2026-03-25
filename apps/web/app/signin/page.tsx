@@ -5,7 +5,8 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { LoginUser } from '@/features/auth/models/login-user.interface';
-import { BMT_LOGO_URL } from '@/features/dashboard/data';
+import { APP_NAME } from '@/features/dashboard/data';
+import GavelOutlinedIcon from '@mui/icons-material/GavelOutlined';
 import { useLogin } from '@/features/auth/queries/auth.queries';
 import { useAuthStore } from '@/features/auth/store/auth.store';
 import { useSnackbarStore } from '@/features/ui/store/snackbar.store';
@@ -55,14 +56,14 @@ export default function SignIn() {
       {/* ── Left brand panel ── */}
       <div className={styles.leftPanel}>
         <div className={styles.brandTop}>
-          <img src={BMT_LOGO_URL} alt="BMT Logo" />
-          <span className={styles.brandName}>BMT</span>
+          <GavelOutlinedIcon sx={{ fontSize: 28 }} />
+          <span className={styles.brandName}>{APP_NAME}</span>
         </div>
         <div className={styles.brandTagline}>
           <h2>Gestion des<br /><em>contrats</em><br />simplifiée.</h2>
           <p>Suivez, analysez et gérez l'ensemble de vos accords commerciaux en un seul endroit.</p>
         </div>
-        <span className={styles.brandFooter}>© 2026 BMT — Tous droits réservés</span>
+        <span className={styles.brandFooter}>© 2026 {APP_NAME} — Tous droits réservés</span>
       </div>
 
       {/* ── Right form panel ── */}

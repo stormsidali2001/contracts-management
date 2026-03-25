@@ -1,10 +1,10 @@
 /* ── Modal shell ── */
 .container {
   width: min(820px, 94vw);
-  background: var(--surface, #fff);
-  border: 1px solid var(--border, #B8C4D4);
+  background: var(--surface);
+  border: 1px solid var(--border);
   border-radius: var(--radius, 12px);
-  box-shadow: var(--shadow-lg, 0 20px 60px rgba(13,27,62,0.18));
+  box-shadow: var(--shadow-lg, 0 20px 60px color-mix(in srgb, var(--navy) 18%, transparent));
   position: absolute;
   top: 50%;
   left: 50%;
@@ -17,7 +17,7 @@
 
 /* ── Navy header band ── */
 .modalHeader {
-  background: var(--navy, #0D1B3E);
+  background: var(--navy-mid);
   padding: 20px 24px;
   display: flex;
   align-items: center;
@@ -106,14 +106,14 @@
   align-items: center;
   gap: 12px;
   padding: 12px 20px;
-  border-bottom: 1px solid var(--border-subtle, #D4DCE8);
-  background: var(--surface-subtle, #F4F6FA);
+  border-bottom: 1px solid var(--border-subtle);
+  background: var(--surface-subtle);
   flex-shrink: 0;
 }
 
 .input {
   height: 36px;
-  background: var(--surface, #fff);
+  background: var(--surface);
   border-radius: var(--radius-sm, 8px);
 }
 
@@ -126,7 +126,7 @@
   font-family: 'Inter', sans-serif;
   font-size: 12px;
   font-weight: 500;
-  color: var(--text-muted, #96A3B5);
+  color: var(--text-muted);
   flex-shrink: 0;
 }
 
