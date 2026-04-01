@@ -3,8 +3,7 @@ import { FormControl, InputLabel, MenuItem, Select, SelectChangeEvent } from '@m
 import { MobileDatePicker } from '@mui/x-date-pickers';
 import dayjs, { Dayjs } from 'dayjs';
 import { useEffect, useState } from 'react';
-import { useAuthStore } from '@/features/auth/store/auth.store';
-import { UserRole } from '@/features/auth/models/user-role.enum';
+import { usePermissions } from '@/features/auth/queries/auth.queries';
 import styles from './ContractsFilter.module.css';
 import { useDirections } from '@/features/direction/queries/direction.queries';
 import FilterListOutlinedIcon from '@mui/icons-material/FilterListOutlined';
@@ -58,8 +57,8 @@ const ContractsFilter = ({ handleSetFilters, handleClose, initialFilters }: Prop
   const [isByStatus,    setIsByStatus]    = useState(false);
   const [startDate,     setStartDate]     = useState<Dayjs>(dayjs(new Date()));
   const [endDate,       setEndDate]       = useState<Dayjs>(dayjs(new Date()));
-  const user                              = useAuthStore((s) => s.user);
-  const shouldDisplayFilter = () => user?.role === UserRole.ADMIN || user?.role === UserRole.JURIDICAL;
+  const { data: permissions }             = usePermissions();
+  const shouldDisplayFilter = () => permissions?.filters.canFilterByDirection ?? false;
   const [isByDate,      setIsByDate]      = useState(false);
   const [isByDirection, setIsByDirection] = useState(false);
   const [selectedDirection,   setSelectedDirection]   = useState<{ label: string; value: string }>({ label: '', value: '' });

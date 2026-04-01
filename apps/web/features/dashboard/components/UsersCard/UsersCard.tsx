@@ -1,6 +1,7 @@
 'use client';
 import { AnimateSharedLayout, motion } from 'framer-motion';
 import { useState, useId } from 'react';
+import { Skeleton } from '@mui/material';
 import AdminIcon from '@/icons/AdminIcon';
 import EmployeeIcon from '@/icons/EmployeeIcon';
 import JuridicalIcon from '@/icons/JuridicalIcon';
@@ -24,7 +25,28 @@ const UsersCard = () => {
   const { data } = useStatistics({ startDate: formatDate(start_date), endDate: formatDate(end_date) });
   const stats = data?.userTypes ?? null;
 
-  if (!stats) return <div className={styles.container}>Loading...</div>;
+  if (!stats) return (
+    <div className={styles.container}>
+      <div className={styles.cardHeader}>
+        <div className={styles.cardHeaderLeft}>
+          <Skeleton variant="text" animation="wave" width={95} height={18} />
+          <Skeleton variant="text" animation="wave" width={72} height={14} />
+        </div>
+        <Skeleton variant="circular" animation="wave" width={24} height={24} />
+      </div>
+      <div className={styles.cardBody}>
+        <div className={styles.percentages}>
+          {[...Array(3)].map((_, i) => (
+            <div key={i} className={styles.percentage}>
+              <Skeleton variant="circular" animation="wave" width={28} height={28} />
+              <Skeleton variant="text" animation="wave" width={38} height={20} />
+              <Skeleton variant="text" animation="wave" width={50} height={14} />
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
 
   return (
     <AnimateSharedLayout>

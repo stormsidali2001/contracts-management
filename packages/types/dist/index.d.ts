@@ -11,4 +11,5 @@ export * from './views/departement.view';
 export * from './views/user.view';
 export * from './views/notification.view';
 export * from './views/event.view';
+export * from './views/permissions.view';
 //# sourceMappingURL=index.d.ts.map

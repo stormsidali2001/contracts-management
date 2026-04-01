@@ -8,6 +8,7 @@ import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement
 import { Line } from 'react-chartjs-2';
 import 'chartjs-adapter-date-fns';
 import { fr } from 'date-fns/locale';
+import { Skeleton } from '@mui/material';
 import { AnimateSharedLayout, motion } from 'framer-motion';
 import { useDateRangeStore } from '@/features/statistics/store/date-range.store';
 import { useStatistics } from '@/features/statistics/queries/statistics.queries';
@@ -34,6 +35,23 @@ export default VendorsCard;
 
 export function CompactCard({ stats, cardId, setExpanded }: any) {
   const latestCount = stats?.slice(-1)?.[0]?.nb_vendors ?? null;
+
+  if (!stats) {
+    return (
+      <motion.div layoutId={`expandableCard-${cardId}`} className={styles.container}>
+        <div className={styles.cardHeader}>
+          <div className={styles.cardHeaderLeft}>
+            <Skeleton variant="text" animation="wave" width={95} height={18} />
+          </div>
+          <Skeleton variant="circular" animation="wave" width={24} height={24} />
+        </div>
+        <div className={styles.chartContainer}>
+          <Skeleton variant="rounded" animation="wave" width="100%" height="100%" sx={{ borderRadius: 8 }} />
+        </div>
+      </motion.div>
+    );
+  }
+
   const data = {
     labels: stats?.slice(-7)?.map((el: any) => el.date) ?? [],
     datasets: [{ label: 'nombre de fournisseurs', backgroundColor: tokens.color.navyMid, borderColor: tokens.color.navyMid, borderWidth: 1.5, hoverBackgroundColor: tokens.color.navyLight, hoverBorderColor: tokens.color.navyMid, data: stats?.slice(-7)?.map((el: any) => el.nb_vendors) ?? [] }],

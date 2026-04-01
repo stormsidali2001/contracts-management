@@ -1,5 +1,5 @@
 'use client';
-import { Accordion, AccordionDetails, AccordionSummary, Button, Modal } from '@mui/material';
+import { Accordion, AccordionDetails, AccordionSummary, Button, Modal, Skeleton } from '@mui/material';
 import styles from './DirectionContent.module.css';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -12,9 +12,8 @@ import PeopleOutlineIcon from '@mui/icons-material/PeopleOutline';
 import CreateDepartement from '@/features/direction/components/CreateDepartement/CreateDepartement';
 import CreateDirection from '@/features/direction/components/CreateDirection/CreateDirection';
 import DeleteDirectionModal from '@/features/direction/components/DeleteDirectionModal/DeleteDirectionModal';
-import { useAuthStore } from '@/features/auth/store/auth.store';
 import { useSnackbarStore } from '@/features/ui/store/snackbar.store';
-import { UserRole } from '@/features/auth/models/user-role.enum';
+import { usePermissions } from '@/features/auth/queries/auth.queries';
 import DepartementUsersList from '@/features/direction/components/DepartementUsersList/DepartementUsersList';
 import { useDirections, useDeleteDirection, useDeleteDepartement } from '@/features/direction/queries/direction.queries';
 import { Direction } from '@/features/direction/models/direction.interface';
@@ -29,10 +28,10 @@ const dirAbbr = (title: string) => {
 const DirectionContent = () => {
   const [openDepartementUsers, setOpenDepartementUsers] = useState(false);
   const [choosenDepartementId, setChoosenDepartementId] = useState('');
-  const user = useAuthStore((s) => s.user);
+  const { data: permissions } = usePermissions();
   const showSnackbar = useSnackbarStore((s) => s.showSnackbar);
 
-  const { data: directions = [] } = useDirections();
+  const { data: directions = [], isLoading } = useDirections();
   const { mutate: deleteDirection } = useDeleteDirection();
   const { mutate: deleteDepartement } = useDeleteDepartement();
 
@@ -61,10 +60,7 @@ const DirectionContent = () => {
     });
   };
 
-  const dispalayIfAdmin = () => {
-    if (!user) return false;
-    return user.role === UserRole.ADMIN;
-  };
+  const dispalayIfAdmin = () => permissions?.directions.canCreate ?? false;
 
   const [choosenDepartementName, setChoosenDepartementName] = useState('');
 
@@ -73,6 +69,43 @@ const DirectionContent = () => {
     setChoosenDepartementId(departementId);
     setChoosenDepartementName(departementName ?? '');
   };
+
+  if (isLoading) {
+    return (
+      <div className={styles.container}>
+        <div className={styles.pageHeader}>
+          <div className={styles.pageHeaderLeft}>
+            <Skeleton variant="text" animation="wave" width={240} height={34} />
+            <Skeleton variant="text" animation="wave" width={340} height={16} />
+          </div>
+          <Skeleton variant="rounded" animation="wave" width={165} height={34} sx={{ borderRadius: 8 }} />
+        </div>
+
+        <div className={styles.statsStrip}>
+          {[...Array(3)].map((_, i) => (
+            <div key={i} className={styles.statCard}>
+              <Skeleton variant="circular" animation="wave" width={36} height={36} />
+              <div className={styles.statContent}>
+                <Skeleton variant="text" animation="wave" width={44} height={28} />
+                <Skeleton variant="text" animation="wave" width={80} height={14} />
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className={styles.wrapperBox}>
+          <div className={styles.cardHeader}>
+            <Skeleton variant="text" animation="wave" width={100} height={20} />
+          </div>
+          <div className={styles.directionsWrapper}>
+            {[...Array(4)].map((_, i) => (
+              <Skeleton key={i} variant="rounded" animation="wave" height={56} sx={{ borderRadius: 0, mb: '1px', display: 'block' }} />
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.container}>

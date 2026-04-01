@@ -3,13 +3,12 @@
 import styles from './vendorContent.module.css';
 import { useState } from 'react';
 import { useParams } from 'next/navigation';
-import { CircularProgress, Modal } from '@mui/material';
+import { CircularProgress, Modal, Skeleton } from '@mui/material';
 import AgreementList from '@/features/vendor/components/AgreementList/AgreementList';
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
-import { useAuthStore } from '@/features/auth/store/auth.store';
 import { useSnackbarStore } from '@/features/ui/store/snackbar.store';
-import { UserRole } from '@/features/auth/models/user-role.enum';
+import { usePermissions } from '@/features/auth/queries/auth.queries';
 import { useVendor, useUpdateVendor } from '@/features/vendor/queries/vendor.queries';
 import Link from 'next/link';
 import ArrowBackIosNewOutlinedIcon from '@mui/icons-material/ArrowBackIosNewOutlined';
@@ -26,7 +25,7 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { useStatistics } from '@/features/statistics/queries/statistics.queries';
 
 const VendorContent = () => {
-  const user = useAuthStore((s) => s.user);
+  const { data: permissions } = usePermissions();
   const [editMode, setEditMode] = useState(false);
   const params = useParams();
   const vendorId = params.vendorId as string | undefined;
@@ -49,8 +48,67 @@ const VendorContent = () => {
   const handleShowConvension = () => { setModalType('convension'); handleContractModaOpen(); };
 
   if (!displayVendor) return (
-    <div className={styles.loadingState}>
-      <div className={styles.loadingPulse} />
+    <div className={styles.page}>
+      <div className={styles.pageHeader}>
+        <div className={styles.pageHeaderLeft}>
+          <Skeleton variant="text" animation="wave" width={110} height={16} />
+          <div className={styles.pageHeaderTitle}>
+            <Skeleton variant="text" animation="wave" width={190} height={34} />
+            <Skeleton variant="rounded" animation="wave" width={85} height={22} sx={{ borderRadius: 99 }} />
+            <Skeleton variant="rounded" animation="wave" width={60} height={22} sx={{ borderRadius: 99 }} />
+          </div>
+        </div>
+        <Skeleton variant="rounded" animation="wave" width={120} height={34} sx={{ borderRadius: 8 }} />
+      </div>
+
+      <div className={styles.container}>
+        {/* Left: vendor details card skeleton */}
+        <div className={styles.left}>
+          <div className={styles.vendorCard}>
+            <div className={styles.cardHeader}>
+              <Skeleton variant="circular" animation="wave" width={40} height={40} />
+              <div className={styles.headerText}>
+                <Skeleton variant="text" animation="wave" width={160} height={18} />
+                <Skeleton variant="text" animation="wave" width={80} height={14} />
+              </div>
+            </div>
+            <div className={styles.content}>
+              {[0, 1, 2, 3, 4, 5].map((i) => (
+                <div key={i} className={`${styles.vendorContentItem} ${i === 0 || i === 5 ? styles.spanTwo : ''}`}>
+                  <Skeleton variant="text" animation="wave" width={70} height={14} />
+                  <Skeleton variant="text" animation="wave" width="85%" height={16} />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Right: agreement stat card skeletons */}
+        <div className={styles.right}>
+          {[0, 1].map((i) => (
+            <div key={i} className={styles.agreementCard}>
+              <div className={styles.agreementCardHeader}>
+                <Skeleton variant="circular" animation="wave" width={32} height={32} />
+                <div className={styles.agreementHeaderText}>
+                  <Skeleton variant="text" animation="wave" width={80} height={18} />
+                  <Skeleton variant="text" animation="wave" width={130} height={13} />
+                </div>
+              </div>
+              <div className={styles.agreementCardBody}>
+                <div className={styles.agreementCountRow}>
+                  <Skeleton variant="text" animation="wave" width={50} height={44} />
+                  <Skeleton variant="text" animation="wave" width={110} height={16} />
+                </div>
+                <div className={styles.agreementMeta}>
+                  <Skeleton variant="rounded" animation="wave" width="100%" height={6} sx={{ borderRadius: 99 }} />
+                  <Skeleton variant="text" animation="wave" width="65%" height={13} />
+                </div>
+              </div>
+              <Skeleton variant="rounded" animation="wave" width="100%" height={38} sx={{ borderRadius: '0 0 10px 10px', mt: 'auto' }} />
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 
@@ -73,7 +131,7 @@ const VendorContent = () => {
     );
   };
 
-  const showDisplayEdit = () => user?.role === UserRole.JURIDICAL;
+  const showDisplayEdit = () => permissions?.vendors.canEdit ?? false;
 
   return (
     <div className={styles.page}>

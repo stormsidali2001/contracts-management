@@ -9,8 +9,7 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { useDebounce } from '@/hooks/useDebounce.hook';
 import Link from 'next/link';
 import ContractsFilter from '@/features/contract/components/ContractsFilter/ContractsFilter';
-import { useAuthStore } from '@/features/auth/store/auth.store';
-import { UserRole } from '@/features/auth/models/user-role.enum';
+import { usePermissions } from '@/features/auth/queries/auth.queries';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import CreateContract from '@/features/contract/components/CreateContract/CreateContract';
 import { useConvensions } from '@/features/contract/queries/contract.queries';
@@ -71,7 +70,7 @@ const ConvensionsContent = () => {
   const [queryOptions, setQueryOptions] = useState<{ sortModel: GridSortItem[] | null }>({ sortModel: null });
   const [open, setOpen] = useState(false);
   const { debounce } = useDebounce();
-  const user = useAuthStore((s) => s.user);
+  const { data: permissions } = usePermissions();
   const [searchQuery, setSearchQuery] = useState('');
 
   const { data: statsData } = useStatistics({});
@@ -105,7 +104,7 @@ const ConvensionsContent = () => {
     return count;
   };
 
-  const canCreateAgreement = () => user?.role === UserRole.JURIDICAL;
+  const canCreateAgreement = () => permissions?.agreements.canCreate ?? false;
 
   const columns: GridColumns<any> = useMemo(() => [
     { field: 'number',  headerName: 'Numéro',    width: 130 },

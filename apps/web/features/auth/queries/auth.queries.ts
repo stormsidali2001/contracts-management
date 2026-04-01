@@ -1,8 +1,9 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { useAuthStore } from '@/features/auth/store/auth.store';
 import authService from '@/features/auth/services/auth.service';
 import { LoginUser } from '@/features/auth/models/login-user.interface';
 import useAxiosPrivate from '@/hooks/auth/useAxiosPrivate';
+import type { PermissionsView } from '@contracts/types';
 
 export const useLogin = () => {
   const setCredentials = useAuthStore((s) => s.setCredentials);
@@ -57,5 +58,14 @@ export const useChangePassword = () => {
   return useMutation({
     mutationFn: (payload: { actualPassword: string; password: string }) =>
       axios.post('/auth/connected-user/reset-password', payload).then((r) => r.data),
+  });
+};
+
+export const usePermissions = () => {
+  const axios = useAxiosPrivate({});
+  return useQuery<PermissionsView>({
+    queryKey: ['permissions'],
+    queryFn: () => axios.get<PermissionsView>('/auth/me/permissions').then((r) => r.data),
+    staleTime: Infinity,
   });
 };

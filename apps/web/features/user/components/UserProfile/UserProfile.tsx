@@ -1,6 +1,6 @@
 'use client';
 
-import { Avatar, Button, CircularProgress, LinearProgress } from '@mui/material';
+import { Avatar, Button, CircularProgress, LinearProgress, Skeleton } from '@mui/material';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useAuthStore } from '@/features/auth/store/auth.store';
@@ -9,7 +9,7 @@ import styles from './UserProfile.module.css';
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
 import { Stack } from '@mui/system';
-import { UserRole } from '@/features/auth/models/user-role.enum';
+import { usePermissions } from '@/features/auth/queries/auth.queries';
 import { useUser, useUpdateUser, useUploadUserImage } from '@/features/user/queries/user.queries';
 import { BASE_URL } from '@/api/axios';
 
@@ -28,6 +28,7 @@ const UserProfile = () => {
   const setImageUrl = useAuthStore((s) => s.setImageUrl);
   const showSnackbar = useSnackbarStore((s) => s.showSnackbar);
 
+  const { data: permissions } = usePermissions();
   const { data: fetchedUser } = useUser(userId);
   const { mutate: updateUser, isPending: loading } = useUpdateUser();
   const { mutateAsync: uploadImage, isPending: isImageUploading } = useUploadUserImage();
@@ -86,16 +87,26 @@ const UserProfile = () => {
   };
 
   const canEditUser = () => {
-    return connectedUser?.role === UserRole.ADMIN || connectedUser?.sub === localUser?.id;
+    return (permissions?.users.canEditAny ?? false) || connectedUser?.sub === localUser?.id;
   };
 
   if (!localUser) {
     return (
       <div className={styles.pageWrapper}>
         <div className={styles.userCard}>
-          <div className={styles.cardHeader} />
+          <Skeleton variant="rectangular" animation="wave" className={styles.cardHeader} sx={{ height: 80 }} />
           <div className={styles.avatarArea}>
-            <CircularProgress size={32} sx={{ color: 'primary.main' }} />
+            <Skeleton variant="circular" animation="wave" width={90} height={90} />
+            <Skeleton variant="text" animation="wave" width={150} height={26} sx={{ mt: 1 }} />
+            <Skeleton variant="text" animation="wave" width={80} height={20} />
+          </div>
+          <div className={styles.fieldsSection}>
+            {[...Array(5)].map((_, i) => (
+              <div key={i} className={styles.fieldRow}>
+                <Skeleton variant="text" animation="wave" width={80} height={16} />
+                <Skeleton variant="text" animation="wave" width={180} height={16} />
+              </div>
+            ))}
           </div>
         </div>
       </div>

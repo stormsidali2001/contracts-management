@@ -10,8 +10,7 @@ import CreateContract from '@/features/contract/components/CreateContract/Create
 import { useDebounce } from '@/hooks/useDebounce.hook';
 import Link from 'next/link';
 import ContractsFilter from '@/features/contract/components/ContractsFilter/ContractsFilter';
-import { useAuthStore } from '@/features/auth/store/auth.store';
-import { UserRole } from '@/features/auth/models/user-role.enum';
+import { usePermissions } from '@/features/auth/queries/auth.queries';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { useContracts } from '@/features/contract/queries/contract.queries';
 import { useStatistics } from '@/features/statistics/queries/statistics.queries';
@@ -68,7 +67,7 @@ const ContractsContent = () => {
   const [filterModalOpen, setFilterModalOPen] = useState(false);
   const [filters, setFilters] = useState<Filters | null>(null);
   const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: 5 });
-  const user = useAuthStore((s) => s.user);
+  const { data: permissions } = usePermissions();
   const [searchQuery, setSearchQuery] = useState('');
   const { debounce } = useDebounce();
   const [queryOptions, setQueryOptions] = useState<{ sortModel: GridSortItem[] | null }>({ sortModel: null });
@@ -105,7 +104,7 @@ const ContractsContent = () => {
     return count;
   };
 
-  const canCreateAgreement = () => user?.role === UserRole.JURIDICAL;
+  const canCreateAgreement = () => permissions?.agreements.canCreate ?? false;
 
   const columns: GridColumns<any> = useMemo(() => [
     { field: 'number',  headerName: 'Numéro',    width: 130 },

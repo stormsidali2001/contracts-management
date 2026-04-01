@@ -3,6 +3,7 @@ import ContractFilledIcon from '@/icons/ContractFilledIcon';
 import ConvensionFilledIcon from '@/icons/ConvensionFilledIcon';
 import styles from './AgreementStatsCard.module.css';
 import { useState } from 'react';
+import { Skeleton } from '@mui/material';
 import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
 import ZoomOutMapIcon from '@mui/icons-material/ZoomOutMap';
 import { Doughnut, Pie, Bar } from 'react-chartjs-2';
@@ -23,7 +24,27 @@ const AgreementStatsCard = () => {
   const { data } = useStatistics({ startDate: formatDate(start_date), endDate: formatDate(end_date) });
   const stats = data?.agreementsStats ?? null;
 
-  if (!stats) return <div className={styles.container}><div className={styles.loading}>Chargement…</div></div>;
+  if (!stats) return (
+    <div className={styles.container}>
+      {[...Array(3)].map((_, i) => (
+        <div key={i} className={styles.miniCard}>
+          <div className={styles.cardHeader}>
+            <div className={styles.cardHeaderLeft}>
+              <Skeleton variant="text" animation="wave" width={130} height={18} />
+              <Skeleton variant="rounded" animation="wave" width={70} height={20} sx={{ borderRadius: 99 }} />
+            </div>
+            <Skeleton variant="circular" animation="wave" width={24} height={24} />
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10, padding: '14px 0' }}>
+            <Skeleton variant="circular" animation="wave" width={110} height={110} />
+            {[...Array(3)].map((_, j) => (
+              <Skeleton key={j} variant="rounded" animation="wave" width="92%" height={34} sx={{ borderRadius: 8 }} />
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
 
   return (
     <div className={styles.container}>

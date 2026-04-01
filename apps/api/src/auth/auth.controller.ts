@@ -9,6 +9,10 @@ import {
   Res,
   Logger,
 } from '@nestjs/common';
+import { PermissionsView } from '@contracts/types';
+import { AccessPolicy } from './domain/access-policy';
+import { CurrentUser } from './decorators/currentUser.decorator';
+import { JwtPayload } from './types/JwtPayload.interface';
 import {
   ConnectedUserResetPassword,
   CreateUserDTO,
@@ -60,6 +64,12 @@ export class AuthController {
     });
     console.log('returning the token');
     return { access_token: tokens.access_token };
+  }
+
+  @UseGuards(JwtAccessTokenGuard)
+  @Get('me/permissions')
+  getPermissions(@CurrentUser() user: JwtPayload): PermissionsView {
+    return AccessPolicy.for(user.role as UserRole);
   }
 
   @UseGuards(JwtAccessTokenGuard)

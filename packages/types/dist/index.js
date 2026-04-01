@@ -27,3 +27,4 @@ __exportStar(require("./views/departement.view"), exports);
 __exportStar(require("./views/user.view"), exports);
 __exportStar(require("./views/notification.view"), exports);
 __exportStar(require("./views/event.view"), exports);
+__exportStar(require("./views/permissions.view"), exports);

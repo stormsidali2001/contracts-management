@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import styles from './ContractContent.module.css';
-import { Button, Modal } from '@mui/material';
+import { Button, Modal, Skeleton } from '@mui/material';
 import PlayCircleOutlineIcon from '@mui/icons-material/PlayCircleOutline';
 import OpenInNewOutlinedIcon from '@mui/icons-material/OpenInNewOutlined';
 import ArrowBackIosNewOutlinedIcon from '@mui/icons-material/ArrowBackIosNewOutlined';
@@ -12,8 +12,7 @@ import AccessTimeOutlinedIcon from '@mui/icons-material/AccessTimeOutlined';
 import StorefrontOutlinedIcon from '@mui/icons-material/StorefrontOutlined';
 import AccountBalanceOutlinedIcon from '@mui/icons-material/AccountBalanceOutlined';
 import ExecutionModal from '@/features/contract/components/ExecutionModal/ExecutionModal';
-import { useAuthStore } from '@/features/auth/store/auth.store';
-import { UserRole } from '@/features/auth/models/user-role.enum';
+import { usePermissions } from '@/features/auth/queries/auth.queries';
 import { useAgreement } from '@/features/contract/queries/contract.queries';
 import { BASE_URL } from '@/api/axios';
 import Link from 'next/link';
@@ -57,20 +56,128 @@ const formatAmount = (v: number | null | undefined) =>
   v == null ? '—' : new Intl.NumberFormat('fr-DZ').format(v) + ' DA';
 
 const ContractContent = ({ type, agreementId }: PropType) => {
-  const user = useAuthStore((s) => s.user);
+  const { data: permissions } = usePermissions();
   const [openExecutionModal, setOpenExecutionModal] = useState(false);
 
   const { data: contract, isLoading } = useAgreement(agreementId, type);
 
   if (isLoading || !contract) {
     return (
-      <div className={styles.loadingState}>
-        <div className={styles.loadingPulse} />
+      <div className={styles.container}>
+        <div className={styles.pageHeader}>
+          <div className={styles.pageHeaderLeft}>
+            <Skeleton variant="text" animation="wave" width={90} height={16} />
+            <div className={styles.pageHeaderTitle}>
+              <Skeleton variant="text" animation="wave" width={130} height={34} />
+              <Skeleton variant="rounded" animation="wave" width={70} height={22} sx={{ borderRadius: 99 }} />
+              <Skeleton variant="rounded" animation="wave" width={100} height={22} sx={{ borderRadius: 99 }} />
+            </div>
+          </div>
+          <div className={styles.pageHeaderActions}>
+            <Skeleton variant="rounded" animation="wave" width={140} height={34} sx={{ borderRadius: 8 }} />
+            <Skeleton variant="rounded" animation="wave" width={100} height={34} sx={{ borderRadius: 8 }} />
+          </div>
+        </div>
+
+        <div className={styles.grid}>
+          {/* Left card skeleton */}
+          <div className={styles.card}>
+            <div className={styles.cardHeader}>
+              <Skeleton variant="circular" animation="wave" width={36} height={36} />
+              <div className={styles.headerText}>
+                <Skeleton variant="text" animation="wave" width={170} height={18} />
+                <Skeleton variant="text" animation="wave" width={90} height={14} />
+              </div>
+            </div>
+            <div className={styles.cardBody}>
+              <section className={styles.section}>
+                <Skeleton variant="text" animation="wave" width={150} height={14} />
+                <div className={styles.parties}>
+                  <Skeleton variant="rounded" animation="wave" height={56} sx={{ borderRadius: 8, flex: 1 }} />
+                  <Skeleton variant="text" animation="wave" width={20} height={16} sx={{ mx: 1 }} />
+                  <Skeleton variant="rounded" animation="wave" height={56} sx={{ borderRadius: 8, flex: 1 }} />
+                </div>
+              </section>
+              <div className={styles.divider} />
+              <section className={styles.section}>
+                <div className={styles.infoGrid}>
+                  <div className={styles.infoBlock}>
+                    <Skeleton variant="text" animation="wave" width={45} height={14} />
+                    <Skeleton variant="text" animation="wave" width="100%" height={16} />
+                    <Skeleton variant="text" animation="wave" width="75%" height={16} />
+                  </div>
+                  <div className={styles.infoBlock}>
+                    <Skeleton variant="text" animation="wave" width={60} height={14} />
+                    <Skeleton variant="text" animation="wave" width={130} height={24} />
+                  </div>
+                </div>
+              </section>
+              <div className={styles.divider} />
+              <section className={styles.section}>
+                <Skeleton variant="text" animation="wave" width={80} height={14} />
+                <div className={styles.datesRow}>
+                  {[...Array(3)].map((_, i) => (
+                    <div key={i} className={styles.dateBlock}>
+                      <Skeleton variant="circular" animation="wave" width={24} height={24} />
+                      <div>
+                        <Skeleton variant="text" animation="wave" width={55} height={13} />
+                        <Skeleton variant="text" animation="wave" width={80} height={16} />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            </div>
+          </div>
+
+          {/* Right card skeleton */}
+          <div className={styles.card}>
+            <div className={styles.cardHeader}>
+              <Skeleton variant="circular" animation="wave" width={36} height={36} />
+              <div className={styles.headerText}>
+                <Skeleton variant="text" animation="wave" width={110} height={18} />
+                <Skeleton variant="text" animation="wave" width={90} height={14} />
+              </div>
+            </div>
+            <div className={styles.cardBody}>
+              <section className={styles.section}>
+                <Skeleton variant="text" animation="wave" width={80} height={14} />
+                <Skeleton variant="rounded" animation="wave" width={110} height={28} sx={{ borderRadius: 99, mt: 0.5 }} />
+                <Skeleton variant="rounded" animation="wave" width="100%" height={8} sx={{ borderRadius: 99, mt: 1 }} />
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 4 }}>
+                  {[70, 50, 65].map((w, i) => (
+                    <Skeleton key={i} variant="text" animation="wave" width={w} height={13} />
+                  ))}
+                </div>
+              </section>
+              <div className={styles.divider} />
+              <section className={styles.section}>
+                <Skeleton variant="text" animation="wave" width={130} height={14} />
+                <div className={styles.execDatesRow}>
+                  <div className={styles.execDateBlock}>
+                    <Skeleton variant="text" animation="wave" width={40} height={13} />
+                    <Skeleton variant="text" animation="wave" width={80} height={16} />
+                  </div>
+                  <Skeleton variant="text" animation="wave" width={16} height={16} />
+                  <div className={styles.execDateBlock}>
+                    <Skeleton variant="text" animation="wave" width={30} height={13} />
+                    <Skeleton variant="text" animation="wave" width={80} height={16} />
+                  </div>
+                </div>
+              </section>
+              <div className={styles.divider} />
+              <section className={styles.section}>
+                <Skeleton variant="text" animation="wave" width={90} height={14} />
+                <Skeleton variant="rounded" animation="wave" width="100%" height={80} sx={{ borderRadius: 8, mt: 0.5 }} />
+              </section>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
 
-  const canExecute = user?.role === UserRole.JURIDICAL;
+  const canExecute = permissions?.agreements.canExecute ?? false;
   const isExecuted = contract.status !== 'not_executed';
   const progress = STATUS_PROGRESS[contract.status] ?? 0;
   const backHref = type === 'contract' ? '/contracts' : '/convensions';

@@ -1,6 +1,6 @@
 'use client';
 import { useState } from 'react';
-import { useMediaQuery, Modal } from '@mui/material';
+import { useMediaQuery, Modal, Skeleton } from '@mui/material';
 import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
 import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
 import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
@@ -24,7 +24,7 @@ const MainDashboard = () => {
   const [openDateModal, setOpenDateModal] = useState(false);
   const { start_date, end_date, setDateRange } = useDateRangeStore();
 
-  const { data } = useStatistics({ startDate: fmtDate(start_date), endDate: fmtDate(end_date) });
+  const { data, isLoading } = useStatistics({ startDate: fmtDate(start_date), endDate: fmtDate(end_date) });
 
   const startLabel = fmtDate(start_date);
   const endLabel   = fmtDate(end_date);
@@ -68,49 +68,66 @@ const MainDashboard = () => {
 
       {/* ── KPI strip ── */}
       <div className={styles.kpiStrip}>
-        <div className={styles.kpiCard}>
-          <div className={styles.kpiIcon}>
-            <DescriptionOutlinedIcon sx={{ fontSize: 20 }} />
-          </div>
-          <div className={styles.kpiContent}>
-            <span className={styles.kpiValue}>{totalAccords || '—'}</span>
-            <span className={styles.kpiLabel}>Total accords</span>
-            <span className={styles.kpiSub}>contrats & conventions</span>
-          </div>
-        </div>
+        {isLoading ? (
+          <>
+            {[...Array(4)].map((_, i) => (
+              <div key={i} className={styles.kpiCard}>
+                <Skeleton variant="circular" animation="wave" width={40} height={40} />
+                <div className={styles.kpiContent}>
+                  <Skeleton variant="text" animation="wave" width={52} height={30} />
+                  <Skeleton variant="text" animation="wave" width={95} height={14} />
+                  <Skeleton variant="text" animation="wave" width={115} height={13} />
+                </div>
+              </div>
+            ))}
+          </>
+        ) : (
+          <>
+            <div className={styles.kpiCard}>
+              <div className={styles.kpiIcon}>
+                <DescriptionOutlinedIcon sx={{ fontSize: 20 }} />
+              </div>
+              <div className={styles.kpiContent}>
+                <span className={styles.kpiValue}>{totalAccords || '—'}</span>
+                <span className={styles.kpiLabel}>Total accords</span>
+                <span className={styles.kpiSub}>contrats & conventions</span>
+              </div>
+            </div>
 
-        <div className={`${styles.kpiCard} ${styles.kpiCardError}`}>
-          <div className={`${styles.kpiIcon} ${styles.kpiIconError}`}>
-            <WarningAmberOutlinedIcon sx={{ fontSize: 20 }} />
-          </div>
-          <div className={styles.kpiContent}>
-            <span className={`${styles.kpiValue} ${notExecuted && notExecuted > 0 ? styles.kpiValueError : ''}`}>{notExecuted ?? '—'}</span>
-            <span className={styles.kpiLabel}>Non exécutés</span>
-            <span className={styles.kpiSub}>en attente d'exécution</span>
-          </div>
-        </div>
+            <div className={`${styles.kpiCard} ${styles.kpiCardError}`}>
+              <div className={`${styles.kpiIcon} ${styles.kpiIconError}`}>
+                <WarningAmberOutlinedIcon sx={{ fontSize: 20 }} />
+              </div>
+              <div className={styles.kpiContent}>
+                <span className={`${styles.kpiValue} ${notExecuted && notExecuted > 0 ? styles.kpiValueError : ''}`}>{notExecuted ?? '—'}</span>
+                <span className={styles.kpiLabel}>Non exécutés</span>
+                <span className={styles.kpiSub}>en attente d'exécution</span>
+              </div>
+            </div>
 
-        <div className={styles.kpiCard}>
-          <div className={styles.kpiIcon}>
-            <StorefrontOutlinedIcon sx={{ fontSize: 20 }} />
-          </div>
-          <div className={styles.kpiContent}>
-            <span className={styles.kpiValue}>{latestVendors ?? '—'}</span>
-            <span className={styles.kpiLabel}>Fournisseurs</span>
-            <span className={styles.kpiSub}>actifs actuellement</span>
-          </div>
-        </div>
+            <div className={styles.kpiCard}>
+              <div className={styles.kpiIcon}>
+                <StorefrontOutlinedIcon sx={{ fontSize: 20 }} />
+              </div>
+              <div className={styles.kpiContent}>
+                <span className={styles.kpiValue}>{latestVendors ?? '—'}</span>
+                <span className={styles.kpiLabel}>Fournisseurs</span>
+                <span className={styles.kpiSub}>actifs actuellement</span>
+              </div>
+            </div>
 
-        <div className={styles.kpiCard}>
-          <div className={styles.kpiIcon}>
-            <PeopleAltOutlinedIcon sx={{ fontSize: 20 }} />
-          </div>
-          <div className={styles.kpiContent}>
-            <span className={styles.kpiValue}>{totalUsers ?? '—'}</span>
-            <span className={styles.kpiLabel}>Utilisateurs</span>
-            <span className={styles.kpiSub}>comptes enregistrés</span>
-          </div>
-        </div>
+            <div className={styles.kpiCard}>
+              <div className={styles.kpiIcon}>
+                <PeopleAltOutlinedIcon sx={{ fontSize: 20 }} />
+              </div>
+              <div className={styles.kpiContent}>
+                <span className={styles.kpiValue}>{totalUsers ?? '—'}</span>
+                <span className={styles.kpiLabel}>Utilisateurs</span>
+                <span className={styles.kpiSub}>comptes enregistrés</span>
+              </div>
+            </div>
+          </>
+        )}
       </div>
 
       {/* ── Cards grid ── */}

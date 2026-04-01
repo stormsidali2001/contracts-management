@@ -10,8 +10,7 @@ import CreateVendor from '@/features/vendor/components/CreateVendor/CreateVendor
 import { useDebounce } from '@/hooks/useDebounce.hook';
 import VendorActions from '@/features/dashboard/VendorActions/VendorActions';
 import Link from 'next/link';
-import { useAuthStore } from '@/features/auth/store/auth.store';
-import { UserRole } from '@/features/auth/models/user-role.enum';
+import { usePermissions } from '@/features/auth/queries/auth.queries';
 import DeleteVendorAction from '@/features/dashboard/components/UserActions/DeleteVendorAction/DeleteVendorAction';
 import { useVendors } from '@/features/vendor/queries/vendor.queries';
 import { useStatistics } from '@/features/statistics/queries/statistics.queries';
@@ -26,7 +25,7 @@ const VendorsContent = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [queryOptions, setQueryOptions] = useState<{ sortModel: GridSortItem[] | null }>({ sortModel: null });
   const [open, setOpen] = useState(false);
-  const user = useAuthStore((s) => s.user);
+  const { data: permissions } = usePermissions();
   const { debounce } = useDebounce();
 
   const { data: statsData } = useStatistics({});
@@ -41,7 +40,7 @@ const VendorsContent = () => {
   });
 
   function showDisplayAddVendor() {
-    return Boolean(user?.role === UserRole.JURIDICAL);
+    return permissions?.vendors.canCreate ?? false;
   }
 
   const columns: GridColumns<any> = useMemo(
