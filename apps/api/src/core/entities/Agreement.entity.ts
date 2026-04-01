@@ -4,8 +4,6 @@ import {
   Entity,
   Index,
   JoinColumn,
-  JoinTable,
-  ManyToMany,
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -16,25 +14,12 @@ import { DirectionEntity } from './Direction.entity';
 import { VendorEntity } from './Vendor.entity';
 
 @Entity('agreements')
-//fulltext
-@Index('agreement-fulltext-object-idx', ['object'], { fulltext: true })
-@Index('agreement-fulltext-number-idx', ['number'], { fulltext: true })
-@Index('agreement-fulltext-observation-idx', ['observation'], {
-  fulltext: true,
-})
-//
-@Index('agreement-fulltext-object-idx', { synchronize: false })
-@Index('agreement-fulltext-number-idx', { synchronize: false })
-@Index('agreement-fulltext-observation-idx', { synchronize: false })
-//unique
-@Index('agreement-number-unique-idx', ['number'], { unique: true })
-//
-@Index('agreement-number-unique-idx', { synchronize: false })
+@Index('agreement-fulltext-idx', ['number', 'object', 'observation'], { fulltext: true })
 export class AgreementEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
+  @Column({ unique: true })
   number: string;
 
   @Column({

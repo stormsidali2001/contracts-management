@@ -1,7 +1,7 @@
 'use client';
 import { Avatar, Chip, IconButton, TextField } from '@mui/material';
 import { DataGrid, GridRenderCellParams, GridSortModel } from '@mui/x-data-grid';
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { useDebounce } from '@/hooks/useDebounce.hook';
 import styles from './DepartementUsersList.module.css';
 import { useUsers } from '@/features/user/queries/user.queries';
@@ -43,6 +43,7 @@ const DepartementUsersList = ({ handleClose, departementId, departementName }: P
   const [searchQuery, setSearchQuery] = useState('');
   const [orderBy, setOrderBy] = useState<string | undefined>(undefined);
 
+  const [rowCount, setRowCount] = useState(0);
   const { data, isFetching } = useUsers({ page: paginationModel.page, pageSize: paginationModel.pageSize, orderBy, searchQuery, departementId });
 
   const handleSortModelChange = (sortModel: GridSortModel) => {
@@ -154,7 +155,7 @@ const DepartementUsersList = ({ handleClose, departementId, departementName }: P
           autoHeight
           rowHeight={52}
           rows={data?.data ?? []}
-          rowCount={data?.total ?? 0}
+          rowCount={rowCount}
           loading={isFetching}
           pageSizeOptions={[5, 10, 20]}
           pagination

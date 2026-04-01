@@ -1,7 +1,7 @@
 import { VendorStatsView } from '@contracts/types';
 import { VendorStat } from 'src/Agreement/domain/vendor-stat';
 
-export class VendorStatsMapper {
+export class VendorStatsPresenter {
   static from(stat: VendorStat): VendorStatsView {
     return {
       id: stat.id,
@@ -11,6 +11,6 @@ export class VendorStatsMapper {
   }
 
   static fromMany(stats: VendorStat[]): VendorStatsView[] {
-    return stats.map(VendorStatsMapper.from);
+    return stats.map(VendorStatsPresenter.from);
   }
 }

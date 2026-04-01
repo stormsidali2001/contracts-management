@@ -12,7 +12,7 @@ export class UserNotificationService {
     private readonly notificationRepository: INotificationRepository,
   ) {}
 
-  async getUserNotifications(userId: string): Promise<Notification[]> {
+  getUserNotifications(userId: string): Promise<Notification[]> {
     return this.notificationRepository.findByUserId(userId);
   }
 

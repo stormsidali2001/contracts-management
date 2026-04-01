@@ -53,7 +53,7 @@ const eventHandlers = [
     VendorService,
     ...eventHandlers,
   ],
-  exports: [AgreementService, VendorService, AGREEMENT_REPOSITORY],
+  exports: [AgreementService, VendorService],
   controllers: [AgreementController, VendorController, AgreementFileController],
 })
 export class AgreementModule {}

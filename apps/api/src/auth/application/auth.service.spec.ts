@@ -10,7 +10,6 @@ import {
   UnauthorizedError,
   ValidationError,
 } from '../../shared/domain/errors';
-import { UserPasswordChangedEvent } from '../../user/domain/events/user-password-changed.event';
 
 // ── Typed mock factory ───────────────────────────────────────────────────────
 
@@ -56,11 +55,11 @@ describe('AuthService', () => {
     create: jest.Mock;
     findByEmailOrUsername: jest.Mock;
     findBy: jest.Mock;
+    notifyPasswordChanged: jest.Mock;
   };
   let hashService: { hash: jest.Mock; compare: jest.Mock };
   let tokenService: { generateTokens: jest.Mock };
   let emailService: { sendPasswordResetEmail: jest.Mock };
-  let eventBus: { publish: jest.Mock; publishAll: jest.Mock };
   let service: AuthService;
 
   beforeEach(() => {
@@ -75,11 +74,11 @@ describe('AuthService', () => {
       create: jest.fn(),
       findByEmailOrUsername: jest.fn(),
       findBy: jest.fn(),
+      notifyPasswordChanged: jest.fn(),
     };
     hashService = { hash: jest.fn(), compare: jest.fn() };
     tokenService = { generateTokens: jest.fn() };
     emailService = { sendPasswordResetEmail: jest.fn() };
-    eventBus = { publish: jest.fn(), publishAll: jest.fn() };
 
     service = new AuthService(
       userService as any,
@@ -87,7 +86,6 @@ describe('AuthService', () => {
       tokenService as any,
       emailService as any,
       credsRepo,
-      eventBus as any,
     );
   });
 
@@ -347,9 +345,7 @@ describe('AuthService', () => {
 
         expect(resetSpy).toHaveBeenCalledWith('new-hashed-pw');
         expect(credsRepo.save).toHaveBeenCalledTimes(1);
-        expect(eventBus.publish).toHaveBeenCalledWith(
-          expect.any(UserPasswordChangedEvent),
-        );
+        expect(userService.notifyPasswordChanged).toHaveBeenCalledWith(dto.userId);
         expect(result).toBe('done');
       });
     });

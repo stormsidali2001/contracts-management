@@ -3,7 +3,7 @@ import styles from './UserContent.module.css';
 import { Avatar, Badge, Button, Chip, IconButton, Modal } from '@mui/material';
 import FilterIcon from '@/icons/FilterIcon';
 import TextField from '@mui/material/TextField';
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import CreateUser from '@/features/dashboard/components/CreateUser/CreateUser';
@@ -72,6 +72,8 @@ const UsersContent = () => {
   const { data: statsData } = useStatistics({});
   const userTypes = statsData?.userTypes ?? null;
 
+  const [rowCount, setRowCount] = useState(0);
+
   const { data, isFetching } = useUsers({
     page: paginationModel.page,
     pageSize: paginationModel.pageSize,
@@ -81,6 +83,10 @@ const UsersContent = () => {
     departementId: filters?.departementId,
     role: filters?.role,
   });
+
+  useEffect(() => {
+    if (data?.total != null) setRowCount(data.total);
+  }, [data?.total]);
 
   const handleSortModelChange = (sortModel: GridSortModel) => {
     if (sortModel) setQueryOptions({ sortModel: [...sortModel] });
@@ -263,7 +269,7 @@ const UsersContent = () => {
             autoHeight
             rowHeight={52}
             rows={data?.data ?? []}
-            rowCount={data?.total ?? 0}
+            rowCount={rowCount}
             loading={isFetching}
             pageSizeOptions={[5]}
             pagination

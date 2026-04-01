@@ -1,7 +1,7 @@
 'use client';
 import styles from './SelectVendor.module.css';
 import { Button, TextField, Typography, Stack } from '@mui/material';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useDebounce } from '@/hooks/useDebounce.hook';
 import { DataGrid, GridColumns, GridSortItem, GridSortModel } from '@mui/x-data-grid';
 import { useVendors } from '@/features/vendor/queries/vendor.queries';
@@ -28,6 +28,7 @@ const SelectVendor = ({ handleClose, selectVendor }: PropType) => {
   const [queryOptions, setQueryOptions] = useState<{ sortModel: GridSortItem[] | null }>({ sortModel: null });
   const [selectedVendor, setSelectedVendor] = useState<any>(null);
 
+  const [rowCount, setRowCount] = useState(0);
   const { data, isFetching } = useVendors({
     page,
     pageSize,
@@ -60,7 +61,7 @@ const SelectVendor = ({ handleClose, selectVendor }: PropType) => {
         <DataGrid
           autoHeight
           rows={data?.data ?? []}
-          rowCount={data?.total ?? 0}
+          rowCount={rowCount}
           loading={isFetching}
           rowsPerPageOptions={[5, 10, 20]}
           pagination

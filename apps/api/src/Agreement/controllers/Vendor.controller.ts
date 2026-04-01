@@ -7,9 +7,9 @@ import { UserRole } from 'src/core/types/UserRole.enum';
 import { VendorService } from '../application/vendor.service';
 import { ApiTags } from '@nestjs/swagger';
 import { VendorView, VendorStatsView } from '@contracts/types';
-import { VendorMapper } from 'src/core/mappers/vendor.mapper';
-import { VendorStatsMapper } from 'src/core/mappers/vendor-stats.mapper';
-import { StatsParamsDTO } from 'src/statistics/models/statsPramsDTO.interface';
+import { VendorPresenter } from 'src/Agreement/infrastructure/vendor.presenter';
+import { VendorStatsPresenter } from 'src/Agreement/infrastructure/vendor-stats.presenter';
+import { StatsParamsDTO } from 'src/core/dtos/stats.dto';
 
 @ApiTags('vendors')
 @Controller('vendors')
@@ -21,21 +21,21 @@ export class VendorController {
   @Post('')
   async createVendor(@Body() vendor: CreateVendorDTO) {
     const result = await this.vendorService.createVendor(vendor);
-    return VendorMapper.from(result);
+    return VendorPresenter.from(result);
   }
 
   @UseGuards(JwtAccessTokenGuard)
   @Get('stats')
   async getVendorStats(@Query() params: StatsParamsDTO) {
     const result = await this.vendorService.getVendorsStats(params);
-    return VendorStatsMapper.fromMany(result);
+    return VendorStatsPresenter.fromMany(result);
   }
 
   @UseGuards(JwtAccessTokenGuard)
   @Get(":id")
   async findById(@Param("id") id: string) {
     const result = await this.vendorService.findByIdWithRelations(id);
-    return result ? VendorMapper.from(result) : null;
+    return result ? VendorPresenter.from(result) : null;
   }
 
   @UseGuards(JwtAccessTokenGuard)
@@ -47,7 +47,7 @@ export class VendorController {
     @Query("searchQuery") searchQuery: string = undefined,
   ) {
     const result = await this.vendorService.findAll(offset, limit, orderBy, searchQuery);
-    return { total: result.total, data: VendorMapper.fromMany(result.data) };
+    return { total: result.total, data: VendorPresenter.fromMany(result.data) };
   }
 
   @RequiredRoles(UserRole.JURIDICAL)
@@ -55,7 +55,7 @@ export class VendorController {
   @Patch(':id')
   async updateVendor(@Param('id') id: string, @Body() newVendor: UpdateVendorDTO) {
     const result = await this.vendorService.updateVendor(id, newVendor);
-    return VendorMapper.from(result);
+    return VendorPresenter.from(result);
   }
 
   @RequiredRoles(UserRole.JURIDICAL)
@@ -66,9 +66,10 @@ export class VendorController {
   }
 
   //testing route
+  @UseGuards(JwtAccessTokenGuard)
   @Post('/test')
   async createVendorTest(@Body() vendor: CreateVendorDTO) {
     const result = await this.vendorService.createVendor(vendor);
-    return VendorMapper.from(result);
+    return VendorPresenter.from(result);
   }
 }

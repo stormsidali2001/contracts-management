@@ -2,7 +2,7 @@
 import { Badge, Button, Chip, IconButton, Modal } from '@mui/material';
 import { DataGrid, GridColumns, GridSortItem, GridSortModel } from '@mui/x-data-grid';
 import TextField from '@mui/material/TextField';
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import styles from './ConvensionContent.module.css';
 import FilterIcon from '@/icons/FilterIcon';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
@@ -78,6 +78,7 @@ const ConvensionsContent = () => {
   const agreementTypes = statsData?.agreementsStats?.types ?? null;
   const totalAccords = agreementTypes ? (agreementTypes.contract ?? 0) + (agreementTypes.convension ?? 0) : null;
 
+  const [rowCount, setRowCount] = useState(0);
   const { data, isFetching } = useConvensions({
     page: paginationModel.page,
     pageSize: paginationModel.pageSize,
@@ -226,7 +227,7 @@ const ConvensionsContent = () => {
             autoHeight
             rowHeight={52}
             rows={data?.data ?? []}
-            rowCount={data?.total ?? 0}
+            rowCount={rowCount}
             loading={isFetching}
             pageSizeOptions={[5]}
             pagination

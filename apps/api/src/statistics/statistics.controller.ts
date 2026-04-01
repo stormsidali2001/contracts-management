@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Query, UseGuards } from '@nestjs/common';
 import { CurrentUserId } from 'src/auth/decorators/currentUserId.decorator';
 import { JwtAccessTokenGuard } from 'src/auth/guards/jwt-access-token.guard';
-import { StatsParamsDTO } from './models/statsPramsDTO.interface';
+import { StatsParamsDTO } from 'src/core/dtos/stats.dto';
 import { StatisticsService } from './application/statistics.service';
 
 @Controller('statistics')

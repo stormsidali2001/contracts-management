@@ -2,7 +2,7 @@ import { UserView } from '@contracts/types';
 import { User } from 'src/user/domain/user.aggregate';
 import { UserProfile } from 'src/user/domain/user.repository';
 
-export class UserMapper {
+export class UserPresenter {
   static from(source: User | UserProfile): UserView {
     const profile = source as UserProfile;
     return {
@@ -24,6 +24,6 @@ export class UserMapper {
   }
 
   static fromMany(sources: (User | UserProfile)[]): UserView[] {
-    return sources.map(UserMapper.from);
+    return sources.map(UserPresenter.from);
   }
 }

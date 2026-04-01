@@ -117,9 +117,14 @@
   gap: 16px;
 }
 
+.expandedHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+
 .closeButton {
-  position: absolute;
-  right: 32px; top: 32px;
   width: 40px; height: 40px;
   background: var(--error);
   border-radius: 50%;

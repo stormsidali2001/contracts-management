@@ -25,12 +25,12 @@ export class RedisEmitterService implements OnModuleDestroy {
 
   /** Broadcast to every connected client in the namespace. */
   broadcast(event: string, data: unknown): void {
-    this.emitter.of('/notifications').emit(event, data);
+    void this.emitter.of('/notifications').emit(event, data);
   }
 
   /** Emit to all sockets that joined a given room (role, dept, userId…). */
   toRoom(room: string, event: string, data: unknown): void {
-    this.emitter.of('/notifications').to(room).emit(event, data);
+    void this.emitter.of('/notifications').to(room).emit(event, data);
   }
 
   onModuleDestroy() {

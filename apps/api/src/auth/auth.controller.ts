@@ -17,8 +17,7 @@ import {
   ResetPasswordDTO,
 } from 'src/core/dtos/user.dto';
 import { AuthService } from './application/auth.service';
-import { UserView } from '@contracts/types';
-import { UserMapper } from 'src/core/mappers/user.mapper';
+import { UserPresenter } from 'src/user/infrastructure/user.presenter';
 import { ApiTags } from '@nestjs/swagger';
 import { JwtAccessTokenGuard } from './guards/jwt-access-token.guard';
 import { UserRole } from 'src/core/types/UserRole.enum';
@@ -27,13 +26,14 @@ import { ConfigService } from '@nestjs/config';
 import { JwtRefreshTokenGuard } from './guards/jwt-refresh-token.guard';
 import { CurrentUserId } from './decorators/currentUserId.decorator';
 import { RequiredRoles } from './decorators/RequiredRoles.decorator';
+import { Public } from './decorators/Public.decorator';
 
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
   constructor(
-    private authService: AuthService,
-    private configService: ConfigService,
+    private readonly authService: AuthService,
+    private readonly configService: ConfigService,
   ) {}
 
   @RequiredRoles(UserRole.ADMIN)
@@ -41,9 +41,10 @@ export class AuthController {
   @Post('register')
   async registerUser(@Body() newUser: CreateUserDTO) {
     const result = await this.authService.register(newUser);
-    return UserMapper.from(result);
+    return UserPresenter.from(result);
   }
 
+  @Public()
   @Post('login')
   async login(
     @Body() user: LoginUserDTO,
@@ -89,11 +90,13 @@ export class AuthController {
     return await this.authService.logout(id);
   }
 
+  @Public()
   @Post('forgot-password')
   async forgotPassword(@Body() params: ForgotPasswordDTO) {
     return await this.authService.forgotPassword(params);
   }
 
+  @Public()
   @Post('reset-password')
   async resetPassword(@Body() params: ResetPasswordDTO) {
     return await this.authService.resetPassword(params);
@@ -108,10 +111,11 @@ export class AuthController {
     return await this.authService.connectedUserResetPassword(params, userId);
   }
   //testing routes
+  @UseGuards(JwtAccessTokenGuard)
   @Post('register/test')
   async registerUserTest(@Body() newUser: CreateUserDTO) {
     const result = await this.authService.register(newUser);
-    return UserMapper.from(result);
+    return UserPresenter.from(result);
   }
 }
 

@@ -2,7 +2,7 @@ import { VendorView } from '@contracts/types';
 import { Vendor } from 'src/Agreement/domain/vendor.aggregate';
 import { VendorWithCounts } from 'src/Agreement/domain/vendor.repository';
 
-export class VendorMapper {
+export class VendorPresenter {
   static from(source: Vendor | VendorWithCounts): VendorView {
     const withCounts = source as VendorWithCounts;
     return {
@@ -21,6 +21,6 @@ export class VendorMapper {
   }
 
   static fromMany(sources: (Vendor | VendorWithCounts)[]): VendorView[] {
-    return sources.map(VendorMapper.from);
+    return sources.map(VendorPresenter.from);
   }
 }

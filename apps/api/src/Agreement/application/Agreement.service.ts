@@ -1,5 +1,6 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Injectable, Inject, BadRequestException, ForbiddenException } from '@nestjs/common';
 import { EventBus } from '@nestjs/cqrs';
+import { join } from 'path';
 import {
   CreateAgreementDTO,
   ExecuteAgreementDTO,
@@ -21,6 +22,10 @@ import {
   NotFoundError,
   ValidationError,
 } from 'src/shared/domain/errors';
+import {
+  isFileExtensionSafe,
+  removeFile,
+} from 'src/Agreement/config/agreementStorage.config';
 
 @Injectable()
 export class AgreementService {
@@ -57,12 +62,12 @@ export class AgreementService {
     });
 
     const saved = await this.agreementRepository.save(agreement);
-    this.eventBus.publishAll(agreement.pullEvents());
+    void this.eventBus.publishAll(agreement.pullEvents());
 
     return saved;
   }
 
-  async findAll(
+  findAll(
     params: FindAllAgreementsDTO,
     role: string,
     departementId: string | null,
@@ -76,11 +81,50 @@ export class AgreementService {
     );
   }
 
-  async findById(
+  findById(
     id: string,
     agrreementType: AgreementType = AgreementType.CONTRACT,
   ): Promise<AgreementDetail | null> {
     return this.agreementRepository.findById(id, agrreementType);
+  }
+
+  getStatusStats(
+    userRole: UserRole,
+    userDepartementId?: string,
+    userDirectionId?: string,
+    startDate?: Date,
+    endDate?: Date,
+  ): Promise<{ status: string; total: string }[]> {
+    return this.agreementRepository.getStatusStats(
+      userRole,
+      userDepartementId,
+      userDirectionId,
+      startDate,
+      endDate,
+    );
+  }
+
+  getTypeStats(
+    userRole: UserRole,
+    userDepartementId?: string,
+    userDirectionId?: string,
+  ): Promise<{ type: string; total: string }[]> {
+    return this.agreementRepository.getTypeStats(
+      userRole,
+      userDepartementId,
+      userDirectionId,
+    );
+  }
+
+  async validateDocumentFile(file: Express.Multer.File): Promise<string> {
+    if (!file) throw new BadRequestException('the file should be a pdf');
+    const fullPath = join(process.cwd(), 'upload/documents', file.filename);
+    const isSafe = await isFileExtensionSafe(fullPath);
+    if (!isSafe) {
+      await removeFile(fullPath);
+      throw new ForbiddenException('file content does not match the extension');
+    }
+    return file.filename;
   }
 
   async executeAgreement(execData: ExecuteAgreementDTO): Promise<Agreement> {
@@ -101,7 +145,7 @@ export class AgreementService {
     agreement.execute(execution_start_date, execution_end_date, observation);
 
     const saved = await this.agreementRepository.save(agreement);
-    this.eventBus.publishAll(agreement.pullEvents());
+    void this.eventBus.publishAll(agreement.pullEvents());
 
     return saved;
   }

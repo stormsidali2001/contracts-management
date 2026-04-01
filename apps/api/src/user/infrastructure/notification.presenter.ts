@@ -1,7 +1,7 @@
 import { NotificationView } from '@contracts/types';
 import { Notification } from 'src/user/domain/notification';
 
-export class NotificationMapper {
+export class NotificationPresenter {
   static from(source: Notification): NotificationView {
     return {
       id: source.id,
@@ -11,6 +11,6 @@ export class NotificationMapper {
   }
 
   static fromMany(sources: Notification[]): NotificationView[] {
-    return sources.map(NotificationMapper.from);
+    return sources.map(NotificationPresenter.from);
   }
 }

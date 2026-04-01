@@ -3,7 +3,7 @@ import { EventBus } from '@nestjs/cqrs';
 import { v4 as uuid } from 'uuid';
 import { CreateVendorDTO, UpdateVendorDTO } from 'src/core/dtos/vendor.dto';
 import { PaginationResponse } from 'src/core/types/paginationResponse.interface';
-import { StatsParamsDTO } from 'src/statistics/models/statsPramsDTO.interface';
+import { StatsParamsDTO } from 'src/core/dtos/stats.dto';
 import { VendorStat } from '../domain/vendor-stat';
 import { Vendor } from '../domain/vendor.aggregate';
 import {
@@ -65,17 +65,17 @@ export class VendorService {
     });
 
     const created = await this.vendorRepository.save(newVendor);
-    this.eventBus.publishAll(newVendor.pullEvents());
+    void this.eventBus.publishAll(newVendor.pullEvents());
 
     return created;
   }
 
-  async findBy(options: { id?: string }): Promise<Vendor | null> {
+  findBy(options: { id?: string }): Promise<Vendor | null> {
     if (options.id) return this.vendorRepository.findById(options.id);
-    return null;
+    return Promise.resolve(null);
   }
 
-  async findAll(
+  findAll(
     offset = 0,
     limit = 10,
     orderBy: string = undefined,
@@ -89,7 +89,7 @@ export class VendorService {
     );
   }
 
-  async findByIdWithRelations(id: string): Promise<VendorWithCounts | null> {
+  findByIdWithRelations(id: string): Promise<VendorWithCounts | null> {
     return this.vendorRepository.findByIdWithRelationCounts(id);
   }
 
@@ -120,12 +120,12 @@ export class VendorService {
       ...uniques,
     });
     const saved = await this.vendorRepository.save(vendor);
-    this.eventBus.publishAll(vendor.pullEvents());
+    void this.eventBus.publishAll(vendor.pullEvents());
 
     return saved;
   }
 
-  async getVendorsStats({ startDate, endDate }: StatsParamsDTO): Promise<VendorStat[]> {
+  getVendorsStats({ startDate, endDate }: StatsParamsDTO): Promise<VendorStat[]> {
     return this.vendorRepository.getVendorStats(startDate, endDate);
   }
 
@@ -144,6 +144,6 @@ export class VendorService {
 
     vendor.markDeleted();
     await this.vendorRepository.delete(vendorId);
-    this.eventBus.publishAll(vendor.pullEvents());
+    void this.eventBus.publishAll(vendor.pullEvents());
   }
 }

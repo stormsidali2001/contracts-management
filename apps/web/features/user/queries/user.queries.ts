@@ -1,8 +1,9 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import useAxiosPrivate from '@/hooks/auth/useAxiosPrivate';
 import { userKeys } from '@/lib/query-keys';
 import { PaginationResponse } from '@/features/dashboard/models/paginationResponse.interface';
 import { CreateUser } from '@/features/dashboard/models/CreateUser.interface';
+import { UserView, UserRole } from '@contracts/types';
 
 export interface UserListParams {
   page: number;
@@ -11,7 +12,7 @@ export interface UserListParams {
   searchQuery?: string;
   directionId?: string;
   departementId?: string;
-  role?: string;
+  role?: UserRole;
 }
 
 export interface UpdateUserPayload {
@@ -20,7 +21,7 @@ export interface UpdateUserPayload {
   firstName?: string;
   lastName?: string;
   username?: string;
-  role?: string;
+  role?: UserRole;
   active?: boolean;
   imageUrl?: string;
 }
@@ -36,7 +37,7 @@ export const useUsers = (params: UserListParams) => {
     queryKey: userKeys.list(params),
     queryFn: () =>
       axios
-        .get<PaginationResponse<any>>('/users', {
+        .get<PaginationResponse<UserView>>('/users', {
           params: {
             offset: page * pageSize,
             limit: pageSize,
@@ -48,6 +49,7 @@ export const useUsers = (params: UserListParams) => {
           },
         })
         .then((r) => r.data),
+    placeholderData: keepPreviousData,
   });
 };
 
@@ -56,7 +58,7 @@ export const useUser = (userId: string | null | undefined) => {
   return useQuery({
     queryKey: userKeys.detail(userId ?? ''),
     queryFn: () =>
-      axios.get<any>(`/users/${userId}`).then((r) => r.data),
+      axios.get<UserView>(`/users/${userId}`).then((r) => r.data),
     enabled: !!userId,
   });
 };
@@ -70,7 +72,7 @@ export const useCreateUser = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (payload: CreateUser) =>
-      axios.post('/auth/register', payload).then((r) => r.data),
+      axios.post<UserView>('/auth/register', payload).then((r) => r.data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: userKeys.lists() });
     },
@@ -82,7 +84,7 @@ export const useUpdateUser = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({ id, ...payload }: UpdateUserPayload) =>
-      axios.put(`/users/${id}`, payload).then((r) => r.data),
+      axios.put<UserView>(`/users/${id}`, payload).then((r) => r.data),
     onSuccess: (_data, { id }) => {
       queryClient.invalidateQueries({ queryKey: userKeys.lists() });
       queryClient.invalidateQueries({ queryKey: userKeys.detail(id) });

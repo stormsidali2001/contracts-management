@@ -44,15 +44,15 @@ export class DirectionService {
       direction.addDepartement(uuid(), dp.title, dp.abriviation);
     }
     const saved = await this.directionRepository.save(direction);
-    this.eventBus.publishAll(direction.pullEvents());
+    void this.eventBus.publishAll(direction.pullEvents());
     return saved;
   }
 
-  async findAll(offset: number, limit: number): Promise<Direction[]> {
+  findAll(offset: number, limit: number): Promise<Direction[]> {
     return this.directionRepository.findAll(offset, limit);
   }
 
-  async find(id: string): Promise<Direction | null> {
+  find(id: string): Promise<Direction | null> {
     return this.directionRepository.findById(id);
   }
 
@@ -64,7 +64,7 @@ export class DirectionService {
         "l'un des departement de la direction contient des utilisateurs",
       );
     await this.directionRepository.delete(id);
-    this.eventBus.publish(new DirectionDeletedEvent(id));
+    void this.eventBus.publish(new DirectionDeletedEvent(id));
     return 'done';
   }
 
@@ -76,11 +76,11 @@ export class DirectionService {
     if (!direction) throw new NotFoundError('la direction éxiste pas');
     direction.rename(dto.title, direction.abriviation);
     const saved = await this.directionRepository.save(direction);
-    this.eventBus.publishAll(direction.pullEvents());
+    void this.eventBus.publishAll(direction.pullEvents());
     return saved;
   }
 
-  async getTopDirection(): Promise<Direction[]> {
+  getTopDirection(): Promise<Direction[]> {
     return this.directionRepository.getTopDirections();
   }
 }

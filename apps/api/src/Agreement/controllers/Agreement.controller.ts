@@ -3,7 +3,7 @@ import { CreateAgreementDTO, ExecuteAgreementDTO, FindAllAgreementsDTO } from ".
 import { AgreementService } from "../application/Agreement.service";
 import { ApiTags } from '@nestjs/swagger';
 import { AgreementView } from '@contracts/types';
-import { AgreementMapper } from 'src/core/mappers/agreement.mapper';
+import { AgreementPresenter } from 'src/Agreement/infrastructure/agreement.presenter';
 import { AgreementType } from "src/core/types/agreement-type.enum";
 import { CurrentUser } from "src/auth/decorators/currentUser.decorator";
 import { JwtPayload } from "src/auth/types/JwtPayload.interface";
@@ -15,20 +15,21 @@ import { RoleGuard } from "src/auth/guards/Role.guard";
 @ApiTags('Agreements')
 @Controller('Agreements')
 export class AgreementController {
-  constructor(private AgreementService: AgreementService) {}
+  constructor(private readonly AgreementService: AgreementService) {}
 
   @RequiredRoles(UserRole.JURIDICAL)
   @UseGuards(JwtAccessTokenGuard, RoleGuard)
   @Post("")
   async createAgreement(@Body() agreement: CreateAgreementDTO) {
     const result = await this.AgreementService.createAgreement(agreement);
-    return AgreementMapper.from(result);
+    return AgreementPresenter.from(result);
   }
 
+  @UseGuards(JwtAccessTokenGuard)
   @Get(':id')
   async findById(@Param("id") id: string, @Query("agreementType") agreementType: AgreementType) {
     const result = await this.AgreementService.findById(id, agreementType);
-    return result ? AgreementMapper.from(result) : null;
+    return result ? AgreementPresenter.from(result) : null;
   }
 
   @UseGuards(JwtAccessTokenGuard)
@@ -43,7 +44,7 @@ export class AgreementController {
       user.departementId,
       user.directionId,
     );
-    return { total: result.total, data: AgreementMapper.fromMany(result.data) };
+    return { total: result.total, data: AgreementPresenter.fromMany(result.data) };
   }
 
   @RequiredRoles(UserRole.JURIDICAL)
@@ -51,13 +52,14 @@ export class AgreementController {
   @Patch('exec')
   async executeAgreement(@Body() execAg: ExecuteAgreementDTO) {
     const result = await this.AgreementService.executeAgreement(execAg);
-    return AgreementMapper.from(result);
+    return AgreementPresenter.from(result);
   }
 
   //testing routes
+  @UseGuards(JwtAccessTokenGuard)
   @Post("/test")
   async createAgreementTest(@Body() agreement: CreateAgreementDTO) {
     const result = await this.AgreementService.createAgreement(agreement);
-    return AgreementMapper.from(result);
+    return AgreementPresenter.from(result);
   }
 }

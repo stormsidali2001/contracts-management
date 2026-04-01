@@ -1,7 +1,7 @@
 import { EventView } from '@contracts/types';
 import { EventEntity } from 'src/core/entities/Event.entity';
 
-export class EventMapper {
+export class EventPresenter {
   static from(entity: EventEntity): EventView {
     return {
       id: entity.id,
@@ -17,6 +17,6 @@ export class EventMapper {
   }
 
   static fromMany(entities: EventEntity[]): EventView[] {
-    return entities.map(EventMapper.from);
+    return entities.map(EventPresenter.from);
   }
 }

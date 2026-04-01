@@ -1,16 +1,18 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import useAxiosPrivate from '@/hooks/auth/useAxiosPrivate';
 import { agreementKeys } from '@/lib/query-keys';
 import { PaginationResponse } from '@/features/dashboard/models/paginationResponse.interface';
 import { CreateAgreement } from '@/features/contract/models/CreateAgreement.interface';
 import { ExecuteAgreement } from '@/features/contract/models/ExecuteAgreement.interface';
+import { AgreementView } from '@contracts/types';
 
-export type AgreementType = 'contract' | 'convension';
+/** Lowercase filter type used as a query param (distinct from the AgreementType enum in @contracts/types) */
+export type AgreementFilterType = 'contract' | 'convension';
 
 export interface AgreementListParams {
   page: number;
   pageSize: number;
-  agreementType: AgreementType;
+  agreementType: AgreementFilterType;
   orderBy?: string;
   searchQuery?: string;
   directionId?: string;
@@ -30,7 +32,7 @@ export const useAgreements = (params: AgreementListParams) => {
     queryKey: agreementKeys.list(params),
     queryFn: () =>
       axios
-        .get<PaginationResponse<any>>('/agreements', {
+        .get<PaginationResponse<AgreementView>>('/agreements', {
           params: {
             offset: page * pageSize,
             limit: pageSize,
@@ -44,6 +46,7 @@ export const useAgreements = (params: AgreementListParams) => {
           },
         })
         .then((r) => r.data),
+    placeholderData: keepPreviousData,
   });
 };
 
@@ -53,14 +56,12 @@ export const useContracts = (params: Omit<AgreementListParams, 'agreementType'>)
 export const useConvensions = (params: Omit<AgreementListParams, 'agreementType'>) =>
   useAgreements({ ...params, agreementType: 'convension' });
 
-export const useAgreement = (id: string | undefined, type: AgreementType) => {
+export const useAgreement = (id: string | undefined, type: AgreementFilterType) => {
   const axios = useAxiosPrivate({});
   return useQuery({
     queryKey: agreementKeys.detail(id ?? '', type),
     queryFn: () =>
-      axios
-        .get<any>(`/Agreements/${id}`, { params: { agreementType: type } })
-        .then((r) => r.data),
+      axios.get<AgreementView>(`/Agreements/${id}`, { params: { agreementType: type } }).then((r) => r.data),
     enabled: !!id,
   });
 };
@@ -74,10 +75,10 @@ export const useCreateAgreement = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (payload: CreateAgreement) =>
-      axios.post('/Agreements', payload).then((r) => r.data),
+      axios.post<AgreementView>('/Agreements', payload).then((r) => r.data),
     onSuccess: (_data, { type }) => {
       queryClient.invalidateQueries({
-        queryKey: agreementKeys.list({ agreementType: type } as any),
+        queryKey: agreementKeys.list({ agreementType: type } as AgreementListParams),
       });
       // Invalidate all agreement lists to be safe
       queryClient.invalidateQueries({ queryKey: agreementKeys.lists() });
@@ -90,7 +91,7 @@ export const useExecuteAgreement = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (payload: ExecuteAgreement) =>
-      axios.patch('/Agreements/exec', payload).then((r) => r.data),
+      axios.patch<AgreementView>('/Agreements/exec', payload).then((r) => r.data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: agreementKeys.details() });
       queryClient.invalidateQueries({ queryKey: agreementKeys.lists() });

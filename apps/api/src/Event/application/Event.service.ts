@@ -1,7 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { CreateEventDTO } from 'src/core/entities/event.dto';
-import { UserEntity } from 'src/core/entities/User.entity';
-import { User } from 'src/user/domain/user.aggregate';
+import { UserRole } from 'src/core/types/UserRole.enum';
 import { EventEntity } from 'src/core/entities/Event.entity';
 import { EventRepository } from '../event.repository';
 
@@ -19,10 +18,12 @@ export class EventService {
     await this.eventRepository.save(event);
   }
 
-  async getEvents(
+  getEvents(
     limit: number,
-    user: UserEntity | User,
+    role: UserRole,
+    departementId?: string | null,
+    directionId?: string | null,
   ): Promise<EventEntity[]> {
-    return this.eventRepository.findPaginated(limit, user);
+    return this.eventRepository.findPaginated(limit, role, departementId, directionId);
   }
 }

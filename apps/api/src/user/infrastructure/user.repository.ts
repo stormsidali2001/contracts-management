@@ -5,7 +5,7 @@ import { NotificationEntity } from 'src/core/entities/Notification.entity';
 import { UserEntity } from 'src/core/entities/User.entity';
 import { UserRole } from 'src/core/types/UserRole.enum';
 import { PaginationResponse } from 'src/core/types/paginationResponse.interface';
-import { StatsParamsDTO } from 'src/statistics/models/statsPramsDTO.interface';
+import { StatsParamsDTO } from 'src/core/dtos/stats.dto';
 import { User } from '../domain/user.aggregate';
 import { IUserRepository, UserProfile } from '../domain/user.repository';
 
@@ -125,12 +125,9 @@ export class UserRepository implements IUserRepository {
     let query = this.repo.createQueryBuilder('user').skip(offset).take(limit);
 
     if (searchQuery && searchQuery.length >= 2) {
-      query = query.andWhere(`(
-        MATCH(user.email) AGAINST ('${searchQuery}' IN BOOLEAN MODE)
-        or MATCH(user.firstName) AGAINST ('${searchQuery}' IN BOOLEAN MODE)
-        or MATCH(user.lastName) AGAINST ('${searchQuery}' IN BOOLEAN MODE)
-        or MATCH(user.username) AGAINST ('${searchQuery}' IN BOOLEAN MODE)
-      )`);
+      query = query.andWhere(
+        `MATCH(user.username, user.email, user.firstName, user.lastName) AGAINST ('${searchQuery}' IN BOOLEAN MODE)`,
+      );
     }
     if (departementId)
       query = query.andWhere('user.departementId = :departementId', {
@@ -151,7 +148,7 @@ export class UserRepository implements IUserRepository {
     return { total, data: data.map((e) => this.toDomain(e)) };
   }
 
-  async getUserTypesStats({
+  getUserTypesStats({
     startDate,
     endDate,
   }: StatsParamsDTO): Promise<{ role: string; total: string }[]> {

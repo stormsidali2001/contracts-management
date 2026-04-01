@@ -67,16 +67,21 @@ export class NotificationsGateWay
       userId,
     );
     this.logger.debug(`request all notifications user : ${client.user.email}`);
-    client.emit('send_all_notifications', notifications);
+    void client.emit('send_all_notifications', notifications);
   }
 
   @SubscribeMessage('REQUEST_ALL_EVENTS')
   async getLastEvents(@ConnectedSocket() client: SocketWithJwtPayload) {
     this.logger.debug(`request all events user : ${client.user.email}`);
     const user = await this.userService.findBy({ id: client.user.sub });
-    const events = await this.eventService.getEvents(20, user);
+    const events = await this.eventService.getEvents(
+      20,
+      user.role,
+      user.departementId,
+      user.directionId,
+    );
 
-    client.emit('SEND_EVENTS', events);
+    void client.emit('SEND_EVENTS', events);
   }
 }
 

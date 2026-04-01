@@ -2,7 +2,7 @@ import { AgreementView } from '@contracts/types';
 import { Agreement } from 'src/Agreement/domain/agreement.aggregate';
 import { AgreementDetail } from 'src/Agreement/domain/agreement.repository';
 
-export class AgreementMapper {
+export class AgreementPresenter {
   static from(source: Agreement | AgreementDetail): AgreementView {
     const detail = source as AgreementDetail;
     return {
@@ -28,6 +28,6 @@ export class AgreementMapper {
   }
 
   static fromMany(sources: (Agreement | AgreementDetail)[]): AgreementView[] {
-    return sources.map(AgreementMapper.from);
+    return sources.map(AgreementPresenter.from);
   }
 }

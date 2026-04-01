@@ -17,7 +17,7 @@ import { RoleGuard } from 'src/auth/guards/Role.guard';
 import { PaginationResponse } from 'src/core/types/paginationResponse.interface';
 import { UserRole } from 'src/core/types/UserRole.enum';
 import { UserView } from '@contracts/types';
-import { UserMapper } from 'src/core/mappers/user.mapper';
+import { UserPresenter } from 'src/user/infrastructure/user.presenter';
 import { UpdateUserDTO } from '../../core/dtos/user.dto';
 import { UserService } from '../application/user.service';
 
@@ -48,7 +48,7 @@ export class UserController {
       active,
       role,
     );
-    return { total: result.total, data: UserMapper.fromMany(result.data) };
+    return { total: result.total, data: UserPresenter.fromMany(result.data) };
   }
 
   @UseGuards(JwtAccessTokenGuard)
@@ -57,7 +57,7 @@ export class UserController {
     const result = await this.userService.findByIdWithDepartementAndDirection(
       id,
     );
-    return result ? UserMapper.from(result) : null;
+    return result ? UserPresenter.from(result) : null;
   }
 
   @RequiredRoles(UserRole.ADMIN)
@@ -75,7 +75,7 @@ export class UserController {
     @CurrentUserId() currentUserId: string,
   ): Promise<UserView> {
     const result = await this.userService.updateUser(id, user, currentUserId);
-    return UserMapper.from(result);
+    return UserPresenter.from(result);
   }
 
   @UseGuards(JwtAccessTokenGuard)

@@ -1,7 +1,7 @@
 import { DepartementView } from '@contracts/types';
 import { Departement } from 'src/direction/domain/departement';
 
-export class DepartementMapper {
+export class DepartementPresenter {
   static from(source: Departement): DepartementView {
     return {
       id: source.id,
@@ -12,6 +12,6 @@ export class DepartementMapper {
   }
 
   static fromMany(sources: Departement[]): DepartementView[] {
-    return sources.map(DepartementMapper.from);
+    return sources.map(DepartementPresenter.from);
   }
 }

@@ -60,7 +60,7 @@ export const useCreateDepartement = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (payload: CreateDepartementPayload) =>
-      axios.post<Departement>('/departements', payload).then((r) => r.data),
+      axios.post('/departements', payload).then((r) => r.data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: directionKeys.lists() });
     },

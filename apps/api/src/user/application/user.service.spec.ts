@@ -4,21 +4,33 @@ import { User } from '../domain/user.aggregate';
 import { Direction } from '../../direction/domain/direction';
 import { Departement } from '../../direction/domain/departement';
 import { UserRole } from '../../core/types/UserRole.enum';
-import { ConflictError, ForbiddenError, NotFoundError } from '../../shared/domain/errors';
+import {
+  ConflictError,
+  ForbiddenError,
+  NotFoundError,
+} from '../../shared/domain/errors';
 
 // ── Typed mock factory ───────────────────────────────────────────────────────
 
 function mockOf<T>(methods: (keyof T)[]): jest.Mocked<T> {
-  return Object.fromEntries(methods.map((m) => [m, jest.fn()])) as jest.Mocked<T>;
+  return Object.fromEntries(
+    methods.map((m) => [m, jest.fn()]),
+  ) as jest.Mocked<T>;
 }
 
 // ── Fixtures ─────────────────────────────────────────────────────────────────
 
-function makeUser(overrides: Partial<Parameters<typeof User.create>[0]> = {}): User {
+function makeUser(
+  overrides: Partial<Parameters<typeof User.create>[0]> = {},
+): User {
   return User.reconstitute({
-    id: 'user-1', email: 'alice@x.com', username: 'alice',
-    firstName: 'Alice', lastName: 'Smith',
-    departementId: 'dept-1', directionId: 'dir-1',
+    id: 'user-1',
+    email: 'alice@x.com',
+    username: 'alice',
+    firstName: 'Alice',
+    lastName: 'Smith',
+    departementId: 'dept-1',
+    directionId: 'dir-1',
     role: UserRole.EMPLOYEE,
     ...overrides,
   });
@@ -33,14 +45,28 @@ function makeProfile(user: User): UserProfile {
 }
 
 function makeDirection(): Direction {
-  const dept = Departement.create({ id: 'dept-1', title: 'Dev', abriviation: 'DD', directionId: 'dir-1' });
-  return Direction.create({ id: 'dir-1', title: 'Tech', abriviation: 'TD', departements: [dept] });
+  const dept = Departement.create({
+    id: 'dept-1',
+    title: 'Dev',
+    abriviation: 'DD',
+    directionId: 'dir-1',
+  });
+  return Direction.create({
+    id: 'dir-1',
+    title: 'Tech',
+    abriviation: 'TD',
+    departements: [dept],
+  });
 }
 
 function makeCreateDto(overrides: Record<string, unknown> = {}) {
   return {
-    email: 'alice@x.com', username: 'alice', firstName: 'Alice', lastName: 'Smith',
-    directionId: 'dir-1', departementId: 'dept-1',
+    email: 'alice@x.com',
+    username: 'alice',
+    firstName: 'Alice',
+    lastName: 'Smith',
+    directionId: 'dir-1',
+    departementId: 'dept-1',
     ...overrides,
   };
 }
@@ -55,14 +81,25 @@ describe('UserService', () => {
 
   beforeEach(() => {
     userRepo = mockOf<IUserRepository>([
-      'save', 'delete', 'findById', 'findByEmailOrUsername', 'findProfileById',
-      'findAdmins', 'findPaginated', 'getUserTypesStats',
-      'findByDepartementId', 'findJuridicalsByOrg',
+      'save',
+      'delete',
+      'findById',
+      'findByEmailOrUsername',
+      'findProfileById',
+      'findAdmins',
+      'findPaginated',
+      'getUserTypesStats',
+      'findByDepartementId',
+      'findJuridicalsByOrg',
     ]);
     directionService = { find: jest.fn() };
     eventBus = { publishAll: jest.fn() };
 
-    service = new UserService(userRepo, directionService as any, eventBus as any);
+    service = new UserService(
+      userRepo,
+      directionService as any,
+      eventBus as any,
+    );
   });
 
   // ── create ──────────────────────────────────────────────────────────────────
@@ -92,7 +129,9 @@ describe('UserService', () => {
       it('skips org lookup when no directionId/departementId provided', async () => {
         userRepo.save.mockImplementation(async (u) => u);
 
-        await service.create(makeCreateDto({ directionId: null, departementId: null }) as any);
+        await service.create(
+          makeCreateDto({ directionId: null, departementId: null }) as any,
+        );
 
         expect(directionService.find).not.toHaveBeenCalled();
         expect(userRepo.save).toHaveBeenCalledTimes(1);
@@ -103,7 +142,9 @@ describe('UserService', () => {
       it('throws NotFoundError when direction is not found', async () => {
         directionService.find.mockResolvedValue(null);
 
-        await expect(service.create(makeCreateDto() as any)).rejects.toThrow(NotFoundError);
+        await expect(service.create(makeCreateDto() as any)).rejects.toThrow(
+          NotFoundError,
+        );
         expect(userRepo.save).not.toHaveBeenCalled();
       });
 
@@ -111,7 +152,9 @@ describe('UserService', () => {
         directionService.find.mockResolvedValue(makeDirection());
         userRepo.save.mockRejectedValue(new Error('db error'));
 
-        await expect(service.create(makeCreateDto() as any)).rejects.toThrow('db error');
+        await expect(service.create(makeCreateDto() as any)).rejects.toThrow(
+          'db error',
+        );
       });
     });
   });
@@ -119,7 +162,11 @@ describe('UserService', () => {
   // ── updateUser ──────────────────────────────────────────────────────────────
 
   describe('updateUser', () => {
-    const updateDto = { email: 'alice@x.com', username: 'alice', firstName: 'Alicia' };
+    const updateDto = {
+      email: 'alice@x.com',
+      username: 'alice',
+      firstName: 'Alicia',
+    };
 
     describe('happy path', () => {
       it('updates user, saves, and publishes updated event', async () => {
@@ -130,7 +177,7 @@ describe('UserService', () => {
 
         // Promise.all([findById(id), findById(currentUserId)])
         userRepo.findById
-          .mockResolvedValueOnce(user)      // target user
+          .mockResolvedValueOnce(user) // target user
           .mockResolvedValueOnce(adminUser); // current user
         userRepo.findByEmailOrUsername.mockResolvedValue(user); // same user — no conflict
         userRepo.findProfileById.mockResolvedValue(profile);
@@ -147,8 +194,10 @@ describe('UserService', () => {
     describe('failure paths', () => {
       it('throws NotFoundError when the target user is not found', async () => {
         userRepo.findById
-          .mockResolvedValueOnce(null)                            // target user missing
-          .mockResolvedValueOnce(makeUser({ id: 'admin-1', role: UserRole.ADMIN }));
+          .mockResolvedValueOnce(null) // target user missing
+          .mockResolvedValueOnce(
+            makeUser({ id: 'admin-1', role: UserRole.ADMIN }),
+          );
 
         await expect(
           service.updateUser('missing-id', updateDto as any, 'admin-1'),
@@ -156,11 +205,14 @@ describe('UserService', () => {
       });
 
       it('throws ForbiddenError when non-admin tries to update another user', async () => {
-        const currentUser = makeUser({ id: 'current-1', role: UserRole.EMPLOYEE });
+        const currentUser = makeUser({
+          id: 'current-1',
+          role: UserRole.EMPLOYEE,
+        });
         const targetUser = makeUser({ id: 'other-1' });
 
         userRepo.findById
-          .mockResolvedValueOnce(targetUser)  // target user
+          .mockResolvedValueOnce(targetUser) // target user
           .mockResolvedValueOnce(currentUser); // current user
 
         await expect(
@@ -176,7 +228,9 @@ describe('UserService', () => {
         userRepo.findById
           .mockResolvedValueOnce(user)
           .mockResolvedValueOnce(adminUser);
-        userRepo.findByEmailOrUsername.mockResolvedValue(makeUser({ id: 'other-id' }));
+        userRepo.findByEmailOrUsername.mockResolvedValue(
+          makeUser({ id: 'other-id' }),
+        );
 
         await expect(
           service.updateUser('user-1', updateDto as any, 'admin-1'),
@@ -208,7 +262,9 @@ describe('UserService', () => {
       it('throws NotFoundError when user profile is not found', async () => {
         userRepo.findProfileById.mockResolvedValue(null);
 
-        await expect(service.deleteUser('missing')).rejects.toThrow(NotFoundError);
+        await expect(service.deleteUser('missing')).rejects.toThrow(
+          NotFoundError,
+        );
         expect(userRepo.delete).not.toHaveBeenCalled();
       });
     });
@@ -258,22 +314,30 @@ describe('UserService', () => {
   // ── updateImage ─────────────────────────────────────────────────────────────
 
   describe('updateImage', () => {
+    const mockFile = { filename: 'img.png' } as Express.Multer.File;
+
+    beforeEach(() => {
+      jest.spyOn(service, 'validateImageFile').mockResolvedValue('img.png');
+    });
+
     it('happy path – updates image url and saves', async () => {
       const user = makeUser();
       const imageSpy = jest.spyOn(user, 'updateImage');
       userRepo.findById.mockResolvedValue(user);
       userRepo.save.mockImplementation(async (u) => u);
 
-      await service.updateImage('user-1', 'https://cdn/img.png');
+      await service.updateImage('user-1', mockFile);
 
-      expect(imageSpy).toHaveBeenCalledWith('https://cdn/img.png');
+      expect(imageSpy).toHaveBeenCalledWith('img.png');
       expect(userRepo.save).toHaveBeenCalledTimes(1);
     });
 
     it('happy path – no-op when user is not found', async () => {
       userRepo.findById.mockResolvedValue(null);
 
-      await expect(service.updateImage('missing', 'url')).resolves.not.toThrow();
+      await expect(
+        service.updateImage('missing', mockFile),
+      ).resolves.not.toThrow();
       expect(userRepo.save).not.toHaveBeenCalled();
     });
   });

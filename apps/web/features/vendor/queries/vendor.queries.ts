@@ -1,8 +1,9 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import useAxiosPrivate from '@/hooks/auth/useAxiosPrivate';
 import { vendorKeys } from '@/lib/query-keys';
 import { PaginationResponse } from '@/features/dashboard/models/paginationResponse.interface';
 import { Vendor } from '@/features/vendor/models/vendor.interface';
+import { VendorView } from '@contracts/types';
 
 export interface VendorListParams {
   page: number;
@@ -26,7 +27,7 @@ export const useVendors = (params: VendorListParams) => {
     queryKey: vendorKeys.list(params),
     queryFn: () =>
       axios
-        .get<PaginationResponse<any>>('/vendors', {
+        .get<PaginationResponse<VendorView>>('/vendors', {
           params: {
             offset: page * pageSize,
             limit: pageSize,
@@ -35,6 +36,7 @@ export const useVendors = (params: VendorListParams) => {
           },
         })
         .then((r) => r.data),
+    placeholderData: keepPreviousData,
   });
 };
 
@@ -43,7 +45,7 @@ export const useVendor = (vendorId: string | null | undefined) => {
   return useQuery({
     queryKey: vendorKeys.detail(vendorId ?? ''),
     queryFn: () =>
-      axios.get<any>(`/vendors/${vendorId}`).then((r) => r.data),
+      axios.get<VendorView>(`/vendors/${vendorId}`).then((r) => r.data),
     enabled: !!vendorId,
   });
 };
@@ -57,7 +59,7 @@ export const useCreateVendor = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (payload: Vendor) =>
-      axios.post('/vendors', payload).then((r) => r.data),
+      axios.post<VendorView>('/vendors', payload).then((r) => r.data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: vendorKeys.lists() });
     },
@@ -69,7 +71,7 @@ export const useUpdateVendor = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({ id, ...payload }: UpdateVendorPayload) =>
-      axios.patch(`/vendors/${id}`, payload).then((r) => r.data),
+      axios.patch<VendorView>(`/vendors/${id}`, payload).then((r) => r.data),
     onSuccess: (_data, { id }) => {
       queryClient.invalidateQueries({ queryKey: vendorKeys.lists() });
       queryClient.invalidateQueries({ queryKey: vendorKeys.detail(id) });

@@ -1,15 +1,12 @@
-import { Entity } from "./Entity.enum";
-import { Operation } from "./Operation.enum";
+import { Entity, Operation } from '@contracts/types';
 
-
-export interface UserEvent{
-    entityId:string;
-    entity:Entity;
-    operation:Operation;
-    createdAt:Date;
-    departementId:string;
-    directionId:string;
-    departementAbriviation:string;
-    directionAbriviation:string;
-    
+export interface UserEvent {
+  entityId: string;
+  entity: Entity;
+  operation: Operation;
+  createdAt: Date;
+  departementId: string;
+  directionId: string;
+  departementAbriviation: string;
+  directionAbriviation: string;
 }

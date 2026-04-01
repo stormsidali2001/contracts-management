@@ -1,6 +1,6 @@
 import { UserRole } from 'src/core/types/UserRole.enum';
 import { PaginationResponse } from 'src/core/types/paginationResponse.interface';
-import { StatsParamsDTO } from 'src/statistics/models/statsPramsDTO.interface';
+import { StatsParamsDTO } from 'src/core/dtos/stats.dto';
 import { User } from './user.aggregate';
 
 /**

@@ -139,11 +139,9 @@ export class AgreementRepository implements IAgreementRepository {
     if (vendorId) query = query.andWhere('ag.vendorId = :vendorId', { vendorId });
 
     if (searchQuery && searchQuery.length >= 2) {
-      query = query.andWhere(`(
-        MATCH(ag.number) AGAINST ('${searchQuery}' IN BOOLEAN MODE)
-        or MATCH(ag.object) AGAINST ('${searchQuery}' IN BOOLEAN MODE)
-        or MATCH(ag.observation) AGAINST ('${searchQuery}' IN BOOLEAN MODE)
-      )`);
+      query = query.andWhere(
+        `MATCH(ag.number, ag.object, ag.observation) AGAINST ('${searchQuery}' IN BOOLEAN MODE)`,
+      );
     }
 
     if (orderBy && orderBy !== 'type') query = query.orderBy(orderBy);
@@ -152,7 +150,7 @@ export class AgreementRepository implements IAgreementRepository {
     return { total, data: data.map((e) => this.toDomain(e)) };
   }
 
-  async getStatusStats(
+  getStatusStats(
     userRole: UserRole,
     userDepartementId?: string,
     userDirectionId?: string,
@@ -188,7 +186,7 @@ export class AgreementRepository implements IAgreementRepository {
     return query.getRawMany();
   }
 
-  async getTypeStats(
+  getTypeStats(
     userRole: UserRole,
     userDepartementId?: string,
     userDirectionId?: string,

@@ -12,4 +12,3 @@ export class StatsParamsDTO {
   @IsDateString({ strict: true })
   endDate: Date;
 }
-

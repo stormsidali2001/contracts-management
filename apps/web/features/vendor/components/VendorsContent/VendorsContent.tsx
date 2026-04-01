@@ -1,7 +1,7 @@
 'use client';
 import { Button, IconButton, Modal } from '@mui/material';
-import { DataGrid, GridColumns, GridSortItem, GridSortModel } from '@mui/x-data-grid';
-import { useMemo, useState } from 'react';
+import { DataGrid, GridColumns, GridRenderCellParams, GridSortItem, GridSortModel } from '@mui/x-data-grid';
+import { useMemo, useState, useEffect } from 'react';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import TextField from '@mui/material/TextField';
@@ -32,6 +32,7 @@ const VendorsContent = () => {
   const { data: statsData } = useStatistics({});
   const agreementTypes = statsData?.agreementsStats?.types ?? null;
 
+  const [rowCount, setRowCount] = useState(0);
   const { data, isFetching } = useVendors({
     page: paginationModel.page,
     pageSize: paginationModel.pageSize,
@@ -79,7 +80,7 @@ const VendorsContent = () => {
           field: 'actions1',
           headerName: 'Supprimer',
           type: 'actions',
-          renderCell: (params) => <DeleteVendorAction {...{ params }} />,
+          renderCell: (params: GridRenderCellParams) => <DeleteVendorAction {...{ params }} />,
         },
       ];
       return editable ? extra : original;
@@ -162,7 +163,7 @@ const VendorsContent = () => {
             autoHeight
             rowHeight={52}
             rows={data?.data ?? []}
-            rowCount={data?.total ?? 0}
+            rowCount={rowCount}
             loading={isFetching}
             pageSizeOptions={[5]}
             pagination

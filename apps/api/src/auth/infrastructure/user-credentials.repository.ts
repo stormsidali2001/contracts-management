@@ -4,7 +4,10 @@ import { DataSource, Repository } from 'typeorm';
 import { PasswordTokenEntity } from 'src/core/entities/PasswordToken';
 import { UserCredentialsEntity } from 'src/core/entities/UserCredentials.entity';
 import { IUserCredentialsRepository } from '../domain/user-credentials.repository';
-import { PasswordToken, UserCredentials } from '../domain/user-credentials.aggregate';
+import {
+  PasswordToken,
+  UserCredentials,
+} from '../domain/user-credentials.aggregate';
 
 @Injectable()
 export class UserCredentialsRepository implements IUserCredentialsRepository {
@@ -68,7 +71,10 @@ export class UserCredentialsRepository implements IUserCredentialsRepository {
           await credRepo
             .createQueryBuilder()
             .relation(UserCredentialsEntity, 'password_token')
-            .of(current?.id ?? (await credRepo.findOneBy({ userId: credentials.userId }))!.id)
+            .of(
+              current?.id ??
+                (await credRepo.findOneBy({ userId: credentials.userId }))!.id,
+            )
             .set(saved);
           credentials.passwordToken.id = saved.id;
         }

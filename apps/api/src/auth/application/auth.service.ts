@@ -1,5 +1,4 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { EventBus } from '@nestjs/cqrs';
 import {
   ConnectedUserResetPassword,
   CreateUserDTO,
@@ -8,7 +7,6 @@ import {
   ResetPasswordDTO,
 } from 'src/core/dtos/user.dto';
 import { UserService } from 'src/user/application/user.service';
-import { User } from 'src/user/domain/user.aggregate';
 import { JwtPayload } from '../types/JwtPayload.interface';
 import { UserRole } from 'src/core/types/UserRole.enum';
 import { randomBytes } from 'crypto';
@@ -18,7 +16,6 @@ import {
   USER_CREDENTIALS_REPOSITORY,
 } from '../domain/user-credentials.repository';
 import { UserCredentials } from '../domain/user-credentials.aggregate';
-import { UserPasswordChangedEvent } from 'src/user/domain/events/user-password-changed.event';
 import { HashService } from '../services/hash.service';
 import { TokenService } from '../services/token.service';
 import { EmailService } from 'src/shared/email/email.service';
@@ -39,10 +36,9 @@ export class AuthService {
     private readonly emailService: EmailService,
     @Inject(USER_CREDENTIALS_REPOSITORY)
     private readonly credentialsRepository: IUserCredentialsRepository,
-    private readonly eventBus: EventBus,
   ) {}
 
-  async register(newUser: CreateUserDTO): Promise<User> {
+  async register(newUser: CreateUserDTO) {
     const userDb = await this.userService.findByEmailOrUsername({
       email: newUser.email ?? undefined,
       username: newUser.username ?? undefined,
@@ -113,8 +109,7 @@ export class AuthService {
     if (!matches) {
       throw new ValidationError('mauvais mot de passe');
     }
-    if (!userDb.active)
-      throw new ForbiddenError('ce compte a eté désactivé.');
+    if (!userDb.active) throw new ForbiddenError('ce compte a eté désactivé.');
 
     const jwtPayload: JwtPayload = {
       email: userDb.email,
@@ -189,8 +184,9 @@ export class AuthService {
   }
 
   async forgotPassword({ email }: ForgotPasswordDTO) {
-    const credentials =
-      await this.credentialsRepository.findByEmailWithToken(email);
+    const credentials = await this.credentialsRepository.findByEmailWithToken(
+      email,
+    );
     if (!credentials) {
       throw new NotFoundError(
         "l'utilisateur associe a ce email n'est pas touvee ",
@@ -220,8 +216,9 @@ export class AuthService {
   }
 
   async resetPassword({ password, token, userId }: ResetPasswordDTO) {
-    const credentials =
-      await this.credentialsRepository.findByUserIdWithToken(userId);
+    const credentials = await this.credentialsRepository.findByUserIdWithToken(
+      userId,
+    );
     if (!credentials) {
       throw new NotFoundError(
         "l'utilisateur associe a ce email n'est pas touvee ",
@@ -245,7 +242,7 @@ export class AuthService {
     const hashed_password = await this.hashService.hash(password);
     credentials.resetPassword(hashed_password); // also clears passwordToken
     await this.credentialsRepository.save(credentials);
-    this.eventBus.publish(new UserPasswordChangedEvent(userId));
+    this.userService.notifyPasswordChanged(userId);
 
     return 'done';
   }

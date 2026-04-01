@@ -40,10 +40,12 @@ export default AgreementStatsCard;
 function ExpandedOverlay({ title, onClose, children }: { title: string; onClose: () => void; children: React.ReactNode }) {
   return (
     <div className={styles.expandedCard}>
-      <button onClick={onClose} className={styles.closeButton} aria-label="Fermer">
-        <CloseOutlinedIcon />
-      </button>
-      <div className={styles.expandedTitle}>{title}</div>
+      <div className={styles.expandedHeader}>
+        <div className={styles.expandedTitle}>{title}</div>
+        <button onClick={onClose} className={styles.closeButton} aria-label="Fermer">
+          <CloseOutlinedIcon />
+        </button>
+      </div>
       <div className={styles.AgreementChart}>{children}</div>
     </div>
   );

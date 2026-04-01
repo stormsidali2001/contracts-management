@@ -1,16 +1,12 @@
-import { Injectable, Inject } from '@nestjs/common';
-import { User } from 'src/user/domain/user.aggregate';
-import { UserEntity } from 'src/core/entities/User.entity';
+import { Injectable } from '@nestjs/common';
 import { AgreementStatus } from 'src/core/types/agreement-status.enum';
 import { AgreementType } from 'src/core/types/agreement-type.enum';
-import {
-  IAgreementRepository,
-  AGREEMENT_REPOSITORY,
-} from 'src/Agreement/domain/agreement.repository';
+import { UserRole } from 'src/core/types/UserRole.enum';
+import { AgreementService } from 'src/Agreement/application/Agreement.service';
 import { DirectionService } from 'src/direction/application/direction.service';
 import { VendorService } from 'src/Agreement/application/vendor.service';
 import { UserService } from 'src/user/application/user.service';
-import { StatsParamsDTO } from '../models/statsPramsDTO.interface';
+import { StatsParamsDTO } from 'src/core/dtos/stats.dto';
 
 @Injectable()
 export class StatisticsService {
@@ -18,8 +14,7 @@ export class StatisticsService {
     private readonly userService: UserService,
     private readonly vendorService: VendorService,
     private readonly directionService: DirectionService,
-    @Inject(AGREEMENT_REPOSITORY)
-    private readonly agreementRepository: IAgreementRepository,
+    private readonly agreementService: AgreementService,
   ) {}
 
   async getStats(params: StatsParamsDTO, userId: string) {
@@ -27,7 +22,7 @@ export class StatisticsService {
     const [userTypesRaw, vendorsStats, agreementsStats] = await Promise.all([
       this.userService.getUserTypesStats(params),
       this.vendorService.getVendorsStats(params),
-      this.getAgreementsStats(params, user),
+      this.getAgreementsStats(params, user.role, user.departementId, user.directionId),
     ]);
 
     const userTypes = { juridical: 0, employee: 0, admin: 0, total: 0 };
@@ -39,21 +34,13 @@ export class StatisticsService {
 
   async getAgreementsStats(
     { startDate, endDate }: StatsParamsDTO,
-    user: UserEntity | User,
+    role: UserRole,
+    departementId?: string | null,
+    directionId?: string | null,
   ) {
     const [statusRaw, typesRaw, topDirections] = await Promise.all([
-      this.agreementRepository.getStatusStats(
-        user.role,
-        user.departementId,
-        user.directionId,
-        startDate,
-        endDate,
-      ),
-      this.agreementRepository.getTypeStats(
-        user.role,
-        user.departementId,
-        user.directionId,
-      ),
+      this.agreementService.getStatusStats(role, departementId, directionId, startDate, endDate),
+      this.agreementService.getTypeStats(role, departementId, directionId),
       this.directionService.getTopDirection(),
     ]);
 

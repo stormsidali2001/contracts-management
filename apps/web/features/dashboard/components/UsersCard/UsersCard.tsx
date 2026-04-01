@@ -97,8 +97,10 @@ function ExpandedCard({ stats, cardId, setExpanded }: any) {
   };
   return (
     <motion.div layoutId={cardId} className={styles.expandedCard}>
-      <div role="button" tabIndex={0} aria-label="Fermer" onClick={() => setExpanded(false)} className={styles.closeButton}><CloseOutlinedIcon /></div>
-      <div className={styles.title}>Utilisateurs</div>
+      <div className={styles.expandedHeader}>
+        <div className={styles.title}>Utilisateurs</div>
+        <div role="button" tabIndex={0} aria-label="Fermer" onClick={() => setExpanded(false)} className={styles.closeButton}><CloseOutlinedIcon /></div>
+      </div>
       <div className={styles.chartContainer}>
         <Doughnut data={data} options={{ maintainAspectRatio: false, layout: { padding: 10 } }} />
       </div>

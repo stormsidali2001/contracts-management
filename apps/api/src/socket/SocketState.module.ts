@@ -5,6 +5,6 @@ import { SocketStateService } from './SocketState.service';
 @Global()
 @Module({
   providers: [RedisEmitterService, SocketStateService],
-  exports: [RedisEmitterService, SocketStateService],
+  exports: [SocketStateService],
 })
 export class SocketStateModule {}

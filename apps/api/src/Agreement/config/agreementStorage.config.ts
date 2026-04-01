@@ -1,5 +1,5 @@
 import { MulterOptions } from "@nestjs/platform-express/multer/interfaces/multer-options.interface";
-import { unlinkSync } from "fs";
+import { unlink } from "fs/promises";
 import { diskStorage } from "multer";
 import { extname } from "path";
 type ValidFileExtension = 'pdf';
@@ -32,9 +32,9 @@ export const isFileExtensionSafe = async (path):Promise<boolean>=>{
     return validExtensions.includes(ext as ValidFileExtension) && validMimeTypes.includes(mime as ValidMimeType) ;
 }
 
-export const removeFile = (path):void=>{
+export const removeFile = async (path): Promise<void> => {
     try{
-        unlinkSync(path)
+        await unlink(path);
     }catch(err){
         console.error(err);
     }

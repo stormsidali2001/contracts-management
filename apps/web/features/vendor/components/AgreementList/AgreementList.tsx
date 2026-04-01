@@ -2,7 +2,7 @@
 import { Button, TextField } from '@mui/material';
 import { DataGrid, GridSortModel } from '@mui/x-data-grid';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useDebounce } from '@/hooks/useDebounce.hook';
 import styles from './AgreementList.module.css';
 import { useAgreements } from '@/features/contract/queries/contract.queries';
@@ -38,6 +38,7 @@ const AgreementList = ({ handleClose, type = 'contract', vendorId }: PropType) =
   const [searchQuery, setSearchQuery] = useState('');
   const [orderBy, setOrderBy] = useState<string | undefined>(undefined);
 
+  const [rowCount, setRowCount] = useState(0);
   const { data, isFetching } = useAgreements({ page, pageSize, agreementType: type, orderBy, searchQuery, vendorId });
 
   const handleSortModelChange = (sortModel: GridSortModel) => {
@@ -67,15 +68,12 @@ const AgreementList = ({ handleClose, type = 'contract', vendorId }: PropType) =
         <DataGrid
           autoHeight
           rows={data?.data ?? []}
-          rowCount={data?.total ?? 0}
+          rowCount={rowCount}
           loading={isFetching}
-          rowsPerPageOptions={[5, 10, 20]}
           pagination
-          page={page}
-          pageSize={pageSize}
+          paginationModel={{ page, pageSize }}
           paginationMode="server"
-          onPageChange={(newPage: number) => setPage(newPage)}
-          onPageSizeChange={(newPageSize: number) => setPageSize(newPageSize)}
+          onPaginationModelChange={(m) => { setPage(m.page); setPageSize(m.pageSize); }}
           columns={columns}
           disableColumnFilter
           disableColumnMenu

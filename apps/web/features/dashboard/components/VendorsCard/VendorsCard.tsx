@@ -63,8 +63,10 @@ export function ExpandedCard({ stats, cardId, setExpanded }: any) {
   };
   return (
     <motion.div layoutId={`expandableCard-${cardId}`} className={styles.expandedCard}>
-      <div role="button" tabIndex={0} aria-label="Fermer" onClick={() => setExpanded(false)} className={styles.closeButton}><CloseOutlinedIcon /></div>
-      <div className={styles.title}>Fournisseurs</div>
+      <div className={styles.expandedHeader}>
+        <div className={styles.title}>Fournisseurs</div>
+        <div role="button" tabIndex={0} aria-label="Fermer" onClick={() => setExpanded(false)} className={styles.closeButton}><CloseOutlinedIcon /></div>
+      </div>
       <div className={styles.expandedChartContainer}>
         <Line data={data} options={{ maintainAspectRatio: false, scales: { x: { type: 'time', time: { parser: 'yyyy-MM-dd', unit: 'month' }, title: { display: true, text: 'Date' }, adapters: { date: { locale: fr } } } } }} />
       </div>

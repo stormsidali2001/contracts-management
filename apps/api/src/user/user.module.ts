@@ -5,6 +5,7 @@ import { NotificationEntity } from 'src/core/entities/Notification.entity';
 import { UserEntity } from 'src/core/entities/User.entity';
 import { DirectionModule } from 'src/direction/direction.module';
 import { EventModule } from 'src/Event/Event.module';
+import { NotificationController } from './controllers/notification.controller';
 import { UserImageController } from './controllers/user-image.controller';
 import { UserController } from './controllers/user.controller';
 import { USER_REPOSITORY } from './domain/user.repository';
@@ -33,7 +34,7 @@ const eventHandlers = [
     DirectionModule,
     EventModule,
   ],
-  controllers: [UserController, UserImageController],
+  controllers: [UserController, UserImageController, NotificationController],
   providers: [
     { provide: USER_REPOSITORY, useClass: UserRepository },
     { provide: NOTIFICATION_REPOSITORY, useClass: NotificationRepository },

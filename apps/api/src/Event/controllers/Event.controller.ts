@@ -1,28 +1,30 @@
 import { Controller, Get, Query, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { CurrentUserId } from 'src/auth/decorators/currentUserId.decorator';
+import { CurrentUser } from 'src/auth/decorators/currentUser.decorator';
 import { JwtAccessTokenGuard } from 'src/auth/guards/jwt-access-token.guard';
-import { UserService } from 'src/user/application/user.service';
+import { JwtPayload } from 'src/auth/types/JwtPayload.interface';
+import { UserRole } from 'src/core/types/UserRole.enum';
 import { EventView } from '@contracts/types';
-import { EventMapper } from 'src/core/mappers/event.mapper';
+import { EventPresenter } from 'src/core/mappers/event.presenter';
 import { EventService } from '../application/Event.service';
 
 @ApiTags('events')
 @Controller('events')
 export class EventController {
-  constructor(
-    private readonly eventService: EventService,
-    private readonly userService: UserService,
-  ) {}
+  constructor(private readonly eventService: EventService) {}
 
   @UseGuards(JwtAccessTokenGuard)
   @Get('')
   async getEvents(
     @Query('limit') limit: number = 20,
-    @CurrentUserId() userId: string,
+    @CurrentUser() user: JwtPayload,
   ): Promise<EventView[]> {
-    const user = await this.userService.findBy({ id: userId });
-    const result = await this.eventService.getEvents(limit, user);
-    return EventMapper.fromMany(result);
+    const result = await this.eventService.getEvents(
+      limit,
+      user.role as UserRole,
+      user.departementId,
+      user.directionId,
+    );
+    return EventPresenter.fromMany(result);
   }
 }

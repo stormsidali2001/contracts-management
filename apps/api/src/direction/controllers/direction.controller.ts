@@ -1,7 +1,7 @@
 import {Controller,Post,Body, Query, Get, ParseIntPipe, Delete,Param,Put, UseGuards} from '@nestjs/common';
 import { CreateDirectionDTO, updateDirectionDTO } from 'src/core/dtos/direction.dto';
 import { DirectionView } from '@contracts/types';
-import { DirectionMapper } from 'src/core/mappers/direction.mapper';
+import { DirectionPresenter } from 'src/direction/infrastructure/direction.presenter';
 import { DirectionService } from '../application/direction.service';
 import {ApiTags} from '@nestjs/swagger';
 import { JwtAccessTokenGuard } from 'src/auth/guards/jwt-access-token.guard';
@@ -21,14 +21,14 @@ export class DirectionController{
     @Post('')
     async createDirection(@Body() direction:CreateDirectionDTO){
         const result = await this.directionService.createDirection(direction);
-        return DirectionMapper.from(result);
+        return DirectionPresenter.from(result);
     }
 
     @UseGuards(JwtAccessTokenGuard)
     @Get('')
     async findAll(@Query('offset') offset:number ,@Query('limit') limit:number ):Promise<DirectionView[]>{
         const result = await this.directionService.findAll(offset,limit);
-        return DirectionMapper.fromMany(result);
+        return DirectionPresenter.fromMany(result);
     }
 
     @RequiredRoles(UserRole.ADMIN)
@@ -43,14 +43,15 @@ export class DirectionController{
     @Put(':id')
     async updateDirection(@Param('id') id:string,@Body() direction:updateDirectionDTO):Promise<DirectionView>{
         const result = await this.directionService.updateDirection(id,direction);
-        return DirectionMapper.from(result);
+        return DirectionPresenter.from(result);
     }
 
     /**Testing routes */
+    @UseGuards(JwtAccessTokenGuard)
     @Post('/test')
     async createDirectionTest(@Body() direction:CreateDirectionDTO){
         console.log("...........................",JSON.stringify(direction))
         const result = await this.directionService.createDirection(direction);
-        return DirectionMapper.from(result);
+        return DirectionPresenter.from(result);
     }
 }

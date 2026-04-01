@@ -20,7 +20,8 @@
     "incremental": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["./*"],
+      "@contracts/types": ["../../packages/types/src/index.ts"]
     },
     "plugins": [
       {

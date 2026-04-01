@@ -28,6 +28,6 @@ import { DirectionService } from './application/direction.service';
     DepartementService,
     DirectionService,
   ],
-  exports: [DepartementService, DirectionService],
+  exports: [DirectionService],
 })
 export class DirectionModule {}

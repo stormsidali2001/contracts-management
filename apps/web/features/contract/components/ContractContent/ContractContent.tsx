@@ -47,7 +47,7 @@ const STATUS_PROGRESS: Record<string, number> = {
   executed_with_delay: 100,
 };
 
-const formatDate = (raw: string | null | undefined) => {
+const formatDate = (raw: Date | string | null | undefined) => {
   if (!raw) return '—';
   const d = new Date(raw);
   return isNaN(d.getTime()) ? String(raw) : d.toLocaleDateString('fr-DZ', { day: '2-digit', month: '2-digit', year: 'numeric' });

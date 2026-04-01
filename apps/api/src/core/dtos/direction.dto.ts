@@ -1,4 +1,5 @@
 import { IsArray, IsNotEmpty, IsString } from "class-validator";
+import { Type } from "class-transformer";
 import { CreateDepartementDTO, DepartementDTO } from "./departement.dto";
 import { ApiProperty } from "@nestjs/swagger";
 
@@ -29,6 +30,7 @@ export class CreateDirectionDTO{
       
     ]})
     @IsArray()
+    @Type(() => DepartementDTO)
     departements:DepartementDTO[];
 }
 export class updateDirectionDTO{

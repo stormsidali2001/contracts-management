@@ -28,7 +28,7 @@ export class DepartementService {
     const newId = uuid();
     direction.addDepartement(newId, dto.title, dto.abriviation);
     await this.directionRepository.save(direction);
-    this.eventBus.publishAll(direction.pullEvents());
+    void this.eventBus.publishAll(direction.pullEvents());
     return direction.getDepartement(newId)!;
   }
 
@@ -41,7 +41,7 @@ export class DepartementService {
 
     direction.updateDepartement(id, dto.title, dto.abriviation);
     await this.directionRepository.save(direction);
-    this.eventBus.publishAll(direction.pullEvents());
+    void this.eventBus.publishAll(direction.pullEvents());
     return direction.getDepartement(id)!;
   }
 
@@ -51,15 +51,15 @@ export class DepartementService {
 
     direction.removeDepartement(id);
     await this.directionRepository.save(direction);
-    this.eventBus.publishAll(direction.pullEvents());
+    void this.eventBus.publishAll(direction.pullEvents());
     return 'done';
   }
 
-  async findById(id: string): Promise<Departement | null> {
+  findById(id: string): Promise<Departement | null> {
     return this.directionRepository.findDepartementById(id);
   }
 
-  async findAll(offset = 0, limit = 10): Promise<Departement[]> {
+  findAll(offset = 0, limit = 10): Promise<Departement[]> {
     return this.directionRepository.findAllDepartements(offset, limit);
   }
 }

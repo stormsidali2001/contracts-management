@@ -1,15 +1,23 @@
-import { Injectable, Inject } from '@nestjs/common';
+import {
+  Injectable,
+  Inject,
+  BadRequestException,
+  ForbiddenException,
+} from '@nestjs/common';
 import { EventBus } from '@nestjs/cqrs';
 import { v4 as uuid } from 'uuid';
+import { join } from 'path';
 import {
-  CreateUserDTO,
-  UpdateUserDTO,
-} from 'src/core/dtos/user.dto';
+  isFileExtensionSafe,
+  removeFile,
+} from 'src/shared/utils/image-storage.config';
+import { CreateUserDTO, UpdateUserDTO } from 'src/core/dtos/user.dto';
 import { PaginationResponse } from 'src/core/types/paginationResponse.interface';
 import { UserRole } from 'src/core/types/UserRole.enum';
 import { DirectionService } from 'src/direction/application/direction.service';
-import { StatsParamsDTO } from 'src/statistics/models/statsPramsDTO.interface';
+import { StatsParamsDTO } from 'src/core/dtos/stats.dto';
 import { User } from '../domain/user.aggregate';
+import { UserPasswordChangedEvent } from '../domain/events/user-password-changed.event';
 import {
   IUserRepository,
   UserProfile,
@@ -38,7 +46,8 @@ export class UserService {
     if (directionId && departementId) {
       const direction = await this.directionService.find(directionId);
       if (!direction) throw new NotFoundError('direction not found');
-      const dept = direction.departements.find((d) => d.id === departementId) ?? null;
+      const dept =
+        direction.departements.find((d) => d.id === departementId) ?? null;
       if (!dept) throw new NotFoundError('departement is not in direction');
       directionData = { id: direction.id, abriviation: direction.abriviation };
       departementData = { id: dept.id, abriviation: dept.abriviation };
@@ -53,17 +62,20 @@ export class UserService {
     });
 
     const saved = await this.userRepository.save(user);
-    user.recordCreated(departementData?.abriviation ?? '', directionData?.abriviation ?? '');
-    this.eventBus.publishAll(user.pullEvents());
+    user.recordCreated(
+      departementData?.abriviation ?? '',
+      directionData?.abriviation ?? '',
+    );
+    void this.eventBus.publishAll(user.pullEvents());
 
     return saved;
   }
 
-  async findById(id: string): Promise<User | null> {
+  findById(id: string): Promise<User | null> {
     return this.userRepository.findById(id);
   }
 
-  async findByEmailOrUsername({
+  findByEmailOrUsername({
     email,
     username,
   }: {
@@ -74,12 +86,15 @@ export class UserService {
   }
 
   // Used by auth guards and socket adapters that only need basic user fields
-  async findBy(options: { id?: string; role?: UserRole }): Promise<User | null> {
+  findBy(options: {
+    id?: string;
+    role?: UserRole;
+  }): Promise<User | null> {
     if (options.id) return this.userRepository.findById(options.id);
-    return null;
+    return Promise.resolve(null);
   }
 
-  async findAll(
+  findAll(
     offset = 0,
     limit = 10,
     orderBy?: string,
@@ -121,26 +136,34 @@ export class UserService {
       dto.username ?? '',
     );
     if (conflicting && conflicting.id !== id)
-      throw new ConflictError("username ou email déjà utilisé");
+      throw new ConflictError('username ou email déjà utilisé');
 
     if (!dto.imageUrl) delete dto.imageUrl;
     user.update(dto);
     await this.userRepository.save(user);
 
     const saved = await this.userRepository.findProfileById(id);
-    user.recordUpdated(saved.departement?.abriviation ?? '', saved.direction?.abriviation ?? '');
-    this.eventBus.publishAll(user.pullEvents());
+    user.recordUpdated(
+      saved.departement?.abriviation ?? '',
+      saved.direction?.abriviation ?? '',
+    );
+    void this.eventBus.publishAll(user.pullEvents());
 
     return saved;
   }
 
-  async findByIdWithDepartementAndDirection(id: string): Promise<UserProfile> {
+  findByIdWithDepartementAndDirection(id: string): Promise<UserProfile> {
     return this.userRepository.findProfileById(id);
   }
 
-  async getUserTypesStats(params: StatsParamsDTO): Promise<{ role: string; total: number }[]> {
+  async getUserTypesStats(
+    params: StatsParamsDTO,
+  ): Promise<{ role: string; total: number }[]> {
     const raw = await this.userRepository.getUserTypesStats(params);
-    return raw.map((s) => ({ role: s.role as unknown as string, total: parseInt(s.total) }));
+    return raw.map((s) => ({
+      role: s.role as unknown as string,
+      total: parseInt(s.total),
+    }));
   }
 
   async recieveNotifications(userId: string): Promise<boolean> {
@@ -161,19 +184,35 @@ export class UserService {
     );
 
     await this.userRepository.delete(userId);
-    this.eventBus.publishAll(user.pullEvents());
+    void this.eventBus.publishAll(user.pullEvents());
   }
 
-  async updateImage(userId: string, imageUrl: string): Promise<void> {
+  async validateImageFile(file: Express.Multer.File): Promise<string> {
+    if (!file) throw new BadRequestException('file should be a png/jpg');
+    const fullPath = join(process.cwd(), 'upload/images', file.filename);
+    const safe = await isFileExtensionSafe(fullPath);
+    if (!safe) {
+      await removeFile(fullPath);
+      throw new ForbiddenException('file content does not match the extension');
+    }
+    return file.filename;
+  }
+
+  async updateImage(
+    userId: string,
+    file: Express.Multer.File,
+  ): Promise<string> {
+    const filename = await this.validateImageFile(file);
     const user = await this.userRepository.findById(userId);
-    if (!user) return;
-    user.updateImage(imageUrl);
+    if (!user) return filename;
+    user.updateImage(filename);
     await this.userRepository.save(user);
+    return filename;
   }
 
   // ── Read-model pass-through (used by AgreementService / NotificationService)
 
-  async findAllBy(options: {
+  findAllBy(options: {
     departementId?: string;
     directionId?: string;
     role?: UserRole;
@@ -188,6 +227,10 @@ export class UserService {
         options.directionId,
       );
     }
-    return [];
+    return Promise.resolve([]);
+  }
+
+  notifyPasswordChanged(userId: string): void {
+    void this.eventBus.publish(new UserPasswordChangedEvent(userId));
   }
 }

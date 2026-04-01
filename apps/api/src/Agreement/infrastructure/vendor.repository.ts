@@ -136,24 +136,9 @@ export class VendorRepository implements IVendorRepository {
     let query = this.repo.createQueryBuilder('vendor').skip(offset).take(limit);
 
     if (searchQuery && searchQuery.length >= 2) {
-      query = query
-        .where(
-          `MATCH(vendor.company_name) AGAINST ('${searchQuery}' IN BOOLEAN MODE)`,
-        )
-        .orWhere(`MATCH(vendor.nif) AGAINST ('${searchQuery}' IN BOOLEAN MODE)`)
-        .orWhere(`MATCH(vendor.nrc) AGAINST ('${searchQuery}' IN BOOLEAN MODE)`)
-        .orWhere(
-          `MATCH(vendor.address) AGAINST ('${searchQuery}' IN BOOLEAN MODE)`,
-        )
-        .orWhere(
-          `MATCH(vendor.home_phone_number) AGAINST ('${searchQuery}' IN BOOLEAN MODE)`,
-        )
-        .orWhere(
-          `MATCH(vendor.mobile_phone_number) AGAINST ('${searchQuery}' IN BOOLEAN MODE)`,
-        )
-        .orWhere(
-          `MATCH(vendor.num) AGAINST ('${searchQuery}' IN BOOLEAN MODE)`,
-        );
+      query = query.where(
+        `MATCH(vendor.num, vendor.nif, vendor.nrc, vendor.company_name, vendor.address, vendor.mobile_phone_number, vendor.home_phone_number) AGAINST ('${searchQuery}' IN BOOLEAN MODE)`,
+      );
     }
 
     if (orderBy) query = query.orderBy(orderBy);
