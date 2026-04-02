@@ -133,6 +133,48 @@ a {
   color: var(--text-muted) !important;
 }
 
+/* ── Onborda — replace missing Tailwind utility classes ── */
+[data-name="onborda-wrapper"] {
+  position: relative;
+  width: 100%;
+}
+[data-name="onborda-site"] {
+  display: block;
+  width: 100%;
+}
+[data-name="onborda-overlay"] {
+  position: absolute;
+  inset: 0;
+  z-index: 900;
+}
+[data-name="onborda-pointer"] {
+  position: relative;
+  z-index: 900;
+}
+[data-name="onborda-card"] {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  max-width: 100%;
+  min-width: min-content;
+  pointer-events: auto;
+  z-index: 950;
+  transition: all 0.3s;
+}
+[data-name="onborda-arrow"] {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  transform-origin: center;
+  color: var(--surface, #fff);
+}
+/* Interaction blocker: the div rendered before onborda-overlay in the portal */
+div:has(> [data-name="onborda-overlay"]) > div:first-child {
+  position: fixed;
+  inset: 0;
+  z-index: 899;
+}
+
 /* ── Thin scrollbar ── */
 * {
   scrollbar-width: thin;

@@ -134,7 +134,7 @@ const VendorContent = () => {
   const showDisplayEdit = () => permissions?.vendors.canEdit ?? false;
 
   return (
-    <div className={styles.page}>
+    <div id="vendor-detail-page" className={styles.page}>
 
       {/* ── Page header ── */}
       <div className={styles.pageHeader}>
@@ -171,7 +171,7 @@ const VendorContent = () => {
 
         {/* ══ Left: vendor detail card ══ */}
         <div className={styles.left}>
-          <div className={styles.vendorCard}>
+          <div id="vendor-detail-card" className={styles.vendorCard}>
 
             {/* Card header */}
             <div className={styles.cardHeader}>

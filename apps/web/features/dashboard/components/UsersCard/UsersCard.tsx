@@ -1,5 +1,5 @@
 'use client';
-import { AnimateSharedLayout, motion } from 'framer-motion';
+import { LayoutGroup, motion } from 'framer-motion';
 import { useState, useId } from 'react';
 import { Skeleton } from '@mui/material';
 import AdminIcon from '@/icons/AdminIcon';
@@ -49,9 +49,9 @@ const UsersCard = () => {
   );
 
   return (
-    <AnimateSharedLayout>
+    <LayoutGroup>
       {!expanded ? <CompactCard stats={stats} cardId={cardId} setExpanded={setExpanded} /> : <ExpandedCard stats={stats} cardId={cardId} setExpanded={setExpanded} />}
-    </AnimateSharedLayout>
+    </LayoutGroup>
   );
 };
 
@@ -73,7 +73,7 @@ function CompactCard({ stats, setExpanded, cardId }: any) {
     { percentage: getEntityPercentage('admin'), icon: AdminIcon, name: 'admin' },
   ];
   return (
-    <motion.div onClick={() => setExpanded(true)} layoutId={cardId} className={styles.container}>
+    <motion.div id="dashboard-users-card" onClick={() => setExpanded(true)} layoutId={cardId} className={styles.container}>
       <div className={styles.cardHeader}>
         <div className={styles.cardHeaderLeft}>
           <span className={styles.title}>Utilisateurs</span>

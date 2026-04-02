@@ -118,8 +118,8 @@ const UserProfile = () => {
     : '/blank-profile-picture.png';
 
   return (
-    <div className={styles.pageWrapper}>
-      <div className={styles.userCard}>
+    <div id="user-profile-page" className={styles.pageWrapper}>
+      <div id="user-profile-card" className={styles.userCard}>
 
         {/* ── Hero header ── */}
         <div className={styles.cardHeader}>

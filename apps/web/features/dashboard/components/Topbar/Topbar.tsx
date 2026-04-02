@@ -59,13 +59,13 @@ const Topbar = () => {
   }
 
   return (
-    <div className={styles.container}>
+    <div id="topbar" className={styles.container}>
        <div className={styles.indications}>
             <span>{getStringFromPathName()}</span>
             <span>{user?.role ?? ''}</span>
        </div>
        <div className={styles.rightButtons}>
-            <IconButton onClick={handleClickNotification} aria-label={notificationsLabel(100)}>
+            <IconButton id="topbar-notifications" onClick={handleClickNotification} aria-label={notificationsLabel(100)}>
                 <Badge badgeContent={notifications.length} sx={{padding:0}} className={styles.notificationBdge}>
                     <NotificationIcon/>
                 </Badge>

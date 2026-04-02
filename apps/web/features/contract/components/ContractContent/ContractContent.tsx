@@ -184,7 +184,7 @@ const ContractContent = ({ type, agreementId }: PropType) => {
   const typeLabel = type === 'contract' ? 'Contrat' : 'Convention';
 
   return (
-    <div className={styles.container}>
+    <div id="agreement-detail-page" className={styles.container}>
 
       {/* ── Page header ── */}
       <div className={styles.pageHeader}>
@@ -232,7 +232,7 @@ const ContractContent = ({ type, agreementId }: PropType) => {
       <div className={styles.grid}>
 
         {/* ══ Left: Contract details ══ */}
-        <div className={styles.card}>
+        <div id="agreement-detail-card" className={styles.card}>
           <div className={styles.cardHeader}>
             <div className={styles.headerIconWrap}>
               <AccountBalanceOutlinedIcon sx={{ fontSize: 18 }} />

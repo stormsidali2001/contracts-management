@@ -158,10 +158,10 @@ const ConvensionsContent = () => {
   ], []);
 
   return (
-    <div className={styles.container}>
+    <div id="convensions-page" className={styles.container}>
 
       {/* ── Page header ── */}
-      <div className={styles.pageHeader}>
+      <div id="convensions-page-header" className={styles.pageHeader}>
         <div className={styles.pageHeaderLeft}>
           <h1 className={styles.pageTitle}>Gestion des conventions</h1>
           <span className={styles.pageSubtitle}>Suivez l'état d'avancement et gérez vos conventions d'accords</span>

@@ -9,6 +9,10 @@ import WithPrivate from '@/features/auth/components/withPrivate';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { queryClient } from '@/lib/query-client';
+import { OnbordaProvider, Onborda } from 'onborda';
+import OnboardingCard from '@/features/onboarding/components/OnboardingCard/OnboardingCard';
+import OnboardingTrigger from '@/features/onboarding/components/OnboardingTrigger/OnboardingTrigger';
+import { allTours } from '@/features/onboarding/data/tours';
 
 export default function RootProvider({ children }: { children: React.ReactNode }) {
   return (
@@ -16,9 +20,19 @@ export default function RootProvider({ children }: { children: React.ReactNode }
       <AppRouterCacheProvider>
         <ThemeProvider theme={theme}>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <WithPrivate>
-              {children}
-            </WithPrivate>
+            <OnbordaProvider>
+              <Onborda
+                steps={allTours}
+                shadowRgb="15,23,42"
+                shadowOpacity="0.35"
+                cardComponent={OnboardingCard}
+              >
+                <WithPrivate>
+                  <OnboardingTrigger />
+                  {children}
+                </WithPrivate>
+              </Onborda>
+            </OnbordaProvider>
           </LocalizationProvider>
         </ThemeProvider>
       </AppRouterCacheProvider>

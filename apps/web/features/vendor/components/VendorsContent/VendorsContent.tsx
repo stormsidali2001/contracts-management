@@ -97,10 +97,10 @@ const VendorsContent = () => {
   };
 
   return (
-    <div className={styles.container}>
+    <div id="vendors-page" className={styles.container}>
 
       {/* ── Page header ── */}
-      <div className={styles.pageHeader}>
+      <div id="vendors-page-header" className={styles.pageHeader}>
         <div className={styles.pageHeaderLeft}>
           <h1 className={styles.pageTitle}>Gestion des fournisseurs</h1>
           <span className={styles.pageSubtitle}>Consultez et gérez les fournisseurs ainsi que leurs accords associés</span>

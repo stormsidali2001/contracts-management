@@ -33,7 +33,7 @@ const Sidebar = () => {
     if (!pathname) return <div />;
 
     return (
-        <div className={styles.container}>
+        <div id="sidebar-nav" className={styles.container}>
             {/* Branding */}
             <div className={styles.logo}>
                 <div className={styles.logoIconWrap}>
@@ -49,7 +49,7 @@ const Sidebar = () => {
             <ul className={styles.links}>
                 {sidebarLinks.map((link, i) => (
                     <Link href={link.link} key={i}>
-                        <li className={getStyle(i)} onClick={() => setActiveIndex(i)}>
+                        <li id={`sidebar-link-${link.link.replace('/', '') || 'home'}`} className={getStyle(i)} onClick={() => setActiveIndex(i)}>
                             <span className={styles.icon}><link.icon /></span>
                             <span>{link.text}</span>
                             <span className={styles.tooltip}>{link.text}</span>

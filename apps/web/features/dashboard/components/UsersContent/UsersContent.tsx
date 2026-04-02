@@ -194,10 +194,10 @@ const UsersContent = () => {
   );
 
   return (
-    <div className={styles.container}>
+    <div id="users-page" className={styles.container}>
 
       {/* ── Page header ── */}
-      <div className={styles.pageHeader}>
+      <div id="users-page-header" className={styles.pageHeader}>
         <div className={styles.pageHeaderLeft}>
           <h1 className={styles.pageTitle}>Gestion des utilisateurs</h1>
           <span className={styles.pageSubtitle}>Consultez, créez et gérez les comptes de votre organisation</span>

@@ -1,20 +1,21 @@
-import { Socket } from "socket.io";
-export interface JwtPayload{
-    sub:string;
-    email:string;
-    username:string;
-    firstName:string;
-    lastName:string;
-    imageUrl?:string;
-    role:string;
-    recieve_notifications:boolean;
-    departementId: string | null;
-    directionId: string | null;
+import { Socket } from 'socket.io';
+export interface JwtPayload {
+  sub: string;
+  email: string;
+  username: string;
+  firstName: string;
+  lastName: string;
+  imageUrl?: string;
+  role: string;
+  recieve_notifications: boolean;
+  departementId: string | null;
+  directionId: string | null;
 }
-export interface JwtCompletePayload  {
-    user:JwtPayload;
-    exp:number;
-    iat:number;
-};
+export interface JwtCompletePayload {
+  user: JwtPayload;
+  exp: number;
+  iat: number;
+}
 
 export type SocketWithJwtPayload = Socket & JwtCompletePayload;
+

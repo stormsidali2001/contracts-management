@@ -158,10 +158,10 @@ const ContractsContent = () => {
   ], []);
 
   return (
-    <div className={styles.container}>
+    <div id="contracts-page" className={styles.container}>
 
       {/* ── Page header ── */}
-      <div className={styles.pageHeader}>
+      <div id="contracts-page-header" className={styles.pageHeader}>
         <div className={styles.pageHeaderLeft}>
           <h1 className={styles.pageTitle}>Gestion des contrats</h1>
           <span className={styles.pageSubtitle}>Suivez l'état d'avancement et gérez vos contrats d'accords</span>

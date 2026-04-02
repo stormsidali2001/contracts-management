@@ -67,7 +67,7 @@ const MainDashboard = () => {
       </div>
 
       {/* ── KPI strip ── */}
-      <div className={styles.kpiStrip}>
+      <div id="dashboard-kpis" className={styles.kpiStrip}>
         {isLoading ? (
           <>
             {[...Array(4)].map((_, i) => (

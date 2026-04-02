@@ -23,10 +23,10 @@ const Settings = () => {
   };
 
   return (
-    <div className={styles.page}>
+    <div id="settings-page" className={styles.page}>
 
       {/* ── Page header ── */}
-      <div className={styles.pageHeader}>
+      <div id="settings-page-header" className={styles.pageHeader}>
         <div className={styles.pageHeaderLeft}>
           <h1 className={styles.pageTitle}>Paramètres</h1>
           <span className={styles.pageSubtitle}>Configurez votre compte et vos préférences</span>

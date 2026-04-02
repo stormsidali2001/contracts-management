@@ -55,7 +55,7 @@ const EntityIcon = ({ entity }: { entity: Entity }) => {
 const LastEventsCard = () => {
   const events = useNotificationStore((s) => s.events);
   return (
-    <div className={styles.container}>
+    <div id="dashboard-events-card" className={styles.container}>
       <div className={styles.cardHeader}>
         <div className={styles.cardHeaderLeft}>
           <span className={styles.title}>Événements</span>

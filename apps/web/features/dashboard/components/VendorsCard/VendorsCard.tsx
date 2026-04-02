@@ -9,7 +9,7 @@ import { Line } from 'react-chartjs-2';
 import 'chartjs-adapter-date-fns';
 import { fr } from 'date-fns/locale';
 import { Skeleton } from '@mui/material';
-import { AnimateSharedLayout, motion } from 'framer-motion';
+import { LayoutGroup, motion } from 'framer-motion';
 import { useDateRangeStore } from '@/features/statistics/store/date-range.store';
 import { useStatistics } from '@/features/statistics/queries/statistics.queries';
 
@@ -25,9 +25,9 @@ const VendorsCard = () => {
   const stats = data?.vendorsStats ?? null;
 
   return (
-    <AnimateSharedLayout>
+    <LayoutGroup>
       {!expanded ? <CompactCard stats={stats} cardId={cardId} setExpanded={setExpanded} /> : <ExpandedCard stats={stats} cardId={cardId} setExpanded={setExpanded} />}
-    </AnimateSharedLayout>
+    </LayoutGroup>
   );
 };
 
@@ -57,7 +57,7 @@ export function CompactCard({ stats, cardId, setExpanded }: any) {
     datasets: [{ label: 'nombre de fournisseurs', backgroundColor: tokens.color.navyMid, borderColor: tokens.color.navyMid, borderWidth: 1.5, hoverBackgroundColor: tokens.color.navyLight, hoverBorderColor: tokens.color.navyMid, data: stats?.slice(-7)?.map((el: any) => el.nb_vendors) ?? [] }],
   };
   return (
-    <motion.div layoutId={`expandableCard-${cardId}`} className={styles.container} onClick={() => setExpanded(true)}>
+    <motion.div id="dashboard-vendors-card" layoutId={`expandableCard-${cardId}`} className={styles.container} onClick={() => setExpanded(true)}>
       <div className={styles.cardHeader}>
         <div className={styles.cardHeaderLeft}>
           <span className={styles.title}>Fournisseurs</span>

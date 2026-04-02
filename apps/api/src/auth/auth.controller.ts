@@ -1,7 +1,6 @@
 import {
   Body,
   Controller,
-  InternalServerErrorException,
   Post,
   Req,
   UseGuards,
@@ -128,4 +127,3 @@ export class AuthController {
     return UserPresenter.from(result);
   }
 }
-

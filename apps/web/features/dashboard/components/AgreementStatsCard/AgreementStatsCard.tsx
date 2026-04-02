@@ -108,7 +108,7 @@ function StatusCard({ stats }: any) {
   }
 
   return (
-    <div className={styles.miniCard}>
+    <div id="dashboard-status-card" className={styles.miniCard}>
       <div className={styles.cardHeader}>
         <div className={styles.cardHeaderLeft}>
           <span className={styles.title}>Statuts</span>
@@ -183,7 +183,7 @@ function TypeCard({ stats }: any) {
   }
 
   return (
-    <div className={styles.miniCard}>
+    <div id="dashboard-type-card" className={styles.miniCard}>
       <div className={styles.cardHeader}>
         <div className={styles.cardHeaderLeft}>
           <span className={styles.title}>Répartition par type</span>
@@ -253,7 +253,7 @@ function DirectionsCard({ stats }: any) {
   }
 
   return (
-    <div className={styles.miniCard}>
+    <div id="dashboard-directions-card" className={styles.miniCard}>
       <div className={styles.cardHeader}>
         <div className={styles.cardHeaderLeft}>
           <span className={styles.title}>Top directions</span>

@@ -108,10 +108,10 @@ const DirectionContent = () => {
   }
 
   return (
-    <div className={styles.container}>
+    <div id="directions-page" className={styles.container}>
 
       {/* ── Page header ── */}
-      <div className={styles.pageHeader}>
+      <div id="directions-page-header" className={styles.pageHeader}>
         <div className={styles.pageHeaderLeft}>
           <h1 className={styles.pageTitle}>Directions & Départements</h1>
           <span className={styles.pageSubtitle}>Gérez la structure organisationnelle de votre entreprise</span>

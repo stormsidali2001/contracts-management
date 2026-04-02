@@ -1,0 +1,132 @@
+/* ── Skip (×) button — absolute top-right ── */
+.btnClose {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  color: var(--text-muted);
+  border-radius: 6px;
+  transition: background 0.15s, color 0.15s;
+  padding: 0;
+  line-height: 1;
+}
+
+.btnClose:hover {
+  background: var(--surface-subtle);
+  color: var(--text-secondary);
+}
+
+.card {
+  position: relative;
+  width: 340px;
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--border-subtle);
+  padding: 22px 22px 18px;
+  font-family: 'Inter', sans-serif;
+}
+
+/* ── Header ── */
+.header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.icon {
+  font-size: 20px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+  line-height: 1.25;
+}
+
+/* ── Body ── */
+.content {
+  font-size: 13px;
+  color: var(--text-body);
+  line-height: 1.65;
+  margin-bottom: 18px;
+}
+
+/* ── Progress ── */
+.progressBar {
+  margin-bottom: 16px;
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+/* ── Footer ── */
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.stepCounter {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-muted);
+  letter-spacing: 0.02em;
+  flex-shrink: 0;
+}
+
+.actions {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+/* ── Buttons ── */
+.btnPrev {
+  font-size: 12px !important;
+  font-family: 'Inter', sans-serif !important;
+  color: var(--text-secondary) !important;
+  padding: 5px 12px !important;
+  border-radius: var(--radius-sm) !important;
+  border: 1px solid var(--border) !important;
+  text-transform: none !important;
+  min-width: 0 !important;
+  letter-spacing: 0 !important;
+  line-height: 1.4 !important;
+}
+
+.btnPrev:hover {
+  background: var(--surface-subtle) !important;
+}
+
+.btnNext {
+  font-size: 12px !important;
+  font-family: 'Inter', sans-serif !important;
+  font-weight: 600 !important;
+  padding: 5px 14px !important;
+  border-radius: var(--radius-sm) !important;
+  text-transform: none !important;
+  min-width: 0 !important;
+  letter-spacing: 0 !important;
+  line-height: 1.4 !important;
+  background-color: var(--navy-mid) !important;
+  color: var(--text-on-dark) !important;
+}
+
+.btnNext:hover {
+  background-color: #1d4ed8 !important;
+}

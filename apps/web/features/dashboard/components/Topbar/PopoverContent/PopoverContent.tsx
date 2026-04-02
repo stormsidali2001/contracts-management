@@ -3,16 +3,37 @@ import styles from './PopoverContent.module.css';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import SettingsIcon from '@mui/icons-material/Settings';
 import LogoutIcon from '@mui/icons-material/Logout';
+import TourIcon from '@mui/icons-material/Explore';
 import { Divider } from '@mui/material';
 import Link from 'next/link';
 import { useAuthStore } from '@/features/auth/store/auth.store';
 import { useMemo } from 'react';
 import { useLogout } from '@/features/auth/queries/auth.queries';
 import { BASE_URL } from '@/api/axios';
+import { useOnborda } from 'onborda';
+import { useRouter } from 'next/navigation';
+
+const tourNameByRole: Record<string, string> = {
+  ADMIN: 'admin-tour',
+  JURIDICAL: 'juridical-tour',
+  EMPLOYEE: 'employee-tour',
+};
 
 const PopoverContent = () => {
   const user = useAuthStore((s) => s.user);
   const { mutate: logout } = useLogout();
+  const { startOnborda } = useOnborda();
+  const router = useRouter();
+
+  function handleRestartTour() {
+    if (!user?.sub || !user?.role) return;
+    localStorage.removeItem(`onboarding_done_${user.sub}`);
+    const tourName = tourNameByRole[user.role];
+    if (!tourName) return;
+    router.push('/');
+    setTimeout(() => startOnborda(tourName), 600);
+  }
+
   const links = useMemo(
     () => [
       { text: 'Profile', link: `/users/${user?.sub ?? ''}`, icon: AccountCircleIcon },
@@ -48,6 +69,10 @@ const PopoverContent = () => {
             </li>
           </Link>
         ))}
+        <li onClick={handleRestartTour} className={styles.link}>
+          <TourIcon className={styles.iconStyle} />
+          <span>Reprendre le tour</span>
+        </li>
         <li onClick={handleLogout} className={styles.link}>
           <LogoutIcon className={styles.iconStyle} />
           <span>Deconnexion</span>

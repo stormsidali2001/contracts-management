@@ -1,0 +1,111 @@
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  background: rgba(15, 23, 42, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.15s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.modal {
+  background: var(--surface);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--border-subtle);
+  padding: 44px 40px 36px;
+  max-width: 440px;
+  width: 92%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0;
+  animation: slideUp 0.2s ease;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.emoji {
+  font-size: 44px;
+  line-height: 1;
+  margin-bottom: 16px;
+}
+
+.title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+  margin-bottom: 12px;
+}
+
+.description {
+  font-size: 14px;
+  color: var(--text-body);
+  line-height: 1.7;
+  margin-bottom: 28px;
+  max-width: 340px;
+}
+
+.description strong {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.divider {
+  width: 40px;
+  height: 3px;
+  background: var(--navy-mid);
+  border-radius: 99px;
+  margin-bottom: 28px;
+  flex-shrink: 0;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.btnStart {
+  font-family: 'Inter', sans-serif !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  padding: 9px 22px !important;
+  border-radius: var(--radius-sm) !important;
+  text-transform: none !important;
+  letter-spacing: 0 !important;
+  background-color: var(--navy-mid) !important;
+  color: var(--text-on-dark) !important;
+  line-height: 1.4 !important;
+}
+
+.btnStart:hover {
+  background-color: #1d4ed8 !important;
+}
+
+.btnSkip {
+  font-family: 'Inter', sans-serif !important;
+  font-size: 13px !important;
+  color: var(--text-muted) !important;
+  padding: 9px 14px !important;
+  text-transform: none !important;
+  min-width: 0 !important;
+  letter-spacing: 0 !important;
+  line-height: 1.4 !important;
+}
+
+.btnSkip:hover {
+  color: var(--text-secondary) !important;
+}
