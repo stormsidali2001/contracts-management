@@ -18,7 +18,27 @@ export class UserNotificationService {
 
   async saveForUsers(
     notifications: { userId: string; message: string }[],
-  ): Promise<void> {
-    await this.notificationRepository.saveMany(notifications);
+  ): Promise<{ userId: string; notification: Notification }[]> {
+    const saved = await this.notificationRepository.saveMany(notifications);
+    return notifications.map((n, i) => ({ userId: n.userId, notification: saved[i] }));
+  }
+
+  async markAsRead(notificationId: string, userId: string): Promise<void> {
+    const notification = await this.notificationRepository.findById(
+      notificationId,
+      userId,
+    );
+    if (!notification) return;
+    notification.markAsRead();
+    await this.notificationRepository.save(notification);
+  }
+
+  async markAllAsRead(userId: string): Promise<void> {
+    const notifications = await this.notificationRepository.findByUserId(
+      userId,
+    );
+    const unread = notifications.filter((n) => !n.isRead);
+    for (const n of unread) n.markAsRead();
+    await Promise.all(unread.map((n) => this.notificationRepository.save(n)));
   }
 }

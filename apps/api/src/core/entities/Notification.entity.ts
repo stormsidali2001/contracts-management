@@ -1,21 +1,29 @@
-import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { UserEntity } from "./User.entity";
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { UserEntity } from './User.entity';
 
-@Entity("notifications")
-export class NotificationEntity{
-    @PrimaryGeneratedColumn('uuid')
-    id:string;
+@Entity('notifications')
+export class NotificationEntity {
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-    @Column()
-    message:string;
+  @Column()
+  message: string;
 
-    @CreateDateColumn({type:"datetime"})
-    createdAt:Date;
+  @Column({ default: false })
+  isRead: boolean;
 
-    //realations
+  @CreateDateColumn({ type: 'datetime' })
+  createdAt: Date;
 
-    @ManyToOne(type=>UserEntity,u=>u.notifications)
-    user:UserEntity
+  //realations
 
-
+  @ManyToOne((type) => UserEntity, (u) => u.notifications)
+  user: UserEntity;
 }
+

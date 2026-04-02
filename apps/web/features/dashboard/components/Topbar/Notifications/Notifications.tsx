@@ -1,7 +1,8 @@
 'use client';
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import NotificationsNoneOutlinedIcon from '@mui/icons-material/NotificationsNoneOutlined';
 import { useNotificationStore } from '@/features/notification/store/notification.store';
+import { useMarkAsRead, useMarkAllAsRead } from '@/features/notification/queries/notification.queries';
 import styles from './Notifications.module.css';
 
 type ActionLabel = 'Tous' | 'Création' | 'Mise à jour' | 'Suppression' | 'Activité';
@@ -32,10 +33,61 @@ function getAction(message: string): { label: ActionLabel; cls: string } {
 const Notifications = () => {
   const notifications = useNotificationStore((s) => s.notifications);
   const [activeFilter, setActiveFilter] = useState<ActionLabel>('Tous');
+  const { mutate: markAsRead } = useMarkAsRead();
+  const { mutate: markAllAsRead } = useMarkAllAsRead();
+  const listRef = useRef<HTMLUListElement>(null);
+
+  const unreadCount = notifications.filter((n) => !n.isRead).length;
 
   const filtered = activeFilter === 'Tous'
     ? notifications
     : notifications.filter((n) => getAction(n.message).label === activeFilter);
+
+  // Automatically mark visible unread notifications as read via IntersectionObserver.
+  // A 600 ms dwell timer ensures the user actually sees the unread highlight before
+  // it clears. The timer resets if the item scrolls out of view before the delay.
+  useEffect(() => {
+    const list = listRef.current;
+    if (!list) return;
+
+    const timers = new Map<Element, ReturnType<typeof setTimeout>>();
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const id = (entry.target as HTMLElement).dataset.notifId;
+          if (!id) return;
+
+          if (entry.isIntersecting) {
+            timers.set(
+              entry.target,
+              setTimeout(() => {
+                markAsRead(id);
+                observer.unobserve(entry.target);
+                timers.delete(entry.target);
+              }, 600),
+            );
+          } else {
+            const t = timers.get(entry.target);
+            if (t !== undefined) {
+              clearTimeout(t);
+              timers.delete(entry.target);
+            }
+          }
+        });
+      },
+      { root: list, threshold: 0.1 },
+    );
+
+    list.querySelectorAll<HTMLElement>('[data-notif-id]').forEach((el) => {
+      observer.observe(el);
+    });
+
+    return () => {
+      observer.disconnect();
+      timers.forEach(clearTimeout);
+    };
+  }, [filtered]);
 
   return (
     <div className={styles.container}>
@@ -46,8 +98,13 @@ const Notifications = () => {
           <NotificationsNoneOutlinedIcon sx={{ fontSize: 17 }} />
         </div>
         <span className={styles.headerTitle}>Notifications</span>
-        {notifications.length > 0 && (
-          <span className={styles.headerCount}>{notifications.length}</span>
+        {unreadCount > 0 && (
+          <span className={styles.headerCount}>{unreadCount}</span>
+        )}
+        {unreadCount > 0 && (
+          <button className={styles.markAllBtn} onClick={() => markAllAsRead()}>
+            Tout lire
+          </button>
         )}
       </div>
 
@@ -86,11 +143,15 @@ const Notifications = () => {
           </span>
         </div>
       ) : (
-        <ul className={styles.list}>
+        <ul ref={listRef} className={styles.list}>
           {filtered.map((n) => {
             const action = getAction(n.message);
             return (
-              <li key={n.id} className={styles.item}>
+              <li
+                key={n.id}
+                {...(!n.isRead ? { 'data-notif-id': n.id } : {})}
+                className={`${styles.item} ${!n.isRead ? styles.itemUnread : ''}`}
+              >
                 <div className={styles.itemMeta}>
                   <span className={`${styles.chip} ${action.cls}`}>{action.label}</span>
                 </div>

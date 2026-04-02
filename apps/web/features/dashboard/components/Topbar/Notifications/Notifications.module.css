@@ -147,12 +147,45 @@
 }
 .list::-webkit-scrollbar-thumb:hover { background: var(--navy-mid); }
 
+/* ── "Tout lire" button in header ── */
+.markAllBtn {
+  margin-left: auto;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 6px;
+  color: #fff;
+  font-family: 'Outfit', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 9px;
+  cursor: pointer;
+  transition: background 0.12s;
+  position: relative;
+  z-index: 1;
+}
+
+.markAllBtn:hover {
+  background: rgba(255, 255, 255, 0.22);
+}
+
 /* ── Single notification row ── */
 .item {
   padding: 12px 18px 14px;
   border-left: 3px solid transparent;
   transition: background 0.12s, border-color 0.12s;
   cursor: default;
+}
+
+/* ── Unread state ── */
+.itemUnread {
+  border-left-color: var(--navy-mid);
+  background: var(--navy-light);
+  cursor: pointer;
+}
+
+.itemUnread .itemText {
+  color: var(--text-primary);
+  font-weight: 500;
 }
 
 .item:not(:last-child) {

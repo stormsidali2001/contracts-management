@@ -5,6 +5,7 @@ import { Operation } from 'src/core/types/operation.enum';
 import { EventService } from 'src/Event/application/Event.service';
 import { SocketStateService } from 'src/socket/SocketState.service';
 import { IUserRepository, USER_REPOSITORY } from '../domain/user.repository';
+import { NotificationPresenter } from '../infrastructure/notification.presenter';
 import { UserNotificationService } from '../application/user-notification.service';
 import { UserPasswordChangedEvent } from '../domain/events/user-password-changed.event';
 
@@ -37,9 +38,9 @@ export class UserPasswordChangedHandler
     }));
 
     if (notifications.length > 0) {
-      await this.notificationService.saveForUsers(notifications);
+      const saved = await this.notificationService.saveForUsers(notifications);
       this.socketStateService.emitIfConnected(
-        notifications.map((n) => ({ userId: n.userId, data: n.message })),
+        saved.map(({ userId, notification }) => ({ userId, data: NotificationPresenter.from(notification) })),
         'send_notification',
       );
     }

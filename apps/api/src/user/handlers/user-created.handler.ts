@@ -5,6 +5,7 @@ import { Operation } from 'src/core/types/operation.enum';
 import { EventService } from 'src/Event/application/Event.service';
 import { SocketStateService } from 'src/socket/SocketState.service';
 import { IUserRepository, USER_REPOSITORY } from '../domain/user.repository';
+import { NotificationPresenter } from '../infrastructure/notification.presenter';
 import { UserNotificationService } from '../application/user-notification.service';
 import { UserService } from '../application/user.service';
 import { UserCreatedEvent } from '../domain/events/user-created.event';
@@ -44,9 +45,9 @@ export class UserCreatedHandler implements IEventHandler<UserCreatedEvent> {
     }));
 
     if (notifications.length > 0) {
-      await this.notificationService.saveForUsers(notifications);
+      const saved = await this.notificationService.saveForUsers(notifications);
       this.socketStateService.emitIfConnected(
-        notifications.map((n) => ({ userId: n.userId, data: n.message })),
+        saved.map(({ userId, notification }) => ({ userId, data: NotificationPresenter.from(notification) })),
         'send_notification',
       );
     }
@@ -63,7 +64,7 @@ export class UserCreatedHandler implements IEventHandler<UserCreatedEvent> {
     await this.eventService.addEvent(eventParams);
     this.socketStateService.emitDataToAdminsOnly('SEND_EVENT', eventParams);
 
-    const userTypes = await this.userService.getUserTypesStats({} as any);
+    const userTypes = await this.userService.getUserTypesShaped();
     this.socketStateService.emitDataToAdminsOnly('STATS_UPDATE', { userTypes });
   }
 }

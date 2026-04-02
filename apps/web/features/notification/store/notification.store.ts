@@ -13,6 +13,8 @@ interface NotificationStore {
   receiveNotifications: (notifications: Notification[]) => void;
   receiveUserEvent: (event: UserEvent) => void;
   receiveUserEvents: (events: UserEvent[]) => void;
+  markAsRead: (notificationId: string) => void;
+  markAllAsRead: () => void;
 }
 
 export const useNotificationStore = create<NotificationStore>((set) => ({
@@ -33,4 +35,16 @@ export const useNotificationStore = create<NotificationStore>((set) => ({
     set((state) => ({ events: [event, ...state.events] })),
 
   receiveUserEvents: (events) => set({ events }),
+
+  markAsRead: (id) =>
+    set((state) => ({
+      notifications: state.notifications.map((n) =>
+        n.id === id ? { ...n, isRead: true } : n,
+      ),
+    })),
+
+  markAllAsRead: () =>
+    set((state) => ({
+      notifications: state.notifications.map((n) => ({ ...n, isRead: true })),
+    })),
 }));

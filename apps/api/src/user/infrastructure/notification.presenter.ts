@@ -7,6 +7,7 @@ export class NotificationPresenter {
       id: source.id,
       message: source.message,
       createdAt: source.createdAt,
+      isRead: source.isRead,
     };
   }
 

@@ -166,6 +166,14 @@ export class UserService {
     }));
   }
 
+  async getUserTypesShaped(): Promise<{ juridical: number; employee: number; admin: number; total: number }> {
+    const raw = await this.getUserTypesStats({} as StatsParamsDTO);
+    const result = { juridical: 0, employee: 0, admin: 0, total: 0 };
+    raw.forEach((s) => { result[s.role.toLowerCase()] = s.total; });
+    result.total = result.juridical + result.admin + result.employee;
+    return result;
+  }
+
   async recieveNotifications(userId: string): Promise<boolean> {
     const user = await this.userRepository.findById(userId);
     user.toggleNotifications();

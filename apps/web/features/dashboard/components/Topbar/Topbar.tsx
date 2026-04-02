@@ -66,7 +66,7 @@ const Topbar = () => {
        </div>
        <div className={styles.rightButtons}>
             <IconButton id="topbar-notifications" onClick={handleClickNotification} aria-label={notificationsLabel(100)}>
-                <Badge badgeContent={notifications.length} sx={{padding:0}} className={styles.notificationBdge}>
+                <Badge badgeContent={notifications.filter((n) => !n.isRead).length} sx={{padding:0}} className={styles.notificationBdge}>
                     <NotificationIcon/>
                 </Badge>
             </IconButton>

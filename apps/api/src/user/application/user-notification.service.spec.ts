@@ -13,7 +13,7 @@ function mockOf<T>(methods: (keyof T)[]): jest.Mocked<T> {
 // ── Fixtures ─────────────────────────────────────────────────────────────────
 
 function makeNotification(userId = 'user-1'): Notification {
-  return { id: `notif-${userId}`, message: 'hello', createdAt: new Date() };
+  return Notification.reconstitute(`notif-${userId}`, 'hello', new Date(), false);
 }
 
 // ── Suite ─────────────────────────────────────────────────────────────────────
@@ -23,7 +23,7 @@ describe('UserNotificationService', () => {
   let service: UserNotificationService;
 
   beforeEach(() => {
-    notifRepo = mockOf<INotificationRepository>(['findByUserId', 'saveMany']);
+    notifRepo = mockOf<INotificationRepository>(['findByUserId', 'findById', 'saveMany', 'save']);
     service = new UserNotificationService(notifRepo);
   });
 
@@ -50,24 +50,83 @@ describe('UserNotificationService', () => {
   // ── saveForUsers ─────────────────────────────────────────────────────────────
 
   describe('saveForUsers', () => {
-    it('delegates to the repository with the exact notification list', async () => {
-      notifRepo.saveMany.mockResolvedValue(undefined);
+    it('delegates to the repository and returns userId+notification pairs', async () => {
+      const savedNotifs = [
+        Notification.reconstitute('id-1', 'msg A', new Date(), false),
+        Notification.reconstitute('id-2', 'msg B', new Date(), false),
+      ];
+      notifRepo.saveMany.mockResolvedValue(savedNotifs);
       const items = [
         { userId: 'user-1', message: 'msg A' },
         { userId: 'user-2', message: 'msg B' },
       ];
 
-      await service.saveForUsers(items);
+      const result = await service.saveForUsers(items);
 
       expect(notifRepo.saveMany).toHaveBeenCalledWith(items);
+      expect(result).toEqual([
+        { userId: 'user-1', notification: savedNotifs[0] },
+        { userId: 'user-2', notification: savedNotifs[1] },
+      ]);
     });
 
-    it('no-op when given an empty array', async () => {
-      notifRepo.saveMany.mockResolvedValue(undefined);
+    it('returns empty array when given an empty array', async () => {
+      notifRepo.saveMany.mockResolvedValue([]);
 
-      await service.saveForUsers([]);
+      const result = await service.saveForUsers([]);
 
-      expect(notifRepo.saveMany).toHaveBeenCalledWith([]);
+      expect(result).toEqual([]);
+    });
+  });
+
+  // ── markAsRead ───────────────────────────────────────────────────────────────
+
+  describe('markAsRead', () => {
+    it('loads, marks, and saves the notification', async () => {
+      const notif = makeNotification('user-1');
+      notifRepo.findById.mockResolvedValue(notif);
+      notifRepo.save.mockResolvedValue(undefined);
+
+      await service.markAsRead('notif-user-1', 'user-1');
+
+      expect(notifRepo.findById).toHaveBeenCalledWith('notif-user-1', 'user-1');
+      expect(notif.isRead).toBe(true);
+      expect(notifRepo.save).toHaveBeenCalledWith(notif);
+    });
+
+    it('is a no-op when notification is not found', async () => {
+      notifRepo.findById.mockResolvedValue(null);
+
+      await service.markAsRead('unknown', 'user-1');
+
+      expect(notifRepo.save).not.toHaveBeenCalled();
+    });
+  });
+
+  // ── markAllAsRead ────────────────────────────────────────────────────────────
+
+  describe('markAllAsRead', () => {
+    it('marks only unread notifications and saves each', async () => {
+      const unread = Notification.reconstitute('n1', 'msg', new Date(), false);
+      const alreadyRead = Notification.reconstitute('n2', 'msg', new Date(), true);
+      notifRepo.findByUserId.mockResolvedValue([unread, alreadyRead]);
+      notifRepo.save.mockResolvedValue(undefined);
+
+      await service.markAllAsRead('user-1');
+
+      expect(unread.isRead).toBe(true);
+      expect(notifRepo.save).toHaveBeenCalledTimes(1);
+      expect(notifRepo.save).toHaveBeenCalledWith(unread);
+    });
+
+    it('is a no-op when all notifications are already read', async () => {
+      const read = Notification.reconstitute('n1', 'msg', new Date(), true);
+      notifRepo.findByUserId.mockResolvedValue([read]);
+      notifRepo.save.mockResolvedValue(undefined);
+
+      await service.markAllAsRead('user-1');
+
+      expect(notifRepo.save).not.toHaveBeenCalled();
     });
   });
 });

@@ -8,6 +8,7 @@ import { statisticsKeys } from '@/lib/query-keys';
 import { SERVER_URL } from '@/api/axios';
 import authService from '@/features/auth/services/auth.service';
 import { Notification } from '@/features/notification/models/Notification.interface';
+import { NotificationView } from '@contracts/types';
 import { NotificationEvents } from '@/features/notification/models/NotificationEvents';
 import { UserEvent } from '@/features/notification/models/UserEvent.interface';
 import { UserEventsTypes } from '@/features/notification/models/UserEventTypes.enum';
@@ -66,8 +67,8 @@ export function useNotificationSocket() {
       receiveNotifications(notifications);
     });
 
-    socket.on(NotificationEvents.sendNotification, (notification: string) => {
-      receiveNotification({ id: Date.now().toString(), message: notification });
+    socket.on(NotificationEvents.sendNotification, (notification: NotificationView) => {
+      receiveNotification({ id: notification.id, message: notification.message, isRead: notification.isRead });
     });
 
     socket.on(UserEventsTypes.SEND_EVENTS, (events: UserEvent[]) => {

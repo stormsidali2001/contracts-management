@@ -8,6 +8,7 @@ import { EventService } from 'src/Event/application/Event.service';
 import { SocketStateService } from 'src/socket/SocketState.service';
 import { DirectionService } from 'src/direction/application/direction.service';
 import { UserService } from 'src/user/application/user.service';
+import { NotificationPresenter } from 'src/user/infrastructure/notification.presenter';
 import { UserNotificationService } from 'src/user/application/user-notification.service';
 import {
   IVendorRepository,
@@ -52,9 +53,9 @@ export class AgreementCreatedHandler
     const deptUsers = await this.userService.findAllBy({ departement: { id: departementId } });
     const deptNotifications = deptUsers.map((u) => ({ userId: u.id, message: deptMessage }));
     if (deptNotifications.length > 0) {
-      await this.notificationService.saveForUsers(deptNotifications);
+      const savedDept = await this.notificationService.saveForUsers(deptNotifications);
       this.socketStateService.emitIfConnected(
-        deptNotifications.map((n) => ({ userId: n.userId, data: n.message })),
+        savedDept.map(({ userId, notification }) => ({ userId, data: NotificationPresenter.from(notification) })),
         'send_notification',
       );
     }
@@ -66,9 +67,9 @@ export class AgreementCreatedHandler
       userId: j.id,
     }));
     if (juridicalNotifications.length > 0) {
-      await this.notificationService.saveForUsers(juridicalNotifications);
+      const savedJuridical = await this.notificationService.saveForUsers(juridicalNotifications);
       this.socketStateService.emitIfConnected(
-        juridicalNotifications.map((n) => ({ userId: n.userId, data: n.message })),
+        savedJuridical.map(({ userId, notification }) => ({ userId, data: NotificationPresenter.from(notification) })),
         'send_notification',
       );
     }

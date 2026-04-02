@@ -13,6 +13,7 @@ import { SocketWithJwtPayload } from 'src/auth/types/JwtPayload.interface';
 import { EventService } from 'src/Event/application/Event.service';
 import { SocketStateService } from 'src/socket/SocketState.service';
 import { UserNotificationService } from 'src/user/application/user-notification.service';
+import { NotificationPresenter } from 'src/user/infrastructure/notification.presenter';
 import { UserService } from './application/user.service';
 
 @WebSocketGateway({
@@ -67,7 +68,7 @@ export class NotificationsGateWay
       userId,
     );
     this.logger.debug(`request all notifications user : ${client.user.email}`);
-    void client.emit('send_all_notifications', notifications);
+    void client.emit('send_all_notifications', NotificationPresenter.fromMany(notifications));
   }
 
   @SubscribeMessage('REQUEST_ALL_EVENTS')
