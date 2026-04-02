@@ -14,6 +14,7 @@ import AddCircleIcon from '@mui/icons-material/AddCircle';
 import CreateContract from '@/features/contract/components/CreateContract/CreateContract';
 import { useConvensions } from '@/features/contract/queries/contract.queries';
 import { useStatistics } from '@/features/statistics/queries/statistics.queries';
+import Breadcrumb from '@/shared/components/Breadcrumb/Breadcrumb';
 import { tokens } from '@/lib/tokens';
 import HandshakeOutlinedIcon from '@mui/icons-material/HandshakeOutlined';
 import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
@@ -163,6 +164,7 @@ const ConvensionsContent = () => {
       {/* ── Page header ── */}
       <div id="convensions-page-header" className={styles.pageHeader}>
         <div className={styles.pageHeaderLeft}>
+          <Breadcrumb items={[{ label: 'Conventions' }]} />
           <h1 className={styles.pageTitle}>Gestion des conventions</h1>
           <span className={styles.pageSubtitle}>Suivez l'état d'avancement et gérez vos conventions d'accords</span>
         </div>

@@ -5,10 +5,12 @@ import { useState, useEffect } from 'react';
 import Check from '@mui/icons-material/Check';
 import { Save } from '@mui/icons-material';
 import { useUpdateUser } from '@/features/user/queries/user.queries';
+import { useSnackbarStore } from '@/features/ui/store/snackbar.store';
 
 const UserActions = ({ params, rowId, setRowId }: any) => {
   const [success, setSuccess] = useState(false);
   const { mutate: updateUser, isPending: loading } = useUpdateUser();
+  const showSnackbar = useSnackbarStore((s) => s.showSnackbar);
 
   const handleSubmit = () => {
     const { id, role, active, email, firstName, lastName, username } = params.row;
@@ -19,6 +21,9 @@ const UserActions = ({ params, rowId, setRowId }: any) => {
           setSuccess(true);
           setRowId(null);
         },
+        onError: (err: any) => showSnackbar({
+          message: err?.response?.data?.error ?? 'Erreur lors de la mise à jour',
+        }),
       },
     );
   };

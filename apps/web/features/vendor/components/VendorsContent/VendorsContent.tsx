@@ -14,6 +14,7 @@ import { usePermissions } from '@/features/auth/queries/auth.queries';
 import DeleteVendorAction from '@/features/dashboard/components/UserActions/DeleteVendorAction/DeleteVendorAction';
 import { useVendors } from '@/features/vendor/queries/vendor.queries';
 import { useStatistics } from '@/features/statistics/queries/statistics.queries';
+import Breadcrumb from '@/shared/components/Breadcrumb/Breadcrumb';
 import { tokens } from '@/lib/tokens';
 import StorefrontOutlinedIcon from '@mui/icons-material/StorefrontOutlined';
 import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
@@ -102,6 +103,7 @@ const VendorsContent = () => {
       {/* ── Page header ── */}
       <div id="vendors-page-header" className={styles.pageHeader}>
         <div className={styles.pageHeaderLeft}>
+          <Breadcrumb items={[{ label: 'Fournisseurs' }]} />
           <h1 className={styles.pageTitle}>Gestion des fournisseurs</h1>
           <span className={styles.pageSubtitle}>Consultez et gérez les fournisseurs ainsi que leurs accords associés</span>
         </div>

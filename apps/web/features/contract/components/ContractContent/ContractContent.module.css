@@ -56,18 +56,6 @@
   gap: 8px;
 }
 
-.backLink {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  font-family: 'Inter', sans-serif;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--text-secondary);
-  text-decoration: none;
-  transition: color 0.15s;
-}
-.backLink:hover { color: var(--navy-mid); }
 
 .pageHeaderTitle {
   display: flex;

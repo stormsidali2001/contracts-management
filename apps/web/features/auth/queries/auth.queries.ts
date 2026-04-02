@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useAuthStore } from '@/features/auth/store/auth.store';
 import authService from '@/features/auth/services/auth.service';
 import { LoginUser } from '@/features/auth/models/login-user.interface';
@@ -17,10 +17,14 @@ export const useLogin = () => {
 
 export const useLogout = () => {
   const clearCredentials = useAuthStore((s) => s.clearCredentials);
+  const queryClient = useQueryClient();
   const axios = useAxiosPrivate({});
   return useMutation({
     mutationFn: () => authService.logout({ axios_instance: axios }),
-    onSuccess: () => clearCredentials(),
+    onSuccess: () => {
+      queryClient.clear();
+      clearCredentials();
+    },
   });
 };
 

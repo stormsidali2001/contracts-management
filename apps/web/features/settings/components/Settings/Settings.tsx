@@ -6,14 +6,17 @@ import ChangePassword from '@/features/settings/ChangePassword/ChangePassword';
 import styles from './Settings.module.css';
 import { useToggleNotifications } from '@/features/auth/queries/auth.queries';
 import { BASE_URL } from '@/api/axios';
+import { useSnackbarStore } from '@/features/ui/store/snackbar.store';
 import NotificationsNoneOutlinedIcon from '@mui/icons-material/NotificationsNoneOutlined';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import Breadcrumb from '@/shared/components/Breadcrumb/Breadcrumb';
 
 const Settings = () => {
   const [changePasswordModal, setChangePasswordModal] = useState(false);
 
   const user = useAuthStore((s) => s.user);
+  const showSnackbar = useSnackbarStore((s) => s.showSnackbar);
   const { mutate: toggleNotifications, isPending: isLoading } = useToggleNotifications();
 
   const ROLE_LABELS: Record<string, string> = {
@@ -28,6 +31,7 @@ const Settings = () => {
       {/* ── Page header ── */}
       <div id="settings-page-header" className={styles.pageHeader}>
         <div className={styles.pageHeaderLeft}>
+          <Breadcrumb items={[{ label: 'Paramètres' }]} />
           <h1 className={styles.pageTitle}>Paramètres</h1>
           <span className={styles.pageSubtitle}>Configurez votre compte et vos préférences</span>
         </div>
@@ -79,7 +83,10 @@ const Settings = () => {
                   <input
                     type="checkbox"
                     checked={!!user?.recieve_notifications}
-                    onChange={() => toggleNotifications()}
+                    onChange={() => toggleNotifications(undefined, {
+                      onSuccess: () => showSnackbar({ message: 'Préférences mises à jour', severty: 'success' }),
+                      onError: (err: any) => showSnackbar({ message: err?.response?.data?.error ?? 'Erreur lors de la mise à jour' }),
+                    })}
                   />
                   <div className={styles.toggleTrack} />
                   <div className={styles.toggleThumb} />

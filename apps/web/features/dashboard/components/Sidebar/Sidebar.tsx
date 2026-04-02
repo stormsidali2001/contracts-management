@@ -12,19 +12,33 @@ import VendorsIcon from '@/icons/VendorsIcon';
 import ConvensionIcon from '@/icons/ConvensionIcon';
 import ContractsIcon from '@/icons/ContractsIcon';
 import { APP_NAME } from '../../data';
+import { usePermissions } from '@/features/auth/queries/auth.queries';
+import { PermissionsView } from '@contracts/types';
 
-const sidebarLinks = [
+type SidebarLink = {
+  text: string;
+  icon: () => React.ReactElement;
+  link: string;
+  visible?: (p: PermissionsView | undefined) => boolean;
+};
+
+const sidebarLinks: SidebarLink[] = [
    { text: 'Accueil',      icon: () => <MainDashboardIcon />, link: '/' },
-   { text: 'Directions',   icon: () => <DirectionsIcon />,   link: '/directions' },
-   { text: 'Utilisateurs', icon: () => <UsersIcon />,        link: '/users' },
-   { text: 'Fournisseurs', icon: () => <VendorsIcon />,      link: '/vendors' },
+   { text: 'Directions',   icon: () => <DirectionsIcon />,   link: '/directions',
+     visible: (p) => p?.directions.canCreate ?? false },
+   { text: 'Utilisateurs', icon: () => <UsersIcon />,        link: '/users',
+     visible: (p) => p?.users.canCreate ?? false },
+   { text: 'Fournisseurs', icon: () => <VendorsIcon />,      link: '/vendors',
+     visible: (p) => (p?.vendors.canCreate || p?.directions.canCreate) ?? false },
    { text: 'Convensions',  icon: () => <ConvensionIcon />,   link: '/convensions' },
    { text: 'Contrats',     icon: () => <ContractsIcon />,    link: '/contracts' },
 ];
 
 const Sidebar = () => {
     const pathname = usePathname();
-    const index = sidebarLinks.findIndex(l => pathname === l.link);
+    const { data: permissions } = usePermissions();
+    const visibleLinks = sidebarLinks.filter(l => !l.visible || l.visible(permissions));
+    const index = visibleLinks.findIndex(l => pathname === l.link);
     const [activeIndex, setActiveIndex] = useState(index);
 
     const getStyle = (i: number) =>
@@ -47,8 +61,8 @@ const Sidebar = () => {
 
             {/* Nav */}
             <ul className={styles.links}>
-                {sidebarLinks.map((link, i) => (
-                    <Link href={link.link} key={i}>
+                {visibleLinks.map((link, i) => (
+                    <Link href={link.link} key={link.link}>
                         <li id={`sidebar-link-${link.link.replace('/', '') || 'home'}`} className={getStyle(i)} onClick={() => setActiveIndex(i)}>
                             <span className={styles.icon}><link.icon /></span>
                             <span>{link.text}</span>

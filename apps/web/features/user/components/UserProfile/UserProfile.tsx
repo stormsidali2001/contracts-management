@@ -12,6 +12,7 @@ import { Stack } from '@mui/system';
 import { usePermissions } from '@/features/auth/queries/auth.queries';
 import { useUser, useUpdateUser, useUploadUserImage } from '@/features/user/queries/user.queries';
 import { BASE_URL } from '@/api/axios';
+import Breadcrumb from '@/shared/components/Breadcrumb/Breadcrumb';
 
 const UserProfile = () => {
   const currentUser = useAuthStore((s) => s.user);
@@ -117,8 +118,14 @@ const UserProfile = () => {
     ? `${BASE_URL}/users/image/${localUser.imageUrl}`
     : '/blank-profile-picture.png';
 
+  const fullName = localUser ? `${localUser.firstName} ${localUser.lastName}` : '';
+
   return (
     <div id="user-profile-page" className={styles.pageWrapper}>
+      <Breadcrumb items={[
+        { label: 'Utilisateurs', href: '/users' },
+        { label: fullName },
+      ]} />
       <div id="user-profile-card" className={styles.userCard}>
 
         {/* ── Hero header ── */}

@@ -10,6 +10,7 @@ import { useAuthStore } from '@/features/auth/store/auth.store';
 import { useMemo } from 'react';
 import { useLogout } from '@/features/auth/queries/auth.queries';
 import { BASE_URL } from '@/api/axios';
+import { useSnackbarStore } from '@/features/ui/store/snackbar.store';
 import { useOnborda } from 'onborda';
 import { useRouter } from 'next/navigation';
 
@@ -22,6 +23,7 @@ const tourNameByRole: Record<string, string> = {
 const PopoverContent = () => {
   const user = useAuthStore((s) => s.user);
   const { mutate: logout } = useLogout();
+  const showSnackbar = useSnackbarStore((s) => s.showSnackbar);
   const { startOnborda } = useOnborda();
   const router = useRouter();
 
@@ -44,7 +46,9 @@ const PopoverContent = () => {
 
   function handleLogout(e: any) {
     e.preventDefault();
-    logout();
+    logout(undefined, {
+      onError: () => showSnackbar({ message: 'Erreur lors de la déconnexion' }),
+    });
   }
 
   return (

@@ -17,6 +17,7 @@ import { usePermissions } from '@/features/auth/queries/auth.queries';
 import DepartementUsersList from '@/features/direction/components/DepartementUsersList/DepartementUsersList';
 import { useDirections, useDeleteDirection, useDeleteDepartement } from '@/features/direction/queries/direction.queries';
 import { Direction } from '@/features/direction/models/direction.interface';
+import Breadcrumb from '@/shared/components/Breadcrumb/Breadcrumb';
 
 /** Returns the 1–2 letter abbreviation for the direction icon */
 const dirAbbr = (title: string) => {
@@ -113,6 +114,7 @@ const DirectionContent = () => {
       {/* ── Page header ── */}
       <div id="directions-page-header" className={styles.pageHeader}>
         <div className={styles.pageHeaderLeft}>
+          <Breadcrumb items={[{ label: 'Directions' }]} />
           <h1 className={styles.pageTitle}>Directions & Départements</h1>
           <span className={styles.pageSubtitle}>Gérez la structure organisationnelle de votre entreprise</span>
         </div>

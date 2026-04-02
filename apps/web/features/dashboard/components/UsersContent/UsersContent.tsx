@@ -17,6 +17,7 @@ import DeleteUserAction from '@/features/dashboard/components/UserActions/Delete
 import { DataGrid, GridColumns, GridRenderCellParams, GridSortItem, GridSortModel } from '@mui/x-data-grid';
 import { useUsers } from '@/features/user/queries/user.queries';
 import { useStatistics } from '@/features/statistics/queries/statistics.queries';
+import Breadcrumb from '@/shared/components/Breadcrumb/Breadcrumb';
 import { tokens } from '@/lib/tokens';
 import { BASE_URL } from '@/api/axios';
 import AdminPanelSettingsOutlinedIcon from '@mui/icons-material/AdminPanelSettingsOutlined';
@@ -199,6 +200,7 @@ const UsersContent = () => {
       {/* ── Page header ── */}
       <div id="users-page-header" className={styles.pageHeader}>
         <div className={styles.pageHeaderLeft}>
+          <Breadcrumb items={[{ label: 'Utilisateurs' }]} />
           <h1 className={styles.pageTitle}>Gestion des utilisateurs</h1>
           <span className={styles.pageSubtitle}>Consultez, créez et gérez les comptes de votre organisation</span>
         </div>

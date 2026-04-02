@@ -12,6 +12,11 @@ import { useVendors } from '@/features/vendor/queries/vendor.queries';
 
 const ONBOARDING_KEY = (userId: string) => `onboarding_done_${userId}`;
 
+/** Routes that require a "first record" to exist and may be unresolvable. */
+function isDataRoute(route: string): boolean {
+  return route === '/contracts/first' || route === '/convensions/first' || route === '/vendors/first';
+}
+
 /** Poll rAF until `selector` exists in the DOM, then call `callback`. Gives up after `maxMs`. */
 function waitForElement(selector: string, callback: () => void, maxMs = 4000) {
   const deadline = Date.now() + maxMs;
@@ -73,8 +78,40 @@ export default function OnboardingCard({
   // Using rAF polling instead of a fixed timeout avoids race conditions with Next.js App Router.
   const handleNext = () => {
     if (step.nextRoute) {
+      const resolved = resolveRoute(step.nextRoute);
+
+      // Placeholder couldn't be resolved (no first record) — skip dependent steps.
+      if (isDataRoute(step.nextRoute) && resolved === step.nextRoute) {
+        const steps = getTourSteps();
+        let skipTo = currentStep + 1;
+        let exitRoute: string | undefined;
+
+        // Walk forward until we find a step that exits via a concrete (non-data) route.
+        while (skipTo < steps.length) {
+          const s = steps[skipTo];
+          if (s.nextRoute && !isDataRoute(s.nextRoute)) {
+            exitRoute = s.nextRoute;
+            skipTo++; // skip the exit step itself (it belongs to the missing-data page)
+            break;
+          }
+          skipTo++;
+        }
+
+        if (skipTo >= steps.length) { markDone(); return; }
+
+        if (exitRoute) {
+          const targetSelector = steps[skipTo]?.selector;
+          router.push(exitRoute);
+          if (targetSelector) waitForElement(targetSelector, () => setCurrentStep(skipTo));
+          else setTimeout(() => setCurrentStep(skipTo), 600);
+        } else {
+          setCurrentStep(skipTo);
+        }
+        return;
+      }
+
       const targetSelector = getTourSteps()[currentStep + 1]?.selector;
-      router.push(resolveRoute(step.nextRoute));
+      router.push(resolved);
       if (targetSelector) {
         waitForElement(targetSelector, () => setCurrentStep(currentStep + 1));
       } else {
@@ -87,12 +124,31 @@ export default function OnboardingCard({
 
   const handlePrev = () => {
     if (step.prevRoute) {
-      const targetSelector = getTourSteps()[currentStep - 1]?.selector;
+      const steps = getTourSteps();
+      let landOn = currentStep - 1;
+
+      // Skip backward over steps that depend on an unresolved data route.
+      while (landOn > 0) {
+        // A step is "dependent" if the nearest preceding step-with-a-nextRoute points to an
+        // unresolved placeholder — meaning the data it navigated to didn't exist.
+        let dependent = false;
+        for (let i = landOn - 1; i >= 0; i--) {
+          if (steps[i].nextRoute) {
+            const r = steps[i].nextRoute!;
+            dependent = isDataRoute(r) && resolveRoute(r) === r;
+            break;
+          }
+        }
+        if (!dependent) break;
+        landOn--;
+      }
+
+      const targetSelector = steps[landOn]?.selector;
       router.push(resolveRoute(step.prevRoute));
       if (targetSelector) {
-        waitForElement(targetSelector, () => setCurrentStep(currentStep - 1));
+        waitForElement(targetSelector, () => setCurrentStep(landOn));
       } else {
-        setTimeout(() => setCurrentStep(currentStep - 1), 600);
+        setTimeout(() => setCurrentStep(landOn), 600);
       }
     } else {
       prevStep();

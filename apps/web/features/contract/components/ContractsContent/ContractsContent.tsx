@@ -14,6 +14,7 @@ import { usePermissions } from '@/features/auth/queries/auth.queries';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { useContracts } from '@/features/contract/queries/contract.queries';
 import { useStatistics } from '@/features/statistics/queries/statistics.queries';
+import Breadcrumb from '@/shared/components/Breadcrumb/Breadcrumb';
 import { tokens } from '@/lib/tokens';
 import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
 import HandshakeOutlinedIcon from '@mui/icons-material/HandshakeOutlined';
@@ -163,6 +164,7 @@ const ContractsContent = () => {
       {/* ── Page header ── */}
       <div id="contracts-page-header" className={styles.pageHeader}>
         <div className={styles.pageHeaderLeft}>
+          <Breadcrumb items={[{ label: 'Contrats' }]} />
           <h1 className={styles.pageTitle}>Gestion des contrats</h1>
           <span className={styles.pageSubtitle}>Suivez l'état d'avancement et gérez vos contrats d'accords</span>
         </div>

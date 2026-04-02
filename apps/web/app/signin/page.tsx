@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import { Button, CircularProgress, TextField } from '@mui/material';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -15,11 +16,22 @@ import { validateEmail } from '@/shared/utils/validation/email';
 import { validateEmailOrUsername } from '@/shared/utils/validation/emailOrUsername';
 import styles from '@/styles/Signin.module.css';
 
+const DEV_ACCOUNTS = [
+  { label: 'Admin',      username: 'admin.admin',       password: '123456' },
+  { label: 'Juridique',  username: 'juridical.adala',   password: '123456' },
+  { label: 'Employé',    username: 'storm.sidali',       password: '123456' },
+];
+
 export default function SignIn() {
   const { text: email, textChangeHandler: emailChangeHandler, shouldDisplayError, inputBlurHandler: emailBlurHandler, inputClearHandler: emailClearHandler } = useInput(validateEmailOrUsername);
   const { text: password, textChangeHandler: passwordChangeHandler, inputClearHandler: passwordClearHandler } = useInput();
+
+  const fillAccount = (username: string, pwd: string) => {
+    emailChangeHandler({ target: { value: username } } as React.ChangeEvent<HTMLInputElement>);
+    passwordChangeHandler({ target: { value: pwd } } as React.ChangeEvent<HTMLInputElement>);
+  };
   const router = useRouter();
-  const { mutate: login, isPending, isError, error } = useLogin();
+  const { mutate: login, isPending } = useLogin();
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const showSnackbar = useSnackbarStore((s) => s.showSnackbar);
 
@@ -37,6 +49,9 @@ export default function SignIn() {
         emailClearHandler();
         passwordClearHandler();
       },
+      onError: (err: any) => {
+        showSnackbar({ message: err?.response?.data?.error ?? 'Identifiants incorrects' });
+      },
     });
   };
 
@@ -44,12 +59,6 @@ export default function SignIn() {
     if (!isAuthenticated) return;
     router.push('/');
   }, [isAuthenticated, router]);
-
-  useEffect(() => {
-    if (isError && error) {
-      showSnackbar({ message: (error as any)?.response?.data?.error ?? 'Erreur de connexion' });
-    }
-  }, [isError, error]);
 
   return (
     <div className={styles.container}>
@@ -75,6 +84,7 @@ export default function SignIn() {
           </div>
           <div className={styles.formWrapper}>
             {!isPending ? (
+              <>
               <form onSubmit={handleSubmit}>
                 <TextField
                   onBlur={emailBlurHandler}
@@ -114,6 +124,25 @@ export default function SignIn() {
                   Se connecter
                 </Button>
               </form>
+
+              {process.env.NODE_ENV === 'development' && (
+                <div className={styles.devAccounts}>
+                  <span className={styles.devLabel}>Comptes de test</span>
+                  <div className={styles.devButtons}>
+                    {DEV_ACCOUNTS.map((a) => (
+                      <button
+                        key={a.username}
+                        type="button"
+                        className={styles.devBtn}
+                        onClick={() => fillAccount(a.username, a.password)}
+                      >
+                        {a.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+              </>
             ) : (
               <CircularProgress sx={{ margin: '40px auto', display: 'block' }} />
             )}

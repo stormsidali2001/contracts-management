@@ -5,7 +5,7 @@ import styles from './ContractContent.module.css';
 import { Button, Modal, Skeleton } from '@mui/material';
 import PlayCircleOutlineIcon from '@mui/icons-material/PlayCircleOutline';
 import OpenInNewOutlinedIcon from '@mui/icons-material/OpenInNewOutlined';
-import ArrowBackIosNewOutlinedIcon from '@mui/icons-material/ArrowBackIosNewOutlined';
+import Breadcrumb from '@/shared/components/Breadcrumb/Breadcrumb';
 import CalendarTodayOutlinedIcon from '@mui/icons-material/CalendarTodayOutlined';
 import EventBusyOutlinedIcon from '@mui/icons-material/EventBusyOutlined';
 import AccessTimeOutlinedIcon from '@mui/icons-material/AccessTimeOutlined';
@@ -15,7 +15,6 @@ import ExecutionModal from '@/features/contract/components/ExecutionModal/Execut
 import { usePermissions } from '@/features/auth/queries/auth.queries';
 import { useAgreement } from '@/features/contract/queries/contract.queries';
 import { BASE_URL } from '@/api/axios';
-import Link from 'next/link';
 
 interface PropType {
   type: 'contract' | 'convension';
@@ -189,10 +188,10 @@ const ContractContent = ({ type, agreementId }: PropType) => {
       {/* ── Page header ── */}
       <div className={styles.pageHeader}>
         <div className={styles.pageHeaderLeft}>
-          <Link href={backHref} className={styles.backLink}>
-            <ArrowBackIosNewOutlinedIcon sx={{ fontSize: 12 }} />
-            <span>{type === 'contract' ? 'Contrats' : 'Conventions'}</span>
-          </Link>
+          <Breadcrumb items={[
+            { label: type === 'contract' ? 'Contrats' : 'Conventions', href: backHref },
+            { label: contract.number },
+          ]} />
           <div className={styles.pageHeaderTitle}>
             <h1 className={styles.pageTitle}>{contract.number}</h1>
             <span className={styles.typeBadge}>{typeLabel}</span>
@@ -217,6 +216,7 @@ const ContractContent = ({ type, agreementId }: PropType) => {
           )}
           {canExecute && (
             <button
+              id="agreement-execute-btn"
               className={styles.executeButton}
               disabled={isExecuted}
               onClick={() => setOpenExecutionModal(true)}

@@ -10,8 +10,7 @@ import SaveIcon from '@mui/icons-material/Save';
 import { useSnackbarStore } from '@/features/ui/store/snackbar.store';
 import { usePermissions } from '@/features/auth/queries/auth.queries';
 import { useVendor, useUpdateVendor } from '@/features/vendor/queries/vendor.queries';
-import Link from 'next/link';
-import ArrowBackIosNewOutlinedIcon from '@mui/icons-material/ArrowBackIosNewOutlined';
+import Breadcrumb from '@/shared/components/Breadcrumb/Breadcrumb';
 import StorefrontOutlinedIcon from '@mui/icons-material/StorefrontOutlined';
 import BusinessOutlinedIcon from '@mui/icons-material/BusinessOutlined';
 import FingerprintOutlinedIcon from '@mui/icons-material/FingerprintOutlined';
@@ -139,10 +138,10 @@ const VendorContent = () => {
       {/* ── Page header ── */}
       <div className={styles.pageHeader}>
         <div className={styles.pageHeaderLeft}>
-          <Link href="/vendors" className={styles.backLink}>
-            <ArrowBackIosNewOutlinedIcon sx={{ fontSize: 12 }} />
-            <span>Fournisseurs</span>
-          </Link>
+          <Breadcrumb items={[
+            { label: 'Fournisseurs', href: '/vendors' },
+            { label: displayVendor?.company_name ?? '' },
+          ]} />
           <div className={styles.pageHeaderTitle}>
             <h1 className={styles.pageTitle}>{displayVendor?.company_name}</h1>
             <span className={styles.vendorBadge}>Fournisseur</span>

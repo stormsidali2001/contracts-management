@@ -5,10 +5,12 @@ import { useState, useEffect } from 'react';
 import Check from '@mui/icons-material/Check';
 import { Save } from '@mui/icons-material';
 import { useUpdateVendor } from '@/features/vendor/queries/vendor.queries';
+import { useSnackbarStore } from '@/features/ui/store/snackbar.store';
 
 const VendorActions = ({ params, rowId, setRowId }: any) => {
   const [success, setSuccess] = useState(false);
   const { mutate: updateVendor, isPending: loading } = useUpdateVendor();
+  const showSnackbar = useSnackbarStore((s) => s.showSnackbar);
 
   const handleSubmit = () => {
     const { id, ...others } = params.row;
@@ -19,6 +21,9 @@ const VendorActions = ({ params, rowId, setRowId }: any) => {
           setSuccess(true);
           setRowId(null);
         },
+        onError: (err: any) => showSnackbar({
+          message: err?.response?.data?.error ?? 'Erreur lors de la mise à jour',
+        }),
       },
     );
   };

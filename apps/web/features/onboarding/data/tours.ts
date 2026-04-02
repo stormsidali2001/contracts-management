@@ -178,7 +178,7 @@ export const allTours: Tour[] = [
         content:
           "Chaque fiche fournisseur regroupe les informations de contact, le numéro d'identification et les accords associés.",
         selector: "#vendor-detail-card",
-        side: "right",
+        side: "bottom",
         showControls: true,
         pointerPadding: 12,
         pointerRadius: 10,
@@ -338,14 +338,25 @@ export const allTours: Tour[] = [
         icon: "📄",
         title: "Détail d'un contrat",
         content:
-          "Consultez et modifiez un contrat : fournisseur, montant, dates, statut et documents. Soumettez-le pour signature depuis cette page.",
+          "Consultez et modifiez un contrat : fournisseur, montant, dates, statut et documents joints.",
         selector: "#agreement-detail-card",
         side: "right",
         showControls: true,
         pointerPadding: 12,
         pointerRadius: 10,
-        nextRoute: "/convensions",
         prevRoute: "/contracts",
+      },
+      {
+        icon: "▶️",
+        title: "Exécuter un contrat",
+        content:
+          "Une fois le contrat signé, cliquez sur « Exécuter » pour lancer son exécution. Vous devrez renseigner les dates de début et de fin d'exécution. Le statut passera automatiquement à « En cours » puis « Exécuté ».",
+        selector: "#agreement-execute-btn",
+        side: "left",
+        showControls: true,
+        pointerPadding: 10,
+        pointerRadius: 8,
+        nextRoute: "/convensions",
       },
       {
         icon: "📋",
@@ -364,14 +375,25 @@ export const allTours: Tour[] = [
         icon: "📋",
         title: "Détail d'une convention",
         content:
-          "Gérez une convention : modifiez ses informations, ajoutez des pièces jointes et suivez son avancement jusqu'à l'exécution.",
+          "Gérez une convention : modifiez ses informations, ajoutez des pièces jointes et suivez son avancement.",
         selector: "#agreement-detail-card",
         side: "right",
         showControls: true,
         pointerPadding: 12,
         pointerRadius: 10,
-        nextRoute: "/vendors",
         prevRoute: "/convensions",
+      },
+      {
+        icon: "▶️",
+        title: "Exécuter une convention",
+        content:
+          "Comme pour les contrats, le bouton « Exécuter » vous permet de démarrer l'exécution d'une convention en saisissant ses dates. Le statut évolue de « Non exécuté » à « En cours » puis « Exécuté ».",
+        selector: "#agreement-execute-btn",
+        side: "left",
+        showControls: true,
+        pointerPadding: 10,
+        pointerRadius: 8,
+        nextRoute: "/vendors",
       },
       {
         icon: "🏪",
@@ -392,7 +414,7 @@ export const allTours: Tour[] = [
         content:
           "Consultez et modifiez les informations d'un fournisseur : raison sociale, NIF, coordonnées et contrats associés.",
         selector: "#vendor-detail-card",
-        side: "right",
+        side: "bottom",
         showControls: true,
         pointerPadding: 12,
         pointerRadius: 10,

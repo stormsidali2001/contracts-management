@@ -11,6 +11,9 @@ import { UserCredentialsRepository } from './infrastructure/user-credentials.rep
 import { HashService } from './services/hash.service';
 import { TokenService } from './services/token.service';
 import { EmailModule } from 'src/shared/email/email.module';
+import { RegistrationService } from './application/registration.service';
+import { PasswordManagementService } from './application/password-management.service';
+import { AuthenticationService } from './application/authentication.service';
 
 @Module({
   imports: [
@@ -23,6 +26,9 @@ import { EmailModule } from 'src/shared/email/email.module';
     AuthService,
     HashService,
     TokenService,
+    RegistrationService,
+    PasswordManagementService,
+    AuthenticationService,
     {
       provide: USER_CREDENTIALS_REPOSITORY,
       useClass: UserCredentialsRepository,

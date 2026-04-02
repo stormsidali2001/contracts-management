@@ -6,6 +6,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter';
 import WithPrivate from '@/features/auth/components/withPrivate';
+import WithSnackbar from '@/global/withSnackbar';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { queryClient } from '@/lib/query-client';
@@ -27,10 +28,12 @@ export default function RootProvider({ children }: { children: React.ReactNode }
                 shadowOpacity="0.35"
                 cardComponent={OnboardingCard}
               >
-                <WithPrivate>
-                  <OnboardingTrigger />
-                  {children}
-                </WithPrivate>
+                <WithSnackbar>
+                  <WithPrivate>
+                    <OnboardingTrigger />
+                    {children}
+                  </WithPrivate>
+                </WithSnackbar>
               </Onborda>
             </OnbordaProvider>
           </LocalizationProvider>
