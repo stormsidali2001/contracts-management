@@ -42,7 +42,10 @@ export class Direction extends AggregateRoot {
     departements?: Departement[];
     agreementCount?: number;
   }): Direction {
-    const instance = new Direction({ ...props, departements: props.departements ?? [] });
+    const instance = new Direction({
+      ...props,
+      departements: props.departements ?? [],
+    });
     instance.addEvent(new DirectionCreatedEvent(instance.id));
     return instance;
   }

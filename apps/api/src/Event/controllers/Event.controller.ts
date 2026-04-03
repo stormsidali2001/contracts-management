@@ -16,7 +16,7 @@ export class EventController {
   @UseGuards(JwtAccessTokenGuard)
   @Get('')
   async getEvents(
-    @Query('limit') limit: number = 20,
+    @Query('limit') limit = 20,
     @CurrentUser() user: JwtPayload,
   ): Promise<EventView[]> {
     const result = await this.eventService.getEvents(

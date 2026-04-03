@@ -11,4 +11,3 @@ export class CronJobsEntity {
   @Column({ type: 'date' })
   date: Date;
 }
-

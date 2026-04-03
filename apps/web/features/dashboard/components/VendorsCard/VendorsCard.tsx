@@ -9,7 +9,7 @@ import { Line } from 'react-chartjs-2';
 import 'chartjs-adapter-date-fns';
 import { fr } from 'date-fns/locale';
 import { Skeleton } from '@mui/material';
-import { LayoutGroup, motion } from 'framer-motion';
+import { LayoutGroup, motion, MotionConfig } from 'framer-motion';
 import { useDateRangeStore } from '@/features/statistics/store/date-range.store';
 import { useStatistics } from '@/features/statistics/queries/statistics.queries';
 
@@ -25,15 +25,17 @@ const VendorsCard = () => {
   const stats = data?.vendorsStats ?? null;
 
   return (
-    <LayoutGroup>
-      {!expanded ? <CompactCard stats={stats} cardId={cardId} setExpanded={setExpanded} /> : <ExpandedCard stats={stats} cardId={cardId} setExpanded={setExpanded} />}
-    </LayoutGroup>
+    <MotionConfig reducedMotion="user">
+      <LayoutGroup>
+        {!expanded ? <CompactCard stats={stats} cardId={cardId} setExpanded={setExpanded} /> : <ExpandedCard stats={stats} cardId={cardId} setExpanded={setExpanded} />}
+      </LayoutGroup>
+    </MotionConfig>
   );
 };
 
 export default VendorsCard;
 
-export function CompactCard({ stats, cardId, setExpanded }: any) {
+function CompactCard({ stats, cardId, setExpanded }: any) {
   const latestCount = stats?.slice(-1)?.[0]?.nb_vendors ?? null;
 
   if (!stats) {
@@ -74,7 +76,7 @@ export function CompactCard({ stats, cardId, setExpanded }: any) {
   );
 }
 
-export function ExpandedCard({ stats, cardId, setExpanded }: any) {
+function ExpandedCard({ stats, cardId, setExpanded }: any) {
   const data = {
     labels: stats?.map((el: any) => el.date) ?? [],
     datasets: [{ label: 'nombre de fournisseurs', backgroundColor: tokens.color.navyMid, borderColor: tokens.color.navyMid, borderWidth: 1.5, hoverBackgroundColor: tokens.color.navyLight, hoverBorderColor: tokens.color.navyMid, data: stats?.map((el: any) => el.nb_vendors) ?? [] }],

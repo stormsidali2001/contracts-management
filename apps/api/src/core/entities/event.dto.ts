@@ -29,4 +29,3 @@ export class CreateEventDTO {
   @IsOptional()
   createdAt?: Date;
 }
-

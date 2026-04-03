@@ -17,4 +17,3 @@ export class StatisticsController {
     return await this.statisticsService.getStats(params, userId);
   }
 }
-

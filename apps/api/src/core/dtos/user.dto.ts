@@ -160,4 +160,3 @@ export class ConnectedUserResetPassword {
   @IsNotEmpty()
   password: string;
 }
-

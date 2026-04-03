@@ -13,7 +13,12 @@ function mockOf<T>(methods: (keyof T)[]): jest.Mocked<T> {
 // ── Fixtures ─────────────────────────────────────────────────────────────────
 
 function makeNotification(userId = 'user-1'): Notification {
-  return Notification.reconstitute(`notif-${userId}`, 'hello', new Date(), false);
+  return Notification.reconstitute(
+    `notif-${userId}`,
+    'hello',
+    new Date(),
+    false,
+  );
 }
 
 // ── Suite ─────────────────────────────────────────────────────────────────────
@@ -23,7 +28,12 @@ describe('UserNotificationService', () => {
   let service: UserNotificationService;
 
   beforeEach(() => {
-    notifRepo = mockOf<INotificationRepository>(['findByUserId', 'findById', 'saveMany', 'save']);
+    notifRepo = mockOf<INotificationRepository>([
+      'findByUserId',
+      'findById',
+      'saveMany',
+      'save',
+    ]);
     service = new UserNotificationService(notifRepo);
   });
 
@@ -108,7 +118,12 @@ describe('UserNotificationService', () => {
   describe('markAllAsRead', () => {
     it('marks only unread notifications and saves each', async () => {
       const unread = Notification.reconstitute('n1', 'msg', new Date(), false);
-      const alreadyRead = Notification.reconstitute('n2', 'msg', new Date(), true);
+      const alreadyRead = Notification.reconstitute(
+        'n2',
+        'msg',
+        new Date(),
+        true,
+      );
       notifRepo.findByUserId.mockResolvedValue([unread, alreadyRead]);
       notifRepo.save.mockResolvedValue(undefined);
 

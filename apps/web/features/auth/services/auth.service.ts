@@ -2,21 +2,16 @@ import { LoginUser } from "@/features/auth/models/login-user.interface";
 import jwt_decode from 'jwt-decode';
 import { DecodedJwt } from "@/features/auth/models/decoded-jwt.interface";
 import { DisplayUser } from "@/features/auth/models/DisplayUser.interface";
-import axios, { axiosPrivate } from "@/api/axios";
+import { axiosPrivate } from "@/api/axios";
 import { AxiosInstance } from "axios";
 
 
 const login = async (user:LoginUser):Promise<{user:DisplayUser| null , jwt:string| null} >=>{
 
-            try{
-                const response = await axiosPrivate.post(`/auth/login`, user);
+            const response = await axiosPrivate.post(`/auth/login`, user);
                 const access_token =   response.data?.access_token;
                 const decodedJwt:DecodedJwt = jwt_decode(access_token);
                 return {jwt:access_token , user:decodedJwt.user};
-
-            }catch(err){
-                throw err;
-            }
            
 }
 

@@ -18,4 +18,3 @@ export interface JwtCompletePayload {
 }
 
 export type SocketWithJwtPayload = Socket & JwtCompletePayload;
-

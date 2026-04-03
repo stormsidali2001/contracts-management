@@ -16,7 +16,9 @@ function makeProps(overrides: Partial<Parameters<typeof User.create>[0]> = {}) {
   };
 }
 
-function createUser(overrides: Partial<Parameters<typeof User.create>[0]> = {}) {
+function createUser(
+  overrides: Partial<Parameters<typeof User.create>[0]> = {},
+) {
   return User.create(makeProps(overrides));
 }
 
@@ -66,7 +68,10 @@ describe('User (Aggregate Root)', () => {
   describe('recordCreated', () => {
     it('happy path – should emit UserCreatedEvent with all identity fields', () => {
       // Arrange
-      const user = createUser({ departementId: 'dept-1', directionId: 'dir-1' });
+      const user = createUser({
+        departementId: 'dept-1',
+        directionId: 'dir-1',
+      });
 
       // Act
       user.recordCreated('DEPT', 'DIR');
@@ -89,7 +94,10 @@ describe('User (Aggregate Root)', () => {
   describe('recordUpdated', () => {
     it('happy path – should emit UserUpdatedEvent with current state', () => {
       // Arrange
-      const user = createUser({ departementId: 'dept-1', directionId: 'dir-1' });
+      const user = createUser({
+        departementId: 'dept-1',
+        directionId: 'dir-1',
+      });
 
       // Act
       user.recordUpdated('DEPT', 'DIR');
@@ -106,7 +114,10 @@ describe('User (Aggregate Root)', () => {
   describe('recordDeleted', () => {
     it('happy path – should emit UserDeletedEvent with correct ids', () => {
       // Arrange
-      const user = createUser({ departementId: 'dept-2', directionId: 'dir-2' });
+      const user = createUser({
+        departementId: 'dept-2',
+        directionId: 'dir-2',
+      });
 
       // Act
       user.recordDeleted('D2', 'R2');

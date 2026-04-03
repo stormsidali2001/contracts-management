@@ -26,4 +26,3 @@ export class NotificationEntity {
   @ManyToOne((type) => UserEntity, (u) => u.notifications)
   user: UserEntity;
 }
-

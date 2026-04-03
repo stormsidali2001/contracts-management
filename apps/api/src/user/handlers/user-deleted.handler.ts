@@ -47,7 +47,10 @@ export class UserDeletedHandler implements IEventHandler<UserDeletedEvent> {
     if (notifications.length > 0) {
       const saved = await this.notificationService.saveForUsers(notifications);
       this.socketStateService.emitIfConnected(
-        saved.map(({ userId, notification }) => ({ userId, data: NotificationPresenter.from(notification) })),
+        saved.map(({ userId, notification }) => ({
+          userId,
+          data: NotificationPresenter.from(notification),
+        })),
         'send_notification',
       );
     }

@@ -37,7 +37,16 @@ describe('NotificationRepository (integration)', () => {
     await dataSource.query(
       `INSERT INTO users (id, email, username, firstName, lastName, role, active, recieve_notifications)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-      [userId, `notif-${s}@test.com`, `notif-${s}`, 'Test', 'User', UserRole.EMPLOYEE, true, false],
+      [
+        userId,
+        `notif-${s}@test.com`,
+        `notif-${s}`,
+        'Test',
+        'User',
+        UserRole.EMPLOYEE,
+        true,
+        false,
+      ],
     );
   });
 
@@ -49,7 +58,9 @@ describe('NotificationRepository (integration)', () => {
   afterEach(async () => {
     if (notificationIds.length) {
       await dataSource.query(
-        `DELETE FROM notifications WHERE id IN (${notificationIds.map(() => '?').join(',')})`,
+        `DELETE FROM notifications WHERE id IN (${notificationIds
+          .map(() => '?')
+          .join(',')})`,
         [...notificationIds],
       );
       notificationIds.length = 0;
@@ -112,7 +123,16 @@ describe('NotificationRepository (integration)', () => {
       await dataSource.query(
         `INSERT INTO users (id, email, username, firstName, lastName, role, active, recieve_notifications)
          VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-        [otherId, `other-${otherId.slice(0, 6)}@test.com`, `other-${otherId.slice(0, 6)}`, 'Other', 'User', UserRole.EMPLOYEE, true, false],
+        [
+          otherId,
+          `other-${otherId.slice(0, 6)}@test.com`,
+          `other-${otherId.slice(0, 6)}`,
+          'Other',
+          'User',
+          UserRole.EMPLOYEE,
+          true,
+          false,
+        ],
       );
 
       const results = await repo.findByUserId(otherId);

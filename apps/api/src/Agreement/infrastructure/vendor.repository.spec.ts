@@ -40,7 +40,9 @@ describe('VendorRepository (integration)', () => {
   afterEach(async () => {
     if (vendorIds.length) {
       await dataSource.query(
-        `DELETE FROM vendors WHERE id IN (${vendorIds.map(() => '?').join(',')})`,
+        `DELETE FROM vendors WHERE id IN (${vendorIds
+          .map(() => '?')
+          .join(',')})`,
         [...vendorIds],
       );
       vendorIds.length = 0;
@@ -138,17 +140,18 @@ describe('VendorRepository (integration)', () => {
       vendorIds.push(props.id);
       await repo.save(Vendor.create(props));
 
-      const result = await repo.findByUniqueCondition('v.nif = :nif', { nif: props.nif });
+      const result = await repo.findByUniqueCondition('v.nif = :nif', {
+        nif: props.nif,
+      });
 
       expect(result).toBeInstanceOf(Vendor);
       expect(result.id).toBe(props.id);
     });
 
     it('returns null when the condition does not match', async () => {
-      const result = await repo.findByUniqueCondition(
-        'v.nif = :nif',
-        { nif: 'no-such-nif' },
-      );
+      const result = await repo.findByUniqueCondition('v.nif = :nif', {
+        nif: 'no-such-nif',
+      });
       expect(result).toBeNull();
     });
   });

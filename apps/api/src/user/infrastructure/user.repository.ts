@@ -92,10 +92,18 @@ export class UserRepository implements IUserRepository {
     const user = this.toDomain(entity);
     const profile: UserProfile = Object.assign(user as unknown as UserProfile, {
       direction: entity.direction
-        ? { id: entity.direction.id, title: entity.direction.title, abriviation: entity.direction.abriviation }
+        ? {
+            id: entity.direction.id,
+            title: entity.direction.title,
+            abriviation: entity.direction.abriviation,
+          }
         : null,
       departement: entity.departement
-        ? { id: entity.departement.id, title: entity.departement.title, abriviation: entity.departement.abriviation }
+        ? {
+            id: entity.departement.id,
+            title: entity.departement.title,
+            abriviation: entity.departement.abriviation,
+          }
         : null,
     });
     return profile;

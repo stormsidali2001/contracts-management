@@ -125,7 +125,10 @@ export class VendorService {
     return saved;
   }
 
-  getVendorsStats({ startDate, endDate }: StatsParamsDTO): Promise<VendorStat[]> {
+  getVendorsStats({
+    startDate,
+    endDate,
+  }: StatsParamsDTO): Promise<VendorStat[]> {
     return this.vendorRepository.getVendorStats(startDate, endDate);
   }
 

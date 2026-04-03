@@ -1,16 +1,29 @@
-import { Controller, Post, Body, UseGuards, Query, Get, Param, Patch } from "@nestjs/common";
-import { CreateAgreementDTO, ExecuteAgreementDTO, FindAllAgreementsDTO } from "../../core/dtos/agreement.dto";
-import { AgreementService } from "../application/Agreement.service";
+import {
+  Controller,
+  Post,
+  Body,
+  UseGuards,
+  Query,
+  Get,
+  Param,
+  Patch,
+} from '@nestjs/common';
+import {
+  CreateAgreementDTO,
+  ExecuteAgreementDTO,
+  FindAllAgreementsDTO,
+} from '../../core/dtos/agreement.dto';
+import { AgreementService } from '../application/Agreement.service';
 import { ApiTags } from '@nestjs/swagger';
 import { AgreementView } from '@contracts/types';
 import { AgreementPresenter } from 'src/Agreement/infrastructure/agreement.presenter';
-import { AgreementType } from "src/core/types/agreement-type.enum";
-import { CurrentUser } from "src/auth/decorators/currentUser.decorator";
-import { JwtPayload } from "src/auth/types/JwtPayload.interface";
-import { JwtAccessTokenGuard } from "src/auth/guards/jwt-access-token.guard";
-import { RequiredRoles } from "src/auth/decorators/RequiredRoles.decorator";
-import { UserRole } from "src/core/types/UserRole.enum";
-import { RoleGuard } from "src/auth/guards/Role.guard";
+import { AgreementType } from 'src/core/types/agreement-type.enum';
+import { CurrentUser } from 'src/auth/decorators/currentUser.decorator';
+import { JwtPayload } from 'src/auth/types/JwtPayload.interface';
+import { JwtAccessTokenGuard } from 'src/auth/guards/jwt-access-token.guard';
+import { RequiredRoles } from 'src/auth/decorators/RequiredRoles.decorator';
+import { UserRole } from 'src/core/types/UserRole.enum';
+import { RoleGuard } from 'src/auth/guards/Role.guard';
 
 @ApiTags('Agreements')
 @Controller('Agreements')
@@ -19,7 +32,7 @@ export class AgreementController {
 
   @RequiredRoles(UserRole.JURIDICAL)
   @UseGuards(JwtAccessTokenGuard, RoleGuard)
-  @Post("")
+  @Post('')
   async createAgreement(@Body() agreement: CreateAgreementDTO) {
     const result = await this.AgreementService.createAgreement(agreement);
     return AgreementPresenter.from(result);
@@ -27,7 +40,10 @@ export class AgreementController {
 
   @UseGuards(JwtAccessTokenGuard)
   @Get(':id')
-  async findById(@Param("id") id: string, @Query("agreementType") agreementType: AgreementType) {
+  async findById(
+    @Param('id') id: string,
+    @Query('agreementType') agreementType: AgreementType,
+  ) {
     const result = await this.AgreementService.findById(id, agreementType);
     return result ? AgreementPresenter.from(result) : null;
   }
@@ -44,7 +60,10 @@ export class AgreementController {
       user.departementId,
       user.directionId,
     );
-    return { total: result.total, data: AgreementPresenter.fromMany(result.data) };
+    return {
+      total: result.total,
+      data: AgreementPresenter.fromMany(result.data),
+    };
   }
 
   @RequiredRoles(UserRole.JURIDICAL)
@@ -57,7 +76,7 @@ export class AgreementController {
 
   //testing routes
   @UseGuards(JwtAccessTokenGuard)
-  @Post("/test")
+  @Post('/test')
   async createAgreementTest(@Body() agreement: CreateAgreementDTO) {
     const result = await this.AgreementService.createAgreement(agreement);
     return AgreementPresenter.from(result);

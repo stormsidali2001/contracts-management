@@ -22,7 +22,9 @@ export class AgreementExecutedHandler
     const { agreementId, type, departementId, directionId } = event;
 
     const direction = await this.directionService.find(directionId);
-    const deptAbriviation = direction?.departements.find((d) => d.id === departementId)?.abriviation ?? '';
+    const deptAbriviation =
+      direction?.departements.find((d) => d.id === departementId)
+        ?.abriviation ?? '';
     const dirAbriviation = direction?.abriviation ?? '';
 
     const eventParams = {

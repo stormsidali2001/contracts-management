@@ -29,8 +29,8 @@ export class UserController {
   @UseGuards(JwtAccessTokenGuard)
   @Get('')
   async findAll(
-    @Query('offset') offset: number = 0,
-    @Query('limit') limit: number = 10,
+    @Query('offset') offset = 0,
+    @Query('limit') limit = 10,
     @Query('orderBy') orderBy: string = undefined,
     @Query('searchQuery') searchQuery: string,
     @Query('departementId') departementId: string,
@@ -84,4 +84,3 @@ export class UserController {
     return await this.userService.recieveNotifications(userId);
   }
 }
-

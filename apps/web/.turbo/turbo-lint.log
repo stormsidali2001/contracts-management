@@ -1,0 +1,7 @@
+
+
+> frontend@0.1.0 lint /Users/mac/Desktop/projects/contracts-management/apps/web
+> next lint .
+
+Invalid project directory provided, no such directory: /Users/mac/Desktop/projects/contracts-management/apps/web/lint
+[41m[30m ELIFECYCLE [39m[49m [31mCommand failed with exit code 1.[39m

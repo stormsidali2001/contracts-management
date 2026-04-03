@@ -41,7 +41,9 @@ export class VendorRepository implements IVendorRepository {
 
   async #incrementStatsForDate(date: Date): Promise<void> {
     const dateOnly = date.toISOString().slice(0, 10);
-    const existing = await this.vendorStatsRepo.findOneBy({ date: dateOnly as any });
+    const existing = await this.vendorStatsRepo.findOneBy({
+      date: dateOnly as any,
+    });
     if (existing) {
       await this.vendorStatsRepo.update(
         { id: existing.id },
@@ -147,12 +149,19 @@ export class VendorRepository implements IVendorRepository {
     return { total, data: data.map((e) => this.toDomain(e)) };
   }
 
-  async getVendorStats(startDate?: Date, endDate?: Date): Promise<VendorStat[]> {
+  async getVendorStats(
+    startDate?: Date,
+    endDate?: Date,
+  ): Promise<VendorStat[]> {
     let query = this.vendorStatsRepo.createQueryBuilder('v').orderBy('v.date');
     if (startDate) query = query.where('v.date >= :startDate', { startDate });
     if (endDate) query = query.andWhere('v.date <= :endDate', { endDate });
     const entities = await query.getMany();
-    return entities.map((e) => ({ id: e.id, date: e.date, nb_vendors: e.nb_vendors }));
+    return entities.map((e) => ({
+      id: e.id,
+      date: e.date,
+      nb_vendors: e.nb_vendors,
+    }));
   }
 
   private toDomain(entity: VendorEntity): Vendor {

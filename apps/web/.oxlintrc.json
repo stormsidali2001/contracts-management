@@ -1,0 +1,14 @@
+{
+  "$schema": "https://raw.githubusercontent.com/oxc-project/oxc/main/crates/oxc_linter/schemas/oxlintrc.schema.json",
+  "plugins": ["react", "react-hooks", "typescript", "nextjs"],
+  "env": {
+    "browser": true,
+    "es2022": true
+  },
+  "ignorePatterns": [".next/**", "node_modules/**", "out/**"],
+  "rules": {
+    "no-unused-vars": "warn",
+    "no-undef": "error",
+    "no-useless-catch": "warn"
+  }
+}

@@ -1,4 +1,9 @@
-import { Injectable, Inject, BadRequestException, ForbiddenException } from '@nestjs/common';
+import {
+  Injectable,
+  Inject,
+  BadRequestException,
+  ForbiddenException,
+} from '@nestjs/common';
 import { EventBus } from '@nestjs/cqrs';
 import { join } from 'path';
 import {

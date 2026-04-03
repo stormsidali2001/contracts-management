@@ -4,12 +4,12 @@ import { ValidatorFn } from "@/shared/utils/validation/models/validatorFn.interf
 import { InputActionType, INPUT_ACTION_BLUR, INPUT_ACTION_CHANGE, INPUT_ACTION_CLEAR } from "./models/input-action-type";
 import { InputState } from "./models/input-state.interface";
 
-export const initialInputState:InputState = {
+const initialInputState:InputState = {
     text:'',
     hasBeenTouched:false
 }
 
-export const inputReducer = (state:InputState,action:Action<InputActionType>):InputState=>{
+const inputReducer = (state:InputState,action:Action<InputActionType>):InputState=>{
         const {type , value = ''} = action;
         switch (type) {
             case INPUT_ACTION_CHANGE:

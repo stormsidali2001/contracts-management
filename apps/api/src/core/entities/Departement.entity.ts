@@ -34,4 +34,3 @@ export class DepartementEntity {
   @OneToMany((type) => EventEntity, (e) => e.departement)
   events: EventEntity[];
 }
-

@@ -39,4 +39,3 @@ export class DirectionEntity {
   @OneToMany((type) => EventEntity, (e) => e.direction)
   events: EventEntity[];
 }
-

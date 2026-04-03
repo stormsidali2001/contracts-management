@@ -21,7 +21,6 @@ function mockOf<T>(methods: (keyof T)[]): jest.Mocked<T> {
 
 // ── Fixtures ─────────────────────────────────────────────────────────────────
 
-
 function makeVendor(): Vendor {
   return Vendor.reconstitute({
     id: 'vendor-1',
@@ -51,7 +50,6 @@ function makeAgreement(): Agreement {
     vendorId: 'vendor-1',
   });
 }
-
 
 function makeCreateDto(overrides: Record<string, unknown> = {}) {
   return {

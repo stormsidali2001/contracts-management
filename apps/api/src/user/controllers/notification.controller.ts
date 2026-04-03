@@ -1,4 +1,11 @@
-import { Controller, Get, HttpCode, Param, Patch, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  HttpCode,
+  Param,
+  Patch,
+  UseGuards,
+} from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { CurrentUserId } from 'src/auth/decorators/currentUserId.decorator';
 import { JwtAccessTokenGuard } from 'src/auth/guards/jwt-access-token.guard';
@@ -18,7 +25,9 @@ export class NotificationController {
   async getUserNotifications(
     @CurrentUserId() userId: string,
   ): Promise<NotificationView[]> {
-    const result = await this.userNotificationService.getUserNotifications(userId);
+    const result = await this.userNotificationService.getUserNotifications(
+      userId,
+    );
     return NotificationPresenter.fromMany(result);
   }
 

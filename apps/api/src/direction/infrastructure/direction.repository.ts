@@ -138,7 +138,9 @@ export class DirectionRepository implements IDirectionRepository {
       .where('dp.id = :id', { id })
       .getOne();
 
-    return entity ? this.departementToDomain(entity, entity.direction?.id) : null;
+    return entity
+      ? this.departementToDomain(entity, entity.direction?.id)
+      : null;
   }
 
   async findAllDepartements(

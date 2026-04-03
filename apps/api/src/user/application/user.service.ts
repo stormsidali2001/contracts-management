@@ -86,10 +86,7 @@ export class UserService {
   }
 
   // Used by auth guards and socket adapters that only need basic user fields
-  findBy(options: {
-    id?: string;
-    role?: UserRole;
-  }): Promise<User | null> {
+  findBy(options: { id?: string; role?: UserRole }): Promise<User | null> {
     if (options.id) return this.userRepository.findById(options.id);
     return Promise.resolve(null);
   }
@@ -166,10 +163,17 @@ export class UserService {
     }));
   }
 
-  async getUserTypesShaped(): Promise<{ juridical: number; employee: number; admin: number; total: number }> {
+  async getUserTypesShaped(): Promise<{
+    juridical: number;
+    employee: number;
+    admin: number;
+    total: number;
+  }> {
     const raw = await this.getUserTypesStats({} as StatsParamsDTO);
     const result = { juridical: 0, employee: 0, admin: 0, total: 0 };
-    raw.forEach((s) => { result[s.role.toLowerCase()] = s.total; });
+    raw.forEach((s) => {
+      result[s.role.toLowerCase()] = s.total;
+    });
     result.total = result.juridical + result.admin + result.employee;
     return result;
   }

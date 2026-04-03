@@ -20,7 +20,10 @@ export class UserNotificationService {
     notifications: { userId: string; message: string }[],
   ): Promise<{ userId: string; notification: Notification }[]> {
     const saved = await this.notificationRepository.saveMany(notifications);
-    return notifications.map((n, i) => ({ userId: n.userId, notification: saved[i] }));
+    return notifications.map((n, i) => ({
+      userId: n.userId,
+      notification: saved[i],
+    }));
   }
 
   async markAsRead(notificationId: string, userId: string): Promise<void> {

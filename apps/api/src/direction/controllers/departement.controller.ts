@@ -36,7 +36,10 @@ export class DepartementController {
     @Param('id') id: string,
     @Body() departement: UpdateDepartementDTO,
   ) {
-    const result = await this.departementService.updateDepartement(id, departement);
+    const result = await this.departementService.updateDepartement(
+      id,
+      departement,
+    );
     return DepartementPresenter.from(result);
   }
 
@@ -52,12 +55,8 @@ export class DepartementController {
   }
 
   @Get('')
-  async findAll(
-    @Query('offset') offset: number = 0,
-    @Query('limit') limit: number = 10,
-  ) {
+  async findAll(@Query('offset') offset = 0, @Query('limit') limit = 10) {
     const result = await this.departementService.findAll(offset, limit);
     return DepartementPresenter.fromMany(result);
   }
 }
-

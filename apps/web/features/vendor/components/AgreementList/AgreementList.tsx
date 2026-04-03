@@ -13,7 +13,7 @@ interface PropType {
   vendorId: string;
 }
 
-const AgreementList = ({ handleClose, type = 'contract', vendorId }: PropType) => {
+const AgreementList = ({ handleClose: _handleClose, type = 'contract', vendorId }: PropType) => {
   const columns: any[] = [
     { field: 'number', headerName: 'numero', width: 200 },
     { field: 'object', headerName: 'objet', width: 200 },

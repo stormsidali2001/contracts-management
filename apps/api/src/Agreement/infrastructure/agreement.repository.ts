@@ -6,7 +6,10 @@ import { FindAllAgreementsDTO } from 'src/core/dtos/agreement.dto';
 import { PaginationResponse } from 'src/core/types/paginationResponse.interface';
 import { UserRole } from 'src/core/types/UserRole.enum';
 import { Repository } from 'typeorm';
-import { IAgreementRepository, AgreementDetail } from '../domain/agreement.repository';
+import {
+  IAgreementRepository,
+  AgreementDetail,
+} from '../domain/agreement.repository';
 import { Agreement } from '../domain/agreement.aggregate';
 
 @Injectable()
@@ -136,7 +139,8 @@ export class AgreementRepository implements IAgreementRepository {
     }
 
     if (status) query = query.andWhere('ag.status = :status', { status });
-    if (vendorId) query = query.andWhere('ag.vendorId = :vendorId', { vendorId });
+    if (vendorId)
+      query = query.andWhere('ag.vendorId = :vendorId', { vendorId });
 
     if (searchQuery && searchQuery.length >= 2) {
       query = query.andWhere(
@@ -180,8 +184,10 @@ export class AgreementRepository implements IAgreementRepository {
       );
     }
 
-    if (startDate) query = query.andWhere('ag.createdAt >= :startDate', { startDate });
-    if (endDate) query = query.andWhere('ag.createdAt <= :endDate', { endDate });
+    if (startDate)
+      query = query.andWhere('ag.createdAt >= :startDate', { startDate });
+    if (endDate)
+      query = query.andWhere('ag.createdAt <= :endDate', { endDate });
 
     return query.getRawMany();
   }
@@ -239,7 +245,10 @@ export class AgreementRepository implements IAgreementRepository {
       ? { id: entity.direction.id, abriviation: entity.direction.abriviation }
       : undefined;
     detail.departement = entity.departement
-      ? { id: entity.departement.id, abriviation: entity.departement.abriviation }
+      ? {
+          id: entity.departement.id,
+          abriviation: entity.departement.abriviation,
+        }
       : undefined;
     return detail;
   }

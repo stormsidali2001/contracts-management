@@ -51,21 +51,36 @@ describe('AgreementRepository (integration)', () => {
       `INSERT INTO vendors
          (id, num, company_name, nif, nrc, address, mobile_phone_number, home_phone_number, createdAt)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())`,
-      [vendorId, `NUM-${s}`, `Co-${s}`, `NIF-${s}`, `NRC-${s}`, '1 St', '055', '021'],
+      [
+        vendorId,
+        `NUM-${s}`,
+        `Co-${s}`,
+        `NIF-${s}`,
+        `NRC-${s}`,
+        '1 St',
+        '055',
+        '021',
+      ],
     );
   });
 
   afterAll(async () => {
     await dataSource.query('DELETE FROM vendors WHERE id = ?', [vendorId]);
-    await dataSource.query('DELETE FROM departements WHERE id = ?', [departementId]);
-    await dataSource.query('DELETE FROM directions WHERE id = ?', [directionId]);
+    await dataSource.query('DELETE FROM departements WHERE id = ?', [
+      departementId,
+    ]);
+    await dataSource.query('DELETE FROM directions WHERE id = ?', [
+      directionId,
+    ]);
     await module.close();
   });
 
   afterEach(async () => {
     if (agreementIds.length) {
       await dataSource.query(
-        `DELETE FROM agreements WHERE id IN (${agreementIds.map(() => '?').join(',')})`,
+        `DELETE FROM agreements WHERE id IN (${agreementIds
+          .map(() => '?')
+          .join(',')})`,
         [...agreementIds],
       );
       agreementIds.length = 0;
@@ -136,9 +151,18 @@ describe('AgreementRepository (integration)', () => {
       // Relation summaries are plain objects, not TypeORM entities
       expect(result.vendor).not.toBeInstanceOf(VendorEntity);
       expect(result.vendor).not.toBeInstanceOf(VendorEntity);
-      expect(result.vendor).toEqual({ id: vendorId, company_name: expect.any(String) });
-      expect(result.direction).toEqual({ id: directionId, abriviation: expect.any(String) });
-      expect(result.departement).toEqual({ id: departementId, abriviation: expect.any(String) });
+      expect(result.vendor).toEqual({
+        id: vendorId,
+        company_name: expect.any(String),
+      });
+      expect(result.direction).toEqual({
+        id: directionId,
+        abriviation: expect.any(String),
+      });
+      expect(result.departement).toEqual({
+        id: departementId,
+        abriviation: expect.any(String),
+      });
     });
 
     it('returns null for an unknown id', async () => {

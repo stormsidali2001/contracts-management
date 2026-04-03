@@ -86,7 +86,11 @@ describe('DirectionRepository (integration)', () => {
     it('persists departements along with the direction', async () => {
       const direction = buildDirection();
       directionIds.push(direction.id);
-      direction.addDepartement(uuid(), `Dept-${uuid().slice(0, 6)}`, `DP-${uuid().slice(0, 4)}`);
+      direction.addDepartement(
+        uuid(),
+        `Dept-${uuid().slice(0, 6)}`,
+        `DP-${uuid().slice(0, 4)}`,
+      );
 
       await repo.save(direction);
       const found = await repo.findById(direction.id);
@@ -100,7 +104,11 @@ describe('DirectionRepository (integration)', () => {
       const direction = buildDirection();
       directionIds.push(direction.id);
       const deptId = uuid();
-      direction.addDepartement(deptId, `Dept-${uuid().slice(0, 6)}`, `DP-${uuid().slice(0, 4)}`);
+      direction.addDepartement(
+        deptId,
+        `Dept-${uuid().slice(0, 6)}`,
+        `DP-${uuid().slice(0, 4)}`,
+      );
       await repo.save(direction);
 
       // Remove the departement and re-save
@@ -152,7 +160,11 @@ describe('DirectionRepository (integration)', () => {
       const direction = buildDirection();
       directionIds.push(direction.id);
       const deptId = uuid();
-      direction.addDepartement(deptId, `Dept-${uuid().slice(0, 6)}`, `DP-${uuid().slice(0, 4)}`);
+      direction.addDepartement(
+        deptId,
+        `Dept-${uuid().slice(0, 6)}`,
+        `DP-${uuid().slice(0, 4)}`,
+      );
       await repo.save(direction);
 
       const result = await repo.findByDepartementId(deptId);
@@ -174,7 +186,10 @@ describe('DirectionRepository (integration)', () => {
       directionIds.push(direction.id);
       await repo.save(direction);
 
-      const result = await repo.findByTitleOrAbriviation(direction.title, 'NO-MATCH');
+      const result = await repo.findByTitleOrAbriviation(
+        direction.title,
+        'NO-MATCH',
+      );
 
       expect(result).toBeInstanceOf(Direction);
       expect(result.id).toBe(direction.id);
@@ -185,7 +200,10 @@ describe('DirectionRepository (integration)', () => {
       directionIds.push(direction.id);
       await repo.save(direction);
 
-      const result = await repo.findByTitleOrAbriviation('No Match Title', direction.abriviation);
+      const result = await repo.findByTitleOrAbriviation(
+        'No Match Title',
+        direction.abriviation,
+      );
 
       expect(result).toBeInstanceOf(Direction);
       expect(result.id).toBe(direction.id);
@@ -205,7 +223,11 @@ describe('DirectionRepository (integration)', () => {
       const direction = buildDirection();
       directionIds.push(direction.id);
       const deptId = uuid();
-      direction.addDepartement(deptId, `Dept-${uuid().slice(0, 6)}`, `DP-${uuid().slice(0, 4)}`);
+      direction.addDepartement(
+        deptId,
+        `Dept-${uuid().slice(0, 6)}`,
+        `DP-${uuid().slice(0, 4)}`,
+      );
       await repo.save(direction);
 
       const result = await repo.findDepartementById(deptId);

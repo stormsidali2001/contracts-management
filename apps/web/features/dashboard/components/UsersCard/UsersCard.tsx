@@ -1,5 +1,5 @@
 'use client';
-import { LayoutGroup, motion } from 'framer-motion';
+import { LayoutGroup, motion, MotionConfig } from 'framer-motion';
 import { useState, useId } from 'react';
 import { Skeleton } from '@mui/material';
 import AdminIcon from '@/icons/AdminIcon';
@@ -49,9 +49,11 @@ const UsersCard = () => {
   );
 
   return (
-    <LayoutGroup>
-      {!expanded ? <CompactCard stats={stats} cardId={cardId} setExpanded={setExpanded} /> : <ExpandedCard stats={stats} cardId={cardId} setExpanded={setExpanded} />}
-    </LayoutGroup>
+    <MotionConfig reducedMotion="user">
+      <LayoutGroup>
+        {!expanded ? <CompactCard stats={stats} cardId={cardId} setExpanded={setExpanded} /> : <ExpandedCard stats={stats} cardId={cardId} setExpanded={setExpanded} />}
+      </LayoutGroup>
+    </MotionConfig>
   );
 };
 

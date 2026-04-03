@@ -24,6 +24,11 @@ export class EventService {
     departementId?: string | null,
     directionId?: string | null,
   ): Promise<EventEntity[]> {
-    return this.eventRepository.findPaginated(limit, role, departementId, directionId);
+    return this.eventRepository.findPaginated(
+      limit,
+      role,
+      departementId,
+      directionId,
+    );
   }
 }

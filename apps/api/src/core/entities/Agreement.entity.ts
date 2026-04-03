@@ -14,7 +14,9 @@ import { DirectionEntity } from './Direction.entity';
 import { VendorEntity } from './Vendor.entity';
 
 @Entity('agreements')
-@Index('agreement-fulltext-idx', ['number', 'object', 'observation'], { fulltext: true })
+@Index('agreement-fulltext-idx', ['number', 'object', 'observation'], {
+  fulltext: true,
+})
 export class AgreementEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;

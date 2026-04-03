@@ -1,4 +1,4 @@
-export interface PaginationResponse<T>{
-    total:number;
-    data:T[]
+export interface PaginationResponse<T> {
+  total: number;
+  data: T[];
 }

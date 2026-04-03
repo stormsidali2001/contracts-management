@@ -22,12 +22,20 @@ export class StatisticsService {
     const [userTypesRaw, vendorsStats, agreementsStats] = await Promise.all([
       this.userService.getUserTypesStats(params),
       this.vendorService.getVendorsStats(params),
-      this.getAgreementsStats(params, user.role, user.departementId, user.directionId),
+      this.getAgreementsStats(
+        params,
+        user.role,
+        user.departementId,
+        user.directionId,
+      ),
     ]);
 
     const userTypes = { juridical: 0, employee: 0, admin: 0, total: 0 };
-    userTypesRaw.forEach((s) => { userTypes[s.role.toLowerCase()] = s.total; });
-    userTypes.total = userTypes.juridical + userTypes.admin + userTypes.employee;
+    userTypesRaw.forEach((s) => {
+      userTypes[s.role.toLowerCase()] = s.total;
+    });
+    userTypes.total =
+      userTypes.juridical + userTypes.admin + userTypes.employee;
 
     return { userTypes, vendorsStats, agreementsStats };
   }
@@ -39,7 +47,13 @@ export class StatisticsService {
     directionId?: string | null,
   ) {
     const [statusRaw, typesRaw, topDirections] = await Promise.all([
-      this.agreementService.getStatusStats(role, departementId, directionId, startDate, endDate),
+      this.agreementService.getStatusStats(
+        role,
+        departementId,
+        directionId,
+        startDate,
+        endDate,
+      ),
       this.agreementService.getTypeStats(role, departementId, directionId),
       this.directionService.getTopDirection(),
     ]);

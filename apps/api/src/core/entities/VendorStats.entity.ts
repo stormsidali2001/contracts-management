@@ -11,4 +11,3 @@ export class VendorStatsEntity {
   @Column()
   nb_vendors: number;
 }
-

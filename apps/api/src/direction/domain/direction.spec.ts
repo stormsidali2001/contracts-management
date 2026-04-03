@@ -4,12 +4,20 @@ import { DirectionUpdatedEvent } from './events/direction-updated.event';
 import { DepartementAddedEvent } from './events/departement-added.event';
 import { DepartementUpdatedEvent } from './events/departement-updated.event';
 import { DepartementRemovedEvent } from './events/departement-removed.event';
-import { ConflictError, ForbiddenError, NotFoundError } from 'src/shared/domain/errors';
+import {
+  ConflictError,
+  ForbiddenError,
+  NotFoundError,
+} from 'src/shared/domain/errors';
 import { Departement } from './departement';
 
 // ── Fixtures ─────────────────────────────────────────────────────────────────
 
-function makeDept(id = 'dept-1', title = 'Dev', abriviation = 'DD'): Departement {
+function makeDept(
+  id = 'dept-1',
+  title = 'Dev',
+  abriviation = 'DD',
+): Departement {
   return Departement.create({ id, title, abriviation, directionId: 'dir-1' });
 }
 
@@ -29,7 +37,11 @@ describe('Direction aggregate', () => {
 
   describe('create', () => {
     it('emits DirectionCreatedEvent', () => {
-      const direction = Direction.create({ id: 'dir-1', title: 'Tech', abriviation: 'TD' });
+      const direction = Direction.create({
+        id: 'dir-1',
+        title: 'Tech',
+        abriviation: 'TD',
+      });
 
       const events = direction.pullEvents();
       expect(events).toHaveLength(1);
@@ -38,7 +50,11 @@ describe('Direction aggregate', () => {
     });
 
     it('emits one extra DepartementAddedEvent per initial departement added via addDepartement', () => {
-      const direction = Direction.create({ id: 'dir-1', title: 'Tech', abriviation: 'TD' });
+      const direction = Direction.create({
+        id: 'dir-1',
+        title: 'Tech',
+        abriviation: 'TD',
+      });
       direction.pullEvents(); // drain the created event
 
       direction.addDepartement('dept-1', 'Dev', 'DD');
@@ -92,8 +108,12 @@ describe('Direction aggregate', () => {
     it('throws ConflictError when title or abriviation already exists', () => {
       const direction = makeDirection(true); // has dept-1 with title Dev, abbr DD
 
-      expect(() => direction.addDepartement('dept-2', 'Dev', 'XY')).toThrow(ConflictError);
-      expect(() => direction.addDepartement('dept-3', 'Other', 'DD')).toThrow(ConflictError);
+      expect(() => direction.addDepartement('dept-2', 'Dev', 'XY')).toThrow(
+        ConflictError,
+      );
+      expect(() => direction.addDepartement('dept-3', 'Other', 'DD')).toThrow(
+        ConflictError,
+      );
       expect(direction.pullEvents()).toHaveLength(0);
     });
   });
@@ -109,12 +129,16 @@ describe('Direction aggregate', () => {
       const events = direction.pullEvents();
       expect(events).toHaveLength(1);
       expect(events[0]).toBeInstanceOf(DepartementUpdatedEvent);
-      expect((events[0] as DepartementUpdatedEvent).departementId).toBe('dept-1');
+      expect((events[0] as DepartementUpdatedEvent).departementId).toBe(
+        'dept-1',
+      );
     });
 
     it('throws NotFoundError when departement does not exist', () => {
       const direction = makeDirection();
-      expect(() => direction.updateDepartement('no-such', 'T', 'T')).toThrow(NotFoundError);
+      expect(() => direction.updateDepartement('no-such', 'T', 'T')).toThrow(
+        NotFoundError,
+      );
     });
 
     it('throws ConflictError when new title/abbr conflicts with another departement', () => {
@@ -123,7 +147,9 @@ describe('Direction aggregate', () => {
       direction.addDepartement('dept-2', 'QA', 'QA');
       direction.pullEvents();
 
-      expect(() => direction.updateDepartement('dept-2', 'Dev', 'QX')).toThrow(ConflictError);
+      expect(() => direction.updateDepartement('dept-2', 'Dev', 'QX')).toThrow(
+        ConflictError,
+      );
     });
   });
 
@@ -138,22 +164,31 @@ describe('Direction aggregate', () => {
       const events = direction.pullEvents();
       expect(events).toHaveLength(1);
       expect(events[0]).toBeInstanceOf(DepartementRemovedEvent);
-      expect((events[0] as DepartementRemovedEvent).departementId).toBe('dept-1');
+      expect((events[0] as DepartementRemovedEvent).departementId).toBe(
+        'dept-1',
+      );
     });
 
     it('throws NotFoundError when departement does not exist', () => {
       const direction = makeDirection();
-      expect(() => direction.removeDepartement('no-such')).toThrow(NotFoundError);
+      expect(() => direction.removeDepartement('no-such')).toThrow(
+        NotFoundError,
+      );
     });
 
     it('throws ForbiddenError when departement has employees', () => {
       const dept = makeDept();
       jest.spyOn(dept, 'hasEmployees').mockReturnValue(true);
       const direction = Direction.reconstitute({
-        id: 'dir-1', title: 'Tech', abriviation: 'TD', departements: [dept],
+        id: 'dir-1',
+        title: 'Tech',
+        abriviation: 'TD',
+        departements: [dept],
       });
 
-      expect(() => direction.removeDepartement('dept-1')).toThrow(ForbiddenError);
+      expect(() => direction.removeDepartement('dept-1')).toThrow(
+        ForbiddenError,
+      );
       expect(direction.pullEvents()).toHaveLength(0);
     });
   });
@@ -162,7 +197,11 @@ describe('Direction aggregate', () => {
 
   describe('pullEvents', () => {
     it('clears the event list after being called', () => {
-      const direction = Direction.create({ id: 'dir-1', title: 'T', abriviation: 'T' });
+      const direction = Direction.create({
+        id: 'dir-1',
+        title: 'T',
+        abriviation: 'T',
+      });
       expect(direction.pullEvents()).toHaveLength(1);
       expect(direction.pullEvents()).toHaveLength(0);
     });

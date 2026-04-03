@@ -55,4 +55,3 @@ export class EventEntity {
   @Column({ nullable: true })
   directionAbriviation: string;
 }
-
