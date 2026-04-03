@@ -68,7 +68,10 @@ export class NotificationsGateWay
       userId,
     );
     this.logger.debug(`request all notifications user : ${client.user.email}`);
-    void client.emit('send_all_notifications', NotificationPresenter.fromMany(notifications));
+    void client.emit(
+      'send_all_notifications',
+      NotificationPresenter.fromMany(notifications),
+    );
   }
 
   @SubscribeMessage('REQUEST_ALL_EVENTS')
@@ -85,4 +88,3 @@ export class NotificationsGateWay
     void client.emit('SEND_EVENTS', events);
   }
 }
-

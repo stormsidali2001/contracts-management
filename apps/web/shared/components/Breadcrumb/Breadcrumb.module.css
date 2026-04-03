@@ -1,38 +1,64 @@
+/* ═══════════════════════════════════════
+   Breadcrumb — Frosted pill, navy palette
+   ═══════════════════════════════════════ */
+
 .breadcrumb {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 1px;
-  margin-bottom: 8px;
+  gap: 0;
+  width: fit-content;
+  margin-bottom: 10px;
+  background: color-mix(in srgb, var(--surface) 85%, transparent);
+  border: 1px solid color-mix(in srgb, var(--navy-mid) 14%, transparent);
+  border-radius: 99px;
+  padding: 6px 14px 6px 10px;
+  backdrop-filter: blur(12px) saturate(1.4);
+  -webkit-backdrop-filter: blur(12px) saturate(1.4);
+  box-shadow:
+    0 1px 2px color-mix(in srgb, var(--navy) 5%, transparent),
+    0 4px 12px color-mix(in srgb, var(--navy-mid) 8%, transparent);
+  animation: breadcrumbIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
-/* ── Home icon ── */
+@keyframes breadcrumbIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Home icon button ── */
 .home {
   display: flex;
   align-items: center;
-  color: var(--text-muted);
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 99px;
+  background: var(--navy-mid);
+  color: #fff;
+  flex-shrink: 0;
+  transition: background 0.15s, transform 0.15s;
   line-height: 1;
-  padding: 2px;
-  border-radius: 4px;
-  transition: color 0.15s;
 }
 
 .home:hover {
-  color: var(--navy-mid);
+  background: color-mix(in srgb, var(--navy-mid) 80%, #000);
+  transform: scale(1.08);
 }
 
 /* ── Each subsequent segment ── */
 .item {
   display: flex;
   align-items: center;
-  gap: 1px;
+  gap: 0;
 }
 
-/* ── Chevron separator ── */
+/* ── Slash separator ── */
 .sep {
-  font-size: 13px !important;
-  color: var(--border);
+  font-size: 14px !important;
+  color: color-mix(in srgb, var(--navy-mid) 30%, transparent);
   flex-shrink: 0;
   pointer-events: none;
+  margin: 0 1px;
 }
 
 /* ── Ancestor link ── */
@@ -40,28 +66,43 @@
   font-size: 12px;
   font-family: 'Inter', sans-serif;
   font-weight: 500;
-  color: var(--text-muted);
+  color: color-mix(in srgb, var(--navy-mid) 75%, transparent);
   letter-spacing: 0.01em;
-  padding: 2px 3px;
-  border-radius: 4px;
-  transition: color 0.15s;
+  padding: 2px 6px;
+  border-radius: 6px;
+  transition: color 0.15s, background 0.15s;
   white-space: nowrap;
+  text-decoration: none;
 }
 
 .link:hover {
   color: var(--navy-mid);
+  background: color-mix(in srgb, var(--navy-mid) 8%, transparent);
 }
 
-/* ── Current page (last item, non-clickable) ── */
+/* ── Current page — final crumb ── */
 .current {
   font-size: 12px;
   font-family: 'Inter', sans-serif;
   font-weight: 600;
-  color: var(--text-secondary);
+  color: var(--text-primary);
   letter-spacing: 0.01em;
-  padding: 2px 3px;
+  padding: 2px 6px;
   white-space: nowrap;
-  max-width: 240px;
+  max-width: 220px;
   overflow: hidden;
   text-overflow: ellipsis;
+  position: relative;
+}
+
+/* Subtle navy underline accent on current */
+.current::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 6px;
+  right: 6px;
+  height: 1.5px;
+  border-radius: 99px;
+  background: color-mix(in srgb, var(--navy-mid) 35%, transparent);
 }

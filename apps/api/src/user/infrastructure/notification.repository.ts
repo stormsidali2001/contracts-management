@@ -35,7 +35,9 @@ export class NotificationRepository implements INotificationRepository {
     );
   }
 
-  async saveMany(items: { message: string; userId: string }[]): Promise<Notification[]> {
+  async saveMany(
+    items: { message: string; userId: string }[],
+  ): Promise<Notification[]> {
     const entities = await this.repo.save(
       items.map(({ message, userId }) => ({ message, user: { id: userId } })),
     );
@@ -45,6 +47,9 @@ export class NotificationRepository implements INotificationRepository {
   }
 
   async save(notification: Notification): Promise<void> {
-    await this.repo.update({ id: notification.id }, { isRead: notification.isRead });
+    await this.repo.update(
+      { id: notification.id },
+      { isRead: notification.isRead },
+    );
   }
 }

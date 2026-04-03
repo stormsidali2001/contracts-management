@@ -1,4 +1,9 @@
-import { INestApplicationContext, Logger, UnauthorizedException, WebSocketAdapter } from '@nestjs/common';
+import {
+  INestApplicationContext,
+  Logger,
+  UnauthorizedException,
+  WebSocketAdapter,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { IoAdapter } from '@nestjs/platform-socket.io';
@@ -24,9 +29,7 @@ export class SocketIoAdapter extends IoAdapter implements WebSocketAdapter {
     );
 
     const cors = { origin: [url1, regexUrl2] };
-    this.logger.log(
-      `Creating socket.io server — cors: ${url1} | ${regexUrl2}`,
-    );
+    this.logger.log(`Creating socket.io server — cors: ${url1} | ${regexUrl2}`);
 
     const jwtService = this.app.get(JwtService);
     this.server = super.createIOServer(port, { ...options, cors });
@@ -39,9 +42,9 @@ export class SocketIoAdapter extends IoAdapter implements WebSocketAdapter {
     this.server.adapter(createAdapter(pubClient, subClient));
     this.logger.log(`Redis adapter attached (${redisHost}:${redisPort})`);
 
-    this.server.of('notifications').use(
-      tokenMiddlewareWrapper(jwtService, this.logger, configService),
-    );
+    this.server
+      .of('notifications')
+      .use(tokenMiddlewareWrapper(jwtService, this.logger, configService));
     this.logger.log('JWT middleware set on /notifications');
 
     return this.server;

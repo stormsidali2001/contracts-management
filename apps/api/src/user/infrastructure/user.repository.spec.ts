@@ -185,8 +185,8 @@ describe('UserRepository (integration)', () => {
   describe('delete', () => {
     it('removes the user so it can no longer be found', async () => {
       const user = buildUser();
+      userIds.push(user.id); // safety net: afterEach cleans up if repo.delete throws
       await repo.save(user);
-      // Not added to userIds — the test deletes it directly
 
       await repo.delete(user.id);
 

@@ -30,6 +30,10 @@ describe('VendorRepository (integration)', () => {
   });
 
   afterAll(async () => {
+    // Clean up the vendor_stats row created for the fixed test date
+    await dataSource.query(
+      "DELETE FROM vendor_stats WHERE date = '2099-01-01'",
+    );
     await module.close();
   });
 
@@ -54,7 +58,9 @@ describe('VendorRepository (integration)', () => {
       address: '1 Test St',
       mobile_phone_number: '0551111111',
       home_phone_number: '0211111111',
-      createdAt: new Date(),
+      // Fixed far-future date so vendor_stats rows are isolated to test data
+      // and can be safely deleted in afterAll without touching real stats.
+      createdAt: new Date('2099-01-01'),
     };
   }
 
@@ -212,8 +218,8 @@ describe('VendorRepository (integration)', () => {
   describe('delete', () => {
     it('removes the vendor so it can no longer be found', async () => {
       const props = buildProps();
+      vendorIds.push(props.id); // safety net: afterEach cleans up if repo.delete throws
       await repo.save(Vendor.create(props));
-      // Do not add to vendorIds — we delete it in the test itself
 
       await repo.delete(props.id);
 
