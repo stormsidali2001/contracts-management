@@ -2,7 +2,7 @@
 import { Button, TextField } from '@mui/material';
 import { DataGrid, GridSortModel } from '@mui/x-data-grid';
 import Link from 'next/link';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useDebounce } from '@/hooks/useDebounce.hook';
 import styles from './AgreementList.module.css';
 import { useAgreements } from '@/features/contract/queries/contract.queries';
@@ -38,7 +38,6 @@ const AgreementList = ({ handleClose, type = 'contract', vendorId }: PropType) =
   const [searchQuery, setSearchQuery] = useState('');
   const [orderBy, setOrderBy] = useState<string | undefined>(undefined);
 
-  const [rowCount, setRowCount] = useState(0);
   const { data, isFetching } = useAgreements({ page, pageSize, agreementType: type, orderBy, searchQuery, vendorId });
 
   const handleSortModelChange = (sortModel: GridSortModel) => {
@@ -68,7 +67,7 @@ const AgreementList = ({ handleClose, type = 'contract', vendorId }: PropType) =
         <DataGrid
           autoHeight
           rows={data?.data ?? []}
-          rowCount={rowCount}
+          rowCount={data?.total ?? 0}
           loading={isFetching}
           pagination
           paginationModel={{ page, pageSize }}
