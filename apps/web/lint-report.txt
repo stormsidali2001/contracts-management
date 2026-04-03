@@ -1,0 +1,467 @@
+
+> frontend@0.1.0 lint /Users/mac/Desktop/projects/contracts-management/apps/web
+> oxlint .
+
+
+  x eslint(no-undef): 'module' is not defined.
+   ,-[next.config.js:7:1]
+ 6 | 
+ 7 | module.exports = nextConfig
+   : ^^^^^^
+   `----
+  help: Either define 'module' or remove the reference to it. If 'module' is a global variable, add it to the 'globals' configuration.
+
+  x eslint(no-undef): 'process' is not defined.
+     ,-[app/signin/page.tsx:128:16]
+ 127 | 
+ 128 |               {process.env.NODE_ENV === 'development' && (
+     :                ^^^^^^^
+ 129 |                 <div className={styles.devAccounts}>
+     `----
+  help: Either define 'process' or remove the reference to it. If 'process' is a global variable, add it to the 'globals' configuration.
+
+  ! eslint-plugin-next(no-img-element): Using `<img>` could result in slower LCP and higher bandwidth.
+    ,-[features/dashboard/components/Topbar/PopoverContent/PopoverContent.tsx:58:12]
+ 57 |         <div className={styles.profilImgContainer}>
+ 58 |           <img src={user?.imageUrl ? `${BASE_URL}/users/image/${user?.imageUrl}` : '/blank-profile-picture.png'} alt="Photo de profil" />
+    :            ^|^
+    :             `-- Use `<Image />` from `next/image` instead.
+ 59 |         </div>
+    `----
+  help: Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images.
+  note: See https://nextjs.org/docs/messages/no-img-element
+
+  ! eslint-plugin-react-hooks(exhaustive-deps): React Hook useEffect has missing dependencies: 'withRequestInterceptor', 'withResponseInterceptor', and 'jwt'
+    ,-[hooks/auth/useAxiosPrivate.ts:20:9]
+ 19 | 
+ 20 |     if (withRequestInterceptor) {
+    :         ^^^^^^^^^^^^^^^^^^^^^^
+ 21 |       requestInterceptor = axios.interceptors.request.use(
+ 22 |         (config) => {
+ 23 |           if (!config?.headers) return config;
+ 24 |           if (!config.headers['Authorization']) {
+ 25 |             config.headers['Authorization'] = `Bearer ${jwt}`;
+    :                                                         ^^^
+ 26 |           }
+ 27 |           return config;
+ 28 |         },
+ 29 |         (error) => Promise.reject(error),
+ 30 |       );
+ 31 |     }
+ 32 | 
+ 33 |     if (withResponseInterceptor) {
+    :         ^^^^^^^^^^^^^^^^^^^^^^^
+ 34 |       responseInterceptor = axios.interceptors.response.use(
+    `----
+    ,-[hooks/auth/useAxiosPrivate.ts:57:6]
+ 56 |     };
+ 57 |   }, []);
+    :      ^^
+ 58 | 
+    `----
+  help: Either include it or remove the dependency array.
+
+  ! eslint-plugin-react-hooks(exhaustive-deps): React Hook useEffect has missing dependencies: 'end_date', and 'start_date'
+    ,-[features/dashboard/components/VendorsCard/ChangeDate/ChangeDate.tsx:29:6]
+ 26 |   useEffect(() => {
+ 27 |     if (start_date) setByStartDate(true);
+    :         ^^^^^^^^^^
+ 28 |     if (end_date)   setByEndDate(true);
+    :         ^^^^^^^^
+ 29 |   }, []);
+    :      ^^
+ 30 | 
+    `----
+  help: Either include it or remove the dependency array.
+
+  ! eslint-plugin-react-hooks(exhaustive-deps): React Hook useEffect has a missing dependency: 'markAsRead'
+    ,-[features/dashboard/components/Topbar/Notifications/Notifications.tsx:90:6]
+ 64 |               setTimeout(() => {
+ 65 |                 markAsRead(id);
+    :                 ^^^^^|^^^^
+    :                      `-- useEffect uses `markAsRead` here
+ 66 |                 observer.unobserve(entry.target);
+ 67 |                 timers.delete(entry.target);
+ 68 |               }, 600),
+ 69 |             );
+ 70 |           } else {
+ 71 |             const t = timers.get(entry.target);
+ 72 |             if (t !== undefined) {
+ 73 |               clearTimeout(t);
+ 74 |               timers.delete(entry.target);
+ 75 |             }
+ 76 |           }
+ 77 |         });
+ 78 |       },
+ 79 |       { root: list, threshold: 0.1 },
+ 80 |     );
+ 81 | 
+ 82 |     list.querySelectorAll<HTMLElement>('[data-notif-id]').forEach((el) => {
+ 83 |       observer.observe(el);
+ 84 |     });
+ 85 | 
+ 86 |     return () => {
+ 87 |       observer.disconnect();
+ 88 |       timers.forEach(clearTimeout);
+ 89 |     };
+ 90 |   }, [filtered]);
+    :      ^^^^^^^^^^
+ 91 | 
+    `----
+  help: Either include it or remove the dependency array.
+
+  ! eslint-plugin-react-hooks(exhaustive-deps): React Hook useEffect has a missing dependency: 'directions'
+    ,-[features/contract/components/CreateContract/CreateContract.tsx:54:6]
+ 48 |     if (directions.length === 0) return;
+ 49 |     const direction = directions[Math.floor(Math.random() * (directions.length - 1))];
+    :                       ^^^^^|^^^^
+    :                            `-- useEffect uses `directions` here
+ 50 |     setSelectedDirection({ label: direction?.title, value: direction.id });
+ 51 |     if (direction.departements.length === 0) return;
+ 52 |     const departement = direction.departements[Math.floor(Math.random() * (direction.departements.length - 1))];
+ 53 |     setSelectedDepartement({ label: departement?.title, value: departement.id as string });
+ 54 |   }, [directions.length]);
+    :      ^^^^^^^^^^^^^^^^^^^
+ 55 | 
+    `----
+  help: Either include it or remove the dependency array.
+
+  ! eslint-plugin-next(no-img-element): Using `<img>` could result in slower LCP and higher bandwidth.
+    ,-[features/dashboard/components/Topbar/Topbar.tsx:75:20]
+ 74 |               <div className={styles.profilImgContainer}>
+ 75 |                   <img src={user?.imageUrl?`${BASE_URL}/users/image/${user?.imageUrl}`:"/blank-profile-picture.png"} alt="profile picture"/>
+    :                    ^|^
+    :                     `-- Use `<Image />` from `next/image` instead.
+ 76 |                   <LittleChevronIcon className={styles.chevron}/>
+    `----
+  help: Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images.
+  note: See https://nextjs.org/docs/messages/no-img-element
+
+  ! eslint-plugin-react-hooks(exhaustive-deps): React Hook useEffect has missing dependencies: 'setConnected', 'receiveNotifications', 'receiveUserEvent', 'receiveUserEvents', 'setConnecting', 'receiveNotification', 'setCredentials', and 'isConnected'
+     ,-[features/notification/hooks/useNotificationSocket.ts:102:6]
+  33 |   useEffect(() => {
+  34 |     if (!jwt || isConnected || socketRef.current) return;
+     :                 ^^^^^^^^^^^
+  35 | 
+  36 |     setConnecting();
+     :     ^^^^^^^^^^^^^
+  37 |     const socket = io(`${SERVER_URL}/notifications`, {
+  38 |       auth: { token: jwt },
+  39 |       transports: ['websocket'],
+  40 |     });
+  41 |     socketRef.current = socket;
+  42 | 
+  43 |     socket.on('connect', () => {
+  44 |       setConnected();
+     :       ^^^^^^^^^^^^
+  45 |       socket.emit(NotificationEvents.RequestAllNotifications);
+  46 |       socket.emit(UserEventsTypes.REQUEST_ALL_EVENTS);
+  47 |     });
+  48 | 
+  49 |     socket.on('connect_error', async (err) => {
+  50 |       if (err?.message?.includes('unauthorized')) {
+  51 |         socket.close();
+  52 |         socket.removeAllListeners();
+  53 |         setTimeout(async () => {
+  54 |           try {
+  55 |             const data = await authService.refresh();
+  56 |             setCredentials(data.user!, data.jwt!);
+     :             ^^^^^^^^^^^^^^
+  57 |             socket.auth = { token: data.jwt };
+  58 |             socket.connect();
+  59 |           } catch {
+  60 |             // refresh failed — user will be redirected by withPrivate
+  61 |           }
+  62 |         }, 2000);
+  63 |       }
+  64 |     });
+  65 | 
+  66 |     socket.on(NotificationEvents.SendAllNotifications, (notifications: Notification[]) => {
+  67 |       receiveNotifications(notifications);
+     :       ^^^^^^^^^^^^^^^^^^^^
+  68 |     });
+  69 | 
+  70 |     socket.on(NotificationEvents.sendNotification, (notification: NotificationView) => {
+  71 |       receiveNotification({ id: notification.id, message: notification.message, isRead: notification.isRead });
+     :       ^^^^^^^^^^^^^^^^^^^
+  72 |     });
+  73 | 
+  74 |     socket.on(UserEventsTypes.SEND_EVENTS, (events: UserEvent[]) => {
+  75 |       receiveUserEvents(events);
+     :       ^^^^^^^^^^^^^^^^^
+  76 |     });
+  77 | 
+  78 |     socket.on(UserEventsTypes.SEND_EVENT, (event: UserEvent) => {
+  79 |       receiveUserEvent(event);
+     :       ^^^^^^^^^^^^^^^^
+  80 |     });
+  81 | 
+  82 |     socket.on('STATS_UPDATE', (update: StatsUpdatePayload) => {
+  83 |       const { start_date, end_date } = useDateRangeStore.getState();
+  84 |       if (start_date || end_date) return;
+  85 |       queryClient.setQueryData(
+  86 |         statisticsKeys.detail(undefined, undefined),
+  87 |         (old: Statistics | undefined) => (old ? { ...old, ...update } : old),
+  88 |       );
+  89 |     });
+  90 | 
+  91 |     socket.on('INC_AGR', () => {
+  92 |       const { start_date, end_date } = useDateRangeStore.getState();
+  93 |       if (start_date || end_date) return;
+  94 |       queryClient.invalidateQueries({ queryKey: statisticsKeys.all });
+  95 |     });
+  96 | 
+  97 |     return () => {
+  98 |       socket.removeAllListeners();
+  99 |       socket.disconnect();
+ 100 |       socketRef.current = null;
+ 101 |     };
+ 102 |   }, [jwt]);
+     :      ^^^^^
+ 103 | }
+     `----
+  help: Either include it or remove the dependency array.
+
+  ! eslint-plugin-react-hooks(exhaustive-deps): React Hook useEffect has a missing dependency: 'showSnackbar'
+    ,-[features/forgot-password/components/ForgotPassword/ForgotPassword.tsx:23:6]
+ 21 |     if (!isError) return;
+ 22 |     showSnackbar({ message: 'pas de compte relier a cette addresse email' });
+    :     ^^^^^^|^^^^^
+    :           `-- useEffect uses `showSnackbar` here
+ 23 |   }, [isError]);
+    :      ^^^^^^^^^
+ 24 | 
+    `----
+  help: Either include it or remove the dependency array.
+
+  ! eslint-plugin-react-hooks(exhaustive-deps): React Hook useEffect has a missing dependency: 'showSnackbar'
+    ,-[features/forgot-password/components/ForgotPassword/ForgotPassword.tsx:28:6]
+ 26 |     if (!isSuccess) return;
+ 27 |     showSnackbar({ message: 'demande de re-intialization est envoyee', severty: 'success' });
+    :     ^^^^^^|^^^^^
+    :           `-- useEffect uses `showSnackbar` here
+ 28 |   }, [isSuccess]);
+    :      ^^^^^^^^^^^
+ 29 | 
+    `----
+  help: Either include it or remove the dependency array.
+
+  ! eslint-plugin-next(no-img-element): Using `<img>` could result in slower LCP and higher bandwidth.
+    ,-[features/forgot-password/components/ForgotPassword/ForgotPassword.tsx:52:10]
+ 51 |       <div className={styles.rightWrapper}>
+ 52 |         <img src="boat2v1.jpg" alt="" />
+    :          ^|^     ^^^^^^|^^^^^^
+    :           |            `-- Use a static image import instead.
+    :           `-- Use `<Image />` from `next/image` instead.
+ 53 |       </div>
+    `----
+  help: Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images.
+  note: See https://nextjs.org/docs/messages/no-img-element
+
+  x eslint(no-undef): 'process' is not defined.
+   ,-[api/axios.ts:3:27]
+ 2 | 
+ 3 | export const SERVER_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080";
+   :                           ^^^^^^^
+ 4 | export const BASE_URL = `${SERVER_URL}/api`;
+   `----
+  help: Either define 'process' or remove the reference to it. If 'process' is a global variable, add it to the 'globals' configuration.
+
+  ! eslint-plugin-react-hooks(exhaustive-deps): React Hook useEffect has missing dependencies: 'success', and 'params.id'
+    ,-[features/dashboard/VendorActions/VendorActions.tsx:35:6]
+ 31 |   useEffect(() => {
+ 32 |     if (params.id === rowId && success) {
+    :         ^^^^^^                 ^^^^^^^
+ 33 |       setSuccess(false);
+ 34 |     }
+ 35 |   }, [rowId]);
+    :      ^^^^^^^
+ 36 | 
+    `----
+  help: Either include it or remove the dependency array.
+
+  ! eslint-plugin-react-hooks(exhaustive-deps): React Hook useEffect has missing dependencies: 'directions', 'initialFilters.directionId', 'initialFilters.departementId', 'initialFilters.active', and 'initialFilters.role'
+     ,-[features/dashboard/components/UsersFilter/UsersFilter.tsx:113:6]
+ 103 |   useEffect(() => {
+ 104 |     if (initialFilters.role)   { setIsByRole(true); setRole(initialFilters.role); }
+     :         ^^^^^^^^^^^^^^
+ 105 |     if (initialFilters.active) { setAccountState(true); setIsActive(true); }
+     :         ^^^^^^^^^^^^^^
+ 106 |     if (initialFilters.directionId && initialFilters.departementId) {
+     :         ^^^^^^^^^^^^^^                ^^^^^^^^^^^^^^
+ 107 |       setIsByDirection(true);
+ 108 |       const selDir = directions.find((d) => d.id === initialFilters.directionId);
+     :                      ^^^^^^^^^^
+ 109 |       setSelectedDirection({ label: selDir?.abriviation ?? '', value: initialFilters.directionId });
+ 110 |       const selDep = selDir?.departements.find((dp) => dp.id === initialFilters.departementId);
+ 111 |       setSelectedDepartement({ value: initialFilters.departementId, label: selDep?.abriviation ?? '' });
+ 112 |     }
+ 113 |   }, []);
+     :      ^^
+ 114 | 
+     `----
+  help: Either include it or remove the dependency array.
+
+  ! eslint-plugin-react-hooks(exhaustive-deps): React Hook useEffect has a missing dependency: 'showSnackbar'
+    ,-[features/forgot-password/components/RestPassword/ResetPassword.tsx:31:6]
+ 29 |     if (!isError) return;
+ 30 |     showSnackbar({ message: 'erreur' });
+    :     ^^^^^^|^^^^^
+    :           `-- useEffect uses `showSnackbar` here
+ 31 |   }, [isError]);
+    :      ^^^^^^^^^
+ 32 | 
+    `----
+  help: Either include it or remove the dependency array.
+
+  ! eslint-plugin-react-hooks(exhaustive-deps): React Hook useEffect has a missing dependency: 'showSnackbar'
+    ,-[features/forgot-password/components/RestPassword/ResetPassword.tsx:36:6]
+ 34 |     if (!isSuccess) return;
+ 35 |     showSnackbar({ message: 'votre mot de passe a etee re-intializee', severty: 'success' });
+    :     ^^^^^^|^^^^^
+    :           `-- useEffect uses `showSnackbar` here
+ 36 |   }, [isSuccess]);
+    :      ^^^^^^^^^^^
+ 37 | 
+    `----
+  help: Either include it or remove the dependency array.
+
+  ! eslint-plugin-next(no-img-element): Using `<img>` could result in slower LCP and higher bandwidth.
+    ,-[features/forgot-password/components/RestPassword/ResetPassword.tsx:61:10]
+ 60 |       <div className={styles.rightWrapper}>
+ 61 |         <img src="boat1v1.jpg" alt="" />
+    :          ^|^     ^^^^^^|^^^^^^
+    :           |            `-- Use a static image import instead.
+    :           `-- Use `<Image />` from `next/image` instead.
+ 62 |       </div>
+    `----
+  help: Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images.
+  note: See https://nextjs.org/docs/messages/no-img-element
+
+  ! eslint-plugin-react-hooks(exhaustive-deps): React Hook useEffect has missing dependencies: 'initialFilters.departementId', 'initialFilters.start_date', 'directions', 'initialFilters.amount_max', 'initialFilters.status', 'initialFilters.end_date', 'initialFilters.amount_min', and 'initialFilters.directionId'
+     ,-[features/contract/components/ContractsFilter/ContractsFilter.tsx:129:6]
+ 112 |   useEffect(() => {
+ 113 |     if (initialFilters.directionId && initialFilters.departementId) {
+     :         ^^^^^^^^^^^^^^                ^^^^^^^^^^^^^^
+ 114 |       setIsByDirection(true);
+ 115 |       const selDir = directions.find((d) => d.id === initialFilters.directionId);
+     :                      ^^^^^^^^^^
+ 116 |       setSelectedDirection({ label: selDir?.abriviation ?? '', value: initialFilters.directionId });
+ 117 |       const selDep = selDir?.departements.find((dp) => dp.id === initialFilters.departementId);
+ 118 |       setSelectedDepartement({ value: initialFilters.departementId, label: selDep?.abriviation ?? '' });
+ 119 |     }
+ 120 |     if (initialFilters.amount_min !== undefined && initialFilters.amount_max !== undefined) {
+     :         ^^^^^^^^^^^^^^                             ^^^^^^^^^^^^^^
+ 121 |       setIsByAmount(true); setMinAmount(initialFilters.amount_min); setMaxAmount(initialFilters.amount_max);
+ 122 |     }
+ 123 |     if (initialFilters.start_date && initialFilters.end_date) {
+     :         ^^^^^^^^^^^^^^               ^^^^^^^^^^^^^^
+ 124 |       setIsByDate(true); setStartDate(dayjs(initialFilters.start_date)); setEndDate(dayjs(initialFilters.end_date));
+ 125 |     }
+ 126 |     if (initialFilters.status) {
+     :         ^^^^^^^^^^^^^^
+ 127 |       setIsByStatus(true); setSelectedStatus({ label: initialFilters.status, value: initialFilters.status });
+ 128 |     }
+ 129 |   }, []);
+     :      ^^
+ 130 | 
+     `----
+  help: Either include it or remove the dependency array.
+
+  ! eslint-plugin-next(no-img-element): Using `<img>` could result in slower LCP and higher bandwidth.
+    ,-[features/settings/components/Settings/Settings.tsx:46:18]
+ 45 |             {user?.imageUrl
+ 46 |               ? <img src={`${BASE_URL}/users/image/${user.imageUrl}`} alt="Profil" />
+    :                  ^|^
+    :                   `-- Use `<Image />` from `next/image` instead.
+ 47 |               : <span className={styles.profileAvatarFallback}>{user?.firstName?.[0]?.toUpperCase() ?? '?'}</span>
+    `----
+  help: Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images.
+  note: See https://nextjs.org/docs/messages/no-img-element
+
+  ! eslint-plugin-react-hooks(exhaustive-deps): React Hook useEffect has missing dependencies: 'success', and 'params.id'
+    ,-[features/dashboard/components/UserActions/UserActions.tsx:35:6]
+ 31 |   useEffect(() => {
+ 32 |     if (params.id === rowId && success) {
+    :         ^^^^^^                 ^^^^^^^
+ 33 |       setSuccess(false);
+ 34 |     }
+ 35 |   }, [rowId]);
+    :      ^^^^^^^
+ 36 | 
+    `----
+  help: Either include it or remove the dependency array.
+
+  ! eslint-plugin-react-hooks(exhaustive-deps): React Hook useEffect has missing dependencies: 'isAuthenticated', 'jwt', and 'refresh'
+    ,-[features/auth/components/withPrivate.tsx:22:6]
+ 14 |   useEffect(() => {
+ 15 |     if (jwt || isAuthenticated) {
+    :         ^^^    ^^^^^^^^^^^^^^^
+ 16 |       setInitialized(true);
+ 17 |       return;
+ 18 |     }
+ 19 |     refresh()
+    :     ^^^^^^^
+ 20 |       .catch(() => {})
+ 21 |       .finally(() => setInitialized(true));
+ 22 |   }, []);
+    :      ^^
+ 23 | 
+    `----
+  help: Either include it or remove the dependency array.
+
+  ! eslint-plugin-react-hooks(exhaustive-deps): React Hook useEffect has missing dependencies: 'router', and 'exceptionPaths'
+    ,-[features/auth/components/withPrivate.tsx:29:6]
+ 25 |     if (!initialized) return;
+ 26 |     if (!isAuthenticated && !exceptionPaths.includes(pathname)) {
+    :                              ^^^^^^^^^^^^^^
+ 27 |       router.replace('/signin');
+    :       ^^^^^^
+ 28 |     }
+ 29 |   }, [isAuthenticated, initialized, pathname]);
+    :      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 30 | 
+    `----
+  help: Either include it or remove the dependency array.
+
+  ! eslint-plugin-react-hooks(exhaustive-deps): React Hook useEffect has a missing dependency: 'directions'
+    ,-[features/dashboard/components/CreateUser/CreateUser.tsx:72:6]
+ 66 |     if (directions.length === 0) return;
+ 67 |     const direction = directions[Math.floor(Math.random() * directions.length)];
+    :                       ^^^^^|^^^^
+    :                            `-- useEffect uses `directions` here
+ 68 |     setSelectedDirection({ label: direction?.title, value: direction.id });
+ 69 |     if (direction.departements.length === 0) return;
+ 70 |     const departement = direction.departements[Math.floor(Math.random() * direction.departements.length)];
+ 71 |     setSelectedDepartement({ label: departement?.title, value: departement.id as string });
+ 72 |   }, [directions.length]);
+    :      ^^^^^^^^^^^^^^^^^^^
+ 73 | 
+    `----
+  help: Either include it or remove the dependency array.
+
+  ! eslint-plugin-next(no-img-element): Using `<img>` could result in slower LCP and higher bandwidth.
+     ,-[features/dashboard/components/CreateUser/CreateUser.tsx:246:22]
+ 245 |                 {profileImgPreview
+ 246 |                   ? <img src={profileImgPreview} alt="Preview" className={styles.uploadPreviewImg} />
+     :                      ^|^
+     :                       `-- Use `<Image />` from `next/image` instead.
+ 247 |                   : (
+     `----
+  help: Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images.
+  note: See https://nextjs.org/docs/messages/no-img-element
+
+  ! eslint-plugin-next(no-img-element): Using `<img>` could result in slower LCP and higher bandwidth.
+     ,-[features/dashboard/components/CreateUser/CreateUser.tsx:260:20]
+ 259 |                 <div className={styles.profilePreviewAvatar}>
+ 260 |                   <img src={profileImgPreview || '/blank-profile-picture.png'} alt="Profil" />
+     :                    ^|^
+     :                     `-- Use `<Image />` from `next/image` instead.
+ 261 |                 </div>
+     `----
+  help: Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images.
+  note: See https://nextjs.org/docs/messages/no-img-element
+
+Found 23 warnings and 3 errors.
+Finished in 40ms on 135 files with 107 rules using 8 threads.
+ ELIFECYCLE  Command failed with exit code 1.

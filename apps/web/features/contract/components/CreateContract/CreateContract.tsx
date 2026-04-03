@@ -51,6 +51,7 @@ const CreateContract = ({ handleClose, type = 'contract' }: Proptype) => {
     if (direction.departements.length === 0) return;
     const departement = direction.departements[Math.floor(Math.random() * (direction.departements.length - 1))];
     setSelectedDepartement({ label: departement?.title, value: departement.id as string });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [directions.length]);
 
   function nextBtnshouldBeDisabled(): boolean {

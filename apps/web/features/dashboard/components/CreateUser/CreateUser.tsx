@@ -69,6 +69,7 @@ const CreateUser = ({ handleClose }: Proptype) => {
     if (direction.departements.length === 0) return;
     const departement = direction.departements[Math.floor(Math.random() * direction.departements.length)];
     setSelectedDepartement({ label: departement?.title, value: departement.id as string });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [directions.length]);
 
   useEffect(() => {
@@ -243,6 +244,7 @@ const CreateUser = ({ handleClose }: Proptype) => {
               {/* Upload zone */}
               <label htmlFor="input-file-upload" className={styles.uploadZone}>
                 {profileImgPreview
+                  /* eslint-disable-next-line @next/next/no-img-element */
                   ? <img src={profileImgPreview} alt="Preview" className={styles.uploadPreviewImg} />
                   : (
                     <>
@@ -257,6 +259,7 @@ const CreateUser = ({ handleClose }: Proptype) => {
               {/* Preview card */}
               <div className={styles.profilePreview}>
                 <div className={styles.profilePreviewAvatar}>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={profileImgPreview || '/blank-profile-picture.png'} alt="Profil" />
                 </div>
                 <div className={styles.profilePreviewInfo}>

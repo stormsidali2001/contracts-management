@@ -110,6 +110,7 @@ const UsersFilter = ({ handleSetFilters, handleClose, initialFilters }: PropType
       const selDep = selDir?.departements.find((dp) => dp.id === initialFilters.departementId);
       setSelectedDepartement({ value: initialFilters.departementId, label: selDep?.abriviation ?? '' });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const activeCount = [isByDirection, isByRole, accountState].filter(Boolean).length;

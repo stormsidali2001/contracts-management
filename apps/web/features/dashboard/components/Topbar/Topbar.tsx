@@ -1,6 +1,7 @@
 'use client';
 
 import { Badge, Button, IconButton, Popover } from '@mui/material'
+import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { MouseEvent, useId, useState } from 'react'
 import { useAuthStore } from '@/features/auth/store/auth.store';
@@ -72,7 +73,7 @@ const Topbar = () => {
             </IconButton>
             <Button onClick={handleClick} aria-describedby={popoverId}>
               <div className={styles.profilImgContainer}>
-                  <img src={user?.imageUrl?`${BASE_URL}/users/image/${user?.imageUrl}`:"/blank-profile-picture.png"} alt="profile picture"/>
+                  <Image src={user?.imageUrl ? `${BASE_URL}/users/image/${user?.imageUrl}` : '/blank-profile-picture.png'} alt="profile picture" width={36} height={36} unoptimized />
                   <LittleChevronIcon className={styles.chevron}/>
               </div>
             </Button>

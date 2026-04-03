@@ -32,6 +32,7 @@ const UserActions = ({ params, rowId, setRowId }: any) => {
     if (params.id === rowId && success) {
       setSuccess(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rowId]);
 
   return (

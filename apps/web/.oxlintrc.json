@@ -3,7 +3,8 @@
   "plugins": ["react", "react-hooks", "typescript", "nextjs"],
   "env": {
     "browser": true,
-    "es2022": true
+    "es2022": true,
+    "node": true
   },
   "ignorePatterns": [".next/**", "node_modules/**", "out/**"],
   "rules": {

@@ -54,6 +54,7 @@ const useAxiosPrivate = (props: PropType) => {
       if (withRequestInterceptor) axios.interceptors.request.eject(requestInterceptor);
       if (withResponseInterceptor) axios.interceptors.response.eject(responseInterceptor);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return axios;

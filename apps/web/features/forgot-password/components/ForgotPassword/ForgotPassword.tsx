@@ -6,6 +6,7 @@ import styles from './ForgotPassword.module.css';
 import { useForgotPassword } from '@/features/auth/queries/auth.queries';
 import { useSnackbarStore } from '@/features/ui/store/snackbar.store';
 import { useEffect } from 'react';
+import Image from 'next/image';
 
 const ForgotPassword = () => {
   const { text: email, textChangeHandler: emailChangeHandler, shouldDisplayError, inputBlurHandler: emailBlurHandler } = useInput(validateEmail);
@@ -20,12 +21,12 @@ const ForgotPassword = () => {
   useEffect(() => {
     if (!isError) return;
     showSnackbar({ message: 'pas de compte relier a cette addresse email' });
-  }, [isError]);
+  }, [isError, showSnackbar]);
 
   useEffect(() => {
     if (!isSuccess) return;
     showSnackbar({ message: 'demande de re-intialization est envoyee', severty: 'success' });
-  }, [isSuccess]);
+  }, [isSuccess, showSnackbar]);
 
   return (
     <div className={styles.container}>
@@ -48,8 +49,8 @@ const ForgotPassword = () => {
           )}
         </div>
       </div>
-      <div className={styles.rightWrapper}>
-        <img src="boat2v1.jpg" alt="" />
+      <div className={styles.rightWrapper} style={{ position: 'relative' }}>
+        <Image src="/boat2v1.jpg" alt="" fill style={{ objectFit: 'cover' }} />
       </div>
     </div>
   );

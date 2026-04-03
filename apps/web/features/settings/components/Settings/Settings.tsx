@@ -1,5 +1,6 @@
 'use client';
 import { CircularProgress, Modal } from '@mui/material';
+import Image from 'next/image';
 import { useState } from 'react';
 import { useAuthStore } from '@/features/auth/store/auth.store';
 import ChangePassword from '@/features/settings/ChangePassword/ChangePassword';
@@ -43,7 +44,7 @@ const Settings = () => {
         <div className={styles.profileCard}>
           <div className={styles.profileAvatar}>
             {user?.imageUrl
-              ? <img src={`${BASE_URL}/users/image/${user.imageUrl}`} alt="Profil" />
+              ? <Image src={`${BASE_URL}/users/image/${user.imageUrl}`} alt="Profil" width={64} height={64} unoptimized />
               : <span className={styles.profileAvatarFallback}>{user?.firstName?.[0]?.toUpperCase() ?? '?'}</span>
             }
           </div>

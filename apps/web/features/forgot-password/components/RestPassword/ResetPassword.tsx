@@ -3,6 +3,7 @@
 import { Button, CircularProgress, TextField } from '@mui/material';
 import { useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
+import Image from 'next/image';
 import useInput from '@/hooks/input/use-input';
 import { validatePasswordLength } from '@/shared/utils/validation/length';
 import GavelOutlinedIcon from '@mui/icons-material/GavelOutlined';
@@ -28,12 +29,12 @@ const ResetPassword = () => {
   useEffect(() => {
     if (!isError) return;
     showSnackbar({ message: 'erreur' });
-  }, [isError]);
+  }, [isError, showSnackbar]);
 
   useEffect(() => {
     if (!isSuccess) return;
     showSnackbar({ message: 'votre mot de passe a etee re-intializee', severty: 'success' });
-  }, [isSuccess]);
+  }, [isSuccess, showSnackbar]);
 
   return (
     <div className={styles.container}>
@@ -57,8 +58,8 @@ const ResetPassword = () => {
           )}
         </div>
       </div>
-      <div className={styles.rightWrapper}>
-        <img src="boat1v1.jpg" alt="" />
+      <div className={styles.rightWrapper} style={{ position: 'relative' }}>
+        <Image src="/boat1v1.jpg" alt="" fill style={{ objectFit: 'cover' }} />
       </div>
     </div>
   );

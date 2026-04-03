@@ -6,6 +6,7 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import TourIcon from '@mui/icons-material/Explore';
 import { Divider } from '@mui/material';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useAuthStore } from '@/features/auth/store/auth.store';
 import { useMemo } from 'react';
 import { useLogout } from '@/features/auth/queries/auth.queries';
@@ -55,7 +56,7 @@ const PopoverContent = () => {
     <div className={styles.container}>
       <div className={styles.header}>
         <div className={styles.profilImgContainer}>
-          <img src={user?.imageUrl ? `${BASE_URL}/users/image/${user?.imageUrl}` : '/blank-profile-picture.png'} alt="Photo de profil" />
+          <Image src={user?.imageUrl ? `${BASE_URL}/users/image/${user?.imageUrl}` : '/blank-profile-picture.png'} alt="Photo de profil" width={36} height={36} unoptimized />
         </div>
         <div className={styles.userInfos}>
           <span>{`${user?.firstName}  ${user?.lastName}`}</span>

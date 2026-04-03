@@ -126,6 +126,7 @@ const ContractsFilter = ({ handleSetFilters, handleClose, initialFilters }: Prop
     if (initialFilters.status) {
       setIsByStatus(true); setSelectedStatus({ label: initialFilters.status, value: initialFilters.status });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const activeCount = [isByDirection, isByDate, isByStatus, isByAmount].filter(Boolean).length;

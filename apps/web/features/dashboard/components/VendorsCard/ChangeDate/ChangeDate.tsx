@@ -26,6 +26,7 @@ const ChangeDate = ({ start_date, end_date, handleClose }: PropType) => {
   useEffect(() => {
     if (start_date) setByStartDate(true);
     if (end_date)   setByEndDate(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleApply = () => {

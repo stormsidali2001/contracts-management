@@ -87,6 +87,7 @@ const Notifications = () => {
       observer.disconnect();
       timers.forEach(clearTimeout);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filtered]);
 
   return (

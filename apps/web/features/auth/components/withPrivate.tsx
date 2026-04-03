@@ -19,6 +19,7 @@ function WithPrivate({ children }: any) {
     refresh()
       .catch(() => {})
       .finally(() => setInitialized(true));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -26,6 +27,7 @@ function WithPrivate({ children }: any) {
     if (!isAuthenticated && !exceptionPaths.includes(pathname)) {
       router.replace('/signin');
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated, initialized, pathname]);
 
   if (!initialized && !exceptionPaths.includes(pathname)) return null;
