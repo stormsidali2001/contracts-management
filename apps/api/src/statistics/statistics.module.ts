@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { AgreementModule } from 'src/Agreement/Agreement.module';
 import { UserModule } from 'src/user/user.module';
 import { DirectionModule } from 'src/direction/direction.module';
-import { StatisticsController } from './statistics.controller';
+import { StatisticsController } from './infrastructure/statistics.controller';
 import { StatisticsService } from './application/statistics.service';
 
 @Module({

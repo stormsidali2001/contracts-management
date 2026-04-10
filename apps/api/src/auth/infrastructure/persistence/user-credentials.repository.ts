@@ -3,11 +3,11 @@ import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
 import { PasswordTokenEntity } from 'src/core/entities/PasswordToken';
 import { UserCredentialsEntity } from 'src/core/entities/UserCredentials.entity';
-import { IUserCredentialsRepository } from '../domain/user-credentials.repository';
+import { IUserCredentialsRepository } from '../../domain/persistence/user-credentials.repository';
 import {
   PasswordToken,
   UserCredentials,
-} from '../domain/user-credentials.aggregate';
+} from '../../domain/user-credentials.aggregate';
 
 @Injectable()
 export class UserCredentialsRepository implements IUserCredentialsRepository {

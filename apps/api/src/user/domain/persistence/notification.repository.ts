@@ -1,4 +1,4 @@
-import { Notification } from './notification';
+import { Notification } from '../notification';
 
 export interface INotificationRepository {
   findByUserId(userId: string): Promise<Notification[]>;

@@ -1,6 +1,6 @@
 import { PaginationResponse } from 'src/core/types/paginationResponse.interface';
-import { VendorStat } from './vendor-stat';
-import { Vendor } from './vendor.aggregate';
+import { VendorStat } from '../vendor-stat';
+import { Vendor } from '../vendor.aggregate';
 
 /**
  * Read model — adds relation counts for the vendor detail view.

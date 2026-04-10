@@ -19,7 +19,7 @@ import {
   AgreementDetail,
   IAgreementRepository,
   AGREEMENT_REPOSITORY,
-} from '../domain/agreement.repository';
+} from '../domain/persistence/agreement.repository';
 import { VendorService } from './vendor.service';
 import { v4 as uuid } from 'uuid';
 import {
@@ -30,7 +30,7 @@ import {
 import {
   isFileExtensionSafe,
   removeFile,
-} from 'src/Agreement/config/agreementStorage.config';
+} from 'src/Agreement/infrastructure/config/agreementStorage.config';
 
 @Injectable()
 export class AgreementService {

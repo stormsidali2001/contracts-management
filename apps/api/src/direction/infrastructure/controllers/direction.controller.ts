@@ -16,11 +16,11 @@ import {
 } from 'src/core/dtos/direction.dto';
 import { DirectionView } from '@contracts/types';
 import { DirectionPresenter } from 'src/direction/infrastructure/direction.presenter';
-import { DirectionService } from '../application/direction.service';
+import { DirectionService } from '../../application/direction.service';
 import { ApiTags } from '@nestjs/swagger';
-import { JwtAccessTokenGuard } from 'src/auth/guards/jwt-access-token.guard';
-import { RoleGuard } from 'src/auth/guards/Role.guard';
-import { RequiredRoles } from 'src/auth/decorators/RequiredRoles.decorator';
+import { JwtAccessTokenGuard } from 'src/auth/infrastructure/guards/jwt-access-token.guard';
+import { RoleGuard } from 'src/auth/infrastructure/guards/Role.guard';
+import { RequiredRoles } from 'src/auth/infrastructure/decorators/RequiredRoles.decorator';
 import { UserRole } from 'src/core/types/UserRole.enum';
 
 @ApiTags('directions')

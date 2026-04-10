@@ -9,12 +9,12 @@ import {
   Patch,
   Delete,
 } from '@nestjs/common';
-import { RequiredRoles } from 'src/auth/decorators/RequiredRoles.decorator';
-import { JwtAccessTokenGuard } from 'src/auth/guards/jwt-access-token.guard';
-import { RoleGuard } from 'src/auth/guards/Role.guard';
+import { RequiredRoles } from 'src/auth/infrastructure/decorators/RequiredRoles.decorator';
+import { JwtAccessTokenGuard } from 'src/auth/infrastructure/guards/jwt-access-token.guard';
+import { RoleGuard } from 'src/auth/infrastructure/guards/Role.guard';
 import { CreateVendorDTO, UpdateVendorDTO } from 'src/core/dtos/vendor.dto';
 import { UserRole } from 'src/core/types/UserRole.enum';
-import { VendorService } from '../application/vendor.service';
+import { VendorService } from '../../application/vendor.service';
 import { ApiTags } from '@nestjs/swagger';
 import { VendorView, VendorStatsView } from '@contracts/types';
 import { VendorPresenter } from 'src/Agreement/infrastructure/vendor.presenter';

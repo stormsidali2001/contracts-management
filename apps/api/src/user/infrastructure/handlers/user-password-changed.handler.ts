@@ -3,11 +3,11 @@ import { Inject, Injectable } from '@nestjs/common';
 import { Entity } from 'src/core/types/entity.enum';
 import { Operation } from 'src/core/types/operation.enum';
 import { EventService } from 'src/Event/application/Event.service';
-import { SocketStateService } from 'src/socket/SocketState.service';
-import { IUserRepository, USER_REPOSITORY } from '../domain/user.repository';
-import { NotificationPresenter } from '../infrastructure/notification.presenter';
-import { UserNotificationService } from '../application/user-notification.service';
-import { UserPasswordChangedEvent } from '../domain/events/user-password-changed.event';
+import { SocketStateService } from 'src/socket/infrastructure/SocketState.service';
+import { IUserRepository, USER_REPOSITORY } from '../../domain/persistence/user.repository';
+import { NotificationPresenter } from '../notification.presenter';
+import { UserNotificationService } from '../../application/user-notification.service';
+import { UserPasswordChangedEvent } from '../../domain/events/user-password-changed.event';
 
 @Injectable()
 @EventsHandler(UserPasswordChangedEvent)

@@ -1,8 +1,8 @@
 import { Body, Controller, Get, Query, UseGuards } from '@nestjs/common';
-import { CurrentUserId } from 'src/auth/decorators/currentUserId.decorator';
-import { JwtAccessTokenGuard } from 'src/auth/guards/jwt-access-token.guard';
+import { CurrentUserId } from 'src/auth/infrastructure/decorators/currentUserId.decorator';
+import { JwtAccessTokenGuard } from 'src/auth/infrastructure/guards/jwt-access-token.guard';
 import { StatsParamsDTO } from 'src/core/dtos/stats.dto';
-import { StatisticsService } from './application/statistics.service';
+import { StatisticsService } from '../application/statistics.service';
 
 @Controller('statistics')
 export class StatisticsController {

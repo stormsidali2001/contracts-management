@@ -12,12 +12,12 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { Express } from 'express';
-import { CurrentUserId } from 'src/auth/decorators/currentUserId.decorator';
-import { JwtAccessTokenGuard } from 'src/auth/guards/jwt-access-token.guard';
-import { Public } from 'src/auth/decorators/Public.decorator';
-import { imageStorageConfig } from 'src/shared/utils/image-storage.config';
-import { FileUploadDto } from 'src/user/dto/file-upload.dto';
-import { UserService } from '../application/user.service';
+import { CurrentUserId } from 'src/auth/infrastructure/decorators/currentUserId.decorator';
+import { JwtAccessTokenGuard } from 'src/auth/infrastructure/guards/jwt-access-token.guard';
+import { Public } from 'src/auth/infrastructure/decorators/Public.decorator';
+import { imageStorageConfig } from 'src/shared/infrastructure/utils/image-storage.config';
+import { FileUploadDto } from 'src/user/infrastructure/dto/file-upload.dto';
+import { UserService } from '../../application/user.service';
 
 interface ImageUploadResponse {
   filename: string;

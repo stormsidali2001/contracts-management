@@ -8,9 +8,9 @@ import { Repository } from 'typeorm';
 import {
   IVendorRepository,
   VendorWithCounts,
-} from '../domain/vendor.repository';
-import { Vendor } from '../domain/vendor.aggregate';
-import { VendorStat } from '../domain/vendor-stat';
+} from '../../domain/persistence/vendor.repository';
+import { Vendor } from '../../domain/vendor.aggregate';
+import { VendorStat } from '../../domain/vendor-stat';
 
 @Injectable()
 export class VendorRepository implements IVendorRepository {

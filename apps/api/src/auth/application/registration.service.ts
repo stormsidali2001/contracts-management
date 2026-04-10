@@ -5,9 +5,9 @@ import { v4 as uuidv4 } from 'uuid';
 import {
   IUserCredentialsRepository,
   USER_CREDENTIALS_REPOSITORY,
-} from '../domain/user-credentials.repository';
+} from '../domain/persistence/user-credentials.repository';
 import { UserCredentials } from '../domain/user-credentials.aggregate';
-import { HashService } from '../services/hash.service';
+import { HashService } from '../infrastructure/services/hash.service';
 import { ConflictError } from 'src/shared/domain/errors';
 import { randomBytes } from 'crypto';
 

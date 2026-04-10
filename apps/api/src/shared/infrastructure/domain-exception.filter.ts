@@ -13,7 +13,7 @@ import {
   NotFoundError,
   UnauthorizedError,
   ValidationError,
-} from './domain/errors';
+} from '../domain/errors';
 
 @Catch(DomainError)
 export class DomainExceptionFilter implements ExceptionFilter {

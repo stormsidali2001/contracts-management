@@ -7,9 +7,9 @@ import {
 import {
   IUserCredentialsRepository,
   USER_CREDENTIALS_REPOSITORY,
-} from '../domain/user-credentials.repository';
-import { HashService } from '../services/hash.service';
-import { EmailService } from 'src/shared/email/email.service';
+} from '../domain/persistence/user-credentials.repository';
+import { HashService } from '../infrastructure/services/hash.service';
+import { EmailService } from 'src/shared/infrastructure/email/email.service';
 import { UserService } from 'src/user/application/user.service';
 import {
   NotFoundError,

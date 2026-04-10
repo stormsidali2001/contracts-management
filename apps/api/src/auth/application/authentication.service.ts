@@ -4,10 +4,10 @@ import { UserService } from 'src/user/application/user.service';
 import {
   IUserCredentialsRepository,
   USER_CREDENTIALS_REPOSITORY,
-} from '../domain/user-credentials.repository';
-import { HashService } from '../services/hash.service';
-import { TokenService } from '../services/token.service';
-import { JwtPayload } from '../types/JwtPayload.interface';
+} from '../domain/persistence/user-credentials.repository';
+import { HashService } from '../infrastructure/services/hash.service';
+import { TokenService } from '../infrastructure/services/token.service';
+import { JwtPayload } from '../infrastructure/types/JwtPayload.interface';
 import {
   NotFoundError,
   ForbiddenError,

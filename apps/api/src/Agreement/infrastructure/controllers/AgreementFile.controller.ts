@@ -10,11 +10,11 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
-import { Public } from 'src/auth/decorators/Public.decorator';
-import { JwtAccessTokenGuard } from 'src/auth/guards/jwt-access-token.guard';
-import { agreementStorageConfig } from 'src/Agreement/config/agreementStorage.config';
-import { FileUploadDto } from 'src/Agreement/types/file-upload.dto';
-import { AgreementService } from '../application/Agreement.service';
+import { Public } from 'src/auth/infrastructure/decorators/Public.decorator';
+import { JwtAccessTokenGuard } from 'src/auth/infrastructure/guards/jwt-access-token.guard';
+import { agreementStorageConfig } from 'src/Agreement/infrastructure/config/agreementStorage.config';
+import { FileUploadDto } from 'src/Agreement/infrastructure/types/file-upload.dto';
+import { AgreementService } from '../../application/Agreement.service';
 
 interface DocumentUploadResponse {
   filename: string;

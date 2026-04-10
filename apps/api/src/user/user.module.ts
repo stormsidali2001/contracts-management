@@ -5,20 +5,20 @@ import { NotificationEntity } from 'src/core/entities/Notification.entity';
 import { UserEntity } from 'src/core/entities/User.entity';
 import { DirectionModule } from 'src/direction/direction.module';
 import { EventModule } from 'src/Event/Event.module';
-import { NotificationController } from './controllers/notification.controller';
-import { UserImageController } from './controllers/user-image.controller';
-import { UserController } from './controllers/user.controller';
-import { USER_REPOSITORY } from './domain/user.repository';
-import { NOTIFICATION_REPOSITORY } from './domain/notification.repository';
-import { NotificationsGateWay } from './Notification.gateway';
-import { NotificationRepository } from './infrastructure/notification.repository';
+import { NotificationController } from './infrastructure/controllers/notification.controller';
+import { UserImageController } from './infrastructure/controllers/user-image.controller';
+import { UserController } from './infrastructure/controllers/user.controller';
+import { USER_REPOSITORY } from './domain/persistence/user.repository';
+import { NOTIFICATION_REPOSITORY } from './domain/persistence/notification.repository';
+import { NotificationsGateWay } from './infrastructure/Notification.gateway';
+import { NotificationRepository } from './infrastructure/persistence/notification.repository';
 import { UserNotificationService } from './application/user-notification.service';
-import { UserRepository } from './infrastructure/user.repository';
+import { UserRepository } from './infrastructure/persistence/user.repository';
 import { UserService } from './application/user.service';
-import { UserCreatedHandler } from './handlers/user-created.handler';
-import { UserUpdatedHandler } from './handlers/user-updated.handler';
-import { UserDeletedHandler } from './handlers/user-deleted.handler';
-import { UserPasswordChangedHandler } from './handlers/user-password-changed.handler';
+import { UserCreatedHandler } from './infrastructure/handlers/user-created.handler';
+import { UserUpdatedHandler } from './infrastructure/handlers/user-updated.handler';
+import { UserDeletedHandler } from './infrastructure/handlers/user-deleted.handler';
+import { UserPasswordChangedHandler } from './infrastructure/handlers/user-password-changed.handler';
 
 const eventHandlers = [
   UserCreatedHandler,

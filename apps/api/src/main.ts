@@ -5,9 +5,9 @@ import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { SwaggerModule } from '@nestjs/swagger';
-import { SocketIoAdapter } from './shared/Socket-io.adapter';
+import { SocketIoAdapter } from './shared/infrastructure/Socket-io.adapter';
 import * as cookieParser from 'cookie-parser';
-import { SocketStateService } from './socket/SocketState.service';
+import { SocketStateService } from './socket/infrastructure/SocketState.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);

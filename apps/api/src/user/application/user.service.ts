@@ -10,7 +10,7 @@ import { join } from 'path';
 import {
   isFileExtensionSafe,
   removeFile,
-} from 'src/shared/utils/image-storage.config';
+} from 'src/shared/infrastructure/utils/image-storage.config';
 import { CreateUserDTO, UpdateUserDTO } from 'src/core/dtos/user.dto';
 import { PaginationResponse } from 'src/core/types/paginationResponse.interface';
 import { UserRole } from 'src/core/types/UserRole.enum';
@@ -22,7 +22,7 @@ import {
   IUserRepository,
   UserProfile,
   USER_REPOSITORY,
-} from '../domain/user.repository';
+} from '../domain/persistence/user.repository';
 import {
   ConflictError,
   ForbiddenError,

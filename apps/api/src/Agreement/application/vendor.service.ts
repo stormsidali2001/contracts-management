@@ -10,7 +10,7 @@ import {
   IVendorRepository,
   VendorWithCounts,
   VENDOR_REPOSITORY,
-} from '../domain/vendor.repository';
+} from '../domain/persistence/vendor.repository';
 import {
   ConflictError,
   ForbiddenError,

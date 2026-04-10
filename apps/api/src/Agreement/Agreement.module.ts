@@ -9,20 +9,22 @@ import { VendorStatsEntity } from 'src/core/entities/VendorStats.entity';
 import { DirectionModule } from 'src/direction/direction.module';
 import { EventModule } from 'src/Event/Event.module';
 import { UserModule } from 'src/user/user.module';
-import { AgreementController } from './controllers/Agreement.controller';
-import { AgreementFileController } from './controllers/AgreementFile.controller';
-import { VendorController } from './controllers/Vendor.controller';
-import { AgreementRepository } from './infrastructure/agreement.repository';
-import { VendorRepository } from './infrastructure/vendor.repository';
+import { AgreementController } from './infrastructure/controllers/Agreement.controller';
+import { AgreementFileController } from './infrastructure/controllers/AgreementFile.controller';
+import { VendorController } from './infrastructure/controllers/Vendor.controller';
+import { AgreementRepository } from './infrastructure/persistence/agreement.repository';
+import { VendorRepository } from './infrastructure/persistence/vendor.repository';
 import { AgreementService } from './application/Agreement.service';
 import { VendorService } from './application/vendor.service';
-import { AGREEMENT_REPOSITORY } from './domain/agreement.repository';
-import { VENDOR_REPOSITORY } from './domain/vendor.repository';
-import { AgreementCreatedHandler } from './handlers/agreement-created.handler';
-import { AgreementExecutedHandler } from './handlers/agreement-executed.handler';
-import { VendorCreatedHandler } from './handlers/vendor-created.handler';
-import { VendorUpdatedHandler } from './handlers/vendor-updated.handler';
-import { VendorDeletedHandler } from './handlers/vendor-deleted.handler';
+import { AGREEMENT_REPOSITORY } from './domain/persistence/agreement.repository';
+import { VENDOR_REPOSITORY } from './domain/persistence/vendor.repository';
+import { AgreementCreatedHandler } from './infrastructure/handlers/agreement-created.handler';
+import { AgreementExecutedHandler } from './infrastructure/handlers/agreement-executed.handler';
+import { VendorCreatedHandler } from './infrastructure/handlers/vendor-created.handler';
+import { VendorUpdatedHandler } from './infrastructure/handlers/vendor-updated.handler';
+import { VendorDeletedHandler } from './infrastructure/handlers/vendor-deleted.handler';
+import { ContractExpiringHandler } from './infrastructure/handlers/contract-expiring.handler';
+import { ContractExpiryService } from './application/contract-expiry.service';
 
 const eventHandlers = [
   AgreementCreatedHandler,
@@ -30,6 +32,7 @@ const eventHandlers = [
   VendorCreatedHandler,
   VendorUpdatedHandler,
   VendorDeletedHandler,
+  ContractExpiringHandler,
 ];
 
 @Module({
@@ -51,6 +54,7 @@ const eventHandlers = [
     { provide: VENDOR_REPOSITORY, useClass: VendorRepository },
     AgreementService,
     VendorService,
+    ContractExpiryService,
     ...eventHandlers,
   ],
   exports: [AgreementService, VendorService],

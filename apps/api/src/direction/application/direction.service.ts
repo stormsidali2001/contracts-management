@@ -9,7 +9,7 @@ import { Direction } from '../domain/direction';
 import {
   DIRECTION_REPOSITORY,
   IDirectionRepository,
-} from '../domain/direction.repository';
+} from '../domain/persistence/direction.repository';
 import { DirectionDeletedEvent } from '../domain/events/direction-deleted.event';
 import {
   ConflictError,

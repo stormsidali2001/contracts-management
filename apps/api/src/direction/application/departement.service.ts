@@ -9,7 +9,7 @@ import { Departement } from '../domain/departement';
 import {
   DIRECTION_REPOSITORY,
   IDirectionRepository,
-} from '../domain/direction.repository';
+} from '../domain/persistence/direction.repository';
 import { NotFoundError } from 'src/shared/domain/errors';
 
 @Injectable()

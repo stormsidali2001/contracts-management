@@ -6,8 +6,8 @@ import { VendorEntity } from 'src/core/entities/Vendor.entity';
 import { VendorStatsEntity } from 'src/core/entities/VendorStats.entity';
 import { typeOrmTestingModule } from 'src/test-utils/typeorm-testing';
 import { VendorRepository } from './vendor.repository';
-import { Vendor } from '../domain/vendor.aggregate';
-import { VendorStat } from '../domain/vendor-stat';
+import { Vendor } from '../../domain/vendor.aggregate';
+import { VendorStat } from '../../domain/vendor-stat';
 
 describe('VendorRepository (integration)', () => {
   let module: TestingModule;

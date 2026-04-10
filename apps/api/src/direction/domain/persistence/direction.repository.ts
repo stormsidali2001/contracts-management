@@ -1,5 +1,5 @@
-import { Departement } from './departement';
-import { Direction } from './direction';
+import { Departement } from '../departement';
+import { Direction } from '../direction';
 
 export interface IDirectionRepository {
   /**

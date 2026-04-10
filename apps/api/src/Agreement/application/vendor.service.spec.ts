@@ -1,5 +1,5 @@
 import { VendorService } from './vendor.service';
-import { IVendorRepository } from '../domain/vendor.repository';
+import { IVendorRepository } from '../domain/persistence/vendor.repository';
 import { Vendor } from '../domain/vendor.aggregate';
 import {
   ConflictError,

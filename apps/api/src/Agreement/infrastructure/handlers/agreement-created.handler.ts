@@ -5,7 +5,7 @@ import { Entity } from 'src/core/types/entity.enum';
 import { Operation } from 'src/core/types/operation.enum';
 import { UserRole } from 'src/core/types/UserRole.enum';
 import { EventService } from 'src/Event/application/Event.service';
-import { SocketStateService } from 'src/socket/SocketState.service';
+import { SocketStateService } from 'src/socket/infrastructure/SocketState.service';
 import { DirectionService } from 'src/direction/application/direction.service';
 import { UserService } from 'src/user/application/user.service';
 import { NotificationPresenter } from 'src/user/infrastructure/notification.presenter';
@@ -13,8 +13,8 @@ import { UserNotificationService } from 'src/user/application/user-notification.
 import {
   IVendorRepository,
   VENDOR_REPOSITORY,
-} from '../domain/vendor.repository';
-import { AgreementCreatedEvent } from '../domain/events/agreement-created.event';
+} from '../../domain/persistence/vendor.repository';
+import { AgreementCreatedEvent } from '../../domain/events/agreement-created.event';
 
 @Injectable()
 @EventsHandler(AgreementCreatedEvent)

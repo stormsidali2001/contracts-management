@@ -3,9 +3,9 @@ import { Injectable } from '@nestjs/common';
 import { Entity } from 'src/core/types/entity.enum';
 import { Operation } from 'src/core/types/operation.enum';
 import { EventService } from 'src/Event/application/Event.service';
-import { SocketStateService } from 'src/socket/SocketState.service';
-import { VendorService } from '../application/vendor.service';
-import { VendorDeletedEvent } from '../domain/events/vendor-deleted.event';
+import { SocketStateService } from 'src/socket/infrastructure/SocketState.service';
+import { VendorService } from '../../application/vendor.service';
+import { VendorDeletedEvent } from '../../domain/events/vendor-deleted.event';
 
 @Injectable()
 @EventsHandler(VendorDeletedEvent)

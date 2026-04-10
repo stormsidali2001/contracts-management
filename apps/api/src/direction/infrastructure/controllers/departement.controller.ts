@@ -9,12 +9,12 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { JwtAccessTokenGuard } from 'src/auth/guards/jwt-access-token.guard';
+import { JwtAccessTokenGuard } from 'src/auth/infrastructure/guards/jwt-access-token.guard';
 import {
   CreateDepartementDTO,
   UpdateDepartementDTO,
 } from 'src/core/dtos/departement.dto';
-import { DepartementService } from '../application/departement.service';
+import { DepartementService } from '../../application/departement.service';
 import { DepartementView } from '@contracts/types';
 import { DepartementPresenter } from 'src/direction/infrastructure/departement.presenter';
 import { ApiTags } from '@nestjs/swagger';

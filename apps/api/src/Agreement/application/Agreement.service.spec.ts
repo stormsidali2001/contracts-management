@@ -1,5 +1,5 @@
 import { AgreementService } from './Agreement.service';
-import { IAgreementRepository } from '../domain/agreement.repository';
+import { IAgreementRepository } from '../domain/persistence/agreement.repository';
 import { Agreement } from '../domain/agreement.aggregate';
 import { Vendor } from '../domain/vendor.aggregate';
 
@@ -84,6 +84,7 @@ describe('AgreementService', () => {
       'findPaginated',
       'getStatusStats',
       'getTypeStats',
+      'findExpiringContracts',
     ]);
     vendorService = { findBy: jest.fn() };
     eventBus = { publishAll: jest.fn() };

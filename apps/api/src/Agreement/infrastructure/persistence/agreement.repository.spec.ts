@@ -6,7 +6,7 @@ import { AgreementEntity } from 'src/core/entities/Agreement.entity';
 import { VendorEntity } from 'src/core/entities/Vendor.entity';
 import { typeOrmTestingModule } from 'src/test-utils/typeorm-testing';
 import { AgreementRepository } from './agreement.repository';
-import { Agreement } from '../domain/agreement.aggregate';
+import { Agreement } from '../../domain/agreement.aggregate';
 import { AgreementType } from 'src/core/types/agreement-type.enum';
 
 describe('AgreementRepository (integration)', () => {
@@ -188,6 +188,55 @@ describe('AgreementRepository (integration)', () => {
 
     it('returns null for an unknown id', async () => {
       expect(await repo.findByIdForExecution(uuid())).toBeNull();
+    });
+  });
+
+  // ── findExpiringContracts ─────────────────────────────────────────────────
+
+  describe('findExpiringContracts', () => {
+    it('returns agreements whose execution_end_date is exactly N days from today', async () => {
+      const agreement = buildAgreement();
+      agreementIds.push(agreement.id);
+      await repo.save(agreement);
+
+      // Set execution_end_date to exactly 7 days from now via raw SQL
+      await dataSource.query(
+        'UPDATE agreements SET execution_end_date = DATE_ADD(CURDATE(), INTERVAL 7 DAY) WHERE id = ?',
+        [agreement.id],
+      );
+
+      const results = await repo.findExpiringContracts(7);
+      const found = results.find((a) => a.id === agreement.id);
+
+      expect(found).toBeDefined();
+      expect(found).toBeInstanceOf(Agreement);
+    });
+
+    it('does not return agreements expiring on a different day', async () => {
+      const agreement = buildAgreement();
+      agreementIds.push(agreement.id);
+      await repo.save(agreement);
+
+      await dataSource.query(
+        'UPDATE agreements SET execution_end_date = DATE_ADD(CURDATE(), INTERVAL 14 DAY) WHERE id = ?',
+        [agreement.id],
+      );
+
+      const results = await repo.findExpiringContracts(7);
+      const found = results.find((a) => a.id === agreement.id);
+
+      expect(found).toBeUndefined();
+    });
+
+    it('does not return agreements with no execution_end_date', async () => {
+      const agreement = buildAgreement();
+      agreementIds.push(agreement.id);
+      await repo.save(agreement);
+
+      const results = await repo.findExpiringContracts(0);
+      const found = results.find((a) => a.id === agreement.id);
+
+      expect(found).toBeUndefined();
     });
   });
 

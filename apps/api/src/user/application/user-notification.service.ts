@@ -3,7 +3,7 @@ import { Notification } from 'src/user/domain/notification';
 import {
   INotificationRepository,
   NOTIFICATION_REPOSITORY,
-} from 'src/user/domain/notification.repository';
+} from 'src/user/domain/persistence/notification.repository';
 
 @Injectable()
 export class UserNotificationService {

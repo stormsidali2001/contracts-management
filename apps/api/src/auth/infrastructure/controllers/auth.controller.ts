@@ -9,9 +9,9 @@ import {
   Logger,
 } from '@nestjs/common';
 import { PermissionsView } from '@contracts/types';
-import { AccessPolicy } from './domain/access-policy';
-import { CurrentUser } from './decorators/currentUser.decorator';
-import { JwtPayload } from './types/JwtPayload.interface';
+import { AccessPolicy } from '../../domain/access-policy';
+import { CurrentUser } from '../decorators/currentUser.decorator';
+import { JwtPayload } from '../types/JwtPayload.interface';
 import {
   ConnectedUserResetPassword,
   CreateUserDTO,
@@ -19,17 +19,17 @@ import {
   LoginUserDTO,
   ResetPasswordDTO,
 } from 'src/core/dtos/user.dto';
-import { AuthService } from './application/auth.service';
+import { AuthService } from '../../application/auth.service';
 import { UserPresenter } from 'src/user/infrastructure/user.presenter';
 import { ApiTags } from '@nestjs/swagger';
-import { JwtAccessTokenGuard } from './guards/jwt-access-token.guard';
+import { JwtAccessTokenGuard } from '../guards/jwt-access-token.guard';
 import { UserRole } from 'src/core/types/UserRole.enum';
 import { Response } from 'express';
 import { ConfigService } from '@nestjs/config';
-import { JwtRefreshTokenGuard } from './guards/jwt-refresh-token.guard';
-import { CurrentUserId } from './decorators/currentUserId.decorator';
-import { RequiredRoles } from './decorators/RequiredRoles.decorator';
-import { Public } from './decorators/Public.decorator';
+import { JwtRefreshTokenGuard } from '../guards/jwt-refresh-token.guard';
+import { CurrentUserId } from '../decorators/currentUserId.decorator';
+import { RequiredRoles } from '../decorators/RequiredRoles.decorator';
+import { Public } from '../decorators/Public.decorator';
 
 @ApiTags('auth')
 @Controller('auth')

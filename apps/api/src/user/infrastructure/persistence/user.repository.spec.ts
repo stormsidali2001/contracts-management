@@ -6,7 +6,7 @@ import { UserEntity } from 'src/core/entities/User.entity';
 import { NotificationEntity } from 'src/core/entities/Notification.entity';
 import { typeOrmTestingModule } from 'src/test-utils/typeorm-testing';
 import { UserRepository } from './user.repository';
-import { User } from '../domain/user.aggregate';
+import { User } from '../../domain/user.aggregate';
 import { UserRole } from 'src/core/types/UserRole.enum';
 
 describe('UserRepository (integration)', () => {

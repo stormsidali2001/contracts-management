@@ -2,7 +2,7 @@ import { AgreementType } from 'src/core/types/agreement-type.enum';
 import { FindAllAgreementsDTO } from 'src/core/dtos/agreement.dto';
 import { PaginationResponse } from 'src/core/types/paginationResponse.interface';
 import { UserRole } from 'src/core/types/UserRole.enum';
-import { Agreement } from './agreement.aggregate';
+import { Agreement } from '../agreement.aggregate';
 
 /**
  * Read model — assembles agreement data with relation info for detail views.
@@ -56,6 +56,13 @@ export interface IAgreementRepository {
     userDepartementId?: string,
     userDirectionId?: string,
   ): Promise<{ type: string; total: string }[]>;
+
+  /**
+   * Returns contracts/conventions currently in execution whose end date
+   * falls exactly `daysUntilExpiry` days from today (midnight-to-midnight).
+   * Used by the daily expiry notification cron job.
+   */
+  findExpiringContracts(daysUntilExpiry: number): Promise<Agreement[]>;
 }
 
 export const AGREEMENT_REPOSITORY = Symbol('IAgreementRepository');

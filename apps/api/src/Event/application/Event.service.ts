@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { CreateEventDTO } from 'src/core/entities/event.dto';
 import { UserRole } from 'src/core/types/UserRole.enum';
 import { EventEntity } from 'src/core/entities/Event.entity';
-import { EventRepository } from '../event.repository';
+import { EventRepository } from '../infrastructure/persistence/event.repository';
 
 @Injectable()
 export class EventService {

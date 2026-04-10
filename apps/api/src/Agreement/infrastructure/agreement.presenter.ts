@@ -1,6 +1,6 @@
 import { AgreementView } from '@contracts/types';
 import { Agreement } from 'src/Agreement/domain/agreement.aggregate';
-import { AgreementDetail } from 'src/Agreement/domain/agreement.repository';
+import { AgreementDetail } from 'src/Agreement/domain/persistence/agreement.repository';
 
 export class AgreementPresenter {
   static from(source: Agreement | AgreementDetail): AgreementView {

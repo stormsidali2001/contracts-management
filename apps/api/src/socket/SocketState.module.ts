@@ -1,6 +1,6 @@
 import { Global, Module } from '@nestjs/common';
-import { RedisEmitterService } from './redis-emitter.service';
-import { SocketStateService } from './SocketState.service';
+import { RedisEmitterService } from './infrastructure/redis-emitter.service';
+import { SocketStateService } from './infrastructure/SocketState.service';
 
 @Global()
 @Module({

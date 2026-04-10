@@ -10,16 +10,16 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { CurrentUserId } from 'src/auth/decorators/currentUserId.decorator';
-import { RequiredRoles } from 'src/auth/decorators/RequiredRoles.decorator';
-import { JwtAccessTokenGuard } from 'src/auth/guards/jwt-access-token.guard';
-import { RoleGuard } from 'src/auth/guards/Role.guard';
+import { CurrentUserId } from 'src/auth/infrastructure/decorators/currentUserId.decorator';
+import { RequiredRoles } from 'src/auth/infrastructure/decorators/RequiredRoles.decorator';
+import { JwtAccessTokenGuard } from 'src/auth/infrastructure/guards/jwt-access-token.guard';
+import { RoleGuard } from 'src/auth/infrastructure/guards/Role.guard';
 import { PaginationResponse } from 'src/core/types/paginationResponse.interface';
 import { UserRole } from 'src/core/types/UserRole.enum';
 import { UserView } from '@contracts/types';
 import { UserPresenter } from 'src/user/infrastructure/user.presenter';
-import { UpdateUserDTO } from '../../core/dtos/user.dto';
-import { UserService } from '../application/user.service';
+import { UpdateUserDTO } from '../../../core/dtos/user.dto';
+import { UserService } from '../../application/user.service';
 
 @ApiTags('users')
 @Controller('users')

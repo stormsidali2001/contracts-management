@@ -3,9 +3,9 @@ import { Injectable } from '@nestjs/common';
 import { Entity } from 'src/core/types/entity.enum';
 import { Operation } from 'src/core/types/operation.enum';
 import { EventService } from 'src/Event/application/Event.service';
-import { SocketStateService } from 'src/socket/SocketState.service';
+import { SocketStateService } from 'src/socket/infrastructure/SocketState.service';
 import { DirectionService } from 'src/direction/application/direction.service';
-import { AgreementExecutedEvent } from '../domain/events/agreement-executed.event';
+import { AgreementExecutedEvent } from '../../domain/events/agreement-executed.event';
 
 @Injectable()
 @EventsHandler(AgreementExecutedEvent)

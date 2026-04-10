@@ -6,8 +6,8 @@ import { UserEntity } from 'src/core/entities/User.entity';
 import { UserRole } from 'src/core/types/UserRole.enum';
 import { PaginationResponse } from 'src/core/types/paginationResponse.interface';
 import { StatsParamsDTO } from 'src/core/dtos/stats.dto';
-import { User } from '../domain/user.aggregate';
-import { IUserRepository, UserProfile } from '../domain/user.repository';
+import { User } from '../../domain/user.aggregate';
+import { IUserRepository, UserProfile } from '../../domain/persistence/user.repository';
 
 @Injectable()
 export class UserRepository implements IUserRepository {

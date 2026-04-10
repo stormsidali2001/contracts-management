@@ -1,6 +1,6 @@
 import { VendorView } from '@contracts/types';
 import { Vendor } from 'src/Agreement/domain/vendor.aggregate';
-import { VendorWithCounts } from 'src/Agreement/domain/vendor.repository';
+import { VendorWithCounts } from 'src/Agreement/domain/persistence/vendor.repository';
 
 export class VendorPresenter {
   static from(source: Vendor | VendorWithCounts): VendorView {

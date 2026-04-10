@@ -1,4 +1,4 @@
-import { UserCredentials } from './user-credentials.aggregate';
+import { UserCredentials } from '../user-credentials.aggregate';
 
 export interface IUserCredentialsRepository {
   save(credentials: UserCredentials): Promise<void>;

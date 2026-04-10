@@ -1,5 +1,5 @@
 import { UserService } from './user.service';
-import { IUserRepository, UserProfile } from '../domain/user.repository';
+import { IUserRepository, UserProfile } from '../domain/persistence/user.repository';
 import { User } from '../domain/user.aggregate';
 import { Direction } from '../../direction/domain/direction';
 import { Departement } from '../../direction/domain/departement';

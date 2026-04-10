@@ -3,10 +3,10 @@ import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { DepartementEntity } from 'src/core/entities/Departement.entity';
 import { DirectionEntity } from 'src/core/entities/Direction.entity';
 import { DataSource, EntityManager, Repository } from 'typeorm';
-import { Departement } from '../domain/departement';
-import { Direction } from '../domain/direction';
-import { IDirectionRepository } from '../domain/direction.repository';
-import { TOP_DIRECTIONS_LIMIT } from 'src/shared/constants';
+import { Departement } from '../../domain/departement';
+import { Direction } from '../../domain/direction';
+import { IDirectionRepository } from '../../domain/persistence/direction.repository';
+import { TOP_DIRECTIONS_LIMIT } from 'src/shared/infrastructure/constants';
 
 @Injectable()
 export class DirectionRepository implements IDirectionRepository {

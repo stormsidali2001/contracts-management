@@ -12,18 +12,17 @@ import {
   CreateAgreementDTO,
   ExecuteAgreementDTO,
   FindAllAgreementsDTO,
-} from '../../core/dtos/agreement.dto';
-import { AgreementService } from '../application/Agreement.service';
+} from '../../../core/dtos/agreement.dto';
+import { AgreementService } from '../../application/Agreement.service';
 import { ApiTags } from '@nestjs/swagger';
-import { AgreementView } from '@contracts/types';
 import { AgreementPresenter } from 'src/Agreement/infrastructure/agreement.presenter';
 import { AgreementType } from 'src/core/types/agreement-type.enum';
-import { CurrentUser } from 'src/auth/decorators/currentUser.decorator';
-import { JwtPayload } from 'src/auth/types/JwtPayload.interface';
-import { JwtAccessTokenGuard } from 'src/auth/guards/jwt-access-token.guard';
-import { RequiredRoles } from 'src/auth/decorators/RequiredRoles.decorator';
+import { CurrentUser } from 'src/auth/infrastructure/decorators/currentUser.decorator';
+import { JwtPayload } from 'src/auth/infrastructure/types/JwtPayload.interface';
+import { JwtAccessTokenGuard } from 'src/auth/infrastructure/guards/jwt-access-token.guard';
+import { RequiredRoles } from 'src/auth/infrastructure/decorators/RequiredRoles.decorator';
 import { UserRole } from 'src/core/types/UserRole.enum';
-import { RoleGuard } from 'src/auth/guards/Role.guard';
+import { RoleGuard } from 'src/auth/infrastructure/guards/Role.guard';
 
 @ApiTags('Agreements')
 @Controller('Agreements')

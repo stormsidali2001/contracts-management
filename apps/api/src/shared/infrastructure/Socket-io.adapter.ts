@@ -10,7 +10,7 @@ import { IoAdapter } from '@nestjs/platform-socket.io';
 import { createAdapter } from '@socket.io/redis-adapter';
 import Redis from 'ioredis';
 import { Server, ServerOptions } from 'socket.io';
-import { SocketWithJwtPayload } from 'src/auth/types/JwtPayload.interface';
+import { SocketWithJwtPayload } from 'src/auth/infrastructure/types/JwtPayload.interface';
 
 export class SocketIoAdapter extends IoAdapter implements WebSocketAdapter {
   private readonly logger = new Logger(SocketIoAdapter.name);

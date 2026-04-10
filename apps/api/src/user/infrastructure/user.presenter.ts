@@ -1,6 +1,6 @@
 import { UserView } from '@contracts/types';
 import { User } from 'src/user/domain/user.aggregate';
-import { UserProfile } from 'src/user/domain/user.repository';
+import { UserProfile } from 'src/user/domain/persistence/user.repository';
 
 export class UserPresenter {
   static from(source: User | UserProfile): UserView {

@@ -7,11 +7,11 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { CurrentUserId } from 'src/auth/decorators/currentUserId.decorator';
-import { JwtAccessTokenGuard } from 'src/auth/guards/jwt-access-token.guard';
+import { CurrentUserId } from 'src/auth/infrastructure/decorators/currentUserId.decorator';
+import { JwtAccessTokenGuard } from 'src/auth/infrastructure/guards/jwt-access-token.guard';
 import { NotificationView } from '@contracts/types';
 import { NotificationPresenter } from 'src/user/infrastructure/notification.presenter';
-import { UserNotificationService } from '../application/user-notification.service';
+import { UserNotificationService } from '../../application/user-notification.service';
 
 @ApiTags('notifications')
 @Controller('notifications')

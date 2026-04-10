@@ -6,7 +6,7 @@ import { DepartementEntity } from 'src/core/entities/Departement.entity';
 import { DirectionEntity } from 'src/core/entities/Direction.entity';
 import { typeOrmTestingModule } from 'src/test-utils/typeorm-testing';
 import { DirectionRepository } from './direction.repository';
-import { Direction } from '../domain/direction';
+import { Direction } from '../../domain/direction';
 
 describe('DirectionRepository (integration)', () => {
   let module: TestingModule;

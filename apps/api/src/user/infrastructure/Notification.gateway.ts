@@ -9,12 +9,12 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Namespace } from 'socket.io';
-import { SocketWithJwtPayload } from 'src/auth/types/JwtPayload.interface';
+import { SocketWithJwtPayload } from 'src/auth/infrastructure/types/JwtPayload.interface';
 import { EventService } from 'src/Event/application/Event.service';
-import { SocketStateService } from 'src/socket/SocketState.service';
+import { SocketStateService } from 'src/socket/infrastructure/SocketState.service';
 import { UserNotificationService } from 'src/user/application/user-notification.service';
 import { NotificationPresenter } from 'src/user/infrastructure/notification.presenter';
-import { UserService } from './application/user.service';
+import { UserService } from '../application/user.service';
 
 @WebSocketGateway({
   namespace: 'notifications',

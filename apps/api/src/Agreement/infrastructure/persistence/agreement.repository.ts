@@ -9,8 +9,8 @@ import { Repository } from 'typeorm';
 import {
   IAgreementRepository,
   AgreementDetail,
-} from '../domain/agreement.repository';
-import { Agreement } from '../domain/agreement.aggregate';
+} from '../../domain/persistence/agreement.repository';
+import { Agreement } from '../../domain/agreement.aggregate';
 
 @Injectable()
 export class AgreementRepository implements IAgreementRepository {
@@ -211,6 +211,19 @@ export class AgreementRepository implements IAgreementRepository {
     }
 
     return query.getRawMany();
+  }
+
+  async findExpiringContracts(daysUntilExpiry: number): Promise<Agreement[]> {
+    const entities = await this.repo
+      .createQueryBuilder('ag')
+      .where('ag.execution_end_date IS NOT NULL')
+      .andWhere(
+        'DATE(ag.execution_end_date) = DATE(DATE_ADD(NOW(), INTERVAL :days DAY))',
+        { days: daysUntilExpiry },
+      )
+      .getMany();
+
+    return entities.map((e) => this.toDomain(e));
   }
 
   // ── Mappers ──────────────────────────────────────────────────────────────

@@ -1,5 +1,5 @@
 import { UserNotificationService } from './user-notification.service';
-import { INotificationRepository } from '../domain/notification.repository';
+import { INotificationRepository } from '../domain/persistence/notification.repository';
 import { Notification } from '../domain/notification';
 
 // ── Typed mock factory ───────────────────────────────────────────────────────
