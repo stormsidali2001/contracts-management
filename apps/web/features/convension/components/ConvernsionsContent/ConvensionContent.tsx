@@ -1,6 +1,7 @@
 'use client';
 import { Badge, Button, Chip, IconButton, Modal } from '@mui/material';
 import { DataGrid, GridColumns, GridSortItem, GridSortModel } from '@mui/x-data-grid';
+import EmptyState from '@/shared/components/EmptyState/EmptyState';
 import TextField from '@mui/material/TextField';
 import { useMemo, useState } from 'react';
 import styles from './ConvensionContent.module.css';
@@ -238,6 +239,7 @@ const ConvensionsContent = () => {
             disableColumnFilter
             disableColumnMenu
             onSortModelChange={handleSortModelChange}
+            slots={{ noRowsOverlay: () => <EmptyState message="Aucune convention" subtext="Les conventions ajoutées apparaîtront ici." /> }}
           />
         </div>
       </div>

@@ -15,6 +15,7 @@ import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { useContracts } from '@/features/contract/queries/contract.queries';
 import { useStatistics } from '@/features/statistics/queries/statistics.queries';
 import Breadcrumb from '@/shared/components/Breadcrumb/Breadcrumb';
+import EmptyState from '@/shared/components/EmptyState/EmptyState';
 import { tokens } from '@/lib/tokens';
 import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
 import HandshakeOutlinedIcon from '@mui/icons-material/HandshakeOutlined';
@@ -238,6 +239,7 @@ const ContractsContent = () => {
             disableColumnFilter
             disableColumnMenu
             onSortModelChange={handleSortModelChange}
+            slots={{ noRowsOverlay: () => <EmptyState message="Aucun contrat" subtext="Les contrats ajoutés apparaîtront ici." /> }}
           />
         </div>
       </div>

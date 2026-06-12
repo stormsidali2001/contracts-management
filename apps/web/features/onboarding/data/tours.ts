@@ -131,7 +131,7 @@ export const allTours: Tour[] = [
         pointerPadding: 12,
         pointerRadius: 10,
         nextRoute: "/users",
-        prevRoute: "/",
+        prevRoute: "/dashboard",
       },
       {
         icon: "👥",
@@ -332,7 +332,7 @@ export const allTours: Tour[] = [
         pointerPadding: 12,
         pointerRadius: 10,
         nextRoute: "/contracts/first",
-        prevRoute: "/",
+        prevRoute: "/dashboard",
       },
       {
         icon: "📄",
@@ -494,7 +494,7 @@ export const allTours: Tour[] = [
         pointerPadding: 12,
         pointerRadius: 10,
         nextRoute: "/contracts/first",
-        prevRoute: "/",
+        prevRoute: "/dashboard",
       },
       {
         icon: "📄",

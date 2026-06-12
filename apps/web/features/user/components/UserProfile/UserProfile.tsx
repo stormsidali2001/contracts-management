@@ -11,7 +11,7 @@ import SaveIcon from '@mui/icons-material/Save';
 import { Stack } from '@mui/system';
 import { usePermissions } from '@/features/auth/queries/auth.queries';
 import { useUser, useUpdateUser, useUploadUserImage } from '@/features/user/queries/user.queries';
-import { BASE_URL } from '@/api/axios';
+import { getAvatarSrc, getRoleAvatar } from '@/lib/avatar';
 import Breadcrumb from '@/shared/components/Breadcrumb/Breadcrumb';
 
 const UserProfile = () => {
@@ -22,7 +22,7 @@ const UserProfile = () => {
 
   const [edit, setEdit] = useState(false);
   const [localUser, setLocalUser] = useState<any>(null);
-  const [imagePreview, setImagePreview] = useState('/blank-profile-picture.png');
+  const [imagePreview, setImagePreview] = useState(() => getRoleAvatar(null));
   const [imageFile, setImageFile] = useState<any>(null);
   const [imageUploadProgress, setImageUploadProgress] = useState(0);
 
@@ -114,9 +114,7 @@ const UserProfile = () => {
     );
   }
 
-  const avatarSrc = localUser?.imageUrl
-    ? `${BASE_URL}/users/image/${localUser.imageUrl}`
-    : '/blank-profile-picture.png';
+  const avatarSrc = getAvatarSrc(localUser?.imageUrl, localUser?.role);
 
   const fullName = localUser ? `${localUser.firstName} ${localUser.lastName}` : '';
 

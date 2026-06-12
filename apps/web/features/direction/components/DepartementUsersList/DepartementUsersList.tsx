@@ -5,7 +5,7 @@ import { useMemo, useState } from 'react';
 import { useDebounce } from '@/hooks/useDebounce.hook';
 import styles from './DepartementUsersList.module.css';
 import { useUsers } from '@/features/user/queries/user.queries';
-import { BASE_URL } from '@/api/axios';
+import { getAvatarSrc } from '@/lib/avatar';
 import PeopleAltOutlinedIcon from '@mui/icons-material/PeopleAltOutlined';
 import CloseIcon from '@mui/icons-material/Close';
 import { tokens } from '@/lib/tokens';
@@ -60,7 +60,7 @@ const DepartementUsersList = ({ handleClose, departementId, departementName }: P
       headerName: 'Photo',
       renderCell: (params: GridRenderCellParams) => (
         <Avatar
-          src={params.row.imageUrl ? `${BASE_URL}/users/image/${params.row.imageUrl}` : '/blank-profile-picture.png'}
+          src={getAvatarSrc(params.row.imageUrl, params.row.role)}
           sx={{ width: 32, height: 32 }}
         />
       ),

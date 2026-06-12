@@ -21,6 +21,8 @@
   gap: 10px;
   border-bottom: 1px solid var(--border-subtle);
   margin-bottom: 8px;
+  text-decoration: none;
+  cursor: pointer;
 }
 
 .logoIconWrap {

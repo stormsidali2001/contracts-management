@@ -6,7 +6,7 @@ import { useAuthStore } from '@/features/auth/store/auth.store';
 import ChangePassword from '@/features/settings/ChangePassword/ChangePassword';
 import styles from './Settings.module.css';
 import { useToggleNotifications } from '@/features/auth/queries/auth.queries';
-import { BASE_URL } from '@/api/axios';
+import { getAvatarSrc, getRoleAvatar } from '@/lib/avatar';
 import { useSnackbarStore } from '@/features/ui/store/snackbar.store';
 import NotificationsNoneOutlinedIcon from '@mui/icons-material/NotificationsNoneOutlined';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
@@ -44,7 +44,7 @@ const Settings = () => {
         <div className={styles.profileCard}>
           <div className={styles.profileAvatar}>
             {user?.imageUrl
-              ? <Image src={`${BASE_URL}/users/image/${user.imageUrl}`} alt="Profil" width={64} height={64} unoptimized />
+              ? <Image src={getAvatarSrc(user.imageUrl, user.role)} alt="Profil" width={64} height={64} unoptimized onError={(e) => { (e.currentTarget as HTMLImageElement).src = getRoleAvatar(user?.role); }} />
               : <span className={styles.profileAvatarFallback}>{user?.firstName?.[0]?.toUpperCase() ?? '?'}</span>
             }
           </div>

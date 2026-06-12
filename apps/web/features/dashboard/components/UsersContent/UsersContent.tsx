@@ -15,11 +15,12 @@ import { UserRole } from '@/features/auth/models/user-role.enum';
 import { usePermissions } from '@/features/auth/queries/auth.queries';
 import DeleteUserAction from '@/features/dashboard/components/UserActions/DeleteUserAction/DeleteUserAction';
 import { DataGrid, GridColumns, GridRenderCellParams, GridSortItem, GridSortModel } from '@mui/x-data-grid';
+import EmptyState from '@/shared/components/EmptyState/EmptyState';
 import { useUsers } from '@/features/user/queries/user.queries';
 import { useStatistics } from '@/features/statistics/queries/statistics.queries';
 import Breadcrumb from '@/shared/components/Breadcrumb/Breadcrumb';
 import { tokens } from '@/lib/tokens';
-import { BASE_URL } from '@/api/axios';
+import { getAvatarSrc } from '@/lib/avatar';
 import AdminPanelSettingsOutlinedIcon from '@mui/icons-material/AdminPanelSettingsOutlined';
 import GavelOutlinedIcon from '@mui/icons-material/GavelOutlined';
 import BadgeOutlinedIcon from '@mui/icons-material/BadgeOutlined';
@@ -112,7 +113,7 @@ const UsersContent = () => {
           headerName: 'Photo',
           renderCell: (params: GridRenderCellParams) => (
             <Avatar
-              src={params.row.imageUrl ? `${BASE_URL}/users/image/${params.row.imageUrl}` : '/blank-profile-picture.png'}
+              src={getAvatarSrc(params.row.imageUrl, params.row.role)}
               sx={{ width: 32, height: 32 }}
             />
           ),
@@ -276,6 +277,7 @@ const UsersContent = () => {
             disableColumnFilter
             disableColumnMenu
             onSortModelChange={handleSortModelChange}
+            slots={{ noRowsOverlay: () => <EmptyState message="Aucun utilisateur" subtext="Les utilisateurs créés apparaîtront ici." /> }}
             experimentalFeatures={{ newEditingApi: true }}
             onCellEditStop={(params) => setRowId(params.id)}
             getRowId={(row) => row.id}

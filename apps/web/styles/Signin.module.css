@@ -8,13 +8,16 @@
 
 /* ── Left panel: brand ── */
 .leftPanel {
-  background: var(--navy);
+  background: #ffffff;
+  border-right: 1px solid var(--border-subtle);
   display: flex;
   flex-direction: column;
+  align-items: center;
   justify-content: space-between;
-  padding: 48px;
+  padding: 40px 48px;
   position: relative;
   overflow: hidden;
+  text-align: center;
 }
 
 .leftPanel::before {
@@ -25,7 +28,7 @@
   width: 320px;
   height: 320px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(245,158,11,0.15) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(37,99,235,0.07) 0%, transparent 70%);
   pointer-events: none;
 }
 
@@ -37,64 +40,83 @@
   width: 260px;
   height: 260px;
   border-radius: 50%;
-  background: radial-gradient(circle, color-mix(in srgb, var(--navy-mid) 30%, transparent) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(245,158,11,0.06) 0%, transparent 70%);
   pointer-events: none;
 }
 
 .brandTop {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 10px;
   position: relative;
   z-index: 1;
-}
-
-.brandTop img {
-  width: 44px;
-  height: 44px;
-  object-fit: contain;
-  filter: brightness(0) invert(1);
-  opacity: 0.9;
+  align-self: flex-start;
+  text-decoration: none;
+  cursor: pointer;
 }
 
 .brandName {
   font-family: 'Outfit', sans-serif;
   font-size: 20px;
   font-weight: 700;
-  color: var(--text-on-dark);
+  color: var(--navy);
   letter-spacing: -0.3px;
 }
 
-.brandTagline {
+/* center block: illustration + copy */
+.brandCenter {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 32px;
+  padding: 24px 0;
   position: relative;
   z-index: 1;
+  width: 100%;
+}
+
+.illustration {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.brandTagline {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
 }
 
 .brandTagline h2 {
   font-family: 'Outfit', sans-serif;
-  font-size: 34px;
+  font-size: 30px;
   font-weight: 700;
-  color: var(--text-on-dark);
-  line-height: 1.2;
-  letter-spacing: -0.8px;
-  margin-bottom: 16px;
+  color: var(--text-primary);
+  line-height: 1.25;
+  letter-spacing: -0.6px;
+  margin: 0;
 }
 
 .brandTagline h2 em {
   font-style: normal;
-  color: var(--amber);
+  color: var(--navy-mid);
 }
 
 .brandTagline p {
   font-size: 14px;
-  color: rgba(255,255,255,0.5);
+  color: var(--text-secondary);
   line-height: 1.6;
-  max-width: 300px;
+  max-width: 320px;
+  margin: 0;
 }
 
 .brandFooter {
   font-size: 12px;
-  color: rgba(255,255,255,0.25);
+  color: var(--text-muted);
   position: relative;
   z-index: 1;
 }

@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation'
 import { MouseEvent, useId, useState } from 'react'
 import { useAuthStore } from '@/features/auth/store/auth.store';
 import { useNotificationStore } from '@/features/notification/store/notification.store';
-import { BASE_URL } from '@/api/axios'
+import { getAvatarSrc, getRoleAvatar } from '@/lib/avatar'
 import LittleChevronIcon from '@/icons/LittleChevronIcon'
 import NotificationIcon from '@/icons/NotificationIcon'
 import Notifications from './Notifications/Notifications'
@@ -38,7 +38,7 @@ const Topbar = () => {
 
   const getStringFromPathName = () => {
     switch(pathname){
-      case '/':
+      case '/dashboard':
         return "Tableau de board";
       case '/directions':
         return "les directions";
@@ -73,7 +73,7 @@ const Topbar = () => {
             </IconButton>
             <Button onClick={handleClick} aria-describedby={popoverId}>
               <div className={styles.profilImgContainer}>
-                  <Image src={user?.imageUrl ? `${BASE_URL}/users/image/${user?.imageUrl}` : '/blank-profile-picture.png'} alt="profile picture" width={36} height={36} unoptimized />
+                  <Image src={getAvatarSrc(user?.imageUrl, user?.role)} alt="profile picture" width={36} height={36} unoptimized onError={(e) => { (e.currentTarget as HTMLImageElement).src = getRoleAvatar(user?.role); }} />
                   <LittleChevronIcon className={styles.chevron}/>
               </div>
             </Button>

@@ -1,6 +1,7 @@
 'use client';
 import { Button, IconButton, Modal } from '@mui/material';
 import { DataGrid, GridColumns, GridRenderCellParams, GridSortItem, GridSortModel } from '@mui/x-data-grid';
+import EmptyState from '@/shared/components/EmptyState/EmptyState';
 import { useMemo, useState } from 'react';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
@@ -174,6 +175,7 @@ const VendorsContent = () => {
             disableColumnFilter
             disableColumnMenu
             onSortModelChange={handleSortModelChange}
+            slots={{ noRowsOverlay: () => <EmptyState message="Aucun fournisseur" subtext="Les fournisseurs ajoutés apparaîtront ici." /> }}
             experimentalFeatures={{ newEditingApi: true }}
             onCellEditStop={(params) => setRowId(params.id)}
             getRowId={(row) => row.id}

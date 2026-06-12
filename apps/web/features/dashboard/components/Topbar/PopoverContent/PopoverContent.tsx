@@ -10,7 +10,7 @@ import Image from 'next/image';
 import { useAuthStore } from '@/features/auth/store/auth.store';
 import { useMemo } from 'react';
 import { useLogout } from '@/features/auth/queries/auth.queries';
-import { BASE_URL } from '@/api/axios';
+import { getAvatarSrc, getRoleAvatar } from '@/lib/avatar';
 import { useSnackbarStore } from '@/features/ui/store/snackbar.store';
 import { useOnborda } from 'onborda';
 import { useRouter } from 'next/navigation';
@@ -33,7 +33,7 @@ const PopoverContent = () => {
     localStorage.removeItem(`onboarding_done_${user.sub}`);
     const tourName = tourNameByRole[user.role];
     if (!tourName) return;
-    router.push('/');
+    router.push('/dashboard');
     setTimeout(() => startOnborda(tourName), 600);
   }
 
@@ -56,7 +56,7 @@ const PopoverContent = () => {
     <div className={styles.container}>
       <div className={styles.header}>
         <div className={styles.profilImgContainer}>
-          <Image src={user?.imageUrl ? `${BASE_URL}/users/image/${user?.imageUrl}` : '/blank-profile-picture.png'} alt="Photo de profil" width={36} height={36} unoptimized />
+          <Image src={getAvatarSrc(user?.imageUrl, user?.role)} alt="Photo de profil" width={36} height={36} unoptimized onError={(e) => { (e.currentTarget as HTMLImageElement).src = getRoleAvatar(user?.role); }} />
         </div>
         <div className={styles.userInfos}>
           <span>{`${user?.firstName}  ${user?.lastName}`}</span>

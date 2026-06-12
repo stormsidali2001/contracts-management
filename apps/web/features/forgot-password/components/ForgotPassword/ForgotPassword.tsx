@@ -1,14 +1,19 @@
+'use client';
+
+import { useState, useEffect } from 'react';
 import { Button, CircularProgress, TextField } from '@mui/material';
+import Link from 'next/link';
+import Image from 'next/image';
+import GavelOutlinedIcon from '@mui/icons-material/GavelOutlined';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import useInput from '@/hooks/input/use-input';
 import { validateEmail } from '@/shared/utils/validation/email';
-import GavelOutlinedIcon from '@mui/icons-material/GavelOutlined';
 import styles from './ForgotPassword.module.css';
 import { useForgotPassword } from '@/features/auth/queries/auth.queries';
 import { useSnackbarStore } from '@/features/ui/store/snackbar.store';
-import { useEffect } from 'react';
-import Image from 'next/image';
 
 const ForgotPassword = () => {
+  const [panelError, setPanelError] = useState(false);
   const { text: email, textChangeHandler: emailChangeHandler, shouldDisplayError, inputBlurHandler: emailBlurHandler } = useInput(validateEmail);
   const { mutate: forgotPassword, isPending, isSuccess, isError } = useForgotPassword();
   const showSnackbar = useSnackbarStore((s) => s.showSnackbar);
@@ -20,37 +25,79 @@ const ForgotPassword = () => {
 
   useEffect(() => {
     if (!isError) return;
-    showSnackbar({ message: 'pas de compte relier a cette addresse email' });
+    showSnackbar({ message: 'Aucun compte associé à cette adresse email.' });
   }, [isError, showSnackbar]);
 
   useEffect(() => {
     if (!isSuccess) return;
-    showSnackbar({ message: 'demande de re-intialization est envoyee', severty: 'success' });
+    showSnackbar({ message: 'Lien de réinitialisation envoyé avec succès.', severty: 'success' });
   }, [isSuccess, showSnackbar]);
 
   return (
     <div className={styles.container}>
+      {/* ── Left: form ── */}
       <div className={styles.leftWrapper}>
-        <div className={styles.logo}>
-          <GavelOutlinedIcon sx={{ fontSize: 28 }} />
-        </div>
-        <div className={styles.formWrapper}>
+        <div className={styles.formCard}>
+          <Link href="/" className={styles.logo}>
+            <GavelOutlinedIcon sx={{ fontSize: 22 }} />
+          </Link>
+
+          <div className={styles.formHeading}>
+            <h1>Mot de passe oublié</h1>
+            <p>Entrez votre adresse email et nous vous enverrons un lien pour réinitialiser votre mot de passe.</p>
+          </div>
+
           {!isPending ? (
-            <form onSubmit={handleSubmit}>
-              <h1>Mot de passe oublié</h1>
-              <div className={styles.content}>
-                <p>utlilisez votre address email pour re-initializer votre mot de passe.</p>
-              </div>
-              <TextField onBlur={emailBlurHandler} helperText={shouldDisplayError && 'address email non valide'} error={shouldDisplayError} value={email} onChange={emailChangeHandler} autoComplete="new-email-username" sx={{ boxShadow: 'none' }} size="small" className={styles.textField} inputProps={{ className: styles.input }} label="email" type="text" />
-              <Button type="submit" disabled={shouldDisplayError || email.length === 0} variant="contained" color="secondary">Envoyer</Button>
+            <form className={styles.form} onSubmit={handleSubmit}>
+              <TextField
+                onBlur={emailBlurHandler}
+                helperText={shouldDisplayError && 'Adresse email non valide'}
+                error={shouldDisplayError}
+                value={email}
+                onChange={emailChangeHandler}
+                autoComplete="email"
+                size="small"
+                className={styles.textField}
+                label="Adresse email"
+                type="email"
+                fullWidth
+              />
+              <Button
+                type="submit"
+                disabled={shouldDisplayError || email.length === 0}
+                variant="contained"
+                color="primary"
+                fullWidth
+                size="medium"
+                sx={{ py: 1.25, fontFamily: "'Outfit', sans-serif", fontSize: '14px', fontWeight: 600 }}
+              >
+                Envoyer le lien
+              </Button>
             </form>
           ) : (
-            <CircularProgress sx={{ margin: 'auto' }} />
+            <CircularProgress sx={{ margin: '32px auto', display: 'block' }} />
           )}
+
+          <Link href="/signin" className={styles.backLink}>
+            <ArrowBackIcon sx={{ fontSize: 15 }} />
+            Retour à la connexion
+          </Link>
         </div>
       </div>
-      <div className={styles.rightWrapper} style={{ position: 'relative' }}>
-        <Image src="/boat2v1.jpg" alt="" fill style={{ objectFit: 'cover' }} />
+
+      {/* ── Right: illustration ── */}
+      <div className={styles.rightWrapper}>
+        {!panelError ? (
+          <Image
+            src="/illustrations/auth-panel.png"
+            alt=""
+            fill
+            style={{ objectFit: 'cover' }}
+            onError={() => setPanelError(true)}
+          />
+        ) : (
+          <div className={styles.rightWrapperFallback} />
+        )}
       </div>
     </div>
   );

@@ -3,8 +3,8 @@ import RootProvider from '@/providers/root-provider';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Contracts Management',
-  description: 'Application for managing contracts and agreements',
+  title: 'ContractFlow',
+  description: 'Track contracts, monitor execution status, and get automatic alerts before any deadline expires.',
 };
 
 export default function RootLayout({

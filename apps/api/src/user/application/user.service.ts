@@ -53,10 +53,18 @@ export class UserService {
       departementData = { id: dept.id, abriviation: dept.abriviation };
     }
 
+    const role = userData.role ?? UserRole.EMPLOYEE;
+    const defaultAvatars: Record<string, string> = {
+      [UserRole.ADMIN]: 'default-admin.png',
+      [UserRole.EMPLOYEE]: 'default-employee.png',
+      [UserRole.JURIDICAL]: 'default-juridical.png',
+    };
+
     const user = User.create({
       id: uuid(),
       ...userData,
-      role: userData.role ?? UserRole.EMPLOYEE,
+      imageUrl: userData.imageUrl || defaultAvatars[role],
+      role,
       directionId,
       departementId,
     });

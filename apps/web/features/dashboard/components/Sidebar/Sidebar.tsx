@@ -23,7 +23,7 @@ type SidebarLink = {
 };
 
 const sidebarLinks: SidebarLink[] = [
-   { text: 'Accueil',      icon: () => <MainDashboardIcon />, link: '/' },
+   { text: 'Accueil',      icon: () => <MainDashboardIcon />, link: '/dashboard' },
    { text: 'Directions',   icon: () => <DirectionsIcon />,   link: '/directions',
      visible: (p) => p?.directions.canCreate ?? false },
    { text: 'Utilisateurs', icon: () => <UsersIcon />,        link: '/users',
@@ -49,7 +49,7 @@ const Sidebar = () => {
     return (
         <div id="sidebar-nav" className={styles.container}>
             {/* Branding */}
-            <div className={styles.logo}>
+            <Link href="/" className={styles.logo}>
                 <div className={styles.logoIconWrap}>
                     <GavelOutlinedIcon sx={{ fontSize: 20 }} />
                 </div>
@@ -57,7 +57,7 @@ const Sidebar = () => {
                     <span className={styles.logoName}>{APP_NAME}</span>
                     <span className={styles.logoBadge}>Gestion des contrats</span>
                 </div>
-            </div>
+            </Link>
 
             {/* Nav */}
             <ul className={styles.links}>

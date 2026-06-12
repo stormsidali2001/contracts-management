@@ -1,13 +1,14 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, CircularProgress, TextField } from '@mui/material';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
 import { LoginUser } from '@/features/auth/models/login-user.interface';
 import { APP_NAME } from '@/features/dashboard/data';
+import { tokens } from '@/lib/tokens';
 import GavelOutlinedIcon from '@mui/icons-material/GavelOutlined';
+import Image from 'next/image';
 import { useLogin } from '@/features/auth/queries/auth.queries';
 import { useAuthStore } from '@/features/auth/store/auth.store';
 import { useSnackbarStore } from '@/features/ui/store/snackbar.store';
@@ -23,6 +24,7 @@ const DEV_ACCOUNTS = [
 ];
 
 export default function SignIn() {
+  const [illustrationError, setIllustrationError] = useState(false);
   const { text: email, textChangeHandler: emailChangeHandler, shouldDisplayError, inputBlurHandler: emailBlurHandler, inputClearHandler: emailClearHandler } = useInput(validateEmailOrUsername);
   const { text: password, textChangeHandler: passwordChangeHandler, inputClearHandler: passwordClearHandler } = useInput();
 
@@ -57,21 +59,38 @@ export default function SignIn() {
 
   useEffect(() => {
     if (!isAuthenticated) return;
-    router.push('/');
+    router.push('/dashboard');
   }, [isAuthenticated, router]);
 
   return (
     <div className={styles.container}>
       {/* ── Left brand panel ── */}
       <div className={styles.leftPanel}>
-        <div className={styles.brandTop}>
-          <GavelOutlinedIcon sx={{ fontSize: 28 }} />
+        <Link href="/" className={styles.brandTop}>
+          <GavelOutlinedIcon sx={{ fontSize: 22, color: tokens.color.navyMid }} />
           <span className={styles.brandName}>{APP_NAME}</span>
+        </Link>
+
+        <div className={styles.brandCenter}>
+          {!illustrationError && (
+            <div className={styles.illustration}>
+              <Image
+                src="/illustrations/signin-hero.png"
+                alt=""
+                width={800}
+                height={800}
+                style={{ width: '75%', height: 'auto', maxWidth: '380px' }}
+                onError={() => setIllustrationError(true)}
+                priority
+              />
+            </div>
+          )}
+          <div className={styles.brandTagline}>
+            <h2>Gestion des <em>contrats</em> simplifiée.</h2>
+            <p>Suivez, analysez et gérez l&apos;ensemble de vos accords commerciaux en un seul endroit.</p>
+          </div>
         </div>
-        <div className={styles.brandTagline}>
-          <h2>Gestion des<br /><em>contrats</em><br />simplifiée.</h2>
-          <p>Suivez, analysez et gérez l'ensemble de vos accords commerciaux en un seul endroit.</p>
-        </div>
+
         <span className={styles.brandFooter}>© 2026 {APP_NAME} — Tous droits réservés</span>
       </div>
 
