@@ -72,8 +72,9 @@ const SelectVendor = ({ handleClose, selectVendor }: PropType) => {
           disableColumnFilter
           disableColumnMenu
           onSortModelChange={handleSortModelChange}
-          onSelectionModelChange={(itm) => {
-            const id = itm[0];
+          onRowSelectionModelChange={(itm) => {
+            const ids = Array.isArray(itm) ? itm : [...(itm as any).ids];
+            const id = ids[0];
             const row = data?.data?.find((row: any) => row.id === id);
             setSelectedVendor(row);
           }}

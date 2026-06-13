@@ -31,6 +31,7 @@ export function useNotificationSocket() {
   const socketRef = useRef<Socket | null>(null);
 
   useEffect(() => {
+    if (process.env.NEXT_PUBLIC_MOCK_MODE === 'true') return;
     if (!jwt || isConnected || socketRef.current) return;
 
     setConnecting();

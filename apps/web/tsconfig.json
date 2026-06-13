@@ -20,8 +20,12 @@
     "incremental": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./*"],
-      "@contracts/types": ["../../packages/types/src/index.ts"]
+      "@/*": [
+        "./*"
+      ],
+      "@contracts/types": [
+        "../../packages/types/src/index.ts"
+      ]
     },
     "plugins": [
       {
@@ -34,7 +38,9 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    ".next/dev/types/**/*.ts"
+    ".next/dev/types/**/*.ts",
+    ".next-mock/types/**/*.ts",
+    ".next-mock/dev/types/**/*.ts"
   ],
   "exclude": [
     "node_modules"

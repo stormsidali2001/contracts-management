@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { ThemeProvider } from '@mui/material';
 import { theme } from '@/theme';
 import { LocalizationProvider } from '@mui/x-date-pickers';
@@ -16,6 +17,15 @@ import OnboardingTrigger from '@/features/onboarding/components/OnboardingTrigge
 import { allTours } from '@/features/onboarding/data/tours';
 
 export default function RootProvider({ children }: { children: React.ReactNode }) {
+  const [ready, setReady] = useState(process.env.NEXT_PUBLIC_MOCK_MODE !== 'true');
+
+  useEffect(() => {
+    if (process.env.NEXT_PUBLIC_MOCK_MODE !== 'true') return;
+    import('@/mocks').then(({ initMocks }) => initMocks().then(() => setReady(true)));
+  }, []);
+
+  if (!ready) return null;
+
   return (
     <QueryClientProvider client={queryClient}>
       <AppRouterCacheProvider>
