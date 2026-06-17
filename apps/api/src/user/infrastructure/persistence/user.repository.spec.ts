@@ -36,7 +36,9 @@ describe('UserRepository (integration)', () => {
   afterEach(async () => {
     if (userIds.length) {
       await dataSource.query(
-        `DELETE FROM users WHERE id IN (${userIds.map(() => '?').join(',')})`,
+        `DELETE FROM users WHERE id IN (${userIds
+          .map((_, i) => `$${i + 1}`)
+          .join(',')})`,
         [...userIds],
       );
       userIds.length = 0;

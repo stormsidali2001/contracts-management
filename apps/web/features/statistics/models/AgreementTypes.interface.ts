@@ -1,4 +1,4 @@
-export interface AgreementTypes{
-    contract:number;
-    convension:number;
+export interface AgreementTypes {
+  contract: number;
+  convension: number;
 }

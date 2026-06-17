@@ -14,7 +14,13 @@ import UsersFilter from '@/features/dashboard/components/UsersFilter/UsersFilter
 import { UserRole } from '@/features/auth/models/user-role.enum';
 import { usePermissions } from '@/features/auth/queries/auth.queries';
 import DeleteUserAction from '@/features/dashboard/components/UserActions/DeleteUserAction/DeleteUserAction';
-import { DataGrid, GridColumns, GridRenderCellParams, GridSortItem, GridSortModel } from '@mui/x-data-grid';
+import {
+  DataGrid,
+  GridColumns,
+  GridRenderCellParams,
+  GridSortItem,
+  GridSortModel,
+} from '@mui/x-data-grid';
 import EmptyState from '@/shared/components/EmptyState/EmptyState';
 import { useUsers } from '@/features/user/queries/user.queries';
 import { useStatistics } from '@/features/statistics/queries/statistics.queries';
@@ -33,10 +39,25 @@ interface Filters {
   role?: UserRole;
 }
 
-const ROLE_CONFIG: Record<string, { label: string; bg: string; color: string }> = {
-  ADMIN:     { label: 'Admin',     bg: tokens.color.navy,              color: tokens.color.textOnDark },
-  JURIDICAL: { label: 'Juridique', bg: tokens.color.navyLight,         color: tokens.color.navyMid },
-  EMPLOYEE:  { label: 'Employé',   bg: 'rgba(22,163,74,0.12)',         color: tokens.color.successDark },
+const ROLE_CONFIG: Record<
+  string,
+  { label: string; bg: string; color: string }
+> = {
+  ADMIN: {
+    label: 'Admin',
+    bg: tokens.color.navy,
+    color: tokens.color.textOnDark,
+  },
+  JURIDICAL: {
+    label: 'Juridique',
+    bg: tokens.color.navyLight,
+    color: tokens.color.navyMid,
+  },
+  EMPLOYEE: {
+    label: 'Employé',
+    bg: 'rgba(22,163,74,0.12)',
+    color: tokens.color.successDark,
+  },
 };
 
 const chipSx = {
@@ -49,7 +70,19 @@ const chipSx = {
 };
 
 const pill = (bg: string, color: string, label: string) => (
-  <span style={{ display: 'inline-flex', padding: '2px 9px', borderRadius: 99, background: bg, color, fontSize: 11, fontWeight: 700, fontFamily: "'Inter', sans-serif", lineHeight: 1.6 }}>
+  <span
+    style={{
+      display: 'inline-flex',
+      padding: '2px 9px',
+      borderRadius: 99,
+      background: bg,
+      color,
+      fontSize: 11,
+      fontWeight: 700,
+      fontFamily: "'Inter', sans-serif",
+      lineHeight: 1.6,
+    }}
+  >
     {label}
   </span>
 );
@@ -57,18 +90,29 @@ const pill = (bg: string, color: string, label: string) => (
 const formatDate = (raw: string | null | undefined) => {
   if (!raw) return '—';
   const d = new Date(raw);
-  return isNaN(d.getTime()) ? String(raw) : d.toLocaleDateString('fr-DZ', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  return isNaN(d.getTime())
+    ? String(raw)
+    : d.toLocaleDateString('fr-DZ', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+      });
 };
 
 const UsersContent = () => {
   const [filterModalOpen, setFilterModalOPen] = useState(false);
-  const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: 5 });
+  const [paginationModel, setPaginationModel] = useState({
+    page: 0,
+    pageSize: 5,
+  });
   const { data: permissions } = usePermissions();
   const [filters, setFilters] = useState<Filters | null>(null);
   const [rowId, setRowId] = useState<any>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const { debounce } = useDebounce();
-  const [queryOptions, setQueryOptions] = useState<{ sortModel: GridSortItem[] | null }>({ sortModel: null });
+  const [queryOptions, setQueryOptions] = useState<{
+    sortModel: GridSortItem[] | null;
+  }>({ sortModel: null });
   const [open, setOpen] = useState(false);
 
   const { data: statsData } = useStatistics({});
@@ -96,7 +140,9 @@ const UsersContent = () => {
   const countFilters = () => {
     if (filters == null) return 0;
     let count = 0;
-    Object.keys(filters).forEach((f) => { if (f !== 'departementId') count++; });
+    Object.keys(filters).forEach((f) => {
+      if (f !== 'departementId') count++;
+    });
     return count;
   };
 
@@ -122,8 +168,8 @@ const UsersContent = () => {
           sortable: false,
           width: 64,
         },
-        { field: 'firstName', headerName: 'Prénom',        width: 110, editable },
-        { field: 'lastName',  headerName: 'Nom',           width: 110, editable },
+        { field: 'firstName', headerName: 'Prénom', width: 110, editable },
+        { field: 'lastName', headerName: 'Nom', width: 110, editable },
         {
           field: 'role',
           headerName: 'Rôle',
@@ -132,11 +178,21 @@ const UsersContent = () => {
           type: 'singleSelect',
           editable,
           renderCell: (params: GridRenderCellParams) => {
-            const cfg = ROLE_CONFIG[params.value as string] ?? { label: String(params.value), bg: tokens.color.surfaceSubtle, color: tokens.color.textSecondary };
-            return <Chip label={cfg.label} size="small" sx={{ ...chipSx, background: cfg.bg, color: cfg.color }} />;
+            const cfg = ROLE_CONFIG[params.value as string] ?? {
+              label: String(params.value),
+              bg: tokens.color.surfaceSubtle,
+              color: tokens.color.textSecondary,
+            };
+            return (
+              <Chip
+                label={cfg.label}
+                size="small"
+                sx={{ ...chipSx, background: cfg.bg, color: cfg.color }}
+              />
+            );
           },
         },
-        { field: 'email',    headerName: 'Email',          width: 200, editable },
+        { field: 'email', headerName: 'Email', width: 200, editable },
         {
           field: 'active',
           headerName: 'Statut',
@@ -145,7 +201,7 @@ const UsersContent = () => {
           renderCell: (params: GridRenderCellParams) =>
             params.value
               ? pill('rgba(22,163,74,0.12)', tokens.color.successDark, 'Actif')
-              : pill('rgba(220,38,38,0.10)', tokens.color.errorDark,   'Inactif'),
+              : pill('rgba(220,38,38,0.10)', tokens.color.errorDark, 'Inactif'),
         },
         {
           field: 'created_at',
@@ -161,7 +217,10 @@ const UsersContent = () => {
           type: 'actions',
           width: 56,
           renderCell: (params: any) => (
-            <Link href={`/users/${params.id}`} style={{ textDecoration: 'none' }}>
+            <Link
+              href={`/users/${params.id}`}
+              style={{ textDecoration: 'none' }}
+            >
               <IconButton size="small" sx={{ color: tokens.color.navyMid }}>
                 <ChevronRightIcon sx={{ fontSize: '20px' }} />
               </IconButton>
@@ -175,7 +234,9 @@ const UsersContent = () => {
           field: 'actions',
           headerName: 'Mise à jour',
           type: 'actions',
-          renderCell: (params: any) => <UserActions {...{ params, rowId, setRowId }} />,
+          renderCell: (params: any) => (
+            <UserActions {...{ params, rowId, setRowId }} />
+          ),
         },
         {
           field: 'actions1',
@@ -191,13 +252,14 @@ const UsersContent = () => {
 
   return (
     <div id="users-page" className={styles.container}>
-
       {/* ── Page header ── */}
       <div id="users-page-header" className={styles.pageHeader}>
         <div className={styles.pageHeaderLeft}>
           <Breadcrumb items={[{ label: 'Utilisateurs' }]} />
           <h1 className={styles.pageTitle}>Gestion des utilisateurs</h1>
-          <span className={styles.pageSubtitle}>Consultez, créez et gérez les comptes de votre organisation</span>
+          <span className={styles.pageSubtitle}>
+            Consultez, créez et gérez les comptes de votre organisation
+          </span>
         </div>
         {shouldDisplayAddUser() && (
           <Button
@@ -217,30 +279,44 @@ const UsersContent = () => {
       {/* ── Stats strip ── */}
       <div className={styles.statsStrip}>
         <div className={styles.statCard}>
-          <div className={styles.statIcon}><PeopleAltOutlinedIcon sx={{ fontSize: 18 }} /></div>
+          <div className={styles.statIcon}>
+            <PeopleAltOutlinedIcon sx={{ fontSize: 18 }} />
+          </div>
           <div className={styles.statContent}>
-            <span className={styles.statValue}>{userTypes?.total ?? data?.total ?? '—'}</span>
+            <span className={styles.statValue}>
+              {userTypes?.total ?? data?.total ?? '—'}
+            </span>
             <span className={styles.statLabel}>Total utilisateurs</span>
           </div>
         </div>
         <div className={styles.statCard}>
-          <div className={styles.statIcon}><AdminPanelSettingsOutlinedIcon sx={{ fontSize: 18 }} /></div>
+          <div className={styles.statIcon}>
+            <AdminPanelSettingsOutlinedIcon sx={{ fontSize: 18 }} />
+          </div>
           <div className={styles.statContent}>
             <span className={styles.statValue}>{userTypes?.admin ?? '—'}</span>
             <span className={styles.statLabel}>Admins</span>
           </div>
         </div>
         <div className={styles.statCard}>
-          <div className={styles.statIcon}><GavelOutlinedIcon sx={{ fontSize: 18 }} /></div>
+          <div className={styles.statIcon}>
+            <GavelOutlinedIcon sx={{ fontSize: 18 }} />
+          </div>
           <div className={styles.statContent}>
-            <span className={styles.statValue}>{userTypes?.juridical ?? '—'}</span>
+            <span className={styles.statValue}>
+              {userTypes?.juridical ?? '—'}
+            </span>
             <span className={styles.statLabel}>Juridiques</span>
           </div>
         </div>
         <div className={styles.statCard}>
-          <div className={styles.statIcon}><BadgeOutlinedIcon sx={{ fontSize: 18 }} /></div>
+          <div className={styles.statIcon}>
+            <BadgeOutlinedIcon sx={{ fontSize: 18 }} />
+          </div>
           <div className={styles.statContent}>
-            <span className={styles.statValue}>{userTypes?.employee ?? '—'}</span>
+            <span className={styles.statValue}>
+              {userTypes?.employee ?? '—'}
+            </span>
             <span className={styles.statLabel}>Employés</span>
           </div>
         </div>
@@ -250,16 +326,37 @@ const UsersContent = () => {
         <div className={styles.cardHeader}>
           <div className={styles.cardHeaderText}>
             <span className={styles.cardTitle}>Utilisateurs</span>
-            {data?.total != null && <span className={styles.cardCount}>{data.total} au total</span>}
+            {data?.total != null && (
+              <span className={styles.cardCount}>{data.total} au total</span>
+            )}
           </div>
         </div>
         <div className={styles.searchContainer}>
-          <Badge badgeContent={countFilters()} sx={{ padding: 0 }} className={styles.searchBadge}>
-            <Button startIcon={<FilterIcon />} size="small" color="primary" variant="contained" onClick={() => setFilterModalOPen(true)} className={styles.advancedButton}>
+          <Badge
+            badgeContent={countFilters()}
+            sx={{ padding: 0 }}
+            className={styles.searchBadge}
+          >
+            <Button
+              startIcon={<FilterIcon />}
+              size="small"
+              color="primary"
+              variant="contained"
+              onClick={() => setFilterModalOPen(true)}
+              className={styles.advancedButton}
+            >
               Filtrer
             </Button>
           </Badge>
-          <TextField placeholder="Rechercher un utilisateur..." color="primary" size="small" fullWidth type="search" onChange={handleSearch} InputProps={{ className: styles.input }} />
+          <TextField
+            placeholder="Rechercher un utilisateur..."
+            color="primary"
+            size="small"
+            fullWidth
+            type="search"
+            onChange={handleSearch}
+            InputProps={{ className: styles.input }}
+          />
         </div>
         <div className={styles.tableContainer}>
           <DataGrid
@@ -277,18 +374,39 @@ const UsersContent = () => {
             disableColumnFilter
             disableColumnMenu
             onSortModelChange={handleSortModelChange}
-            slots={{ noRowsOverlay: () => <EmptyState message="Aucun utilisateur" subtext="Les utilisateurs créés apparaîtront ici." /> }}
+            slots={{
+              noRowsOverlay: () => (
+                <EmptyState
+                  message="Aucun utilisateur"
+                  subtext="Les utilisateurs créés apparaîtront ici."
+                />
+              ),
+            }}
             experimentalFeatures={{ newEditingApi: true }}
             onCellEditStop={(params) => setRowId(params.id)}
             getRowId={(row) => row.id}
           />
         </div>
       </div>
-      <Modal open={open} onClose={() => setOpen(false)} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
+      <Modal
+        open={open}
+        onClose={() => setOpen(false)}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
         <CreateUser handleClose={() => setOpen(false)} />
       </Modal>
-      <Modal open={filterModalOpen} onClose={() => setFilterModalOPen(false)} aria-labelledby="modal-filter-modal-title" aria-describedby="modal-filter-modal-description">
-        <UsersFilter initialFilters={filters ?? ({} as Filters)} handleClose={() => setFilterModalOPen(false)} handleSetFilters={setFilters} />
+      <Modal
+        open={filterModalOpen}
+        onClose={() => setFilterModalOPen(false)}
+        aria-labelledby="modal-filter-modal-title"
+        aria-describedby="modal-filter-modal-description"
+      >
+        <UsersFilter
+          initialFilters={filters ?? ({} as Filters)}
+          handleClose={() => setFilterModalOPen(false)}
+          handleSetFilters={setFilters}
+        />
       </Modal>
     </div>
   );

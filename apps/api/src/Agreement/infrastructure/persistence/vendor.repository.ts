@@ -32,6 +32,7 @@ export class VendorRepository implements IVendorRepository {
       address: vendor.address,
       mobile_phone_number: vendor.mobile_phone_number,
       home_phone_number: vendor.home_phone_number,
+      logoUrl: vendor.logoUrl ?? '',
       createdAt: vendor.createdAt,
     };
     const saved = await this.repo.save(data as unknown as VendorEntity);
@@ -134,19 +135,47 @@ export class VendorRepository implements IVendorRepository {
     limit = 10,
     orderBy?: string,
     searchQuery?: string,
-  ): Promise<PaginationResponse<Vendor>> {
-    let query = this.repo.createQueryBuilder('vendor').skip(offset).take(limit);
+  ): Promise<PaginationResponse<VendorWithCounts>> {
+    let query = this.repo
+      .createQueryBuilder('vendor')
+      .skip(offset)
+      .take(limit)
+      .loadRelationCountAndMap(
+        'vendor.contractCount',
+        'vendor.agreements',
+        'agC',
+        (qb) =>
+          qb.where('agC.type = :agCType', { agCType: AgreementType.CONTRACT }),
+      )
+      .loadRelationCountAndMap(
+        'vendor.convensionCount',
+        'vendor.agreements',
+        'agV',
+        (qb) =>
+          qb.where('agV.type = :agVType', {
+            agVType: AgreementType.CONVENSION,
+          }),
+      );
 
     if (searchQuery && searchQuery.length >= 2) {
       query = query.where(
-        `MATCH(vendor.num, vendor.nif, vendor.nrc, vendor.company_name, vendor.address, vendor.mobile_phone_number, vendor.home_phone_number) AGAINST ('${searchQuery}' IN BOOLEAN MODE)`,
+        '(vendor.num ILIKE :search OR vendor.nif ILIKE :search OR vendor.nrc ILIKE :search OR vendor.company_name ILIKE :search OR vendor.address ILIKE :search OR vendor.mobile_phone_number ILIKE :search OR vendor.home_phone_number ILIKE :search)',
+        { search: `%${searchQuery}%` },
       );
     }
 
     if (orderBy) query = query.orderBy(orderBy);
 
     const [data, total] = await query.getManyAndCount();
-    return { total, data: data.map((e) => this.toDomain(e)) };
+    return {
+      total,
+      data: data.map((e) =>
+        Object.assign(this.toDomain(e) as unknown as VendorWithCounts, {
+          contractCount: (e as any).contractCount ?? 0,
+          convensionCount: (e as any).convensionCount ?? 0,
+        }),
+      ),
+    };
   }
 
   async getVendorStats(
@@ -174,6 +203,7 @@ export class VendorRepository implements IVendorRepository {
       address: entity.address,
       mobile_phone_number: entity.mobile_phone_number,
       home_phone_number: entity.home_phone_number,
+      logoUrl: entity.logoUrl ?? '',
       createdAt: entity.createdAt,
     });
   }

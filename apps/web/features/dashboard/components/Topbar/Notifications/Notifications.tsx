@@ -2,32 +2,55 @@
 import { useState, useRef, useEffect } from 'react';
 import NotificationsNoneOutlinedIcon from '@mui/icons-material/NotificationsNoneOutlined';
 import { useNotificationStore } from '@/features/notification/store/notification.store';
-import { useMarkAsRead, useMarkAllAsRead } from '@/features/notification/queries/notification.queries';
+import {
+  useMarkAsRead,
+  useMarkAllAsRead,
+} from '@/features/notification/queries/notification.queries';
 import styles from './Notifications.module.css';
 
-type ActionLabel = 'Tous' | 'Création' | 'Mise à jour' | 'Suppression' | 'Activité';
+type ActionLabel =
+  | 'Tous'
+  | 'Création'
+  | 'Mise à jour'
+  | 'Suppression'
+  | 'Activité';
 
-const FILTERS: ActionLabel[] = ['Tous', 'Création', 'Mise à jour', 'Suppression', 'Activité'];
+const FILTERS: ActionLabel[] = [
+  'Tous',
+  'Création',
+  'Mise à jour',
+  'Suppression',
+  'Activité',
+];
 
 /** Bold the email address inside the message string */
 function renderMessage(message: string) {
   const parts = message.split(/([\w.+-]+@[\w.-]+\.[a-zA-Z]+)/g);
   return parts.map((part, i) =>
-    i % 2 === 1
-      ? <strong key={i} className={styles.emailHighlight}>{part}</strong>
-      : part,
+    i % 2 === 1 ? (
+      <strong key={i} className={styles.emailHighlight}>
+        {part}
+      </strong>
+    ) : (
+      part
+    ),
   );
 }
 
 /** Detect action type from message text */
 function getAction(message: string): { label: ActionLabel; cls: string } {
   const m = message.toLowerCase();
-  if (m.includes('supprim'))  return { label: 'Suppression', cls: styles.chipDelete };
+  if (m.includes('supprim'))
+    return { label: 'Suppression', cls: styles.chipDelete };
   if (m.includes('ajout') || m.includes('créé') || m.includes('cree'))
-                               return { label: 'Création',    cls: styles.chipInsert };
-  if (m.includes('mis a jour') || m.includes('mis à jour') || m.includes('mise à jour'))
-                               return { label: 'Mise à jour', cls: styles.chipUpdate };
-  return                              { label: 'Activité',    cls: styles.chipActivity };
+    return { label: 'Création', cls: styles.chipInsert };
+  if (
+    m.includes('mis a jour') ||
+    m.includes('mis à jour') ||
+    m.includes('mise à jour')
+  )
+    return { label: 'Mise à jour', cls: styles.chipUpdate };
+  return { label: 'Activité', cls: styles.chipActivity };
 }
 
 const Notifications = () => {
@@ -39,9 +62,12 @@ const Notifications = () => {
 
   const unreadCount = notifications.filter((n) => !n.isRead).length;
 
-  const filtered = activeFilter === 'Tous'
-    ? notifications
-    : notifications.filter((n) => getAction(n.message).label === activeFilter);
+  const filtered =
+    activeFilter === 'Tous'
+      ? notifications
+      : notifications.filter(
+          (n) => getAction(n.message).label === activeFilter,
+        );
 
   // Automatically mark visible unread notifications as read via IntersectionObserver.
   // A 600 ms dwell timer ensures the user actually sees the unread highlight before
@@ -91,8 +117,7 @@ const Notifications = () => {
   }, [filtered]);
 
   return (
-    <div className={styles.container}>
-
+    <div className={styles.container} data-testid="notifications-panel">
       {/* ── Navy header ── */}
       <div className={styles.header}>
         <div className={styles.headerIcon}>
@@ -103,18 +128,24 @@ const Notifications = () => {
           <span className={styles.headerCount}>{unreadCount}</span>
         )}
         {unreadCount > 0 && (
-          <button className={styles.markAllBtn} onClick={() => markAllAsRead()}>
+          <button
+            className={styles.markAllBtn}
+            onClick={() => markAllAsRead()}
+            data-testid="notifications-mark-all-read"
+          >
             Tout lire
           </button>
         )}
       </div>
 
       {/* ── Filter bar ── */}
-      <div className={styles.filterBar}>
+      <div className={styles.filterBar} data-testid="notifications-filter-bar">
         {FILTERS.map((f) => {
-          const count = f === 'Tous'
-            ? notifications.length
-            : notifications.filter((n) => getAction(n.message).label === f).length;
+          const count =
+            f === 'Tous'
+              ? notifications.length
+              : notifications.filter((n) => getAction(n.message).label === f)
+                  .length;
           return (
             <button
               key={f}
@@ -123,7 +154,9 @@ const Notifications = () => {
             >
               {f}
               {count > 0 && (
-                <span className={`${styles.filterCount} ${activeFilter === f ? styles.filterCountActive : ''}`}>
+                <span
+                  className={`${styles.filterCount} ${activeFilter === f ? styles.filterCountActive : ''}`}
+                >
                   {count}
                 </span>
               )}
@@ -134,17 +167,26 @@ const Notifications = () => {
 
       {/* ── Empty state ── */}
       {filtered.length === 0 ? (
-        <div className={styles.emptyState}>
+        <div
+          className={styles.emptyState}
+          data-testid="notifications-empty-state"
+        >
           <div className={styles.emptyIcon}>
             <NotificationsNoneOutlinedIcon sx={{ fontSize: 24 }} />
           </div>
           <span className={styles.emptyTitle}>Aucune notification</span>
           <span className={styles.emptyDesc}>
-            {activeFilter === 'Tous' ? 'Vous êtes à jour !' : `Aucune notification de type « ${activeFilter} »`}
+            {activeFilter === 'Tous'
+              ? 'Vous êtes à jour !'
+              : `Aucune notification de type « ${activeFilter} »`}
           </span>
         </div>
       ) : (
-        <ul ref={listRef} className={styles.list}>
+        <ul
+          ref={listRef}
+          className={styles.list}
+          data-testid="notifications-list"
+        >
           {filtered.map((n) => {
             const action = getAction(n.message);
             return (
@@ -154,7 +196,9 @@ const Notifications = () => {
                 className={`${styles.item} ${!n.isRead ? styles.itemUnread : ''}`}
               >
                 <div className={styles.itemMeta}>
-                  <span className={`${styles.chip} ${action.cls}`}>{action.label}</span>
+                  <span className={`${styles.chip} ${action.cls}`}>
+                    {action.label}
+                  </span>
                 </div>
                 <p className={styles.itemText}>{renderMessage(n.message)}</p>
               </li>

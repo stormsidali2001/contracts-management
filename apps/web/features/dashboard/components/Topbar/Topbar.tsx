@@ -1,17 +1,17 @@
 'use client';
 
-import { Badge, Button, IconButton, Popover } from '@mui/material'
-import Image from 'next/image'
-import { usePathname } from 'next/navigation'
-import { MouseEvent, useId, useState } from 'react'
+import { Badge, Button, IconButton, Popover } from '@mui/material';
+import Image from 'next/image';
+import { usePathname } from 'next/navigation';
+import { MouseEvent, useId, useState } from 'react';
 import { useAuthStore } from '@/features/auth/store/auth.store';
 import { useNotificationStore } from '@/features/notification/store/notification.store';
-import { getAvatarSrc, getRoleAvatar } from '@/lib/avatar'
-import LittleChevronIcon from '@/icons/LittleChevronIcon'
-import NotificationIcon from '@/icons/NotificationIcon'
-import Notifications from './Notifications/Notifications'
-import PopoverContent from './PopoverContent/PopoverContent'
-import styles from './Topbar.module.css'
+import { getAvatarSrc, getRoleAvatar } from '@/lib/avatar';
+import LittleChevronIcon from '@/icons/LittleChevronIcon';
+import NotificationIcon from '@/icons/NotificationIcon';
+import Notifications from './Notifications/Notifications';
+import PopoverContent from './PopoverContent/PopoverContent';
+import styles from './Topbar.module.css';
 
 const Topbar = () => {
   const notifications = useNotificationStore((s) => s.notifications);
@@ -19,7 +19,8 @@ const Topbar = () => {
   const popoverId = useId();
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const popoverIdNotification = useId();
-  const [anchorElNotification, setAnchorElNotification] = useState<HTMLButtonElement | null>(null);
+  const [anchorElNotification, setAnchorElNotification] =
+    useState<HTMLButtonElement | null>(null);
   const user = useAuthStore((s) => s.user);
   const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -37,80 +38,99 @@ const Topbar = () => {
   };
 
   const getStringFromPathName = () => {
-    switch(pathname){
+    switch (pathname) {
       case '/dashboard':
-        return "Tableau de board";
+        return 'Tableau de board';
       case '/directions':
-        return "les directions";
+        return 'Les directions';
       case '/vendors':
-        return "les fournisseurs"
+        return 'Les fournisseurs';
       case '/users':
-        return "les utilisateurs";
+        return 'Les utilisateurs';
       case '/contracts':
-        return "les contrats"
+        return 'Les contrats';
       case '/convensions':
-        return "Les convensions";
+        return 'Les convensions';
       case '/settings':
-        return "Parametres";
+        return 'Parametres';
     }
-    if(pathname.includes("/users")) return "un utilisateur"
-    if(pathname.includes("/convensions")) return "une convension"
-    if(pathname.includes("/contracts")) return "un contrat"
-    if(pathname.includes("/vendors")) return "un fournisseur"
-  }
+    if (pathname.includes('/users')) return 'un utilisateur';
+    if (pathname.includes('/convensions')) return 'une convension';
+    if (pathname.includes('/contracts')) return 'un contrat';
+    if (pathname.includes('/vendors')) return 'un fournisseur';
+  };
 
   return (
     <div id="topbar" className={styles.container}>
-       <div className={styles.indications}>
-            <span>{getStringFromPathName()}</span>
-            <span>{user?.role ?? ''}</span>
-       </div>
-       <div className={styles.rightButtons}>
-            <IconButton id="topbar-notifications" onClick={handleClickNotification} aria-label={notificationsLabel(100)}>
-                <Badge badgeContent={notifications.filter((n) => !n.isRead).length} sx={{padding:0}} className={styles.notificationBdge}>
-                    <NotificationIcon/>
-                </Badge>
-            </IconButton>
-            <Button onClick={handleClick} aria-describedby={popoverId}>
-              <div className={styles.profilImgContainer}>
-                  <Image src={getAvatarSrc(user?.imageUrl, user?.role)} alt="profile picture" width={36} height={36} unoptimized onError={(e) => { (e.currentTarget as HTMLImageElement).src = getRoleAvatar(user?.role); }} />
-                  <LittleChevronIcon className={styles.chevron}/>
-              </div>
-            </Button>
-            <Popover
-              id={popoverId}
-              open={open}
-              anchorEl={anchorEl}
-              onClose={handleClose}
-              anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'left',
+      <div className={styles.indications}>
+        <span>{getStringFromPathName()}</span>
+        <span>{user?.role ?? ''}</span>
+      </div>
+      <div className={styles.rightButtons}>
+        <IconButton
+          id="topbar-notifications"
+          onClick={handleClickNotification}
+          aria-label={notificationsLabel(100)}
+        >
+          <Badge
+            badgeContent={notifications.filter((n) => !n.isRead).length}
+            sx={{ padding: 0 }}
+            className={styles.notificationBdge}
+          >
+            <NotificationIcon />
+          </Badge>
+        </IconButton>
+        <Button onClick={handleClick} aria-describedby={popoverId}>
+          <div className={styles.profilImgContainer}>
+            <Image
+              src={getAvatarSrc(user?.imageUrl, user?.role)}
+              alt="profile picture"
+              width={36}
+              height={36}
+              unoptimized
+              onError={(e) => {
+                (e.currentTarget as HTMLImageElement).src = getRoleAvatar(
+                  user?.role,
+                );
               }}
-              PaperProps={{
-                className: styles.popoverStyles,
-              }}
-            >
-               <PopoverContent/>
-            </Popover>
-            <Popover
-              id={popoverIdNotification}
-              open={openNotification}
-              anchorEl={anchorElNotification}
-              onClose={handleCloseNotification}
-              anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'left',
-              }}
-              PaperProps={{
-                className: styles.popoverStyles,
-              }}
-            >
-               <Notifications/>
-            </Popover>
-       </div>
+            />
+            <LittleChevronIcon className={styles.chevron} />
+          </div>
+        </Button>
+        <Popover
+          id={popoverId}
+          open={open}
+          anchorEl={anchorEl}
+          onClose={handleClose}
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'left',
+          }}
+          PaperProps={{
+            className: styles.popoverStyles,
+          }}
+        >
+          <PopoverContent />
+        </Popover>
+        <Popover
+          id={popoverIdNotification}
+          open={openNotification}
+          anchorEl={anchorElNotification}
+          onClose={handleCloseNotification}
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'left',
+          }}
+          PaperProps={{
+            className: styles.popoverStyles,
+          }}
+        >
+          <Notifications />
+        </Popover>
+      </div>
     </div>
-  )
-}
+  );
+};
 
 function notificationsLabel(count: number) {
   if (count === 0) {
@@ -122,4 +142,4 @@ function notificationsLabel(count: number) {
   return `${count} notifications`;
 }
 
-export default Topbar
+export default Topbar;

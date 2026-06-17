@@ -17,10 +17,16 @@ const DeleteVendorAction = ({ params }: any) => {
     deleteVendor(id, {
       onSuccess: () => {
         setSuccess(true);
-        showSnackbar({ message: 'le vendor a eté supprimé avec success', severty: 'success' });
+        showSnackbar({
+          message: 'le vendor a eté supprimé avec success',
+          severty: 'success',
+        });
       },
       onError: (err: any) => {
-        showSnackbar({ message: err?.response?.data?.error ?? 'erreur inconnu', severty: 'error' });
+        showSnackbar({
+          message: err?.response?.data?.error ?? 'erreur inconnu',
+          severty: 'error',
+        });
       },
     });
   };
@@ -30,11 +36,26 @@ const DeleteVendorAction = ({ params }: any) => {
       {success ? (
         <Check color="secondary" sx={{ width: 25, height: 25 }} />
       ) : (
-        <Button color="primary" sx={{ width: 30, height: 30, boxShadow: 'none' }} onClick={() => handleSubmit()}>
+        <Button
+          color="primary"
+          sx={{ width: 30, height: 30, boxShadow: 'none' }}
+          onClick={() => handleSubmit()}
+        >
           <DeleteForever sx={{ boxShadow: 'none', width: '36px' }} />
         </Button>
       )}
-      {loading && <CircularProgress size={30} sx={{ position: 'absolute', top: '0', left: '15px', transform: 'translate(-50%,-50%)', zIndex: 1 }} />}
+      {loading && (
+        <CircularProgress
+          size={30}
+          sx={{
+            position: 'absolute',
+            top: '0',
+            left: '15px',
+            transform: 'translate(-50%,-50%)',
+            zIndex: 1,
+          }}
+        />
+      )}
     </Box>
   );
 };

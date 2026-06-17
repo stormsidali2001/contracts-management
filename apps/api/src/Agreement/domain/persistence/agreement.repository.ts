@@ -41,7 +41,7 @@ export interface IAgreementRepository {
     userRole: UserRole,
     userDepartementId?: string,
     userDirectionId?: string,
-  ): Promise<PaginationResponse<Agreement>>;
+  ): Promise<PaginationResponse<AgreementDetail>>;
 
   getStatusStats(
     userRole: UserRole,

@@ -9,7 +9,12 @@ function WithPrivate({ children }: any) {
   const router = useRouter();
   const pathname = usePathname();
   const [initialized, setInitialized] = useState(false);
-  const exceptionPaths = ['/', '/signin', '/forgot-password', '/reset-password'];
+  const exceptionPaths = [
+    '/',
+    '/signin',
+    '/forgot-password',
+    '/reset-password',
+  ];
 
   useEffect(() => {
     if (jwt || isAuthenticated) {

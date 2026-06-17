@@ -53,7 +53,11 @@ export const mockDirections: DirectionView[] = [
     title: 'Direction des Achats',
     abriviation: 'DAC',
     departements: [
-      { id: 'dep-13', title: 'Département Approvisionnement', abriviation: 'APP' },
+      {
+        id: 'dep-13',
+        title: 'Département Approvisionnement',
+        abriviation: 'APP',
+      },
       { id: 'dep-14', title: 'Département Fournisseurs', abriviation: 'FRN' },
       { id: 'dep-15', title: 'Département Logistique', abriviation: 'LOG' },
     ],

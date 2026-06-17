@@ -14,8 +14,18 @@ import { useSnackbarStore } from '@/features/ui/store/snackbar.store';
 
 const ForgotPassword = () => {
   const [panelError, setPanelError] = useState(false);
-  const { text: email, textChangeHandler: emailChangeHandler, shouldDisplayError, inputBlurHandler: emailBlurHandler } = useInput(validateEmail);
-  const { mutate: forgotPassword, isPending, isSuccess, isError } = useForgotPassword();
+  const {
+    text: email,
+    textChangeHandler: emailChangeHandler,
+    shouldDisplayError,
+    inputBlurHandler: emailBlurHandler,
+  } = useInput(validateEmail);
+  const {
+    mutate: forgotPassword,
+    isPending,
+    isSuccess,
+    isError,
+  } = useForgotPassword();
   const showSnackbar = useSnackbarStore((s) => s.showSnackbar);
 
   const handleSubmit = (e: any) => {
@@ -30,7 +40,10 @@ const ForgotPassword = () => {
 
   useEffect(() => {
     if (!isSuccess) return;
-    showSnackbar({ message: 'Lien de réinitialisation envoyé avec succès.', severty: 'success' });
+    showSnackbar({
+      message: 'Lien de réinitialisation envoyé avec succès.',
+      severty: 'success',
+    });
   }, [isSuccess, showSnackbar]);
 
   return (
@@ -44,7 +57,10 @@ const ForgotPassword = () => {
 
           <div className={styles.formHeading}>
             <h1>Mot de passe oublié</h1>
-            <p>Entrez votre adresse email et nous vous enverrons un lien pour réinitialiser votre mot de passe.</p>
+            <p>
+              Entrez votre adresse email et nous vous enverrons un lien pour
+              réinitialiser votre mot de passe.
+            </p>
           </div>
 
           {!isPending ? (
@@ -69,7 +85,12 @@ const ForgotPassword = () => {
                 color="primary"
                 fullWidth
                 size="medium"
-                sx={{ py: 1.25, fontFamily: "'Outfit', sans-serif", fontSize: '14px', fontWeight: 600 }}
+                sx={{
+                  py: 1.25,
+                  fontFamily: "'Outfit', sans-serif",
+                  fontSize: '14px',
+                  fontWeight: 600,
+                }}
               >
                 Envoyer le lien
               </Button>

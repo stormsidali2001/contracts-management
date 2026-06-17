@@ -3,7 +3,12 @@ import styles from './SelectVendor.module.css';
 import { Button, TextField, Typography, Stack } from '@mui/material';
 import { useState } from 'react';
 import { useDebounce } from '@/hooks/useDebounce.hook';
-import { DataGrid, GridColumns, GridSortItem, GridSortModel } from '@mui/x-data-grid';
+import {
+  DataGrid,
+  GridColumns,
+  GridSortItem,
+  GridSortModel,
+} from '@mui/x-data-grid';
 import { useVendors } from '@/features/vendor/queries/vendor.queries';
 
 const columns: GridColumns<any> = [
@@ -25,7 +30,9 @@ const SelectVendor = ({ handleClose, selectVendor }: PropType) => {
   const pageSize = 5;
   const [searchQuery, setSearchQuery] = useState('');
   const { debounce } = useDebounce();
-  const [queryOptions, setQueryOptions] = useState<{ sortModel: GridSortItem[] | null }>({ sortModel: null });
+  const [queryOptions, setQueryOptions] = useState<{
+    sortModel: GridSortItem[] | null;
+  }>({ sortModel: null });
   const [selectedVendor, setSelectedVendor] = useState<any>(null);
 
   const { data, isFetching } = useVendors({
@@ -52,9 +59,25 @@ const SelectVendor = ({ handleClose, selectVendor }: PropType) => {
 
   return (
     <div className={styles.container}>
-      <Typography sx={{ margin: '-5px 0 10px 0', fontSize: '14px', color: 'text.secondary' }}>Selectioner un fournisseur</Typography>
+      <Typography
+        sx={{
+          margin: '-5px 0 10px 0',
+          fontSize: '14px',
+          color: 'text.secondary',
+        }}
+      >
+        Selectioner un fournisseur
+      </Typography>
       <div className={styles.searchContainer}>
-        <TextField placeholder="mot clé..." color="secondary" size="small" fullWidth type="search" onChange={handleSearch} InputProps={{ className: styles.input }} />
+        <TextField
+          placeholder="mot clé..."
+          color="secondary"
+          size="small"
+          fullWidth
+          type="search"
+          onChange={handleSearch}
+          InputProps={{ className: styles.input }}
+        />
       </div>
       <div className={styles.tableContainer}>
         <DataGrid
@@ -80,7 +103,12 @@ const SelectVendor = ({ handleClose, selectVendor }: PropType) => {
           }}
         />
       </div>
-      <Stack direction="row" justifyContent="center" gap={3} className={styles.actionButtons}>
+      <Stack
+        direction="row"
+        justifyContent="center"
+        gap={3}
+        className={styles.actionButtons}
+      >
         <Button onClick={() => handleClose()}>Fermer</Button>
         <Button disabled={selectedVendor == null} onClick={handleConfirm}>
           Confirmer

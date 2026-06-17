@@ -19,30 +19,58 @@ const ResetPassword = () => {
   const userId = searchParams.get('userId');
   const token = searchParams.get('token');
 
-  const { mutate: resetPassword, isPending, isSuccess, isError } = useResetPassword();
+  const {
+    mutate: resetPassword,
+    isPending,
+    isSuccess,
+    isError,
+  } = useResetPassword();
   const showSnackbar = useSnackbarStore((s) => s.showSnackbar);
 
-  const { text: newPassword, textChangeHandler: newPasswordChangeHandler, shouldDisplayError: newPasswordShouldDisplayError, inputBlurHandler: newPasswordBlurHandler } = useInput(validatePasswordLength);
-  const { text: confirmation, textChangeHandler: confirmationChangeHandler, shouldDisplayError: confirmationShouldDisplayError, inputBlurHandler: confirmationBlurHandler } = useInput(validatePasswordLength);
+  const {
+    text: newPassword,
+    textChangeHandler: newPasswordChangeHandler,
+    shouldDisplayError: newPasswordShouldDisplayError,
+    inputBlurHandler: newPasswordBlurHandler,
+  } = useInput(validatePasswordLength);
+  const {
+    text: confirmation,
+    textChangeHandler: confirmationChangeHandler,
+    shouldDisplayError: confirmationShouldDisplayError,
+    inputBlurHandler: confirmationBlurHandler,
+  } = useInput(validatePasswordLength);
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
-    resetPassword({ password: newPassword, token: token as string, userId: userId as string });
+    resetPassword({
+      password: newPassword,
+      token: token as string,
+      userId: userId as string,
+    });
   };
 
   useEffect(() => {
     if (!isError) return;
-    showSnackbar({ message: 'Le lien de réinitialisation est invalide ou expiré.' });
+    showSnackbar({
+      message: 'Le lien de réinitialisation est invalide ou expiré.',
+    });
   }, [isError, showSnackbar]);
 
   useEffect(() => {
     if (!isSuccess) return;
-    showSnackbar({ message: 'Mot de passe mis à jour avec succès.', severty: 'success' });
+    showSnackbar({
+      message: 'Mot de passe mis à jour avec succès.',
+      severty: 'success',
+    });
   }, [isSuccess, showSnackbar]);
 
   const passwordsMatch = newPassword === confirmation;
-  const canSubmit = !newPasswordShouldDisplayError && !confirmationShouldDisplayError
-    && newPassword.length > 0 && confirmation.length > 0 && passwordsMatch;
+  const canSubmit =
+    !newPasswordShouldDisplayError &&
+    !confirmationShouldDisplayError &&
+    newPassword.length > 0 &&
+    confirmation.length > 0 &&
+    passwordsMatch;
 
   return (
     <div className={styles.container}>
@@ -55,14 +83,18 @@ const ResetPassword = () => {
 
           <div className={styles.formHeading}>
             <h1>Nouveau mot de passe</h1>
-            <p>Choisissez un mot de passe sécurisé d&apos;au moins 6 caractères.</p>
+            <p>
+              Choisissez un mot de passe sécurisé d&apos;au moins 6 caractères.
+            </p>
           </div>
 
           {!isPending ? (
             <form className={styles.form} onSubmit={handleSubmit}>
               <TextField
                 onBlur={newPasswordBlurHandler}
-                helperText={newPasswordShouldDisplayError && 'Minimum 6 caractères'}
+                helperText={
+                  newPasswordShouldDisplayError && 'Minimum 6 caractères'
+                }
                 error={newPasswordShouldDisplayError}
                 value={newPassword}
                 onChange={newPasswordChangeHandler}
@@ -79,10 +111,13 @@ const ResetPassword = () => {
                   confirmationShouldDisplayError
                     ? 'Minimum 6 caractères'
                     : confirmation.length > 0 && !passwordsMatch
-                    ? 'Les mots de passe ne correspondent pas'
-                    : undefined
+                      ? 'Les mots de passe ne correspondent pas'
+                      : undefined
                 }
-                error={confirmationShouldDisplayError || (confirmation.length > 0 && !passwordsMatch)}
+                error={
+                  confirmationShouldDisplayError ||
+                  (confirmation.length > 0 && !passwordsMatch)
+                }
                 value={confirmation}
                 onChange={confirmationChangeHandler}
                 autoComplete="new-password"
@@ -99,7 +134,12 @@ const ResetPassword = () => {
                 color="primary"
                 fullWidth
                 size="medium"
-                sx={{ py: 1.25, fontFamily: "'Outfit', sans-serif", fontSize: '14px', fontWeight: 600 }}
+                sx={{
+                  py: 1.25,
+                  fontFamily: "'Outfit', sans-serif",
+                  fontSize: '14px',
+                  fontWeight: 600,
+                }}
               >
                 Mettre à jour le mot de passe
               </Button>

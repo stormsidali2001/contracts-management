@@ -29,13 +29,13 @@ export const ALL_ENTITIES = [
 
 export function typeOrmTestingModule() {
   return TypeOrmModule.forRoot({
-    type: 'mysql',
-    host: process.env.MYSQL_DATABASE_HOST ?? 'localhost',
-    port: Number(process.env.MYSQL_DATABASE_PORT) || 3306,
-    username: process.env.MYSQL_USERNAME ?? 'root',
-    password: process.env.MYSQL_PASSWORD ?? '',
-    database: process.env.MYSQL_DATABASE_NAME ?? 'contracts',
+    type: 'postgres',
+    host: process.env.DB_TEST_HOST ?? process.env.DB_HOST ?? 'localhost',
+    port: Number(process.env.DB_TEST_PORT ?? process.env.DB_PORT) || 5432,
+    username: process.env.DB_USERNAME ?? 'user1',
+    password: process.env.DB_PASSWORD ?? '',
+    database: process.env.DB_TEST_NAME ?? 'contracts_management_test',
     entities: ALL_ENTITIES,
-    synchronize: false,
+    synchronize: true,
   });
 }

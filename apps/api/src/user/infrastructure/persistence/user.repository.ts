@@ -7,7 +7,10 @@ import { UserRole } from 'src/core/types/UserRole.enum';
 import { PaginationResponse } from 'src/core/types/paginationResponse.interface';
 import { StatsParamsDTO } from 'src/core/dtos/stats.dto';
 import { User } from '../../domain/user.aggregate';
-import { IUserRepository, UserProfile } from '../../domain/persistence/user.repository';
+import {
+  IUserRepository,
+  UserProfile,
+} from '../../domain/persistence/user.repository';
 
 @Injectable()
 export class UserRepository implements IUserRepository {
@@ -47,7 +50,7 @@ export class UserRepository implements IUserRepository {
       await notificationRepo
         .createQueryBuilder()
         .delete()
-        .where('notifications.userId = :userId', { userId })
+        .where('"userId" = :userId', { userId })
         .execute();
 
       await userRepo
@@ -134,7 +137,8 @@ export class UserRepository implements IUserRepository {
 
     if (searchQuery && searchQuery.length >= 2) {
       query = query.andWhere(
-        `MATCH(user.username, user.email, user.firstName, user.lastName) AGAINST ('${searchQuery}' IN BOOLEAN MODE)`,
+        '(user.username ILIKE :search OR user.email ILIKE :search OR user.firstName ILIKE :search OR user.lastName ILIKE :search)',
+        { search: `%${searchQuery}%` },
       );
     }
     if (departementId)

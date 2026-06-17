@@ -18,7 +18,7 @@ export class NotificationEntity {
   @Column({ default: false })
   isRead: boolean;
 
-  @CreateDateColumn({ type: 'datetime' })
+  @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
 
   //realations

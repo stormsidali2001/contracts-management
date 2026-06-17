@@ -1,17 +1,22 @@
 'use client';
 
 import styles from './vendorContent.module.css';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useParams } from 'next/navigation';
-import { CircularProgress, Modal, Skeleton } from '@mui/material';
+import { Avatar, CircularProgress, Modal, Skeleton } from '@mui/material';
 import AgreementList from '@/features/vendor/components/AgreementList/AgreementList';
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
+import CameraAltIcon from '@mui/icons-material/CameraAlt';
 import { useSnackbarStore } from '@/features/ui/store/snackbar.store';
 import { usePermissions } from '@/features/auth/queries/auth.queries';
-import { useVendor, useUpdateVendor } from '@/features/vendor/queries/vendor.queries';
+import {
+  useVendor,
+  useUpdateVendor,
+  useUploadVendorLogo,
+} from '@/features/vendor/queries/vendor.queries';
 import Breadcrumb from '@/shared/components/Breadcrumb/Breadcrumb';
-import StorefrontOutlinedIcon from '@mui/icons-material/StorefrontOutlined';
+import { getVendorLogoSrc } from '@/lib/avatar';
 import BusinessOutlinedIcon from '@mui/icons-material/BusinessOutlined';
 import FingerprintOutlinedIcon from '@mui/icons-material/FingerprintOutlined';
 import AssignmentIndOutlinedIcon from '@mui/icons-material/AssignmentIndOutlined';
@@ -31,90 +36,195 @@ const VendorContent = () => {
   const [localVendor, setLocalVendor] = useState<any>(null);
   const showSnackbar = useSnackbarStore((s) => s.showSnackbar);
   const [contractModalOpen, setContractModalOpen] = useState(false);
-  const handleContractModaOpen  = () => setContractModalOpen(true);
+  const handleContractModaOpen = () => setContractModalOpen(true);
   const handleContractModalClose = () => setContractModalOpen(false);
-  const [modalType, setModalType] = useState<'contract' | 'convension'>('contract');
+  const [modalType, setModalType] = useState<'contract' | 'convension'>(
+    'contract',
+  );
 
+  const logoInputRef = useRef<HTMLInputElement>(null);
   const { data: vendor } = useVendor(vendorId);
   const { mutate: updateVendor, isPending: loading } = useUpdateVendor();
+  const { mutate: uploadLogo } = useUploadVendorLogo();
 
   const displayVendor = localVendor ?? vendor;
 
   // ── All hooks must be called unconditionally before any early return ──
   const { data: statsData } = useStatistics();
 
-  const handleShowContract  = () => { setModalType('contract');   handleContractModaOpen(); };
-  const handleShowConvension = () => { setModalType('convension'); handleContractModaOpen(); };
+  const handleShowContract = () => {
+    setModalType('contract');
+    handleContractModaOpen();
+  };
+  const handleShowConvension = () => {
+    setModalType('convension');
+    handleContractModaOpen();
+  };
 
-  if (!displayVendor) return (
-    <div className={styles.page}>
-      <div className={styles.pageHeader}>
-        <div className={styles.pageHeaderLeft}>
-          <Skeleton variant="text" animation="wave" width={110} height={16} />
-          <div className={styles.pageHeaderTitle}>
-            <Skeleton variant="text" animation="wave" width={190} height={34} />
-            <Skeleton variant="rounded" animation="wave" width={85} height={22} sx={{ borderRadius: 99 }} />
-            <Skeleton variant="rounded" animation="wave" width={60} height={22} sx={{ borderRadius: 99 }} />
+  if (!displayVendor)
+    return (
+      <div className={styles.page}>
+        <div className={styles.pageHeader}>
+          <div className={styles.pageHeaderLeft}>
+            <Skeleton variant="text" animation="wave" width={110} height={16} />
+            <div className={styles.pageHeaderTitle}>
+              <Skeleton
+                variant="text"
+                animation="wave"
+                width={190}
+                height={34}
+              />
+              <Skeleton
+                variant="rounded"
+                animation="wave"
+                width={85}
+                height={22}
+                sx={{ borderRadius: 99 }}
+              />
+              <Skeleton
+                variant="rounded"
+                animation="wave"
+                width={60}
+                height={22}
+                sx={{ borderRadius: 99 }}
+              />
+            </div>
+          </div>
+          <Skeleton
+            variant="rounded"
+            animation="wave"
+            width={120}
+            height={34}
+            sx={{ borderRadius: 8 }}
+          />
+        </div>
+
+        <div className={styles.container}>
+          {/* Left: vendor details card skeleton */}
+          <div className={styles.left}>
+            <div className={styles.vendorCard}>
+              <div className={styles.cardHeader}>
+                <Skeleton
+                  variant="circular"
+                  animation="wave"
+                  width={40}
+                  height={40}
+                />
+                <div className={styles.headerText}>
+                  <Skeleton
+                    variant="text"
+                    animation="wave"
+                    width={160}
+                    height={18}
+                  />
+                  <Skeleton
+                    variant="text"
+                    animation="wave"
+                    width={80}
+                    height={14}
+                  />
+                </div>
+              </div>
+              <div className={styles.content}>
+                {[0, 1, 2, 3, 4, 5].map((i) => (
+                  <div
+                    key={i}
+                    className={`${styles.vendorContentItem} ${i === 0 || i === 5 ? styles.spanTwo : ''}`}
+                  >
+                    <Skeleton
+                      variant="text"
+                      animation="wave"
+                      width={70}
+                      height={14}
+                    />
+                    <Skeleton
+                      variant="text"
+                      animation="wave"
+                      width="85%"
+                      height={16}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Right: agreement stat card skeletons */}
+          <div className={styles.right}>
+            {[0, 1].map((i) => (
+              <div key={i} className={styles.agreementCard}>
+                <div className={styles.agreementCardHeader}>
+                  <Skeleton
+                    variant="circular"
+                    animation="wave"
+                    width={32}
+                    height={32}
+                  />
+                  <div className={styles.agreementHeaderText}>
+                    <Skeleton
+                      variant="text"
+                      animation="wave"
+                      width={80}
+                      height={18}
+                    />
+                    <Skeleton
+                      variant="text"
+                      animation="wave"
+                      width={130}
+                      height={13}
+                    />
+                  </div>
+                </div>
+                <div className={styles.agreementCardBody}>
+                  <div className={styles.agreementCountRow}>
+                    <Skeleton
+                      variant="text"
+                      animation="wave"
+                      width={50}
+                      height={44}
+                    />
+                    <Skeleton
+                      variant="text"
+                      animation="wave"
+                      width={110}
+                      height={16}
+                    />
+                  </div>
+                  <div className={styles.agreementMeta}>
+                    <Skeleton
+                      variant="rounded"
+                      animation="wave"
+                      width="100%"
+                      height={6}
+                      sx={{ borderRadius: 99 }}
+                    />
+                    <Skeleton
+                      variant="text"
+                      animation="wave"
+                      width="65%"
+                      height={13}
+                    />
+                  </div>
+                </div>
+                <Skeleton
+                  variant="rounded"
+                  animation="wave"
+                  width="100%"
+                  height={38}
+                  sx={{ borderRadius: '0 0 10px 10px', mt: 'auto' }}
+                />
+              </div>
+            ))}
           </div>
         </div>
-        <Skeleton variant="rounded" animation="wave" width={120} height={34} sx={{ borderRadius: 8 }} />
       </div>
+    );
 
-      <div className={styles.container}>
-        {/* Left: vendor details card skeleton */}
-        <div className={styles.left}>
-          <div className={styles.vendorCard}>
-            <div className={styles.cardHeader}>
-              <Skeleton variant="circular" animation="wave" width={40} height={40} />
-              <div className={styles.headerText}>
-                <Skeleton variant="text" animation="wave" width={160} height={18} />
-                <Skeleton variant="text" animation="wave" width={80} height={14} />
-              </div>
-            </div>
-            <div className={styles.content}>
-              {[0, 1, 2, 3, 4, 5].map((i) => (
-                <div key={i} className={`${styles.vendorContentItem} ${i === 0 || i === 5 ? styles.spanTwo : ''}`}>
-                  <Skeleton variant="text" animation="wave" width={70} height={14} />
-                  <Skeleton variant="text" animation="wave" width="85%" height={16} />
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
+  const totalContracts = statsData?.agreementsStats?.types?.contract ?? null;
+  const totalConvensions =
+    statsData?.agreementsStats?.types?.convension ?? null;
 
-        {/* Right: agreement stat card skeletons */}
-        <div className={styles.right}>
-          {[0, 1].map((i) => (
-            <div key={i} className={styles.agreementCard}>
-              <div className={styles.agreementCardHeader}>
-                <Skeleton variant="circular" animation="wave" width={32} height={32} />
-                <div className={styles.agreementHeaderText}>
-                  <Skeleton variant="text" animation="wave" width={80} height={18} />
-                  <Skeleton variant="text" animation="wave" width={130} height={13} />
-                </div>
-              </div>
-              <div className={styles.agreementCardBody}>
-                <div className={styles.agreementCountRow}>
-                  <Skeleton variant="text" animation="wave" width={50} height={44} />
-                  <Skeleton variant="text" animation="wave" width={110} height={16} />
-                </div>
-                <div className={styles.agreementMeta}>
-                  <Skeleton variant="rounded" animation="wave" width="100%" height={6} sx={{ borderRadius: 99 }} />
-                  <Skeleton variant="text" animation="wave" width="65%" height={13} />
-                </div>
-              </div>
-              <Skeleton variant="rounded" animation="wave" width="100%" height={38} sx={{ borderRadius: '0 0 10px 10px', mt: 'auto' }} />
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-
-  const totalContracts   = statsData?.agreementsStats?.types?.contract   ?? null;
-  const totalConvensions = statsData?.agreementsStats?.types?.convension ?? null;
-
-  const contractCount   = displayVendor?.contractCount   ?? 0;
+  const contractCount = displayVendor?.contractCount ?? 0;
   const convensionCount = displayVendor?.convensionCount ?? 0;
 
   const setVendorProperty = (key: string, value: any) =>
@@ -124,24 +234,57 @@ const VendorContent = () => {
     updateVendor(
       { id: displayVendor.id, ...displayVendor },
       {
-        onSuccess: () => { setEditMode(false); setLocalVendor(null); showSnackbar({ message: 'le fournisseur a été mis à jour', severty: 'success' }); },
-        onError:   (err: any) => { setEditMode(false); showSnackbar({ message: err?.response?.data?.error ?? 'erreur inconnue' }); },
+        onSuccess: () => {
+          setEditMode(false);
+          setLocalVendor(null);
+          showSnackbar({
+            message: 'le fournisseur a été mis à jour',
+            severty: 'success',
+          });
+        },
+        onError: (err: any) => {
+          setEditMode(false);
+          showSnackbar({
+            message: err?.response?.data?.error ?? 'erreur inconnue',
+          });
+        },
       },
     );
   };
 
   const showDisplayEdit = () => permissions?.vendors.canEdit ?? false;
 
+  const handleLogoFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    uploadLogo(file, {
+      onSuccess: (filename) => {
+        updateVendor(
+          { id: displayVendor.id, logoUrl: filename },
+          {
+            onSuccess: () => {
+              showSnackbar({ message: 'Logo mis à jour', severty: 'success' });
+            },
+          },
+        );
+      },
+      onError: () =>
+        showSnackbar({ message: 'Erreur lors du téléchargement du logo' }),
+    });
+    e.target.value = '';
+  };
+
   return (
     <div id="vendor-detail-page" className={styles.page}>
-
       {/* ── Page header ── */}
       <div className={styles.pageHeader}>
         <div className={styles.pageHeaderLeft}>
-          <Breadcrumb items={[
-            { label: 'Fournisseurs', href: '/vendors' },
-            { label: displayVendor?.company_name ?? '' },
-          ]} />
+          <Breadcrumb
+            items={[
+              { label: 'Fournisseurs', href: '/vendors' },
+              { label: displayVendor?.company_name ?? '' },
+            ]}
+          />
           <div className={styles.pageHeaderTitle}>
             <h1 className={styles.pageTitle}>{displayVendor?.company_name}</h1>
             <span className={styles.vendorBadge}>Fournisseur</span>
@@ -151,12 +294,23 @@ const VendorContent = () => {
         {showDisplayEdit() && (
           <div className={styles.pageHeaderActions}>
             {editMode ? (
-              <button className={styles.saveBtn} onClick={handleSubmit} disabled={loading}>
-                {loading ? <CircularProgress size={14} sx={{ color: '#fff' }} /> : <SaveIcon sx={{ fontSize: 15 }} />}
+              <button
+                className={styles.saveBtn}
+                onClick={handleSubmit}
+                disabled={loading}
+              >
+                {loading ? (
+                  <CircularProgress size={14} sx={{ color: '#fff' }} />
+                ) : (
+                  <SaveIcon sx={{ fontSize: 15 }} />
+                )}
                 Sauvegarder
               </button>
             ) : (
-              <button className={styles.editBtn} onClick={() => setEditMode(true)}>
+              <button
+                className={styles.editBtn}
+                onClick={() => setEditMode(true)}
+              >
                 <EditIcon sx={{ fontSize: 15 }} />
                 Modifier
               </button>
@@ -167,31 +321,64 @@ const VendorContent = () => {
 
       {/* ── Main grid ── */}
       <div className={styles.container}>
-
         {/* ══ Left: vendor detail card ══ */}
         <div className={styles.left}>
           <div id="vendor-detail-card" className={styles.vendorCard}>
-
             {/* Card header */}
             <div className={styles.cardHeader}>
-              <div className={styles.headerIconWrap}>
-                <StorefrontOutlinedIcon sx={{ fontSize: 20 }} />
+              <div style={{ position: 'relative', flexShrink: 0 }}>
+                <Avatar
+                  src={getVendorLogoSrc(displayVendor?.logoUrl)}
+                  sx={{ width: 40, height: 40 }}
+                />
+                {editMode && (
+                  <label
+                    htmlFor="vendor-logo-input"
+                    style={{
+                      position: 'absolute',
+                      inset: 0,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      background: 'rgba(0,0,0,0.45)',
+                      borderRadius: '50%',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    <CameraAltIcon sx={{ fontSize: 15, color: '#fff' }} />
+                    <input
+                      id="vendor-logo-input"
+                      ref={logoInputRef}
+                      type="file"
+                      accept="image/png,image/jpeg"
+                      style={{ display: 'none' }}
+                      onChange={handleLogoFileChange}
+                    />
+                  </label>
+                )}
               </div>
               <div className={styles.headerText}>
-                <span className={styles.vendorTitle}>{displayVendor?.company_name}</span>
+                <span className={styles.vendorTitle}>
+                  {displayVendor?.company_name}
+                </span>
                 <span className={styles.labelText}>{displayVendor?.num}</span>
               </div>
             </div>
 
             {/* Field grid */}
             <div className={styles.content}>
-
               <div className={`${styles.vendorContentItem} ${styles.spanTwo}`}>
                 <div className={styles.fieldLabel}>
                   <BusinessOutlinedIcon sx={{ fontSize: 12 }} />
                   Raison sociale
                 </div>
-                <Field edit={editMode} value={displayVendor?.company_name ?? ''} onChange={(e: any) => setVendorProperty('company_name', e.target.value)} />
+                <Field
+                  edit={editMode}
+                  value={displayVendor?.company_name ?? ''}
+                  onChange={(e: any) =>
+                    setVendorProperty('company_name', e.target.value)
+                  }
+                />
               </div>
 
               <div className={styles.vendorContentItem}>
@@ -199,7 +386,13 @@ const VendorContent = () => {
                   <FingerprintOutlinedIcon sx={{ fontSize: 12 }} />
                   NIF
                 </div>
-                <Field edit={editMode} value={displayVendor?.nif ?? ''} onChange={(e: any) => setVendorProperty('nif', e.target.value)} />
+                <Field
+                  edit={editMode}
+                  value={displayVendor?.nif ?? ''}
+                  onChange={(e: any) =>
+                    setVendorProperty('nif', e.target.value)
+                  }
+                />
               </div>
 
               <div className={styles.vendorContentItem}>
@@ -207,7 +400,13 @@ const VendorContent = () => {
                   <AssignmentIndOutlinedIcon sx={{ fontSize: 12 }} />
                   NRC
                 </div>
-                <Field edit={editMode} value={displayVendor?.nrc ?? ''} onChange={(e: any) => setVendorProperty('nrc', e.target.value)} />
+                <Field
+                  edit={editMode}
+                  value={displayVendor?.nrc ?? ''}
+                  onChange={(e: any) =>
+                    setVendorProperty('nrc', e.target.value)
+                  }
+                />
               </div>
 
               <div className={styles.vendorContentItem}>
@@ -215,7 +414,13 @@ const VendorContent = () => {
                   <PhoneAndroidOutlinedIcon sx={{ fontSize: 12 }} />
                   Mobile
                 </div>
-                <Field edit={editMode} value={displayVendor?.mobile_phone_number ?? ''} onChange={(e: any) => setVendorProperty('mobile_phone_number', e.target.value)} />
+                <Field
+                  edit={editMode}
+                  value={displayVendor?.mobile_phone_number ?? ''}
+                  onChange={(e: any) =>
+                    setVendorProperty('mobile_phone_number', e.target.value)
+                  }
+                />
               </div>
 
               <div className={styles.vendorContentItem}>
@@ -223,7 +428,13 @@ const VendorContent = () => {
                   <PhoneOutlinedIcon sx={{ fontSize: 12 }} />
                   Fixe
                 </div>
-                <Field edit={editMode} value={displayVendor?.home_phone_number ?? ''} onChange={(e: any) => setVendorProperty('home_phone_number', e.target.value)} />
+                <Field
+                  edit={editMode}
+                  value={displayVendor?.home_phone_number ?? ''}
+                  onChange={(e: any) =>
+                    setVendorProperty('home_phone_number', e.target.value)
+                  }
+                />
               </div>
 
               <div className={`${styles.vendorContentItem} ${styles.spanTwo}`}>
@@ -231,16 +442,20 @@ const VendorContent = () => {
                   <LocationOnOutlinedIcon sx={{ fontSize: 12 }} />
                   Adresse
                 </div>
-                <Field edit={editMode} value={displayVendor?.address ?? ''} onChange={(e: any) => setVendorProperty('address', e.target.value)} />
+                <Field
+                  edit={editMode}
+                  value={displayVendor?.address ?? ''}
+                  onChange={(e: any) =>
+                    setVendorProperty('address', e.target.value)
+                  }
+                />
               </div>
-
             </div>
           </div>
         </div>
 
         {/* ══ Right: agreement stat cards ══ */}
         <div className={styles.right}>
-
           {/* Contracts */}
           <div className={styles.agreementCard}>
             <div className={styles.agreementCardHeader}>
@@ -249,33 +464,47 @@ const VendorContent = () => {
               </div>
               <div className={styles.agreementHeaderText}>
                 <span className={styles.agreementHeaderTitle}>Contrats</span>
-                <span className={styles.agreementHeaderSub}>Accords commerciaux</span>
+                <span className={styles.agreementHeaderSub}>
+                  Accords commerciaux
+                </span>
               </div>
             </div>
             <div className={styles.agreementCardBody}>
               <div className={styles.agreementCountRow}>
                 <span className={styles.agreementCount}>{contractCount}</span>
                 <span className={styles.agreementCountLabel}>
-                  contrat{contractCount !== 1 ? 's' : ''}<br />
-                  <span className={styles.agreementCountSub}>lié{contractCount !== 1 ? 's' : ''} à ce fournisseur</span>
+                  contrat{contractCount !== 1 ? 's' : ''}
+                  <br />
+                  <span className={styles.agreementCountSub}>
+                    lié{contractCount !== 1 ? 's' : ''} à ce fournisseur
+                  </span>
                 </span>
               </div>
               <div className={styles.agreementMeta}>
                 <div className={styles.agreementMetaBar}>
                   <div
                     className={styles.agreementMetaFill}
-                    style={{ width: totalContracts ? `${Math.round((contractCount / totalContracts) * 100)}%` : '0%' }}
+                    style={{
+                      width: totalContracts
+                        ? `${Math.round((contractCount / totalContracts) * 100)}%`
+                        : '0%',
+                    }}
                   />
                 </div>
                 <span className={styles.agreementMetaLabel}>
                   {totalContracts != null
                     ? `${contractCount} sur ${totalContracts} contrat${totalContracts !== 1 ? 's' : ''} au total`
-                    : contractCount === 0 ? 'Aucun contrat enregistré' : `${contractCount} contrat${contractCount !== 1 ? 's' : ''}`
-                  }
+                    : contractCount === 0
+                      ? 'Aucun contrat enregistré'
+                      : `${contractCount} contrat${contractCount !== 1 ? 's' : ''}`}
                 </span>
               </div>
             </div>
-            <button className={styles.agreementCta} onClick={handleShowContract} disabled={contractCount === 0}>
+            <button
+              className={styles.agreementCta}
+              onClick={handleShowContract}
+              disabled={contractCount === 0}
+            >
               <span>Voir les contrats</span>
               <ChevronRightIcon sx={{ fontSize: 16 }} />
             </button>
@@ -289,43 +518,60 @@ const VendorContent = () => {
               </div>
               <div className={styles.agreementHeaderText}>
                 <span className={styles.agreementHeaderTitle}>Conventions</span>
-                <span className={styles.agreementHeaderSub}>Accords de partenariat</span>
+                <span className={styles.agreementHeaderSub}>
+                  Accords de partenariat
+                </span>
               </div>
             </div>
             <div className={styles.agreementCardBody}>
               <div className={styles.agreementCountRow}>
                 <span className={styles.agreementCount}>{convensionCount}</span>
                 <span className={styles.agreementCountLabel}>
-                  convention{convensionCount !== 1 ? 's' : ''}<br />
-                  <span className={styles.agreementCountSub}>liée{convensionCount !== 1 ? 's' : ''} à ce fournisseur</span>
+                  convention{convensionCount !== 1 ? 's' : ''}
+                  <br />
+                  <span className={styles.agreementCountSub}>
+                    liée{convensionCount !== 1 ? 's' : ''} à ce fournisseur
+                  </span>
                 </span>
               </div>
               <div className={styles.agreementMeta}>
                 <div className={styles.agreementMetaBar}>
                   <div
                     className={styles.agreementMetaFill}
-                    style={{ width: totalConvensions ? `${Math.round((convensionCount / totalConvensions) * 100)}%` : '0%' }}
+                    style={{
+                      width: totalConvensions
+                        ? `${Math.round((convensionCount / totalConvensions) * 100)}%`
+                        : '0%',
+                    }}
                   />
                 </div>
                 <span className={styles.agreementMetaLabel}>
                   {totalConvensions != null
                     ? `${convensionCount} sur ${totalConvensions} convention${totalConvensions !== 1 ? 's' : ''} au total`
-                    : convensionCount === 0 ? 'Aucune convention enregistrée' : `${convensionCount} convention${convensionCount !== 1 ? 's' : ''}`
-                  }
+                    : convensionCount === 0
+                      ? 'Aucune convention enregistrée'
+                      : `${convensionCount} convention${convensionCount !== 1 ? 's' : ''}`}
                 </span>
               </div>
             </div>
-            <button className={styles.agreementCta} onClick={handleShowConvension} disabled={convensionCount === 0}>
+            <button
+              className={styles.agreementCta}
+              onClick={handleShowConvension}
+              disabled={convensionCount === 0}
+            >
               <span>Voir les conventions</span>
               <ChevronRightIcon sx={{ fontSize: 16 }} />
             </button>
           </div>
-
         </div>
       </div>
 
       <Modal open={contractModalOpen} onClose={handleContractModalClose}>
-        <AgreementList vendorId={displayVendor?.id} type={modalType} handleClose={handleContractModalClose} />
+        <AgreementList
+          vendorId={displayVendor?.id}
+          type={modalType}
+          handleClose={handleContractModalClose}
+        />
       </Modal>
     </div>
   );
@@ -334,10 +580,16 @@ const VendorContent = () => {
 function Field({ edit, value, onChange }: any) {
   return (
     <>
-      {edit
-        ? <input type="text" className={styles.editInput} value={value} onChange={onChange} />
-        : <span className={styles.vendorValueItem}>{value || '—'}</span>
-      }
+      {edit ? (
+        <input
+          type="text"
+          className={styles.editInput}
+          value={value}
+          onChange={onChange}
+        />
+      ) : (
+        <span className={styles.vendorValueItem}>{value || '—'}</span>
+      )}
     </>
   );
 }

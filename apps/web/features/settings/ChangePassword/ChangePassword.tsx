@@ -13,27 +13,53 @@ interface PropType {
 }
 
 const ChangePassword = ({ handleClose }: PropType) => {
-  const { text: actualPassword, textChangeHandler: actualPasswordChangeHandler, inputBlurHandler: actualPasswordBlurHandler, shouldDisplayError: actualPasswordError } = useInput(validatePasswordLength);
-  const { text: password,       textChangeHandler: passwordChangeHandler,       inputBlurHandler: passwordBlurHandler,       shouldDisplayError: passwordError       } = useInput(validatePasswordLength);
-  const { text: confirm,        textChangeHandler: confirmChangeHandler,        inputBlurHandler: confirmBlurHandler,        shouldDisplayError: confirmError        } = useInput(validatePasswordLength);
+  const {
+    text: actualPassword,
+    textChangeHandler: actualPasswordChangeHandler,
+    inputBlurHandler: actualPasswordBlurHandler,
+    shouldDisplayError: actualPasswordError,
+  } = useInput(validatePasswordLength);
+  const {
+    text: password,
+    textChangeHandler: passwordChangeHandler,
+    inputBlurHandler: passwordBlurHandler,
+    shouldDisplayError: passwordError,
+  } = useInput(validatePasswordLength);
+  const {
+    text: confirm,
+    textChangeHandler: confirmChangeHandler,
+    inputBlurHandler: confirmBlurHandler,
+    shouldDisplayError: confirmError,
+  } = useInput(validatePasswordLength);
 
   const showSnackbar = useSnackbarStore((s) => s.showSnackbar);
   const { mutate: changePassword, isPending: isLoading } = useChangePassword();
 
   const passwordMismatch = confirm.length > 0 && password !== confirm;
-  const canSubmit = !actualPasswordError && !passwordError && !confirmError && !passwordMismatch
-    && actualPassword.length > 0 && password.length > 0 && confirm.length > 0;
+  const canSubmit =
+    !actualPasswordError &&
+    !passwordError &&
+    !confirmError &&
+    !passwordMismatch &&
+    actualPassword.length > 0 &&
+    password.length > 0 &&
+    confirm.length > 0;
 
   const handleChangePassword = () => {
     changePassword(
       { actualPassword, password },
       {
         onSuccess: () => {
-          showSnackbar({ message: 'votre mot de passe a eté re-initialiser', severty: 'success' });
+          showSnackbar({
+            message: 'votre mot de passe a eté re-initialiser',
+            severty: 'success',
+          });
           handleClose();
         },
         onError: (err: any) => {
-          showSnackbar({ message: err?.response?.data?.error ?? 'erreur inconnu' });
+          showSnackbar({
+            message: err?.response?.data?.error ?? 'erreur inconnu',
+          });
         },
       },
     );
@@ -41,7 +67,6 @@ const ChangePassword = ({ handleClose }: PropType) => {
 
   return (
     <div className={styles.container}>
-
       {/* ── Navy header ── */}
       <div className={styles.modalHeader}>
         <div className={styles.headerLeft}>
@@ -50,7 +75,9 @@ const ChangePassword = ({ handleClose }: PropType) => {
           </div>
           <div className={styles.headerText}>
             <span className={styles.headerTitle}>Changer le mot de passe</span>
-            <span className={styles.headerSubtitle}>Sécurisez votre compte</span>
+            <span className={styles.headerSubtitle}>
+              Sécurisez votre compte
+            </span>
           </div>
         </div>
       </div>
@@ -59,12 +86,19 @@ const ChangePassword = ({ handleClose }: PropType) => {
       <div className={styles.body}>
         {isLoading ? (
           <div className={styles.loadingWrap}>
-            <CircularProgress size={40} thickness={3} sx={{ color: 'var(--navy-mid)' }} />
+            <CircularProgress
+              size={40}
+              thickness={3}
+              sx={{ color: 'var(--navy-mid)' }}
+            />
             <span className={styles.loadingLabel}>Modification en cours…</span>
           </div>
         ) : (
           <div className={styles.fieldGroup}>
-            <p className={styles.hint}>Saisissez votre mot de passe actuel puis choisissez un nouveau mot de passe d'au moins 6 caractères.</p>
+            <p className={styles.hint}>
+              Saisissez votre mot de passe actuel puis choisissez un nouveau mot
+              de passe d'au moins 6 caractères.
+            </p>
             <TextField
               onBlur={actualPasswordBlurHandler}
               helperText={actualPasswordError && 'Minimum 6 caractères'}
@@ -91,7 +125,13 @@ const ChangePassword = ({ handleClose }: PropType) => {
             />
             <TextField
               onBlur={confirmBlurHandler}
-              helperText={confirmError ? 'Minimum 6 caractères' : passwordMismatch ? 'Les mots de passe ne correspondent pas' : undefined}
+              helperText={
+                confirmError
+                  ? 'Minimum 6 caractères'
+                  : passwordMismatch
+                    ? 'Les mots de passe ne correspondent pas'
+                    : undefined
+              }
               error={confirmError || passwordMismatch}
               value={confirm}
               onChange={confirmChangeHandler}
@@ -107,7 +147,9 @@ const ChangePassword = ({ handleClose }: PropType) => {
 
       {/* ── Actions ── */}
       <div className={styles.actionRow}>
-        <button className={styles.cancelBtn} onClick={handleClose}>Annuler</button>
+        <button className={styles.cancelBtn} onClick={handleClose}>
+          Annuler
+        </button>
         <button
           className={styles.applyBtn}
           disabled={!canSubmit || isLoading}

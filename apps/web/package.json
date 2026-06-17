@@ -6,11 +6,14 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "format": "prettier --write \"**/*.{ts,tsx}\"",
     "lint": "oxlint .",
     "test:e2e": "playwright test",
     "test:e2e:mock": "playwright test --project=mock",
     "test:e2e:prod": "playwright test --project=prod",
     "test:e2e:ui": "playwright test --ui",
+    "test:e2e:ui:mock": "playwright test --project=mock --ui",
+    "test:e2e:ui:prod": "playwright test --project=prod --ui",
     "test:e2e:report": "playwright show-report"
   },
   "dependencies": {

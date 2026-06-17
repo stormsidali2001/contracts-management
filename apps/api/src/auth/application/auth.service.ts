@@ -22,6 +22,18 @@ export class AuthService {
     return this.registrationService.register(newUser);
   }
 
+  async registerBatch(
+    users: CreateUserDTO[],
+    sharedPassword: string,
+    batchSize = 20,
+  ) {
+    return this.registrationService.registerBatch(
+      users,
+      sharedPassword,
+      batchSize,
+    );
+  }
+
   async login(user: LoginUserDTO) {
     return this.authenticationService.login(user);
   }

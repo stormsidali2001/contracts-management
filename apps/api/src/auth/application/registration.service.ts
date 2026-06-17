@@ -66,6 +66,60 @@ export class RegistrationService {
     return userView;
   }
 
+  async registerBatch(
+    users: CreateUserDTO[],
+    sharedPassword: string,
+    batchSize = 20,
+  ): Promise<{ created: number; skipped: number }> {
+    // Hash once — all seed users share the same password, this avoids N bcrypt calls
+    const passwordHash = await this.hashService.hash(sharedPassword);
+
+    let created = 0;
+    let skipped = 0;
+
+    for (let i = 0; i < users.length; i += batchSize) {
+      const batch = users.slice(i, i + batchSize);
+      const results = await Promise.allSettled(
+        batch.map((user) => this.registerWithPreHash(user, passwordHash)),
+      );
+      results.forEach((r) => {
+        if (r.status === 'fulfilled') created++;
+        else skipped++;
+      });
+    }
+
+    return { created, skipped };
+  }
+
+  private async registerWithPreHash(
+    newUser: CreateUserDTO,
+    passwordHash: string,
+  ) {
+    const userDb = await this.userService.findByEmailOrUsername({
+      email: newUser.email ?? undefined,
+      username: newUser.username ?? undefined,
+    });
+    if (userDb) throw new ConflictError('email ou username deja pris');
+
+    if (!newUser.username) {
+      newUser.username = newUser.firstName + uuidv4();
+    }
+
+    const { password: _ignored, ...userDataWithoutPassword } = newUser as any;
+    const userView = await this.userService.create(userDataWithoutPassword);
+
+    await this.credentialsRepository.save(
+      UserCredentials.create({
+        userId: userView.id,
+        passwordHash,
+        refreshTokenHash: null,
+        passwordToken: undefined,
+      }),
+    );
+
+    return userView;
+  }
+
   private async generateRandomPasswordHash(): Promise<string> {
     return new Promise((resolve, reject) => {
       randomBytes(32, (err, buf) => {

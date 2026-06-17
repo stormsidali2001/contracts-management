@@ -16,3 +16,11 @@ export const getAvatarSrc = (
   if (!imageUrl || imageUrl.startsWith('default-')) return getRoleAvatar(role);
   return `${BASE_URL}/users/image/${imageUrl}`;
 };
+
+export const getVendorLogoSrc = (
+  logoUrl: string | undefined | null,
+): string => {
+  if (!logoUrl || logoUrl.startsWith('default-'))
+    return '/avatars/default-vendor.png';
+  return `${BASE_URL}/vendors/image/${logoUrl}`;
+};

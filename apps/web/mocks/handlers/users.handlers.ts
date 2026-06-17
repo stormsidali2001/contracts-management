@@ -19,7 +19,10 @@ export const usersHandlers = [
           u.username.toLowerCase().includes(search),
       );
     }
-    return HttpResponse.json({ data: filtered.slice(offset, offset + limit), total: filtered.length });
+    return HttpResponse.json({
+      data: filtered.slice(offset, offset + limit),
+      total: filtered.length,
+    });
   }),
 
   http.get(`${API_BASE}/users/:id`, ({ params }) => {
@@ -31,8 +34,8 @@ export const usersHandlers = [
   http.put(`${API_BASE}/users/:id`, async ({ params, request }) => {
     const idx = db.users.findIndex((u) => u.id === params.id);
     if (idx === -1) return new HttpResponse(null, { status: 404 });
-    const body = await request.json() as Record<string, unknown>;
-    db.users[idx] = { ...db.users[idx], ...body } as typeof db.users[0];
+    const body = (await request.json()) as Record<string, unknown>;
+    db.users[idx] = { ...db.users[idx], ...body } as (typeof db.users)[0];
     return HttpResponse.json(db.users[idx]);
   }),
 

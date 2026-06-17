@@ -24,7 +24,9 @@ export class ContractExpiryService {
     this.logger.log('Running contract expiry check...');
 
     for (const days of EXPIRY_THRESHOLDS_DAYS) {
-      const expiring = await this.agreementRepository.findExpiringContracts(days);
+      const expiring = await this.agreementRepository.findExpiringContracts(
+        days,
+      );
 
       for (const agreement of expiring) {
         this.eventBus.publish(

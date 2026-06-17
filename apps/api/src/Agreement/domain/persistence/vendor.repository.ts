@@ -40,7 +40,7 @@ export interface IVendorRepository {
     limit: number,
     orderBy?: string,
     searchQuery?: string,
-  ): Promise<PaginationResponse<Vendor>>;
+  ): Promise<PaginationResponse<VendorWithCounts>>;
 
   getVendorStats(startDate?: Date, endDate?: Date): Promise<VendorStat[]>;
 }

@@ -41,7 +41,7 @@ describe('VendorRepository (integration)', () => {
     if (vendorIds.length) {
       await dataSource.query(
         `DELETE FROM vendors WHERE id IN (${vendorIds
-          .map(() => '?')
+          .map((_, i) => `$${i + 1}`)
           .join(',')})`,
         [...vendorIds],
       );

@@ -1,5 +1,9 @@
 import 'tsconfig-paths/register';
-import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
+import {
+  ClassSerializerInterceptor,
+  Logger,
+  ValidationPipe,
+} from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder } from '@nestjs/swagger';
@@ -8,6 +12,7 @@ import { SwaggerModule } from '@nestjs/swagger';
 import { SocketIoAdapter } from './shared/infrastructure/Socket-io.adapter';
 import * as cookieParser from 'cookie-parser';
 import { SocketStateService } from './socket/infrastructure/SocketState.service';
+import { DataSource } from 'typeorm';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -40,5 +45,19 @@ async function bootstrap() {
   app.useWebSocketAdapter(new SocketIoAdapter(app));
 
   await app.listen(8080);
+
+  const logger = new Logger('Bootstrap');
+  const mode =
+    process.env.NODE_ENV === 'production' ? 'production' : 'development';
+
+  const dataSource = app.get(DataSource);
+  const [{ count }] = await dataSource.query<[{ count: string }]>(
+    'SELECT COUNT(*) AS count FROM users',
+  );
+  const seeded = parseInt(count, 10) > 0;
+
+  logger.log(`Mode          : ${mode}`);
+  logger.log(`Data seeded   : ${seeded ? 'yes' : 'no'}`);
+  logger.log(`Server        : http://localhost:8080`);
 }
 bootstrap();

@@ -122,7 +122,7 @@ export class DirectionRepository implements IDirectionRepository {
       .leftJoin('dr.agreements', 'ag')
       .addSelect('COUNT(ag.id)', 'agCount')
       .groupBy('dr.id')
-      .orderBy('agCount', 'DESC')
+      .orderBy('COUNT(ag.id)', 'DESC')
       .limit(TOP_DIRECTIONS_LIMIT)
       .getMany();
 

@@ -19,45 +19,45 @@
 export const tokens = {
   color: {
     /* ── Brand ── */
-    navy:         '#0F172A',   // slate-950   — deep, clean dark
-    navyMid:      '#2563EB',   // blue-600    — vivid modern accent
-    navyLight:    '#EFF6FF',   // blue-50     — soft tint for hovers / highlights
+    navy: '#0F172A', // slate-950   — deep, clean dark
+    navyMid: '#2563EB', // blue-600    — vivid modern accent
+    navyLight: '#EFF6FF', // blue-50     — soft tint for hovers / highlights
 
-    amber:        '#F59E0B',   // amber-400
-    amberLight:   '#FEF9C3',   // yellow-100
+    amber: '#F59E0B', // amber-400
+    amberLight: '#FEF9C3', // yellow-100
 
     /* ── Surfaces ── */
-    bg:            '#F1F5F9',  // slate-100   — clean off-white page background
-    surface:       '#FFFFFF',
-    surfaceSubtle: '#F8FAFC',  // slate-50    — inset sections, table headers
+    bg: '#F1F5F9', // slate-100   — clean off-white page background
+    surface: '#FFFFFF',
+    surfaceSubtle: '#F8FAFC', // slate-50    — inset sections, table headers
 
     /* ── Text ── */
-    textPrimary:   '#0F172A',  // slate-950
-    textSecondary: '#475569',  // slate-600
-    textBody:      '#334155',  // slate-700
-    textLabel:     '#64748B',  // slate-500
-    textMuted:     '#94A3B8',  // slate-400
-    textOnDark:    '#FFFFFF',
+    textPrimary: '#0F172A', // slate-950
+    textSecondary: '#475569', // slate-600
+    textBody: '#334155', // slate-700
+    textLabel: '#64748B', // slate-500
+    textMuted: '#94A3B8', // slate-400
+    textOnDark: '#FFFFFF',
 
     /* ── Borders ── */
-    border:        '#CBD5E1',  // slate-300
-    borderSubtle:  '#E2E8F0',  // slate-200
+    border: '#CBD5E1', // slate-300
+    borderSubtle: '#E2E8F0', // slate-200
 
     /* ── Semantic ── */
-    success:     '#10B981',   // emerald-500
-    successDark: '#059669',   // emerald-600
-    error:       '#EF4444',   // red-500
-    errorDark:   '#DC2626',   // red-600
-    warning:     '#F59E0B',   // amber-400
-    warningDark: '#D97706',   // amber-600
-    info:        '#2563EB',   // blue-600
+    success: '#10B981', // emerald-500
+    successDark: '#059669', // emerald-600
+    error: '#EF4444', // red-500
+    errorDark: '#DC2626', // red-600
+    warning: '#F59E0B', // amber-400
+    warningDark: '#D97706', // amber-600
+    info: '#2563EB', // blue-600
   },
 
   radius: {
-    sm:  10,
-    md:  14,
-    lg:  18,
-    xl:  24,
+    sm: 10,
+    md: 14,
+    lg: 18,
+    xl: 24,
   },
 
   shadow: {
@@ -69,7 +69,7 @@ export const tokens = {
 
   font: {
     display: "'Outfit', sans-serif",
-    body:    "'Inter', sans-serif",
+    body: "'Inter', sans-serif",
   },
 
   layout: {

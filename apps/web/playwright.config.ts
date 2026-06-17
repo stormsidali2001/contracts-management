@@ -42,13 +42,15 @@ export default defineConfig({
       use: {
         ...devices['Desktop Chrome'],
         baseURL: `http://localhost:${PROD_PORT}`,
-        storageState: 'e2e/.auth/prod-state.json',
+        // No storageState here: authenticatedPage/juridicalPage fixtures each do a fresh
+        // login, and auth tests (which use plain `page`) need to start unauthenticated so
+        // navigating to /signin shows the form instead of auto-redirecting to /dashboard.
       },
       metadata: { testMode: 'prod' },
-      dependencies: ['prod-setup'],
     },
     {
       name: 'prod-setup',
+      testDir: './e2e',
       testMatch: '**/global.setup.ts',
       use: {
         ...devices['Desktop Chrome'],

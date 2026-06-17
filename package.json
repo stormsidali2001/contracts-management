@@ -7,12 +7,15 @@
     "build": "turbo run build",
     "dev": "turbo run dev start:dev",
     "lint": "turbo run lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "format": "turbo run format",
+    "format:api": "pnpm --filter backend format",
+    "format:web": "pnpm --filter frontend format",
     "generate:directions": "pnpm --filter fake-data generate:directions",
     "generate:users": "pnpm --filter fake-data generate:users",
     "generate:vendors": "pnpm --filter fake-data generate:vendors",
     "generate:agreements": "pnpm --filter fake-data generate:agreements",
-    "generate:accounts": "pnpm --filter fake-data generate:accounts"
+    "generate:accounts": "pnpm --filter fake-data generate:accounts",
+    "trigger:expiry": "pnpm --filter backend trigger:expiry"
   },
   "devDependencies": {
     "turbo": "latest",

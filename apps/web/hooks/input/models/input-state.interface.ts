@@ -1,4 +1,4 @@
-export interface InputState{
-    text:string;
-    hasBeenTouched:boolean;
+export interface InputState {
+  text: string;
+  hasBeenTouched: boolean;
 }

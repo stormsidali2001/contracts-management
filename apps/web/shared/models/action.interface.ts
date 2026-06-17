@@ -1,4 +1,4 @@
-export interface Action<T>{
-    type:T;
-    value?:string;
+export interface Action<T> {
+  type: T;
+  value?: string;
 }

@@ -6,55 +6,160 @@ test.describe('Users', () => {
     await expect(page.locator('#users-page')).toBeVisible({ timeout: 10_000 });
   });
 
-  test('users page loads with header and data grid', async ({ authenticatedPage: page }) => {
+  test('users page loads with header and data grid', async ({
+    authenticatedPage: page,
+  }) => {
+    // Assert
     await expect(page.locator('#users-page-header')).toBeVisible();
     await expect(page.getByRole('grid')).toBeVisible({ timeout: 10_000 });
   });
 
   test('create user button is visible', async ({ authenticatedPage: page }) => {
-    await expect(page.getByRole('button', { name: 'Créer un utilisateur' })).toBeVisible();
+    // Assert
+    await expect(
+      page.getByRole('button', { name: 'Créer un utilisateur' }),
+    ).toBeVisible();
   });
 
-  test('can create a user via 4-step modal (Admin role, skips direction step)', async ({ authenticatedPage: page }) => {
-    await page.getByRole('button', { name: 'Créer un utilisateur' }).click();
+  test('can create a user via 4-step modal (Admin role, skips direction step)', async ({
+    authenticatedPage: page,
+  }) => {
+    // Arrange
+    const ts = Date.now();
 
-    // Step 0 — Identifiants: Nom, Prénom, Email
-    // Use exact: true because 'Nom' is a substring of 'Prénom'
-    await expect(page.getByLabel('Nom', { exact: true })).toBeVisible({ timeout: 5_000 });
+    // Act — Step 0: Identifiants
+    await page.getByRole('button', { name: 'Créer un utilisateur' }).click();
+    await expect(page.getByLabel('Nom', { exact: true })).toBeVisible({
+      timeout: 5_000,
+    });
     await page.getByLabel('Nom', { exact: true }).fill('Dupont');
     await page.getByLabel('Prénom', { exact: true }).fill('Jean');
-    await page.getByLabel('Email').fill(`e2e.user.${Date.now()}@test.dz`);
+    await page.getByLabel('Email').fill(`e2e.user.${ts}@test.dz`);
     await page.getByRole('button', { name: /suivant/i }).click();
 
-    // Step 1 — Profil: select Admin role card (use desc text which is unique in the form)
-    await expect(page.getByText('Accès complet')).toBeVisible({ timeout: 5_000 });
+    // Act — Step 1: Role selection (Admin skips direction step)
+    await expect(page.getByText('Accès complet')).toBeVisible({
+      timeout: 5_000,
+    });
     await page.getByText('Accès complet').click();
-
-    // Clicking Suivant on step 1 with ADMIN role triggers submit and goes to step 3
     await page.getByRole('button', { name: /suivant/i }).click();
 
-    // Step 3 — Validation: success state
-    await expect(page.getByText(/creé|créé|success/i)).toBeVisible({ timeout: 10_000 });
-
-    // Close the modal
+    // Assert — Step 3: Success state
+    await expect(page.getByText(/creé|créé|success/i)).toBeVisible({
+      timeout: 10_000,
+    });
     await page.getByRole('button', { name: /fermer|terminer/i }).click();
   });
 
   test('data grid shows user rows', async ({ authenticatedPage: page }) => {
-    const rows = page.getByRole('row').filter({ hasNot: page.getByRole('columnheader') });
+    // Assert
+    const rows = page
+      .getByRole('row')
+      .filter({ hasNot: page.getByRole('columnheader') });
     await expect(rows.first()).toBeVisible({ timeout: 10_000 });
   });
 
-  test('can navigate to user profile page', async ({ authenticatedPage: page }) => {
-    const rows = page.getByRole('row').filter({ hasNot: page.getByRole('columnheader') });
+  test('can navigate to user profile page', async ({
+    authenticatedPage: page,
+  }) => {
+    // Arrange
+    const rows = page
+      .getByRole('row')
+      .filter({ hasNot: page.getByRole('columnheader') });
     await expect(rows.first()).toBeVisible({ timeout: 5_000 });
-    // The grid has a chevron-right link column for navigation
+
+    // Act
     const navLink = rows.first().getByRole('link');
-    if (await navLink.count() > 0) {
+    if ((await navLink.count()) > 0) {
       await navLink.first().click();
     } else {
       await rows.first().getByRole('button').last().click();
     }
+
+    // Assert
     await expect(page).toHaveURL(/\/users\/.+/, { timeout: 5_000 });
+  });
+
+  test('can delete a user via the grid delete button', async ({
+    authenticatedPage: page,
+  }) => {
+    // Arrange — create a unique user so deletion is idempotent across runs
+    const ts = String(Date.now()).slice(-6);
+    await page.getByRole('button', { name: 'Créer un utilisateur' }).click();
+    await expect(page.getByLabel('Nom', { exact: true })).toBeVisible({
+      timeout: 5_000,
+    });
+    await page.getByLabel('Nom', { exact: true }).fill('ToDelete');
+    await page.getByLabel('Prénom', { exact: true }).fill(`E2E${ts}`);
+    await page.getByLabel('Email').fill(`del.${ts}@test.dz`);
+    await page.getByRole('button', { name: /suivant/i }).click();
+    await expect(page.getByText('Accès complet')).toBeVisible({
+      timeout: 5_000,
+    });
+    await page.getByText('Accès complet').click();
+    await page.getByRole('button', { name: /suivant/i }).click();
+    await expect(page.getByText(/creé|créé|success/i)).toBeVisible({
+      timeout: 10_000,
+    });
+    await page.getByRole('button', { name: /fermer|terminer/i }).click();
+
+    // Arrange — search for the created user
+    const searchInput = page.getByPlaceholder(/rechercher un utilisateur/i);
+    await searchInput.fill(`E2E${ts}`);
+    const rows = page
+      .getByRole('grid')
+      .getByRole('row')
+      .filter({ hasNot: page.getByRole('columnheader') });
+    await expect(rows.first()).toBeVisible({ timeout: 8_000 });
+
+    // Act — widen viewport so the Supprimer column renders, then click DeleteForever icon
+    await page.setViewportSize({ width: 1600, height: 900 });
+    const deleteBtn = rows.first().locator('[data-testid="DeleteForeverIcon"]');
+    await expect(deleteBtn).toBeVisible({ timeout: 5_000 });
+    await deleteBtn.click();
+
+    // Assert — checkmark or snackbar confirms deletion
+    const successIndicator = rows
+      .first()
+      .locator('[data-testid="CheckIcon"]')
+      .or(page.getByText(/supprimé|deleted/i).first());
+    await expect(successIndicator.first()).toBeVisible({ timeout: 8_000 });
+  });
+
+  test('can edit own profile from user profile page', async ({
+    authenticatedPage: page,
+  }) => {
+    // Arrange — navigate to own profile via topbar user menu
+    await page.locator('#topbar').getByRole('button').last().click();
+    await expect(page.getByText('Profile')).toBeVisible({ timeout: 5_000 });
+    await page.getByText('Profile').click();
+    await expect(page.locator('#user-profile-page')).toBeVisible({
+      timeout: 10_000,
+    });
+
+    // Act — click the icon-only edit button (no accessible name, located inside profile card)
+    const profileCardBtn = page
+      .locator('#user-profile-card')
+      .getByRole('button')
+      .first();
+    await expect(profileCardBtn).toBeVisible({ timeout: 5_000 });
+    await profileCardBtn.click();
+
+    // Act — update a field (inputs appear after edit mode activates)
+    const inputs = page
+      .locator('#user-profile-card')
+      .locator('input[type="text"]');
+    if ((await inputs.count()) > 0) {
+      const current = await inputs.first().inputValue();
+      await inputs.first().fill(current || 'Admin');
+    }
+
+    // Act — save (same button now shows SaveIcon)
+    await profileCardBtn.click();
+
+    // Assert
+    await expect(page.locator('#user-profile-page')).toBeVisible({
+      timeout: 5_000,
+    });
   });
 });

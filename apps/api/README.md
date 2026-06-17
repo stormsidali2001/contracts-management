@@ -1,73 +1,89 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# contracts-management — API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+NestJS backend following Domain-Driven Design (DDD) + CQRS. Connects to PostgreSQL via TypeORM and Redis via Socket.IO adapter.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Stack
 
-## Description
+- **NestJS** with `@nestjs/cqrs` for event-driven domain logic
+- **TypeORM** with `synchronize: true` (schema is auto-migrated on startup, no migration files)
+- **PostgreSQL 16** — main DB on port 5432, test DB on port 5433
+- **Redis 7** — Socket.IO pub/sub adapter
+- **Swagger** — available at `http://localhost:8080/docs` when running
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
-
-## Installation
+## Commands
 
 ```bash
-$ npm install
+pnpm start:dev        # NestJS watch mode (port 8080)
+pnpm build            # compile TypeScript
+pnpm lint             # ESLint
+pnpm test             # Jest integration tests (requires Docker test DB on port 5433)
+pnpm test --no-coverage --testPathPattern=<file>  # run a single spec
 ```
 
-## Running the app
+## Startup output
 
-```bash
-# development
-$ npm run start
+On every start the server logs:
 
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+```
+[Bootstrap] Mode          : development | production
+[Bootstrap] Data seeded   : yes | no
+[Bootstrap] Server        : http://localhost:8080
 ```
 
-## Test
+"Data seeded" is determined by whether the `users` table has any rows.
 
-```bash
-# unit tests
-$ npm run test
+## Architecture
 
-# e2e tests
-$ npm run test:e2e
+Each domain aggregate lives under `src/<Aggregate>/` and follows this structure:
 
-# test coverage
-$ npm run test:cov
+```
+src/<Aggregate>/
+  domain/          # aggregate root, repository interface, domain events, errors
+  application/     # service layer — orchestrates use cases, publishes domain events
+  infrastructure/  # TypeORM repository implementation, event handlers, controllers
 ```
 
-## Support
+Key aggregates: `Agreement`, `user`, `vendor`, `direction`, `auth`, `statistics`, `Event`, `socket`.
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+**Rules:**
+- Aggregates expose `create()` (records domain events) and `reconstitute()` (no events, used when loading from DB).
+- Services call `eventBus.publishAll(aggregate.pullEvents())` to publish events.
+- Repository interfaces live in `domain/`; implementations live in `infrastructure/`. Services never import TypeORM.
+- Domain errors (`ValidationError`, `NotFoundError`, `ConflictError`, `ForbiddenError`, `UnauthorizedError`) are mapped to HTTP status codes by `DomainExceptionFilter`.
 
-## Stay in touch
+Shared infrastructure is in `src/core/` (TypeORM entities, DTOs, mappers, enums).
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+## Testing
 
-## License
+Integration tests hit the real test database — no mocking of TypeORM or the DB driver.
 
-Nest is [MIT licensed](LICENSE).
+Two spec categories:
+
+| Category | Pattern | Setup |
+|----------|---------|-------|
+| Repository integration | `*.repository.spec.ts` | Minimal module: `typeOrmTestingModule()` + the repository under test. FK prerequisites inserted with raw SQL. |
+| Service-level integration | `*.spec.ts` with service providers | Full service + repository wired via `CqrsModule`. Data created through service methods, same as the seeder. |
+
+The second category is used whenever the query under test depends on cross-aggregate data distribution (e.g. `getTopDirections` needs realistic agreement counts per direction).
+
+## Environment variables
+
+See `apps/api/.env-example` for the full list. Required variables:
+
+| Variable | Description |
+|----------|-------------|
+| `DB_USERNAME` | PostgreSQL user |
+| `DB_PASSWORD` | PostgreSQL password |
+| `DB_HOST` | DB host (default `localhost`) |
+| `DB_PORT` | DB port (default `5432`) |
+| `DB_NAME` | Database name |
+| `DB_TEST_HOST` | Test DB host |
+| `DB_TEST_PORT` | Test DB port (default `5433`) |
+| `DB_TEST_NAME` | Test database name |
+| `JWT_ACCESS_TOKEN_SECRET` | Access token signing secret |
+| `JWT_REFRESH_TOKEN_SECRET` | Refresh token signing secret |
+| `REDIS_HOST` | Redis host |
+| `REDIS_PORT` | Redis port |
+| `CLIENT_PORT` | Frontend port (for CORS allowlist) |
+| `ethereal_user` | Ethereal SMTP user (email dev) |
+| `ethereal_password` | Ethereal SMTP password |

@@ -13,7 +13,10 @@ export interface MockNotification {
 export const db = {
   users: mockUsers.map((u) => ({ ...u })),
   vendors: mockVendors.map((v) => ({ ...v })),
-  directions: mockDirections.map((d) => ({ ...d, departements: d.departements?.map((dep) => ({ ...dep })) ?? [] })) as DirectionView[],
+  directions: mockDirections.map((d) => ({
+    ...d,
+    departements: d.departements?.map((dep) => ({ ...dep })) ?? [],
+  })) as DirectionView[],
   agreements: mockAgreements.map((a) => ({ ...a })),
   notifications: [] as MockNotification[],
 };

@@ -13,7 +13,11 @@ interface PropType {
   vendorId: string;
 }
 
-const AgreementList = ({ handleClose: _handleClose, type = 'contract', vendorId }: PropType) => {
+const AgreementList = ({
+  handleClose: _handleClose,
+  type = 'contract',
+  vendorId,
+}: PropType) => {
   const columns: any[] = [
     { field: 'number', headerName: 'numero', width: 200 },
     { field: 'object', headerName: 'objet', width: 200 },
@@ -27,7 +31,9 @@ const AgreementList = ({ handleClose: _handleClose, type = 'contract', vendorId 
       headerName: 'Details',
       type: 'actions',
       renderCell: (params: any) => (
-        <Button><Link href={`/${type}s/${params.id}`}>Details</Link></Button>
+        <Button>
+          <Link href={`/${type}s/${params.id}`}>Details</Link>
+        </Button>
       ),
     },
   ];
@@ -38,7 +44,14 @@ const AgreementList = ({ handleClose: _handleClose, type = 'contract', vendorId 
   const [searchQuery, setSearchQuery] = useState('');
   const [orderBy, setOrderBy] = useState<string | undefined>(undefined);
 
-  const { data, isFetching } = useAgreements({ page, pageSize, agreementType: type, orderBy, searchQuery, vendorId });
+  const { data, isFetching } = useAgreements({
+    page,
+    pageSize,
+    agreementType: type,
+    orderBy,
+    searchQuery,
+    vendorId,
+  });
 
   const handleSortModelChange = (sortModel: GridSortModel) => {
     setOrderBy(sortModel.length > 0 ? sortModel[0].field : undefined);
@@ -72,7 +85,10 @@ const AgreementList = ({ handleClose: _handleClose, type = 'contract', vendorId 
           pagination
           paginationModel={{ page, pageSize }}
           paginationMode="server"
-          onPaginationModelChange={(m) => { setPage(m.page); setPageSize(m.pageSize); }}
+          onPaginationModelChange={(m) => {
+            setPage(m.page);
+            setPageSize(m.pageSize);
+          }}
           columns={columns}
           disableColumnFilter
           disableColumnMenu

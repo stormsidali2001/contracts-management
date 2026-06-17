@@ -77,7 +77,7 @@ export class AgreementService {
     role: string,
     departementId: string | null,
     directionId: string | null,
-  ): Promise<PaginationResponse<Agreement>> {
+  ): Promise<PaginationResponse<AgreementDetail>> {
     return this.agreementRepository.findPaginated(
       params,
       role as UserRole,

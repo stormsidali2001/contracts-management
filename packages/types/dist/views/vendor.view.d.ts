@@ -8,6 +8,7 @@ export interface VendorView {
     mobile_phone_number: string;
     home_phone_number: string;
     createdAt: Date;
+    logoUrl?: string | null;
     agreements?: any[];
     contractCount?: number;
     convensionCount?: number;

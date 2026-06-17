@@ -64,13 +64,23 @@ export function useNotificationSocket() {
       }
     });
 
-    socket.on(NotificationEvents.SendAllNotifications, (notifications: Notification[]) => {
-      receiveNotifications(notifications);
-    });
+    socket.on(
+      NotificationEvents.SendAllNotifications,
+      (notifications: Notification[]) => {
+        receiveNotifications(notifications);
+      },
+    );
 
-    socket.on(NotificationEvents.sendNotification, (notification: NotificationView) => {
-      receiveNotification({ id: notification.id, message: notification.message, isRead: notification.isRead });
-    });
+    socket.on(
+      NotificationEvents.sendNotification,
+      (notification: NotificationView) => {
+        receiveNotification({
+          id: notification.id,
+          message: notification.message,
+          isRead: notification.isRead,
+        });
+      },
+    );
 
     socket.on(UserEventsTypes.SEND_EVENTS, (events: UserEvent[]) => {
       receiveUserEvents(events);

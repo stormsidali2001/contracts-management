@@ -1,16 +1,15 @@
-import {useState} from 'react';
+import { useState } from 'react';
 interface Debounce {
-   
-    debounce:(fn:()=>void,delay?:number)=>void
+  debounce: (fn: () => void, delay?: number) => void;
 }
-export const useDebounce = ():Debounce=>{
-    const [timeoutId,setTimeOutId] = useState<NodeJS.Timeout | string>('')
+export const useDebounce = (): Debounce => {
+  const [timeoutId, setTimeOutId] = useState<NodeJS.Timeout | string>('');
 
-    function debounce(fn:()=>void,delay:number = 1000):void{
-        clearTimeout(timeoutId);
-        const id = setTimeout(()=>fn(),delay);
-        setTimeOutId(id);
-    }
+  function debounce(fn: () => void, delay: number = 1000): void {
+    clearTimeout(timeoutId);
+    const id = setTimeout(() => fn(), delay);
+    setTimeOutId(id);
+  }
 
-    return {debounce};
-}
+  return { debounce };
+};

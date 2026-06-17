@@ -1,6 +1,12 @@
 'use client';
-import { Button, IconButton, Modal } from '@mui/material';
-import { DataGrid, GridColumns, GridRenderCellParams, GridSortItem, GridSortModel } from '@mui/x-data-grid';
+import { Avatar, Button, IconButton, Modal } from '@mui/material';
+import {
+  DataGrid,
+  GridColumns,
+  GridRenderCellParams,
+  GridSortItem,
+  GridSortModel,
+} from '@mui/x-data-grid';
 import EmptyState from '@/shared/components/EmptyState/EmptyState';
 import { useMemo, useState } from 'react';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
@@ -20,12 +26,18 @@ import { tokens } from '@/lib/tokens';
 import StorefrontOutlinedIcon from '@mui/icons-material/StorefrontOutlined';
 import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
 import HandshakeOutlinedIcon from '@mui/icons-material/HandshakeOutlined';
+import { getVendorLogoSrc } from '@/lib/avatar';
 
 const VendorsContent = () => {
-  const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: 5 });
+  const [paginationModel, setPaginationModel] = useState({
+    page: 0,
+    pageSize: 5,
+  });
   const [rowId, setRowId] = useState<any>(null);
   const [searchQuery, setSearchQuery] = useState('');
-  const [queryOptions, setQueryOptions] = useState<{ sortModel: GridSortItem[] | null }>({ sortModel: null });
+  const [queryOptions, setQueryOptions] = useState<{
+    sortModel: GridSortItem[] | null;
+  }>({ sortModel: null });
   const [open, setOpen] = useState(false);
   const { data: permissions } = usePermissions();
   const { debounce } = useDebounce();
@@ -48,19 +60,79 @@ const VendorsContent = () => {
     () => {
       const editable = showDisplayAddVendor();
       const original: GridColumns<any> = [
-        { field: 'num',                 headerName: 'Numéro',         width: 130, editable },
-        { field: 'company_name',        headerName: 'Raison sociale', flex: 1, minWidth: 180, editable },
-        { field: 'nif',                 headerName: 'NIF',            width: 130, editable },
-        { field: 'address',             headerName: 'Adresse',        flex: 1, minWidth: 160, editable },
-        { field: 'mobile_phone_number', headerName: 'Mobile',         width: 130, editable },
-        { field: 'home_phone_number',   headerName: 'Fixe',           width: 120, editable },
+        {
+          field: 'logo',
+          headerName: '',
+          width: 52,
+          sortable: false,
+          filterable: false,
+          renderCell: (params: any) => (
+            <Avatar
+              src={getVendorLogoSrc(params.row.logoUrl)}
+              sx={{ width: 32, height: 32 }}
+            />
+          ),
+        },
+        { field: 'num', headerName: 'Numéro', width: 130, editable },
+        {
+          field: 'company_name',
+          headerName: 'Raison sociale',
+          flex: 1,
+          minWidth: 180,
+          editable,
+        },
+        { field: 'nif', headerName: 'NIF', width: 130, editable },
+        {
+          field: 'address',
+          headerName: 'Adresse',
+          flex: 1,
+          minWidth: 160,
+          editable,
+        },
+        {
+          field: 'mobile_phone_number',
+          headerName: 'Mobile',
+          width: 130,
+          editable,
+        },
+        {
+          field: 'home_phone_number',
+          headerName: 'Fixe',
+          width: 120,
+          editable,
+        },
+        {
+          field: 'agreements',
+          headerName: 'Accords liés',
+          width: 110,
+          sortable: false,
+          filterable: false,
+          renderCell: (params: any) => {
+            const contracts = params.row.contractCount ?? 0;
+            const conventions = params.row.convensionCount ?? 0;
+            const total = contracts + conventions;
+            if (total === 0)
+              return <span style={{ color: '#94a3b8', fontSize: 13 }}>—</span>;
+            return (
+              <span style={{ fontSize: 13 }}>
+                <strong>{total}</strong>
+                <span style={{ color: '#94a3b8', marginLeft: 4 }}>
+                  ({contracts}C · {conventions}V)
+                </span>
+              </span>
+            );
+          },
+        },
         {
           field: 'details',
           headerName: '',
           type: 'actions',
           width: 56,
           renderCell: (params: any) => (
-            <Link href={`/vendors/${params.id}`} style={{ textDecoration: 'none' }}>
+            <Link
+              href={`/vendors/${params.id}`}
+              style={{ textDecoration: 'none' }}
+            >
               <IconButton size="small" sx={{ color: tokens.color.navyMid }}>
                 <ChevronRightIcon sx={{ fontSize: '20px' }} />
               </IconButton>
@@ -74,13 +146,17 @@ const VendorsContent = () => {
           field: 'actions',
           headerName: 'Mise à jour',
           type: 'actions',
-          renderCell: (params: any) => <VendorActions {...{ params, rowId, setRowId }} />,
+          renderCell: (params: any) => (
+            <VendorActions {...{ params, rowId, setRowId }} />
+          ),
         },
         {
           field: 'actions1',
           headerName: 'Supprimer',
           type: 'actions',
-          renderCell: (params: GridRenderCellParams) => <DeleteVendorAction {...{ params }} />,
+          renderCell: (params: GridRenderCellParams) => (
+            <DeleteVendorAction {...{ params }} />
+          ),
         },
       ];
       return editable ? extra : original;
@@ -99,13 +175,14 @@ const VendorsContent = () => {
 
   return (
     <div id="vendors-page" className={styles.container}>
-
       {/* ── Page header ── */}
       <div id="vendors-page-header" className={styles.pageHeader}>
         <div className={styles.pageHeaderLeft}>
           <Breadcrumb items={[{ label: 'Fournisseurs' }]} />
           <h1 className={styles.pageTitle}>Gestion des fournisseurs</h1>
-          <span className={styles.pageSubtitle}>Consultez et gérez les fournisseurs ainsi que leurs accords associés</span>
+          <span className={styles.pageSubtitle}>
+            Consultez et gérez les fournisseurs ainsi que leurs accords associés
+          </span>
         </div>
         {showDisplayAddVendor() && (
           <Button
@@ -125,23 +202,33 @@ const VendorsContent = () => {
       {/* ── Stats strip ── */}
       <div className={styles.statsStrip}>
         <div className={styles.statCard}>
-          <div className={styles.statIcon}><StorefrontOutlinedIcon sx={{ fontSize: 18 }} /></div>
+          <div className={styles.statIcon}>
+            <StorefrontOutlinedIcon sx={{ fontSize: 18 }} />
+          </div>
           <div className={styles.statContent}>
             <span className={styles.statValue}>{data?.total ?? '—'}</span>
             <span className={styles.statLabel}>Total fournisseurs</span>
           </div>
         </div>
         <div className={styles.statCard}>
-          <div className={styles.statIcon}><DescriptionOutlinedIcon sx={{ fontSize: 18 }} /></div>
+          <div className={styles.statIcon}>
+            <DescriptionOutlinedIcon sx={{ fontSize: 18 }} />
+          </div>
           <div className={styles.statContent}>
-            <span className={styles.statValue}>{agreementTypes?.contract ?? '—'}</span>
+            <span className={styles.statValue}>
+              {agreementTypes?.contract ?? '—'}
+            </span>
             <span className={styles.statLabel}>Contrats associés</span>
           </div>
         </div>
         <div className={styles.statCard}>
-          <div className={styles.statIcon}><HandshakeOutlinedIcon sx={{ fontSize: 18 }} /></div>
+          <div className={styles.statIcon}>
+            <HandshakeOutlinedIcon sx={{ fontSize: 18 }} />
+          </div>
           <div className={styles.statContent}>
-            <span className={styles.statValue}>{agreementTypes?.convension ?? '—'}</span>
+            <span className={styles.statValue}>
+              {agreementTypes?.convension ?? '—'}
+            </span>
             <span className={styles.statLabel}>Conventions associées</span>
           </div>
         </div>
@@ -157,7 +244,15 @@ const VendorsContent = () => {
           </div>
         </div>
         <div className={styles.searchContainer}>
-          <TextField placeholder="Rechercher un fournisseur..." color="primary" size="small" fullWidth type="search" onChange={handleSearch} InputProps={{ className: styles.input }} />
+          <TextField
+            placeholder="Rechercher un fournisseur..."
+            color="primary"
+            size="small"
+            fullWidth
+            type="search"
+            onChange={handleSearch}
+            InputProps={{ className: styles.input }}
+          />
         </div>
         <div className={styles.tableContainer}>
           <DataGrid
@@ -175,14 +270,26 @@ const VendorsContent = () => {
             disableColumnFilter
             disableColumnMenu
             onSortModelChange={handleSortModelChange}
-            slots={{ noRowsOverlay: () => <EmptyState message="Aucun fournisseur" subtext="Les fournisseurs ajoutés apparaîtront ici." /> }}
+            slots={{
+              noRowsOverlay: () => (
+                <EmptyState
+                  message="Aucun fournisseur"
+                  subtext="Les fournisseurs ajoutés apparaîtront ici."
+                />
+              ),
+            }}
             experimentalFeatures={{ newEditingApi: true }}
             onCellEditStop={(params) => setRowId(params.id)}
             getRowId={(row) => row.id}
           />
         </div>
       </div>
-      <Modal open={open} onClose={() => setOpen(false)} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
+      <Modal
+        open={open}
+        onClose={() => setOpen(false)}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
         <CreateVendor handleClose={() => setOpen(false)} />
       </Modal>
     </div>

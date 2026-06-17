@@ -1,6 +1,11 @@
 'use client';
 import { Badge, Button, Chip, IconButton, Modal } from '@mui/material';
-import { DataGrid, GridColumns, GridSortItem, GridSortModel } from '@mui/x-data-grid';
+import {
+  DataGrid,
+  GridColumns,
+  GridSortItem,
+  GridSortModel,
+} from '@mui/x-data-grid';
 import TextField from '@mui/material/TextField';
 import { useMemo, useState } from 'react';
 import styles from './ContractsContent.module.css';
@@ -39,12 +44,35 @@ interface Filters {
   status?: AgreementStatus;
 }
 
-const STATUS_CONFIG: Record<string, { label: string; bg: string; color: string }> = {
-  not_executed:            { label: 'Non exécuté',       bg: 'rgba(220,38,38,0.10)',  color: tokens.color.errorDark },
-  executed:                { label: 'Exécuté',           bg: 'rgba(22,163,74,0.10)',  color: tokens.color.successDark },
-  executed_with_delay:     { label: 'Exécuté (retard)',  bg: 'rgba(217,119,6,0.10)',  color: tokens.color.warningDark },
-  in_execution:            { label: 'En cours',          bg: 'rgba(23,73,142,0.10)',  color: tokens.color.navyMid },
-  in_execution_with_delay: { label: 'En cours (retard)', bg: 'rgba(245,158,11,0.10)', color: tokens.color.warningDark },
+const STATUS_CONFIG: Record<
+  string,
+  { label: string; bg: string; color: string }
+> = {
+  not_executed: {
+    label: 'Non exécuté',
+    bg: 'rgba(220,38,38,0.10)',
+    color: tokens.color.errorDark,
+  },
+  executed: {
+    label: 'Exécuté',
+    bg: 'rgba(22,163,74,0.10)',
+    color: tokens.color.successDark,
+  },
+  executed_with_delay: {
+    label: 'Exécuté (retard)',
+    bg: 'rgba(217,119,6,0.10)',
+    color: tokens.color.warningDark,
+  },
+  in_execution: {
+    label: 'En cours',
+    bg: 'rgba(23,73,142,0.10)',
+    color: tokens.color.navyMid,
+  },
+  in_execution_with_delay: {
+    label: 'En cours (retard)',
+    bg: 'rgba(245,158,11,0.10)',
+    color: tokens.color.warningDark,
+  },
 };
 
 const chipSx = {
@@ -59,7 +87,13 @@ const chipSx = {
 const formatDate = (raw: string | null | undefined) => {
   if (!raw) return '—';
   const d = new Date(raw);
-  return isNaN(d.getTime()) ? String(raw) : d.toLocaleDateString('fr-DZ', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  return isNaN(d.getTime())
+    ? String(raw)
+    : d.toLocaleDateString('fr-DZ', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+      });
 };
 
 const formatAmount = (v: number | null | undefined) =>
@@ -68,16 +102,23 @@ const formatAmount = (v: number | null | undefined) =>
 const ContractsContent = () => {
   const [filterModalOpen, setFilterModalOPen] = useState(false);
   const [filters, setFilters] = useState<Filters | null>(null);
-  const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: 5 });
+  const [paginationModel, setPaginationModel] = useState({
+    page: 0,
+    pageSize: 5,
+  });
   const { data: permissions } = usePermissions();
   const [searchQuery, setSearchQuery] = useState('');
   const { debounce } = useDebounce();
-  const [queryOptions, setQueryOptions] = useState<{ sortModel: GridSortItem[] | null }>({ sortModel: null });
+  const [queryOptions, setQueryOptions] = useState<{
+    sortModel: GridSortItem[] | null;
+  }>({ sortModel: null });
   const [open, setOpen] = useState(false);
 
   const { data: statsData } = useStatistics({});
   const agreementTypes = statsData?.agreementsStats?.types ?? null;
-  const totalAccords = agreementTypes ? (agreementTypes.contract ?? 0) + (agreementTypes.convension ?? 0) : null;
+  const totalAccords = agreementTypes
+    ? (agreementTypes.contract ?? 0) + (agreementTypes.convension ?? 0)
+    : null;
 
   const { data, isFetching } = useContracts({
     page: paginationModel.page,
@@ -101,72 +142,98 @@ const ContractsContent = () => {
   const countFilters = () => {
     if (filters == null) return 0;
     let count = 0;
-    Object.keys(filters).forEach((f) => { if (!['departementId', 'amount_min', 'start_date'].includes(f)) count++; });
+    Object.keys(filters).forEach((f) => {
+      if (!['departementId', 'amount_min', 'start_date'].includes(f)) count++;
+    });
     return count;
   };
 
   const canCreateAgreement = () => permissions?.agreements.canCreate ?? false;
 
-  const columns: GridColumns<any> = useMemo(() => [
-    { field: 'number',  headerName: 'Numéro',    width: 130 },
-    { field: 'object',  headerName: 'Objet',     flex: 1, minWidth: 180 },
-    {
-      field: 'amount',
-      headerName: 'Montant',
-      width: 150,
-      valueFormatter: (value: number) => formatAmount(value),
-    },
-    {
-      field: 'expiration_date',
-      headerName: 'Expiration',
-      width: 110,
-      valueFormatter: (value: string) => formatDate(value),
-    },
-    {
-      field: 'signature_date',
-      headerName: 'Signature',
-      width: 110,
-      valueFormatter: (value: string) => formatDate(value),
-    },
-    {
-      field: 'status',
-      headerName: 'Statut',
-      width: 185,
-      renderCell: (params: any) => {
-        const cfg = STATUS_CONFIG[params.value as string] ?? { label: String(params.value), bg: tokens.color.surfaceSubtle, color: tokens.color.textSecondary };
-        return <Chip label={cfg.label} size="small" sx={{ ...chipSx, background: cfg.bg, color: cfg.color }} />;
+  const columns: GridColumns<any> = useMemo(
+    () => [
+      { field: 'number', headerName: 'Numéro', width: 130 },
+      { field: 'object', headerName: 'Objet', flex: 1, minWidth: 180 },
+      {
+        field: 'vendor',
+        headerName: 'Fournisseur',
+        width: 220,
+        sortable: false,
+        valueGetter: (value: any) => value?.company_name ?? '—',
       },
-    },
-    {
-      field: 'createdAt',
-      headerName: 'Créé le',
-      width: 110,
-      valueFormatter: (value: string) => formatDate(value),
-    },
-    {
-      field: 'actions',
-      headerName: '',
-      type: 'actions',
-      width: 56,
-      renderCell: (params: any) => (
-        <Link href={`/contracts/${params.id}`} style={{ textDecoration: 'none' }}>
-          <IconButton size="small" sx={{ color: tokens.color.navyMid }}>
-            <ChevronRightIcon sx={{ fontSize: '20px' }} />
-          </IconButton>
-        </Link>
-      ),
-    },
-  ], []);
+      {
+        field: 'amount',
+        headerName: 'Montant',
+        width: 150,
+        valueFormatter: (value: number) => formatAmount(value),
+      },
+      {
+        field: 'expiration_date',
+        headerName: 'Expiration',
+        width: 110,
+        valueFormatter: (value: string) => formatDate(value),
+      },
+      {
+        field: 'signature_date',
+        headerName: 'Signature',
+        width: 110,
+        valueFormatter: (value: string) => formatDate(value),
+      },
+      {
+        field: 'status',
+        headerName: 'Statut',
+        width: 185,
+        renderCell: (params: any) => {
+          const cfg = STATUS_CONFIG[params.value as string] ?? {
+            label: String(params.value),
+            bg: tokens.color.surfaceSubtle,
+            color: tokens.color.textSecondary,
+          };
+          return (
+            <Chip
+              label={cfg.label}
+              size="small"
+              sx={{ ...chipSx, background: cfg.bg, color: cfg.color }}
+            />
+          );
+        },
+      },
+      {
+        field: 'createdAt',
+        headerName: 'Créé le',
+        width: 110,
+        valueFormatter: (value: string) => formatDate(value),
+      },
+      {
+        field: 'actions',
+        headerName: '',
+        type: 'actions',
+        width: 56,
+        renderCell: (params: any) => (
+          <Link
+            href={`/contracts/${params.id}`}
+            style={{ textDecoration: 'none' }}
+          >
+            <IconButton size="small" sx={{ color: tokens.color.navyMid }}>
+              <ChevronRightIcon sx={{ fontSize: '20px' }} />
+            </IconButton>
+          </Link>
+        ),
+      },
+    ],
+    [],
+  );
 
   return (
     <div id="contracts-page" className={styles.container}>
-
       {/* ── Page header ── */}
       <div id="contracts-page-header" className={styles.pageHeader}>
         <div className={styles.pageHeaderLeft}>
           <Breadcrumb items={[{ label: 'Contrats' }]} />
           <h1 className={styles.pageTitle}>Gestion des contrats</h1>
-          <span className={styles.pageSubtitle}>Suivez l'état d'avancement et gérez vos contrats d'accords</span>
+          <span className={styles.pageSubtitle}>
+            Suivez l'état d'avancement et gérez vos contrats d'accords
+          </span>
         </div>
         {canCreateAgreement() && (
           <Button
@@ -186,21 +253,29 @@ const ContractsContent = () => {
       {/* ── Stats strip ── */}
       <div className={styles.statsStrip}>
         <div className={styles.statCard}>
-          <div className={styles.statIcon}><DescriptionOutlinedIcon sx={{ fontSize: 18 }} /></div>
+          <div className={styles.statIcon}>
+            <DescriptionOutlinedIcon sx={{ fontSize: 18 }} />
+          </div>
           <div className={styles.statContent}>
             <span className={styles.statValue}>{data?.total ?? '—'}</span>
             <span className={styles.statLabel}>Total contrats</span>
           </div>
         </div>
         <div className={styles.statCard}>
-          <div className={styles.statIcon}><HandshakeOutlinedIcon sx={{ fontSize: 18 }} /></div>
+          <div className={styles.statIcon}>
+            <HandshakeOutlinedIcon sx={{ fontSize: 18 }} />
+          </div>
           <div className={styles.statContent}>
-            <span className={styles.statValue}>{agreementTypes?.convension ?? '—'}</span>
+            <span className={styles.statValue}>
+              {agreementTypes?.convension ?? '—'}
+            </span>
             <span className={styles.statLabel}>Conventions</span>
           </div>
         </div>
         <div className={styles.statCard}>
-          <div className={styles.statIcon}><FolderOpenOutlinedIcon sx={{ fontSize: 18 }} /></div>
+          <div className={styles.statIcon}>
+            <FolderOpenOutlinedIcon sx={{ fontSize: 18 }} />
+          </div>
           <div className={styles.statContent}>
             <span className={styles.statValue}>{totalAccords ?? '—'}</span>
             <span className={styles.statLabel}>Total accords</span>
@@ -212,16 +287,37 @@ const ContractsContent = () => {
         <div className={styles.cardHeader}>
           <div className={styles.cardHeaderText}>
             <span className={styles.cardTitle}>Contrats</span>
-            {data?.total != null && <span className={styles.cardCount}>{data.total} au total</span>}
+            {data?.total != null && (
+              <span className={styles.cardCount}>{data.total} au total</span>
+            )}
           </div>
         </div>
         <div className={styles.searchContainer}>
-          <Badge badgeContent={countFilters()} sx={{ padding: 0 }} className={styles.searchBadge}>
-            <Button startIcon={<FilterIcon />} size="small" color="primary" variant="contained" onClick={() => setFilterModalOPen(true)} className={styles.advancedButton}>
+          <Badge
+            badgeContent={countFilters()}
+            sx={{ padding: 0 }}
+            className={styles.searchBadge}
+          >
+            <Button
+              startIcon={<FilterIcon />}
+              size="small"
+              color="primary"
+              variant="contained"
+              onClick={() => setFilterModalOPen(true)}
+              className={styles.advancedButton}
+            >
               Filtrer
             </Button>
           </Badge>
-          <TextField placeholder="Rechercher un contrat..." color="primary" size="small" fullWidth type="search" onChange={handleSearch} InputProps={{ className: styles.input }} />
+          <TextField
+            placeholder="Rechercher un contrat..."
+            color="primary"
+            size="small"
+            fullWidth
+            type="search"
+            onChange={handleSearch}
+            InputProps={{ className: styles.input }}
+          />
         </div>
         <div className={styles.tableContainer}>
           <DataGrid
@@ -239,15 +335,36 @@ const ContractsContent = () => {
             disableColumnFilter
             disableColumnMenu
             onSortModelChange={handleSortModelChange}
-            slots={{ noRowsOverlay: () => <EmptyState message="Aucun contrat" subtext="Les contrats ajoutés apparaîtront ici." /> }}
+            slots={{
+              noRowsOverlay: () => (
+                <EmptyState
+                  message="Aucun contrat"
+                  subtext="Les contrats ajoutés apparaîtront ici."
+                />
+              ),
+            }}
           />
         </div>
       </div>
-      <Modal open={open} onClose={() => setOpen(false)} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
+      <Modal
+        open={open}
+        onClose={() => setOpen(false)}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
         <CreateContract handleClose={() => setOpen(false)} />
       </Modal>
-      <Modal open={filterModalOpen} onClose={() => setFilterModalOPen(false)} aria-labelledby="modal-filter-modal-title" aria-describedby="modal-filter-modal-description">
-        <ContractsFilter initialFilters={filters ?? ({} as any)} handleClose={() => setFilterModalOPen(false)} handleSetFilters={(f: any) => setFilters(f)} />
+      <Modal
+        open={filterModalOpen}
+        onClose={() => setFilterModalOPen(false)}
+        aria-labelledby="modal-filter-modal-title"
+        aria-describedby="modal-filter-modal-description"
+      >
+        <ContractsFilter
+          initialFilters={filters ?? ({} as any)}
+          handleClose={() => setFilterModalOPen(false)}
+          handleSetFilters={(f: any) => setFilters(f)}
+        />
       </Modal>
     </div>
   );

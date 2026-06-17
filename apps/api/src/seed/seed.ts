@@ -27,6 +27,15 @@ async function bootstrap() {
     case 'accounts':
       await seed.seedAccounts();
       break;
+    case 'trigger-expiry':
+      const agreementId = process.argv[3];
+      const days = parseInt(process.argv[4] ?? '30', 10);
+      if (!agreementId) {
+        console.error('Usage: trigger-expiry <agreementId> [days]');
+      } else {
+        await seed.triggerExpiry(agreementId, days);
+      }
+      break;
     case 'all':
       await seed.seedDirections();
       await seed.seedAccounts();
@@ -38,7 +47,7 @@ async function bootstrap() {
       console.error(`Unknown command: "${command}"`);
       console.log('Usage: seed <command> [count]');
       console.log(
-        'Commands: directions | vendors | users | agreements | accounts',
+        'Commands: directions | vendors | users | agreements | accounts | trigger-expiry',
       );
   }
 

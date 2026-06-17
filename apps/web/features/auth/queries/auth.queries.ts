@@ -35,8 +35,11 @@ export const useForgotPassword = () =>
 
 export const useResetPassword = () =>
   useMutation({
-    mutationFn: (payload: { password: string; token: string; userId: string }) =>
-      authService.resetPassword(payload),
+    mutationFn: (payload: {
+      password: string;
+      token: string;
+      userId: string;
+    }) => authService.resetPassword(payload),
   });
 
 export const useToggleNotifications = () => {
@@ -45,7 +48,8 @@ export const useToggleNotifications = () => {
   const jwt = useAuthStore((s) => s.jwt);
   const axios = useAxiosPrivate({});
   return useMutation({
-    mutationFn: () => authService.selectRecieveNotification({ axios_instance: axios }),
+    mutationFn: () =>
+      authService.selectRecieveNotification({ axios_instance: axios }),
     onSuccess: () => {
       if (user && jwt) {
         setCredentials(
@@ -61,7 +65,9 @@ export const useChangePassword = () => {
   const axios = useAxiosPrivate({});
   return useMutation({
     mutationFn: (payload: { actualPassword: string; password: string }) =>
-      axios.post('/auth/connected-user/reset-password', payload).then((r) => r.data),
+      axios
+        .post('/auth/connected-user/reset-password', payload)
+        .then((r) => r.data),
   });
 };
 
@@ -69,7 +75,8 @@ export const usePermissions = () => {
   const axios = useAxiosPrivate({});
   return useQuery<PermissionsView>({
     queryKey: ['permissions'],
-    queryFn: () => axios.get<PermissionsView>('/auth/me/permissions').then((r) => r.data),
+    queryFn: () =>
+      axios.get<PermissionsView>('/auth/me/permissions').then((r) => r.data),
     staleTime: Infinity,
   });
 };

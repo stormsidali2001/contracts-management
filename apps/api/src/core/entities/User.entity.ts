@@ -15,9 +15,7 @@ import { DirectionEntity } from './Direction.entity';
 import { NotificationEntity } from './Notification.entity';
 
 @Entity('users')
-@Index('users-fulltext-idx', ['username', 'email', 'firstName', 'lastName'], {
-  fulltext: true,
-})
+@Index('users-fulltext-idx', ['username', 'email', 'firstName', 'lastName'])
 export class UserEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -50,7 +48,7 @@ export class UserEntity {
   @Column({ default: false })
   recieve_notifications: boolean;
 
-  @CreateDateColumn({ type: 'datetime' })
+  @CreateDateColumn({ type: 'timestamp' })
   created_at: Date;
 
   //relations

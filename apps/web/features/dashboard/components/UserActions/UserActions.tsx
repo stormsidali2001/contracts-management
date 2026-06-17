@@ -13,7 +13,8 @@ const UserActions = ({ params, rowId, setRowId }: any) => {
   const showSnackbar = useSnackbarStore((s) => s.showSnackbar);
 
   const handleSubmit = () => {
-    const { id, role, active, email, firstName, lastName, username } = params.row;
+    const { id, role, active, email, firstName, lastName, username } =
+      params.row;
     updateUser(
       { id, role, active, email, firstName, lastName, username },
       {
@@ -21,9 +22,11 @@ const UserActions = ({ params, rowId, setRowId }: any) => {
           setSuccess(true);
           setRowId(null);
         },
-        onError: (err: any) => showSnackbar({
-          message: err?.response?.data?.error ?? 'Erreur lors de la mise à jour',
-        }),
+        onError: (err: any) =>
+          showSnackbar({
+            message:
+              err?.response?.data?.error ?? 'Erreur lors de la mise à jour',
+          }),
       },
     );
   };
@@ -40,11 +43,27 @@ const UserActions = ({ params, rowId, setRowId }: any) => {
       {success ? (
         <Check color="secondary" sx={{ width: 25, height: 25 }} />
       ) : (
-        <Button color="primary" sx={{ width: 30, height: 30, boxShadow: 'none' }} disabled={params.id !== rowId || loading} onClick={() => handleSubmit()}>
+        <Button
+          color="primary"
+          sx={{ width: 30, height: 30, boxShadow: 'none' }}
+          disabled={params.id !== rowId || loading}
+          onClick={() => handleSubmit()}
+        >
           <Save sx={{ boxShadow: 'none' }} />
         </Button>
       )}
-      {loading && <CircularProgress size={30} sx={{ position: 'absolute', top: '0', left: '15px', transform: 'translate(-50%,-50%)', zIndex: 1 }} />}
+      {loading && (
+        <CircularProgress
+          size={30}
+          sx={{
+            position: 'absolute',
+            top: '0',
+            left: '15px',
+            transform: 'translate(-50%,-50%)',
+            zIndex: 1,
+          }}
+        />
+      )}
     </Box>
   );
 };

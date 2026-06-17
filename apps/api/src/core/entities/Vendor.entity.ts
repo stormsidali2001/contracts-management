@@ -8,19 +8,15 @@ import {
 import { AgreementEntity } from './Agreement.entity';
 
 @Entity('vendors')
-@Index(
-  'vendor-fulltext-idx',
-  [
-    'num',
-    'nif',
-    'nrc',
-    'company_name',
-    'address',
-    'mobile_phone_number',
-    'home_phone_number',
-  ],
-  { fulltext: true },
-)
+@Index('vendor-fulltext-idx', [
+  'num',
+  'nif',
+  'nrc',
+  'company_name',
+  'address',
+  'mobile_phone_number',
+  'home_phone_number',
+])
 export class VendorEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -45,6 +41,9 @@ export class VendorEntity {
 
   @Column()
   home_phone_number: string;
+
+  @Column({ type: 'varchar', nullable: true, default: '' })
+  logoUrl: string;
 
   @Column({ type: 'date' })
   createdAt: Date;

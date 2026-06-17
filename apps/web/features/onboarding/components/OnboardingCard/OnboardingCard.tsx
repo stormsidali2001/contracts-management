@@ -7,14 +7,21 @@ import { useEffect } from 'react';
 import styles from './OnboardingCard.module.css';
 import { useAuthStore } from '@/features/auth/store/auth.store';
 import { allTours } from '@/features/onboarding/data/tours';
-import { useContracts, useConvensions } from '@/features/contract/queries/contract.queries';
+import {
+  useContracts,
+  useConvensions,
+} from '@/features/contract/queries/contract.queries';
 import { useVendors } from '@/features/vendor/queries/vendor.queries';
 
 const ONBOARDING_KEY = (userId: string) => `onboarding_done_${userId}`;
 
 /** Routes that require a "first record" to exist and may be unresolvable. */
 function isDataRoute(route: string): boolean {
-  return route === '/contracts/first' || route === '/convensions/first' || route === '/vendors/first';
+  return (
+    route === '/contracts/first' ||
+    route === '/convensions/first' ||
+    route === '/vendors/first'
+  );
 }
 
 /** Poll rAF until `selector` exists in the DOM, then call `callback`. Gives up after `maxMs`. */
@@ -55,7 +62,9 @@ export default function OnboardingCard({
   useEffect(() => {
     const original = Element.prototype.scrollIntoView;
     Element.prototype.scrollIntoView = function () {};
-    return () => { Element.prototype.scrollIntoView = original; };
+    return () => {
+      Element.prototype.scrollIntoView = original;
+    };
   }, []);
 
   const markDone = () => {
@@ -63,14 +72,18 @@ export default function OnboardingCard({
     closeOnborda();
   };
 
-  const getTourSteps = () => allTours.find((t) => t.tour === currentTour)?.steps ?? [];
+  const getTourSteps = () =>
+    allTours.find((t) => t.tour === currentTour)?.steps ?? [];
 
   /** Resolve special placeholder routes to real URLs at runtime. */
   const resolveRoute = (route: string) => {
     if (route === '/users/me' && user?.sub) return `/users/${user.sub}`;
-    if (route === '/contracts/first' && firstContractId) return `/contracts/${firstContractId}`;
-    if (route === '/convensions/first' && firstConvensionId) return `/convensions/${firstConvensionId}`;
-    if (route === '/vendors/first' && firstVendorId) return `/vendors/${firstVendorId}`;
+    if (route === '/contracts/first' && firstContractId)
+      return `/contracts/${firstContractId}`;
+    if (route === '/convensions/first' && firstConvensionId)
+      return `/convensions/${firstConvensionId}`;
+    if (route === '/vendors/first' && firstVendorId)
+      return `/vendors/${firstVendorId}`;
     return route;
   };
 
@@ -97,12 +110,16 @@ export default function OnboardingCard({
           skipTo++;
         }
 
-        if (skipTo >= steps.length) { markDone(); return; }
+        if (skipTo >= steps.length) {
+          markDone();
+          return;
+        }
 
         if (exitRoute) {
           const targetSelector = steps[skipTo]?.selector;
           router.push(exitRoute);
-          if (targetSelector) waitForElement(targetSelector, () => setCurrentStep(skipTo));
+          if (targetSelector)
+            waitForElement(targetSelector, () => setCurrentStep(skipTo));
           else setTimeout(() => setCurrentStep(skipTo), 600);
         } else {
           setCurrentStep(skipTo);
@@ -163,7 +180,11 @@ export default function OnboardingCard({
       {arrow}
 
       {/* Skip button — top-right corner */}
-      <button className={styles.btnClose} onClick={markDone} aria-label="Ignorer le tutoriel">
+      <button
+        className={styles.btnClose}
+        onClick={markDone}
+        aria-label="Ignorer le tutoriel"
+      >
         ✕
       </button>
 
@@ -190,7 +211,9 @@ export default function OnboardingCard({
       />
 
       <div className={styles.footer}>
-        <span className={styles.stepCounter}>{currentStep + 1} / {totalSteps}</span>
+        <span className={styles.stepCounter}>
+          {currentStep + 1} / {totalSteps}
+        </span>
 
         <div className={styles.actions}>
           {currentStep > 0 && (

@@ -24,9 +24,10 @@ export default function WelcomeModal({ role, onStart, onSkip }: Props) {
         <span className={styles.emoji}>👋</span>
         <h2 className={styles.title}>Bienvenue sur ContractFlow !</h2>
         <p className={styles.description}>
-          En tant que <strong>{roleLabel}</strong>, vous avez accès à des fonctionnalités
-          adaptées à votre rôle. Ce guide interactif vous présentera les sections
-          principales de la plateforme en quelques étapes.
+          En tant que <strong>{roleLabel}</strong>, vous avez accès à des
+          fonctionnalités adaptées à votre rôle. Ce guide interactif vous
+          présentera les sections principales de la plateforme en quelques
+          étapes.
         </p>
         <div className={styles.divider} />
         <div className={styles.actions}>

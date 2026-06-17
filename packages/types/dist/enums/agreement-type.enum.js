@@ -5,4 +5,4 @@ var AgreementType;
 (function (AgreementType) {
     AgreementType["CONTRACT"] = "contract";
     AgreementType["CONVENSION"] = "convension";
-})(AgreementType || (exports.AgreementType = AgreementType = {}));
+})(AgreementType = exports.AgreementType || (exports.AgreementType = {}));

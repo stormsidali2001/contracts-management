@@ -7,4 +7,4 @@ var Operation;
     Operation["UPDATE"] = "UPDATE";
     Operation["DELETE"] = "DELETE";
     Operation["EXECUTE"] = "EXECUTE";
-})(Operation || (exports.Operation = Operation = {}));
+})(Operation = exports.Operation || (exports.Operation = {}));

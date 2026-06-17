@@ -1,4 +1,9 @@
-import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+  keepPreviousData,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query';
 import useAxiosPrivate from '@/hooks/auth/useAxiosPrivate';
 import { vendorKeys } from '@/lib/query-keys';
 import { PaginationResponse } from '@/features/dashboard/models/paginationResponse.interface';
@@ -87,6 +92,21 @@ export const useDeleteVendor = () => {
       axios.delete(`/vendors/${id}`).then((r) => r.data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: vendorKeys.lists() });
+    },
+  });
+};
+
+export const useUploadVendorLogo = () => {
+  const axios = useAxiosPrivate({});
+  return useMutation({
+    mutationFn: (file: File) => {
+      const formData = new FormData();
+      formData.append('file', file);
+      return axios
+        .post<{ filename: string }>('/vendors/image/upload', formData, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        })
+        .then((r) => r.data.filename);
     },
   });
 };

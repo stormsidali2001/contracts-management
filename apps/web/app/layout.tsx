@@ -4,7 +4,8 @@ import { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'ContractFlow',
-  description: 'Track contracts, monitor execution status, and get automatic alerts before any deadline expires.',
+  description:
+    'Track contracts, monitor execution status, and get automatic alerts before any deadline expires.',
 };
 
 export default function RootLayout({

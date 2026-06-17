@@ -19,7 +19,8 @@ export const useAuthStore = create<AuthStore>((set) => ({
 
   setCredentials: (user, jwt) => set({ user, jwt, isAuthenticated: true }),
 
-  clearCredentials: () => set({ user: null, jwt: null, isAuthenticated: false }),
+  clearCredentials: () =>
+    set({ user: null, jwt: null, isAuthenticated: false }),
 
   setImageUrl: (imageUrl) =>
     set((state) => ({

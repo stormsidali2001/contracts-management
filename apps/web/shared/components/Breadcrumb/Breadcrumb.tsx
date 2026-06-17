@@ -24,7 +24,9 @@ export default function Breadcrumb({ items }: BreadcrumbProps) {
         <span key={i} className={styles.item}>
           <ChevronRightIcon className={styles.sep} />
           {item.href ? (
-            <Link href={item.href} className={styles.link}>{item.label}</Link>
+            <Link href={item.href} className={styles.link}>
+              {item.label}
+            </Link>
           ) : (
             <span className={styles.current}>{item.label}</span>
           )}

@@ -12,6 +12,7 @@ import { UserModule } from 'src/user/user.module';
 import { AgreementController } from './infrastructure/controllers/Agreement.controller';
 import { AgreementFileController } from './infrastructure/controllers/AgreementFile.controller';
 import { VendorController } from './infrastructure/controllers/Vendor.controller';
+import { VendorImageController } from './infrastructure/controllers/VendorImage.controller';
 import { AgreementRepository } from './infrastructure/persistence/agreement.repository';
 import { VendorRepository } from './infrastructure/persistence/vendor.repository';
 import { AgreementService } from './application/Agreement.service';
@@ -58,6 +59,11 @@ const eventHandlers = [
     ...eventHandlers,
   ],
   exports: [AgreementService, VendorService],
-  controllers: [AgreementController, VendorController, AgreementFileController],
+  controllers: [
+    AgreementController,
+    VendorController,
+    AgreementFileController,
+    VendorImageController,
+  ],
 })
 export class AgreementModule {}

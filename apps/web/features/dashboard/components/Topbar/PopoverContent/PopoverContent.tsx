@@ -39,7 +39,11 @@ const PopoverContent = () => {
 
   const links = useMemo(
     () => [
-      { text: 'Profile', link: `/users/${user?.sub ?? ''}`, icon: AccountCircleIcon },
+      {
+        text: 'Profile',
+        link: `/users/${user?.sub ?? ''}`,
+        icon: AccountCircleIcon,
+      },
       { text: 'Parametres', link: '/settings', icon: SettingsIcon },
     ],
     [user?.sub],
@@ -56,7 +60,18 @@ const PopoverContent = () => {
     <div className={styles.container}>
       <div className={styles.header}>
         <div className={styles.profilImgContainer}>
-          <Image src={getAvatarSrc(user?.imageUrl, user?.role)} alt="Photo de profil" width={36} height={36} unoptimized onError={(e) => { (e.currentTarget as HTMLImageElement).src = getRoleAvatar(user?.role); }} />
+          <Image
+            src={getAvatarSrc(user?.imageUrl, user?.role)}
+            alt="Photo de profil"
+            width={36}
+            height={36}
+            unoptimized
+            onError={(e) => {
+              (e.currentTarget as HTMLImageElement).src = getRoleAvatar(
+                user?.role,
+              );
+            }}
+          />
         </div>
         <div className={styles.userInfos}>
           <span>{`${user?.firstName}  ${user?.lastName}`}</span>

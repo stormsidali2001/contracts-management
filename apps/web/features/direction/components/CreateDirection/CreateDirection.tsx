@@ -1,7 +1,10 @@
 'use client';
 import { Button, CircularProgress, Modal, TextField } from '@mui/material';
 import useInput from '@/hooks/input/use-input';
-import { validateDepartementAbriviationLength, validateDepartementTitleLength } from '@/shared/utils/validation/length';
+import {
+  validateDepartementAbriviationLength,
+  validateDepartementTitleLength,
+} from '@/shared/utils/validation/length';
 import styles from './CreateDirection.module.css';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import BusinessIcon from '@mui/icons-material/Business';
@@ -22,7 +25,11 @@ const CreateDirection = ({ handleDirectionModalClose }: PropTypes) => {
   const [openDepartementModal, setOpenDepartementModal] = useState(false);
   const [departements, setDepartements] = useState<Departement[]>([]);
   const showSnackbar = useSnackbarStore((s) => s.showSnackbar);
-  const { mutate: createDirection, isPending: isLoading, isSuccess } = useCreateDirection();
+  const {
+    mutate: createDirection,
+    isPending: isLoading,
+    isSuccess,
+  } = useCreateDirection();
 
   const {
     text: title,
@@ -49,11 +56,16 @@ const CreateDirection = ({ handleDirectionModalClose }: PropTypes) => {
       { title, abriviation, departements },
       {
         onSuccess: () => {
-          showSnackbar({ message: 'la direction a été creé avec success.', severty: 'success' });
+          showSnackbar({
+            message: 'la direction a été creé avec success.',
+            severty: 'success',
+          });
           handleDirectionModalClose();
         },
         onError: (err: any) => {
-          showSnackbar({ message: err?.response?.data?.error ?? 'erreur inconnue' });
+          showSnackbar({
+            message: err?.response?.data?.error ?? 'erreur inconnue',
+          });
         },
       },
     );
@@ -75,7 +87,11 @@ const CreateDirection = ({ handleDirectionModalClose }: PropTypes) => {
       <form onSubmit={handleSubmit}>
         {isLoading ? (
           <div className={styles.stateContainer}>
-            <CircularProgress size={36} thickness={4} sx={{ color: 'var(--navy-mid, #17498E)' }} />
+            <CircularProgress
+              size={36}
+              thickness={4}
+              sx={{ color: 'var(--navy-mid, #17498E)' }}
+            />
             <span className={styles.stateText}>Création en cours…</span>
           </div>
         ) : isSuccess ? (
@@ -83,7 +99,9 @@ const CreateDirection = ({ handleDirectionModalClose }: PropTypes) => {
             <div className={styles.successIcon}>
               <CheckCircleOutlineIcon sx={{ fontSize: 28 }} />
             </div>
-            <span className={styles.stateText}>Direction créée avec succès</span>
+            <span className={styles.stateText}>
+              Direction créée avec succès
+            </span>
           </div>
         ) : (
           <div className={styles.modalBody}>
@@ -107,13 +125,17 @@ const CreateDirection = ({ handleDirectionModalClose }: PropTypes) => {
               fullWidth
               color="primary"
               error={abriviationShouldDisplayError}
-              helperText={abriviationShouldDisplayError && 'Entre 2 et 5 caractères'}
+              helperText={
+                abriviationShouldDisplayError && 'Entre 2 et 5 caractères'
+              }
             />
 
             {/* Departments sub-section */}
             <div className={styles.deptSection}>
               <div className={styles.deptSectionHeader}>
-                <span className={styles.sectionLabel}>Départements ({departements.length})</span>
+                <span className={styles.sectionLabel}>
+                  Départements ({departements.length})
+                </span>
                 <Button
                   className={styles.addDeptBtn}
                   startIcon={<AddCircleIcon sx={{ fontSize: 15 }} />}
@@ -126,12 +148,16 @@ const CreateDirection = ({ handleDirectionModalClose }: PropTypes) => {
               </div>
               <div className={styles.deptList}>
                 {departements.length === 0 ? (
-                  <span className={styles.emptyDept}>Aucun département ajouté</span>
+                  <span className={styles.emptyDept}>
+                    Aucun département ajouté
+                  </span>
                 ) : (
                   departements.map((d, i) => (
                     <span key={i} className={styles.deptChip}>
                       {d.title}
-                      <span className={styles.deptChipAbbr}>{d.abriviation}</span>
+                      <span className={styles.deptChipAbbr}>
+                        {d.abriviation}
+                      </span>
                     </span>
                   ))
                 )}
@@ -153,14 +179,24 @@ const CreateDirection = ({ handleDirectionModalClose }: PropTypes) => {
             variant="contained"
             color="primary"
             className={styles.submitBtn}
-            disabled={title.length === 0 || abriviation.length === 0 || titleShouldDisplayError || abriviationShouldDisplayError || isSuccess || isLoading}
+            disabled={
+              title.length === 0 ||
+              abriviation.length === 0 ||
+              titleShouldDisplayError ||
+              abriviationShouldDisplayError ||
+              isSuccess ||
+              isLoading
+            }
           >
             Créer
           </Button>
         </div>
       </form>
 
-      <Modal open={openDepartementModal} onClose={() => setOpenDepartementModal(false)}>
+      <Modal
+        open={openDepartementModal}
+        onClose={() => setOpenDepartementModal(false)}
+      >
         <CreateDepartement
           pushDepartementToDirection={pushDepartementToDirection}
           linkToDirectionAsync={false}

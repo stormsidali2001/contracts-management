@@ -1,4 +1,9 @@
-import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+  keepPreviousData,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query';
 import useAxiosPrivate from '@/hooks/auth/useAxiosPrivate';
 import { userKeys } from '@/lib/query-keys';
 import { PaginationResponse } from '@/features/dashboard/models/paginationResponse.interface';
@@ -32,7 +37,15 @@ export interface UpdateUserPayload {
 
 export const useUsers = (params: UserListParams) => {
   const axios = useAxiosPrivate({});
-  const { page, pageSize, orderBy, searchQuery, directionId, departementId, role } = params;
+  const {
+    page,
+    pageSize,
+    orderBy,
+    searchQuery,
+    directionId,
+    departementId,
+    role,
+  } = params;
   return useQuery({
     queryKey: userKeys.list(params),
     queryFn: () =>
@@ -57,8 +70,7 @@ export const useUser = (userId: string | null | undefined) => {
   const axios = useAxiosPrivate({});
   return useQuery({
     queryKey: userKeys.detail(userId ?? ''),
-    queryFn: () =>
-      axios.get<UserView>(`/users/${userId}`).then((r) => r.data),
+    queryFn: () => axios.get<UserView>(`/users/${userId}`).then((r) => r.data),
     enabled: !!userId,
   });
 };

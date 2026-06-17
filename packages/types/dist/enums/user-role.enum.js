@@ -6,4 +6,4 @@ var UserRole;
     UserRole["EMPLOYEE"] = "EMPLOYEE";
     UserRole["JURIDICAL"] = "JURIDICAL";
     UserRole["ADMIN"] = "ADMIN";
-})(UserRole || (exports.UserRole = UserRole = {}));
+})(UserRole = exports.UserRole || (exports.UserRole = {}));

@@ -14,6 +14,7 @@ export class VendorPresenter {
       address: source.address,
       mobile_phone_number: source.mobile_phone_number,
       home_phone_number: source.home_phone_number,
+      logoUrl: source.logoUrl ?? '',
       createdAt: source.createdAt,
       contractCount: withCounts.contractCount,
       convensionCount: withCounts.convensionCount,

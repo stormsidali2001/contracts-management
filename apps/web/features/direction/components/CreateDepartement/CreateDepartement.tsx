@@ -1,7 +1,10 @@
 'use client';
 import { Button, CircularProgress, TextField } from '@mui/material';
 import useInput from '@/hooks/input/use-input';
-import { validateDepartementAbriviationLength, validateDepartementTitleLength } from '@/shared/utils/validation/length';
+import {
+  validateDepartementAbriviationLength,
+  validateDepartementTitleLength,
+} from '@/shared/utils/validation/length';
 import styles from './CreateDepartement.module.css';
 import AccountTreeOutlinedIcon from '@mui/icons-material/AccountTreeOutlined';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
@@ -18,7 +21,10 @@ const CreateDepartement = ({
 }: {
   selectedDirectionId?: string | null;
   handleCloseDepartementModal: () => void;
-  pushDepartementToDirection: (departement: Departement, selectedDirectionId?: string) => void;
+  pushDepartementToDirection: (
+    departement: Departement,
+    selectedDirectionId?: string,
+  ) => void;
   linkToDirectionAsync?: boolean;
 }) => {
   const {
@@ -37,7 +43,8 @@ const CreateDepartement = ({
 
   const [isSuccess, setIsSuccess] = useState(false);
   const showSnackbar = useSnackbarStore((s) => s.showSnackbar);
-  const { mutate: createDepartement, isPending: isLoading } = useCreateDepartement();
+  const { mutate: createDepartement, isPending: isLoading } =
+    useCreateDepartement();
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
@@ -48,13 +55,21 @@ const CreateDepartement = ({
         { directionId: selectedDirectionId, title, abriviation },
         {
           onSuccess: (res: any) => {
-            pushDepartementToDirection({ id: res.id, title, abriviation, users: 0 }, selectedDirectionId);
-            showSnackbar({ message: 'le département a été créé avec succès', severty: 'success' });
+            pushDepartementToDirection(
+              { id: res.id, title, abriviation, users: 0 },
+              selectedDirectionId,
+            );
+            showSnackbar({
+              message: 'le département a été créé avec succès',
+              severty: 'success',
+            });
             setIsSuccess(true);
             setTimeout(() => handleCloseDepartementModal(), 2000);
           },
           onError: (err: any) => {
-            showSnackbar({ message: err?.response?.data?.error ?? 'erreur inconnue' });
+            showSnackbar({
+              message: err?.response?.data?.error ?? 'erreur inconnue',
+            });
           },
         },
       );
@@ -80,7 +95,11 @@ const CreateDepartement = ({
       <form onSubmit={handleSubmit}>
         {isLoading ? (
           <div className={styles.stateContainer}>
-            <CircularProgress size={36} thickness={4} sx={{ color: 'var(--navy-mid, #17498E)' }} />
+            <CircularProgress
+              size={36}
+              thickness={4}
+              sx={{ color: 'var(--navy-mid, #17498E)' }}
+            />
             <span className={styles.stateText}>Création en cours…</span>
           </div>
         ) : isSuccess ? (
@@ -88,7 +107,9 @@ const CreateDepartement = ({
             <div className={styles.successIcon}>
               <CheckCircleOutlineIcon sx={{ fontSize: 28 }} />
             </div>
-            <span className={styles.stateText}>Département créé avec succès</span>
+            <span className={styles.stateText}>
+              Département créé avec succès
+            </span>
           </div>
         ) : (
           <div className={styles.modalBody}>
@@ -112,7 +133,9 @@ const CreateDepartement = ({
               fullWidth
               color="primary"
               error={abriviationShouldDisplayError}
-              helperText={abriviationShouldDisplayError && 'Entre 2 et 5 caractères'}
+              helperText={
+                abriviationShouldDisplayError && 'Entre 2 et 5 caractères'
+              }
             />
           </div>
         )}
@@ -130,7 +153,14 @@ const CreateDepartement = ({
             variant="contained"
             color="primary"
             className={styles.submitBtn}
-            disabled={title.length === 0 || abriviation.length === 0 || titleShouldDisplayError || abriviationShouldDisplayError || isSuccess || isLoading}
+            disabled={
+              title.length === 0 ||
+              abriviation.length === 0 ||
+              titleShouldDisplayError ||
+              abriviationShouldDisplayError ||
+              isSuccess ||
+              isLoading
+            }
           >
             Créer
           </Button>

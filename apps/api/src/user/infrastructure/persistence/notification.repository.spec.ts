@@ -35,8 +35,8 @@ describe('NotificationRepository (integration)', () => {
     const s = uuid().replace(/-/g, '').slice(0, 8);
     userId = uuid();
     await dataSource.query(
-      `INSERT INTO users (id, email, username, firstName, lastName, role, active, recieve_notifications)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      `INSERT INTO users (id, email, username, "firstName", "lastName", role, active, recieve_notifications)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
       [
         userId,
         `notif-${s}@test.com`,
@@ -51,7 +51,7 @@ describe('NotificationRepository (integration)', () => {
   });
 
   afterAll(async () => {
-    await dataSource.query('DELETE FROM users WHERE id = ?', [userId]);
+    await dataSource.query('DELETE FROM users WHERE id = $1', [userId]);
     await module.close();
   });
 
@@ -59,7 +59,7 @@ describe('NotificationRepository (integration)', () => {
     if (notificationIds.length) {
       await dataSource.query(
         `DELETE FROM notifications WHERE id IN (${notificationIds
-          .map(() => '?')
+          .map((_, i) => `$${i + 1}`)
           .join(',')})`,
         [...notificationIds],
       );
@@ -121,8 +121,8 @@ describe('NotificationRepository (integration)', () => {
     it('returns an empty array for a user with no notifications', async () => {
       const otherId = uuid();
       await dataSource.query(
-        `INSERT INTO users (id, email, username, firstName, lastName, role, active, recieve_notifications)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+        `INSERT INTO users (id, email, username, "firstName", "lastName", role, active, recieve_notifications)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
         [
           otherId,
           `other-${otherId.slice(0, 6)}@test.com`,
@@ -137,7 +137,7 @@ describe('NotificationRepository (integration)', () => {
 
       const results = await repo.findByUserId(otherId);
 
-      await dataSource.query('DELETE FROM users WHERE id = ?', [otherId]);
+      await dataSource.query('DELETE FROM users WHERE id = $1', [otherId]);
       expect(results).toEqual([]);
     });
   });

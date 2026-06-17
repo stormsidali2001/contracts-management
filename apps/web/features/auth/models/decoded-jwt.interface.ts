@@ -1,7 +1,7 @@
-import { DisplayUser } from "./DisplayUser.interface";
+import { DisplayUser } from './DisplayUser.interface';
 
-export interface DecodedJwt{
-    user:DisplayUser;
-    iat:number;
-    exp:number;
+export interface DecodedJwt {
+  user: DisplayUser;
+  iat: number;
+  exp: number;
 }

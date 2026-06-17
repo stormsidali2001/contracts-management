@@ -24,7 +24,8 @@ export const useNotificationStore = create<NotificationStore>((set) => ({
   isEstablishingConnection: false,
 
   setConnecting: () => set({ isEstablishingConnection: true }),
-  setConnected: () => set({ isConnected: true, isEstablishingConnection: false }),
+  setConnected: () =>
+    set({ isConnected: true, isEstablishingConnection: false }),
 
   receiveNotification: (notification) =>
     set((state) => ({ notifications: [notification, ...state.notifications] })),

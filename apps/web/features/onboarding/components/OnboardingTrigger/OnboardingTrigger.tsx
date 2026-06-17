@@ -43,10 +43,6 @@ export default function OnboardingTrigger() {
   if (!showWelcome || !user?.role) return null;
 
   return (
-    <WelcomeModal
-      role={user.role}
-      onStart={handleStart}
-      onSkip={handleSkip}
-    />
+    <WelcomeModal role={user.role} onStart={handleStart} onSkip={handleSkip} />
   );
 }

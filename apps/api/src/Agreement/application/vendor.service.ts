@@ -80,7 +80,7 @@ export class VendorService {
     limit = 10,
     orderBy: string = undefined,
     searchQuery: string = undefined,
-  ): Promise<PaginationResponse<Vendor>> {
+  ): Promise<PaginationResponse<VendorWithCounts>> {
     return this.vendorRepository.findPaginated(
       offset,
       limit,

@@ -1,1 +1,1 @@
-export type ValidatorFn  = (text:string , options?:object)=> boolean;
+export type ValidatorFn = (text: string, options?: object) => boolean;

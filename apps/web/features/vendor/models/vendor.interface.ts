@@ -1,10 +1,12 @@
-export interface Vendor{
-    num:string;
-    company_name:string;
-    nif:string;
-    nrc:string;
-    address:string;
-    home_phone_number:string;
-    mobile_phone_number:string;
-
+export interface Vendor {
+  num: string;
+  company_name: string;
+  nif: string;
+  nrc: string;
+  address: string;
+  home_phone_number: string;
+  mobile_phone_number: string;
+  logoUrl?: string | null;
+  contractCount?: number;
+  convensionCount?: number;
 }

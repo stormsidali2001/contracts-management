@@ -34,10 +34,10 @@ describe('DirectionRepository (integration)', () => {
 
   afterEach(async () => {
     if (directionIds.length) {
-      const placeholders = directionIds.map(() => '?').join(',');
+      const placeholders = directionIds.map((_, i) => `$${i + 1}`).join(',');
       // Departements must be removed before directions due to the FK constraint
       await dataSource.query(
-        `DELETE FROM departements WHERE directionId IN (${placeholders})`,
+        `DELETE FROM departements WHERE "directionId" IN (${placeholders})`,
         [...directionIds],
       );
       await dataSource.query(

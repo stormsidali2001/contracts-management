@@ -9,4 +9,4 @@ var Entity;
     Entity["JURIDICAL"] = "JURIDICAL";
     Entity["ADMIN"] = "ADMIN";
     Entity["VENDOR"] = "VENDOR";
-})(Entity || (exports.Entity = Entity = {}));
+})(Entity = exports.Entity || (exports.Entity = {}));

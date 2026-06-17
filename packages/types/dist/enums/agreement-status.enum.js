@@ -8,4 +8,4 @@ var AgreementStatus;
     AgreementStatus["IN_EXECUTION"] = "in_execution";
     AgreementStatus["EXECUTED_WITH_DELAY"] = "executed_with_delay";
     AgreementStatus["EXECUTED"] = "executed";
-})(AgreementStatus || (exports.AgreementStatus = AgreementStatus = {}));
+})(AgreementStatus = exports.AgreementStatus || (exports.AgreementStatus = {}));

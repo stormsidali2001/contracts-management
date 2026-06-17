@@ -97,10 +97,12 @@ export class AgreementRepository implements IAgreementRepository {
     userRole: UserRole,
     userDepartementId?: string,
     userDirectionId?: string,
-  ): Promise<PaginationResponse<Agreement>> {
+  ): Promise<PaginationResponse<AgreementDetail>> {
     let query = this.repo
       .createQueryBuilder('ag')
       .where('ag.type = :type', { type: agreementType })
+      .leftJoin('ag.vendor', 'vendor')
+      .addSelect(['vendor.id', 'vendor.company_name'])
       .skip(offset)
       .take(limit);
 
@@ -144,14 +146,15 @@ export class AgreementRepository implements IAgreementRepository {
 
     if (searchQuery && searchQuery.length >= 2) {
       query = query.andWhere(
-        `MATCH(ag.number, ag.object, ag.observation) AGAINST ('${searchQuery}' IN BOOLEAN MODE)`,
+        '(ag.number ILIKE :search OR ag.object ILIKE :search OR ag.observation ILIKE :search)',
+        { search: `%${searchQuery}%` },
       );
     }
 
     if (orderBy && orderBy !== 'type') query = query.orderBy(orderBy);
 
-    const [data, total] = await query.getManyAndCount();
-    return { total, data: data.map((e) => this.toDomain(e)) };
+    const [entities, total] = await query.getManyAndCount();
+    return { total, data: entities.map((e) => this.toDetail(e)) };
   }
 
   getStatusStats(
@@ -218,7 +221,7 @@ export class AgreementRepository implements IAgreementRepository {
       .createQueryBuilder('ag')
       .where('ag.execution_end_date IS NOT NULL')
       .andWhere(
-        'DATE(ag.execution_end_date) = DATE(DATE_ADD(NOW(), INTERVAL :days DAY))',
+        "ag.execution_end_date::date = (CURRENT_DATE + INTERVAL '1 day' * :days)",
         { days: daysUntilExpiry },
       )
       .getMany();

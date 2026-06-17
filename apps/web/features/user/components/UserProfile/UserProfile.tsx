@@ -1,6 +1,12 @@
 'use client';
 
-import { Avatar, Button, CircularProgress, LinearProgress, Skeleton } from '@mui/material';
+import {
+  Avatar,
+  Button,
+  CircularProgress,
+  LinearProgress,
+  Skeleton,
+} from '@mui/material';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useAuthStore } from '@/features/auth/store/auth.store';
@@ -10,7 +16,11 @@ import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
 import { Stack } from '@mui/system';
 import { usePermissions } from '@/features/auth/queries/auth.queries';
-import { useUser, useUpdateUser, useUploadUserImage } from '@/features/user/queries/user.queries';
+import {
+  useUser,
+  useUpdateUser,
+  useUploadUserImage,
+} from '@/features/user/queries/user.queries';
 import { getAvatarSrc, getRoleAvatar } from '@/lib/avatar';
 import Breadcrumb from '@/shared/components/Breadcrumb/Breadcrumb';
 
@@ -32,7 +42,8 @@ const UserProfile = () => {
   const { data: permissions } = usePermissions();
   const { data: fetchedUser } = useUser(userId);
   const { mutate: updateUser, isPending: loading } = useUpdateUser();
-  const { mutateAsync: uploadImage, isPending: isImageUploading } = useUploadUserImage();
+  const { mutateAsync: uploadImage, isPending: isImageUploading } =
+    useUploadUserImage();
 
   useEffect(() => {
     if (fetchedUser) setLocalUser(fetchedUser);
@@ -45,12 +56,16 @@ const UserProfile = () => {
     return () => URL.revokeObjectURL(objectUrl);
   }, [imageFile]);
 
-  const setUserProperty = (key: string, value: any) => setLocalUser((u: object) => ({ ...u, [key]: value }));
+  const setUserProperty = (key: string, value: any) =>
+    setLocalUser((u: object) => ({ ...u, [key]: value }));
 
   const handleSubmit = async () => {
     let imageUrl = '';
     if (imageFile) {
-      const res = await uploadImage({ file: imageFile, onProgress: (p) => setImageUploadProgress(p) });
+      const res = await uploadImage({
+        file: imageFile,
+        onProgress: (p) => setImageUploadProgress(p),
+      });
       imageUrl = res.filename;
     }
 
@@ -74,7 +89,9 @@ const UserProfile = () => {
           setEdit(false);
         },
         onError: (err: any) => {
-          showSnackbar({ message: err?.response?.data?.error ?? 'erreur inconnue' });
+          showSnackbar({
+            message: err?.response?.data?.error ?? 'erreur inconnue',
+          });
           setEdit(false);
         },
       },
@@ -88,24 +105,53 @@ const UserProfile = () => {
   };
 
   const canEditUser = () => {
-    return (permissions?.users.canEditAny ?? false) || connectedUser?.sub === localUser?.id;
+    return (
+      (permissions?.users.canEditAny ?? false) ||
+      connectedUser?.sub === localUser?.id
+    );
   };
 
   if (!localUser) {
     return (
       <div className={styles.pageWrapper}>
         <div className={styles.userCard}>
-          <Skeleton variant="rectangular" animation="wave" className={styles.cardHeader} sx={{ height: 80 }} />
+          <Skeleton
+            variant="rectangular"
+            animation="wave"
+            className={styles.cardHeader}
+            sx={{ height: 80 }}
+          />
           <div className={styles.avatarArea}>
-            <Skeleton variant="circular" animation="wave" width={90} height={90} />
-            <Skeleton variant="text" animation="wave" width={150} height={26} sx={{ mt: 1 }} />
+            <Skeleton
+              variant="circular"
+              animation="wave"
+              width={90}
+              height={90}
+            />
+            <Skeleton
+              variant="text"
+              animation="wave"
+              width={150}
+              height={26}
+              sx={{ mt: 1 }}
+            />
             <Skeleton variant="text" animation="wave" width={80} height={20} />
           </div>
           <div className={styles.fieldsSection}>
             {[...Array(5)].map((_, i) => (
               <div key={i} className={styles.fieldRow}>
-                <Skeleton variant="text" animation="wave" width={80} height={16} />
-                <Skeleton variant="text" animation="wave" width={180} height={16} />
+                <Skeleton
+                  variant="text"
+                  animation="wave"
+                  width={80}
+                  height={16}
+                />
+                <Skeleton
+                  variant="text"
+                  animation="wave"
+                  width={180}
+                  height={16}
+                />
               </div>
             ))}
           </div>
@@ -116,31 +162,38 @@ const UserProfile = () => {
 
   const avatarSrc = getAvatarSrc(localUser?.imageUrl, localUser?.role);
 
-  const fullName = localUser ? `${localUser.firstName} ${localUser.lastName}` : '';
+  const fullName = localUser
+    ? `${localUser.firstName} ${localUser.lastName}`
+    : '';
 
   return (
     <div id="user-profile-page" className={styles.pageWrapper}>
-      <Breadcrumb items={[
-        { label: 'Utilisateurs', href: '/users' },
-        { label: fullName },
-      ]} />
+      <Breadcrumb
+        items={[{ label: 'Utilisateurs', href: '/users' }, { label: fullName }]}
+      />
       <div id="user-profile-card" className={styles.userCard}>
-
         {/* ── Hero header ── */}
         <div className={styles.cardHeader}>
-          {canEditUser() && (
-            edit ? (
+          {canEditUser() &&
+            (edit ? (
               <Button className={styles.editButton} onClick={handleSubmit}>
-                {loading
-                  ? <CircularProgress size={18} sx={{ color: 'primary.contrastText' }} />
-                  : <SaveIcon fontSize="small" />}
+                {loading ? (
+                  <CircularProgress
+                    size={18}
+                    sx={{ color: 'primary.contrastText' }}
+                  />
+                ) : (
+                  <SaveIcon fontSize="small" />
+                )}
               </Button>
             ) : (
-              <Button className={styles.editButton} onClick={() => setEdit(true)}>
+              <Button
+                className={styles.editButton}
+                onClick={() => setEdit(true)}
+              >
                 <EditIcon fontSize="small" />
               </Button>
-            )
-          )}
+            ))}
           <span className={styles.headerRole}>{localUser?.role}</span>
         </div>
 
@@ -154,7 +207,12 @@ const UserProfile = () => {
                 <Avatar className={styles.profileImg} src={imagePreview} />
                 <div className={styles.avatarEditHint}>Changer</div>
               </div>
-              <input type="file" id="input1" style={{ display: 'none' }} onChange={handleFileChange} />
+              <input
+                type="file"
+                id="input1"
+                style={{ display: 'none' }}
+                onChange={handleFileChange}
+              />
             </label>
           )}
 
@@ -165,11 +223,15 @@ const UserProfile = () => {
           <div className={styles.orgBadges}>
             <div className={styles.orgBadge}>
               <span className={styles.orgBadgeLabel}>DP</span>
-              <span className={styles.orgBadgeValue}>{localUser?.departement?.abriviation ?? '—'}</span>
+              <span className={styles.orgBadgeValue}>
+                {localUser?.departement?.abriviation ?? '—'}
+              </span>
             </div>
             <div className={styles.orgBadge}>
               <span className={styles.orgBadgeLabel}>DR</span>
-              <span className={styles.orgBadgeValue}>{localUser?.direction?.abriviation ?? '—'}</span>
+              <span className={styles.orgBadgeValue}>
+                {localUser?.direction?.abriviation ?? '—'}
+              </span>
             </div>
           </div>
         </div>
@@ -178,7 +240,13 @@ const UserProfile = () => {
         {isImageUploading && (
           <div className={styles.uploadRow}>
             <Stack alignItems="center" gap={0.5}>
-              <span style={{ fontSize: 12, color: 'var(--text-muted)', fontFamily: 'Inter, sans-serif' }}>
+              <span
+                style={{
+                  fontSize: 12,
+                  color: 'var(--text-muted)',
+                  fontFamily: 'Inter, sans-serif',
+                }}
+              >
                 {imageUploadProgress}%
               </span>
               <LinearProgress
@@ -195,26 +263,43 @@ const UserProfile = () => {
         <div className={styles.fieldsSection}>
           <div className={styles.fieldRow}>
             <span className={styles.fieldLabel}>Nom</span>
-            <Field value={localUser?.firstName} edit={edit} onChange={(e: any) => setUserProperty('firstName', e.target.value)} />
+            <Field
+              value={localUser?.firstName}
+              edit={edit}
+              onChange={(e: any) =>
+                setUserProperty('firstName', e.target.value)
+              }
+            />
           </div>
           <div className={styles.fieldRow}>
             <span className={styles.fieldLabel}>Prénom</span>
-            <Field value={localUser?.lastName} edit={edit} onChange={(e: any) => setUserProperty('lastName', e.target.value)} />
+            <Field
+              value={localUser?.lastName}
+              edit={edit}
+              onChange={(e: any) => setUserProperty('lastName', e.target.value)}
+            />
           </div>
           <div className={styles.fieldRow}>
             <span className={styles.fieldLabel}>Email</span>
-            <Field value={localUser?.email} edit={edit} onChange={(e: any) => setUserProperty('email', e.target.value)} />
+            <Field
+              value={localUser?.email}
+              edit={edit}
+              onChange={(e: any) => setUserProperty('email', e.target.value)}
+            />
           </div>
           <div className={styles.fieldRow}>
             <span className={styles.fieldLabel}>{"Nom d'util."}</span>
-            <Field value={localUser?.username} edit={edit} onChange={(e: any) => setUserProperty('username', e.target.value)} />
+            <Field
+              value={localUser?.username}
+              edit={edit}
+              onChange={(e: any) => setUserProperty('username', e.target.value)}
+            />
           </div>
           <div className={styles.fieldRow}>
             <span className={styles.fieldLabel}>Rôle</span>
             <span className={styles.fieldValue}>{localUser?.role}</span>
           </div>
         </div>
-
       </div>
     </div>
   );
@@ -223,10 +308,16 @@ const UserProfile = () => {
 function Field({ edit, value, onChange }: any) {
   return (
     <>
-      {edit
-        ? <input type="text" className={styles.editInput} value={value ?? ''} onChange={onChange} />
-        : <span className={styles.fieldValue}>{value}</span>
-      }
+      {edit ? (
+        <input
+          type="text"
+          className={styles.editInput}
+          value={value ?? ''}
+          onChange={onChange}
+        />
+      ) : (
+        <span className={styles.fieldValue}>{value}</span>
+      )}
     </>
   );
 }

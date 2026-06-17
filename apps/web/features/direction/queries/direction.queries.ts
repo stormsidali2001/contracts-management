@@ -1,14 +1,20 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import useAxiosPrivate from '@/hooks/auth/useAxiosPrivate';
 import { directionKeys } from '@/lib/query-keys';
-import { Direction, DisplayDirection } from '@/features/direction/models/direction.interface';
+import {
+  Direction,
+  DisplayDirection,
+} from '@/features/direction/models/direction.interface';
 import { Departement } from '@/features/direction/models/departement.interface';
 
 export interface CreateDirectionPayload extends DisplayDirection {
   departements: Omit<Departement, 'id' | 'users'>[];
 }
 
-export interface CreateDepartementPayload extends Omit<Departement, 'id' | 'users'> {
+export interface CreateDepartementPayload extends Omit<
+  Departement,
+  'id' | 'users'
+> {
   directionId: string;
 }
 

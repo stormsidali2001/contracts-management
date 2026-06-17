@@ -40,17 +40,17 @@ describe('AgreementRepository (integration)', () => {
     vendorId = uuid();
 
     await dataSource.query(
-      'INSERT INTO directions (id, title, abriviation) VALUES (?, ?, ?)',
+      'INSERT INTO directions (id, title, abriviation) VALUES ($1, $2, $3)',
       [directionId, `Dir-${s}`, `D-${s}`],
     );
     await dataSource.query(
-      'INSERT INTO departements (id, title, abriviation, directionId) VALUES (?, ?, ?, ?)',
+      'INSERT INTO departements (id, title, abriviation, "directionId") VALUES ($1, $2, $3, $4)',
       [departementId, `Dept-${s}`, `DP-${s}`, directionId],
     );
     await dataSource.query(
       `INSERT INTO vendors
-         (id, num, company_name, nif, nrc, address, mobile_phone_number, home_phone_number, createdAt)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())`,
+         (id, num, company_name, nif, nrc, address, mobile_phone_number, home_phone_number, "createdAt")
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, NOW())`,
       [
         vendorId,
         `NUM-${s}`,
@@ -65,11 +65,11 @@ describe('AgreementRepository (integration)', () => {
   });
 
   afterAll(async () => {
-    await dataSource.query('DELETE FROM vendors WHERE id = ?', [vendorId]);
-    await dataSource.query('DELETE FROM departements WHERE id = ?', [
+    await dataSource.query('DELETE FROM vendors WHERE id = $1', [vendorId]);
+    await dataSource.query('DELETE FROM departements WHERE id = $1', [
       departementId,
     ]);
-    await dataSource.query('DELETE FROM directions WHERE id = ?', [
+    await dataSource.query('DELETE FROM directions WHERE id = $1', [
       directionId,
     ]);
     await module.close();
@@ -79,7 +79,7 @@ describe('AgreementRepository (integration)', () => {
     if (agreementIds.length) {
       await dataSource.query(
         `DELETE FROM agreements WHERE id IN (${agreementIds
-          .map(() => '?')
+          .map((_, i) => `$${i + 1}`)
           .join(',')})`,
         [...agreementIds],
       );
@@ -201,7 +201,7 @@ describe('AgreementRepository (integration)', () => {
 
       // Set execution_end_date to exactly 7 days from now via raw SQL
       await dataSource.query(
-        'UPDATE agreements SET execution_end_date = DATE_ADD(CURDATE(), INTERVAL 7 DAY) WHERE id = ?',
+        "UPDATE agreements SET execution_end_date = CURRENT_DATE + INTERVAL '7 days' WHERE id = $1",
         [agreement.id],
       );
 
@@ -218,7 +218,7 @@ describe('AgreementRepository (integration)', () => {
       await repo.save(agreement);
 
       await dataSource.query(
-        'UPDATE agreements SET execution_end_date = DATE_ADD(CURDATE(), INTERVAL 14 DAY) WHERE id = ?',
+        "UPDATE agreements SET execution_end_date = CURRENT_DATE + INTERVAL '14 days' WHERE id = $1",
         [agreement.id],
       );
 
@@ -237,6 +237,44 @@ describe('AgreementRepository (integration)', () => {
       const found = results.find((a) => a.id === agreement.id);
 
       expect(found).toBeUndefined();
+    });
+  });
+
+  // ── findPaginated ─────────────────────────────────────────────────────────
+
+  describe('findPaginated', () => {
+    it('includes vendor summary on each returned row', async () => {
+      const agreement = buildAgreement();
+      agreementIds.push(agreement.id);
+      await repo.save(agreement);
+
+      const result = await repo.findPaginated(
+        { agreementType: AgreementType.CONTRACT, offset: 0, limit: 50 } as any,
+        'ADMIN' as any,
+      );
+
+      const row = result.data.find((a) => a.id === agreement.id);
+      expect(row).toBeDefined();
+      expect(row.vendor).toEqual({
+        id: vendorId,
+        company_name: expect.any(String),
+      });
+    });
+
+    it('returns paginated totals and correct page size', async () => {
+      const a1 = buildAgreement();
+      const a2 = buildAgreement();
+      agreementIds.push(a1.id, a2.id);
+      await repo.save(a1);
+      await repo.save(a2);
+
+      const result = await repo.findPaginated(
+        { agreementType: AgreementType.CONTRACT, offset: 0, limit: 1 } as any,
+        'ADMIN' as any,
+      );
+
+      expect(result.total).toBeGreaterThanOrEqual(2);
+      expect(result.data).toHaveLength(1);
     });
   });
 

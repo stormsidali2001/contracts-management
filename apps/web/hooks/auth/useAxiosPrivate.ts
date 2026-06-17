@@ -8,8 +8,10 @@ interface PropType {
 }
 
 const useAxiosPrivate = (props: PropType) => {
-  const withRequestInterceptor = props?.withRequestInterceptor === false ? false : true;
-  const withResponseInterceptor = props?.withResponseInterceptor === false ? false : true;
+  const withRequestInterceptor =
+    props?.withRequestInterceptor === false ? false : true;
+  const withResponseInterceptor =
+    props?.withResponseInterceptor === false ? false : true;
 
   const jwt = useAuthStore((s) => s.jwt);
 
@@ -36,7 +38,8 @@ const useAxiosPrivate = (props: PropType) => {
         async (error) => {
           const previousRequest = error?.config;
           if (
-            (error?.response?.status !== 403 || error?.response?.status !== 401) &&
+            (error?.response?.status !== 403 ||
+              error?.response?.status !== 401) &&
             previousRequest?.sent
           )
             return Promise.reject(error);
@@ -51,8 +54,10 @@ const useAxiosPrivate = (props: PropType) => {
     }
 
     return () => {
-      if (withRequestInterceptor) axios.interceptors.request.eject(requestInterceptor);
-      if (withResponseInterceptor) axios.interceptors.response.eject(responseInterceptor);
+      if (withRequestInterceptor)
+        axios.interceptors.request.eject(requestInterceptor);
+      if (withResponseInterceptor)
+        axios.interceptors.response.eject(responseInterceptor);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

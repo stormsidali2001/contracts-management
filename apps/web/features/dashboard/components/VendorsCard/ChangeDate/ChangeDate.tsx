@@ -8,7 +8,8 @@ import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined
 import CheckOutlinedIcon from '@mui/icons-material/CheckOutlined';
 import EventOutlinedIcon from '@mui/icons-material/EventOutlined';
 
-const format = (d: Date) => new Date(d).toISOString().replace(/T[0-9:.Z]*/g, '');
+const format = (d: Date) =>
+  new Date(d).toISOString().replace(/T[0-9:.Z]*/g, '');
 
 interface PropType {
   start_date: Dayjs | null;
@@ -18,21 +19,21 @@ interface PropType {
 
 const ChangeDate = ({ start_date, end_date, handleClose }: PropType) => {
   const [byStartDate, setByStartDate] = useState(false);
-  const [byEndDate,   setByEndDate]   = useState(false);
-  const [startDate,   setStartDate]   = useState(start_date);
-  const [endDate,     setEndDate]     = useState(end_date);
+  const [byEndDate, setByEndDate] = useState(false);
+  const [startDate, setStartDate] = useState(start_date);
+  const [endDate, setEndDate] = useState(end_date);
   const setDateRange = useDateRangeStore((s) => s.setDateRange);
 
   useEffect(() => {
     if (start_date) setByStartDate(true);
-    if (end_date)   setByEndDate(true);
+    if (end_date) setByEndDate(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleApply = () => {
     setDateRange({
       startDate: byStartDate && startDate ? format(startDate.toDate()) : null,
-      endDate:   byEndDate   && endDate   ? format(endDate.toDate())   : null,
+      endDate: byEndDate && endDate ? format(endDate.toDate()) : null,
     });
     handleClose();
   };
@@ -49,7 +50,9 @@ const ChangeDate = ({ start_date, end_date, handleClose }: PropType) => {
           </div>
           <div className={styles.headerText}>
             <span className={styles.headerTitle}>Filtrer par période</span>
-            <span className={styles.headerSubtitle}>Sélectionner un intervalle de dates</span>
+            <span className={styles.headerSubtitle}>
+              Sélectionner un intervalle de dates
+            </span>
           </div>
         </div>
       </div>
@@ -57,7 +60,9 @@ const ChangeDate = ({ start_date, end_date, handleClose }: PropType) => {
       {/* ── Date rows ── */}
       <div className={styles.modalBody}>
         {/* Start date */}
-        <div className={`${styles.dateRow} ${byStartDate ? styles.active : ''}`}>
+        <div
+          className={`${styles.dateRow} ${byStartDate ? styles.active : ''}`}
+        >
           <div className={styles.dateRowTop}>
             <div className={styles.dateRowLabel}>
               <div className={styles.dateRowIcon}>
@@ -75,7 +80,9 @@ const ChangeDate = ({ start_date, end_date, handleClose }: PropType) => {
               <div className={styles.toggleThumb} />
             </label>
           </div>
-          <div className={`${styles.pickerWrapper} ${byStartDate ? styles.visible : ''}`}>
+          <div
+            className={`${styles.pickerWrapper} ${byStartDate ? styles.visible : ''}`}
+          >
             <MobileDatePicker
               label="Date de début"
               value={startDate}
@@ -105,7 +112,9 @@ const ChangeDate = ({ start_date, end_date, handleClose }: PropType) => {
               <div className={styles.toggleThumb} />
             </label>
           </div>
-          <div className={`${styles.pickerWrapper} ${byEndDate ? styles.visible : ''}`}>
+          <div
+            className={`${styles.pickerWrapper} ${byEndDate ? styles.visible : ''}`}
+          >
             <MobileDatePicker
               label="Date de fin"
               value={endDate}
@@ -118,8 +127,12 @@ const ChangeDate = ({ start_date, end_date, handleClose }: PropType) => {
       </div>
 
       {/* ── Period preview ── */}
-      <div className={`${styles.periodPreview} ${!(byStartDate || byEndDate) ? styles.hidden : ''}`}>
-        <span>{byStartDate && startDate ? startDate.format('DD/MM/YYYY') : '—'}</span>
+      <div
+        className={`${styles.periodPreview} ${!(byStartDate || byEndDate) ? styles.hidden : ''}`}
+      >
+        <span>
+          {byStartDate && startDate ? startDate.format('DD/MM/YYYY') : '—'}
+        </span>
         <span className={styles.periodArrow}>→</span>
         <span>{byEndDate && endDate ? endDate.format('DD/MM/YYYY') : '—'}</span>
       </div>
@@ -129,7 +142,11 @@ const ChangeDate = ({ start_date, end_date, handleClose }: PropType) => {
         <button className={styles.cancelBtn} onClick={handleClose}>
           Fermer
         </button>
-        <button className={styles.applyBtn} disabled={!canApply} onClick={handleApply}>
+        <button
+          className={styles.applyBtn}
+          disabled={!canApply}
+          onClick={handleApply}
+        >
           <CheckOutlinedIcon sx={{ fontSize: 15 }} />
           Appliquer
         </button>

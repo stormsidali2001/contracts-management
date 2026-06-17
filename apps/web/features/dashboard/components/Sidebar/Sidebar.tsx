@@ -23,67 +23,87 @@ type SidebarLink = {
 };
 
 const sidebarLinks: SidebarLink[] = [
-   { text: 'Accueil',      icon: () => <MainDashboardIcon />, link: '/dashboard' },
-   { text: 'Directions',   icon: () => <DirectionsIcon />,   link: '/directions',
-     visible: (p) => p?.directions.canCreate ?? false },
-   { text: 'Utilisateurs', icon: () => <UsersIcon />,        link: '/users',
-     visible: (p) => p?.users.canCreate ?? false },
-   { text: 'Fournisseurs', icon: () => <VendorsIcon />,      link: '/vendors',
-     visible: (p) => (p?.vendors.canCreate || p?.directions.canCreate) ?? false },
-   { text: 'Convensions',  icon: () => <ConvensionIcon />,   link: '/convensions' },
-   { text: 'Contrats',     icon: () => <ContractsIcon />,    link: '/contracts' },
+  { text: 'Accueil', icon: () => <MainDashboardIcon />, link: '/dashboard' },
+  {
+    text: 'Directions',
+    icon: () => <DirectionsIcon />,
+    link: '/directions',
+    visible: (p) => p?.directions.canCreate ?? false,
+  },
+  {
+    text: 'Utilisateurs',
+    icon: () => <UsersIcon />,
+    link: '/users',
+    visible: (p) => p?.users.canCreate ?? false,
+  },
+  {
+    text: 'Fournisseurs',
+    icon: () => <VendorsIcon />,
+    link: '/vendors',
+    visible: (p) => (p?.vendors.canCreate || p?.directions.canCreate) ?? false,
+  },
+  { text: 'Convensions', icon: () => <ConvensionIcon />, link: '/convensions' },
+  { text: 'Contrats', icon: () => <ContractsIcon />, link: '/contracts' },
 ];
 
 const Sidebar = () => {
-    const pathname = usePathname();
-    const { data: permissions } = usePermissions();
-    const visibleLinks = sidebarLinks.filter(l => !l.visible || l.visible(permissions));
-    const index = visibleLinks.findIndex(l => pathname === l.link);
-    const [activeIndex, setActiveIndex] = useState(index);
+  const pathname = usePathname();
+  const { data: permissions } = usePermissions();
+  const visibleLinks = sidebarLinks.filter(
+    (l) => !l.visible || l.visible(permissions),
+  );
+  const index = visibleLinks.findIndex((l) => pathname === l.link);
+  const [activeIndex, setActiveIndex] = useState(index);
 
-    const getStyle = (i: number) =>
-        i === activeIndex ? `${styles.link} ${styles.active}` : styles.link;
+  const getStyle = (i: number) =>
+    i === activeIndex ? `${styles.link} ${styles.active}` : styles.link;
 
-    if (!pathname) return <div />;
+  if (!pathname) return <div />;
 
-    return (
-        <div id="sidebar-nav" className={styles.container}>
-            {/* Branding */}
-            <Link href="/" className={styles.logo}>
-                <div className={styles.logoIconWrap}>
-                    <GavelOutlinedIcon sx={{ fontSize: 20 }} />
-                </div>
-                <div className={styles.logoText}>
-                    <span className={styles.logoName}>{APP_NAME}</span>
-                    <span className={styles.logoBadge}>Gestion des contrats</span>
-                </div>
-            </Link>
-
-            {/* Nav */}
-            <ul className={styles.links}>
-                {visibleLinks.map((link, i) => (
-                    <Link href={link.link} key={link.link}>
-                        <li id={`sidebar-link-${link.link.replace('/', '') || 'home'}`} className={getStyle(i)} onClick={() => setActiveIndex(i)}>
-                            <span className={styles.icon}><link.icon /></span>
-                            <span>{link.text}</span>
-                            <span className={styles.tooltip}>{link.text}</span>
-                        </li>
-                    </Link>
-                ))}
-            </ul>
-
-            {/* Footer */}
-            <div className={styles.footer}>
-                <div className={styles.footerInner}>
-                    <div className={styles.footerAvatar}>AD</div>
-                    <div className={styles.footerText}>
-                        <span className={styles.footerName}>Administrateur</span>
-                        <span className={styles.footerRole}>Super admin</span>
-                    </div>
-                </div>
-            </div>
+  return (
+    <div id="sidebar-nav" className={styles.container}>
+      {/* Branding */}
+      <Link href="/" className={styles.logo}>
+        <div className={styles.logoIconWrap}>
+          <GavelOutlinedIcon sx={{ fontSize: 20 }} />
         </div>
-    );
+        <div className={styles.logoText}>
+          <span className={styles.logoName}>{APP_NAME}</span>
+          <span className={styles.logoBadge}>Gestion des contrats</span>
+        </div>
+      </Link>
+
+      {/* Nav */}
+      <ul className={styles.links}>
+        {visibleLinks.map((link, i) => (
+          <Link href={link.link} key={link.link}>
+            <li
+              id={`sidebar-link-${link.link.replace('/', '') || 'home'}`}
+              className={getStyle(i)}
+              onClick={() => setActiveIndex(i)}
+            >
+              <span className={styles.icon}>
+                <link.icon />
+              </span>
+              <span>{link.text}</span>
+              <span className={styles.tooltip}>{link.text}</span>
+            </li>
+          </Link>
+        ))}
+      </ul>
+
+      {/* Footer */}
+      <div className={styles.footer}>
+        <div className={styles.footerInner}>
+          <div className={styles.footerAvatar}>AD</div>
+          <div className={styles.footerText}>
+            <span className={styles.footerName}>Administrateur</span>
+            <span className={styles.footerRole}>Super admin</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default Sidebar;

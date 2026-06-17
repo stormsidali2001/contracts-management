@@ -12,6 +12,7 @@ export class Vendor extends AggregateRoot {
   address: string;
   mobile_phone_number: string;
   home_phone_number: string;
+  logoUrl: string;
   createdAt: Date;
 
   private constructor(props: {
@@ -24,6 +25,7 @@ export class Vendor extends AggregateRoot {
     mobile_phone_number: string;
     home_phone_number: string;
     createdAt: Date;
+    logoUrl?: string | null;
   }) {
     super();
     this.id = props.id;
@@ -34,6 +36,7 @@ export class Vendor extends AggregateRoot {
     this.address = props.address;
     this.mobile_phone_number = props.mobile_phone_number;
     this.home_phone_number = props.home_phone_number;
+    this.logoUrl = props.logoUrl ?? '';
     this.createdAt = props.createdAt;
   }
 
@@ -47,6 +50,7 @@ export class Vendor extends AggregateRoot {
     mobile_phone_number: string;
     home_phone_number: string;
     createdAt: Date;
+    logoUrl?: string | null;
   }): Vendor {
     const instance = new Vendor(props);
     instance.addEvent(new VendorCreatedEvent(instance.id));
@@ -64,6 +68,7 @@ export class Vendor extends AggregateRoot {
     mobile_phone_number: string;
     home_phone_number: string;
     createdAt: Date;
+    logoUrl?: string | null;
   }): Vendor {
     return new Vendor(props);
   }
@@ -76,6 +81,7 @@ export class Vendor extends AggregateRoot {
     address?: string;
     mobile_phone_number?: string;
     home_phone_number?: string;
+    logoUrl?: string | null;
   }): void {
     Object.assign(this, partial);
     this.addEvent(new VendorUpdatedEvent(this.id));

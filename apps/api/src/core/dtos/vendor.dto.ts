@@ -92,6 +92,11 @@ export class UpdateVendorDTO {
   @ApiPropertyOptional({ type: 'string', example: '0663737507' })
   @IsNotEmpty()
   home_phone_number: string;
+
+  @IsOptional()
+  @ApiPropertyOptional({ type: 'string', example: 'abc123.png' })
+  @IsString()
+  logoUrl: string;
 }
 
 export class VendotrStats {

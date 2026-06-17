@@ -17,51 +17,74 @@ import { useStatistics } from '@/features/statistics/queries/statistics.queries'
 
 import styles from './MainDashboard.module.css';
 
-const fmtDate = (d: any) => (d ? d.toDate().toISOString().replace(/T[0-9:.Z]*/g, '') : undefined);
+const fmtDate = (d: any) =>
+  d
+    ? d
+        .toDate()
+        .toISOString()
+        .replace(/T[0-9:.Z]*/g, '')
+    : undefined;
 
 const MainDashboard = () => {
   const isMedium = useMediaQuery('(max-width: 900px)');
   const [openDateModal, setOpenDateModal] = useState(false);
   const { start_date, end_date, setDateRange } = useDateRangeStore();
 
-  const { data, isLoading } = useStatistics({ startDate: fmtDate(start_date), endDate: fmtDate(end_date) });
+  const { data, isLoading } = useStatistics({
+    startDate: fmtDate(start_date),
+    endDate: fmtDate(end_date),
+  });
 
   const startLabel = fmtDate(start_date);
-  const endLabel   = fmtDate(end_date);
-  const hasFilter  = !!(startLabel || endLabel);
+  const endLabel = fmtDate(end_date);
+  const hasFilter = !!(startLabel || endLabel);
 
   // KPI values
-  const totalAccords  = (data?.agreementsStats?.types?.contract ?? 0) + (data?.agreementsStats?.types?.convension ?? 0);
-  const notExecuted   = data?.agreementsStats?.status?.not_executed ?? null;
+  const totalAccords =
+    (data?.agreementsStats?.types?.contract ?? 0) +
+    (data?.agreementsStats?.types?.convension ?? 0);
+  const notExecuted = data?.agreementsStats?.status?.not_executed ?? null;
   const latestVendors = data?.vendorsStats?.slice(-1)?.[0]?.nb_vendors ?? null;
-  const totalUsers    = data?.userTypes?.total ?? null;
+  const totalUsers = data?.userTypes?.total ?? null;
 
   const clearFilter = () => setDateRange({ startDate: null, endDate: null });
 
   return (
     <div className={styles.container}>
-
       {/* ── Page header ── */}
       <div className={styles.pageHeader}>
         <div className={styles.pageHeaderLeft}>
           <h1 className={styles.pageTitle}>Tableau de bord</h1>
-          <span className={styles.pageSubtitle}>Vue d'ensemble des accords et activités</span>
+          <span className={styles.pageSubtitle}>
+            Vue d'ensemble des accords et activités
+          </span>
         </div>
         <div className={styles.pageHeaderRight}>
           {hasFilter && (
             <div className={styles.activePeriod}>
-              <CalendarMonthOutlinedIcon sx={{ fontSize: 13, color: 'var(--navy-mid)' }} />
+              <CalendarMonthOutlinedIcon
+                sx={{ fontSize: 13, color: 'var(--navy-mid)' }}
+              />
               <span className={styles.periodValue}>{startLabel}</span>
               <span className={styles.periodSep}>→</span>
               <span className={styles.periodValue}>{endLabel}</span>
-              <button className={styles.clearBtn} onClick={clearFilter} aria-label="Effacer le filtre">
+              <button
+                className={styles.clearBtn}
+                onClick={clearFilter}
+                aria-label="Effacer le filtre"
+              >
                 <CloseOutlinedIcon sx={{ fontSize: 11 }} />
               </button>
             </div>
           )}
-          <button className={styles.filterBtn} onClick={() => setOpenDateModal(true)}>
+          <button
+            className={styles.filterBtn}
+            onClick={() => setOpenDateModal(true)}
+          >
             <CalendarMonthOutlinedIcon sx={{ fontSize: 15 }} />
-            <span>{hasFilter ? 'Modifier la période' : 'Filtrer par période'}</span>
+            <span>
+              {hasFilter ? 'Modifier la période' : 'Filtrer par période'}
+            </span>
           </button>
         </div>
       </div>
@@ -72,11 +95,31 @@ const MainDashboard = () => {
           <>
             {[...Array(4)].map((_, i) => (
               <div key={i} className={styles.kpiCard}>
-                <Skeleton variant="circular" animation="wave" width={40} height={40} />
+                <Skeleton
+                  variant="circular"
+                  animation="wave"
+                  width={40}
+                  height={40}
+                />
                 <div className={styles.kpiContent}>
-                  <Skeleton variant="text" animation="wave" width={52} height={30} />
-                  <Skeleton variant="text" animation="wave" width={95} height={14} />
-                  <Skeleton variant="text" animation="wave" width={115} height={13} />
+                  <Skeleton
+                    variant="text"
+                    animation="wave"
+                    width={52}
+                    height={30}
+                  />
+                  <Skeleton
+                    variant="text"
+                    animation="wave"
+                    width={95}
+                    height={14}
+                  />
+                  <Skeleton
+                    variant="text"
+                    animation="wave"
+                    width={115}
+                    height={13}
+                  />
                 </div>
               </div>
             ))}
@@ -99,7 +142,11 @@ const MainDashboard = () => {
                 <WarningAmberOutlinedIcon sx={{ fontSize: 20 }} />
               </div>
               <div className={styles.kpiContent}>
-                <span className={`${styles.kpiValue} ${notExecuted && notExecuted > 0 ? styles.kpiValueError : ''}`}>{notExecuted ?? '—'}</span>
+                <span
+                  className={`${styles.kpiValue} ${notExecuted && notExecuted > 0 ? styles.kpiValueError : ''}`}
+                >
+                  {notExecuted ?? '—'}
+                </span>
                 <span className={styles.kpiLabel}>Non exécutés</span>
                 <span className={styles.kpiSub}>en attente d'exécution</span>
               </div>
@@ -156,7 +203,11 @@ const MainDashboard = () => {
       </div>
 
       <Modal open={openDateModal} onClose={() => setOpenDateModal(false)}>
-        <ChangeDate handleClose={() => setOpenDateModal(false)} start_date={start_date} end_date={end_date} />
+        <ChangeDate
+          handleClose={() => setOpenDateModal(false)}
+          start_date={start_date}
+          end_date={end_date}
+        />
       </Modal>
     </div>
   );

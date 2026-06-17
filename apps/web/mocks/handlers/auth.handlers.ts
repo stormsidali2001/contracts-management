@@ -21,43 +21,49 @@ export const authHandlers = [
   ),
 
   http.post(`${API_BASE}/auth/register`, async ({ request }) => {
-    const body = await request.json() as Record<string, unknown>;
+    const body = (await request.json()) as Record<string, unknown>;
     const { db } = await import('../db');
     const { UserRole } = await import('@contracts/types');
     const role = (body.role as string) ?? UserRole.EMPLOYEE;
     const newUser = {
       id: `usr-${Date.now()}`,
-      email: body.email as string ?? '',
-      username: ((body.email as string ?? '').split('@')[0]),
-      firstName: body.firstName as string ?? '',
-      lastName: body.lastName as string ?? '',
+      email: (body.email as string) ?? '',
+      username: ((body.email as string) ?? '').split('@')[0],
+      firstName: (body.firstName as string) ?? '',
+      lastName: (body.lastName as string) ?? '',
       imageUrl: `default-${role.toLowerCase()}.png`,
       active: true,
       role: role as import('@contracts/types').UserRole,
       recieve_notifications: false,
       created_at: new Date(),
-      departementId: body.departementId as string ?? null,
-      directionId: body.directionId as string ?? null,
+      departementId: (body.departementId as string) ?? null,
+      directionId: (body.directionId as string) ?? null,
     };
     db.users.push(newUser);
     return HttpResponse.json(newUser, { status: 201 });
   }),
 
-  http.post(`${API_BASE}/auth/logout`, () => new HttpResponse(null, { status: 200 })),
+  http.post(
+    `${API_BASE}/auth/logout`,
+    () => new HttpResponse(null, { status: 200 }),
+  ),
 
   http.get(`${API_BASE}/auth/me/permissions`, () =>
     HttpResponse.json(FULL_PERMISSIONS),
   ),
 
-  http.post(`${API_BASE}/auth/connected-user/reset-password`, () =>
-    new HttpResponse(null, { status: 200 }),
+  http.post(
+    `${API_BASE}/auth/connected-user/reset-password`,
+    () => new HttpResponse(null, { status: 200 }),
   ),
 
-  http.post(`${API_BASE}/auth/forgot-password`, () =>
-    new HttpResponse(null, { status: 200 }),
+  http.post(
+    `${API_BASE}/auth/forgot-password`,
+    () => new HttpResponse(null, { status: 200 }),
   ),
 
-  http.post(`${API_BASE}/auth/reset-password`, () =>
-    new HttpResponse(null, { status: 200 }),
+  http.post(
+    `${API_BASE}/auth/reset-password`,
+    () => new HttpResponse(null, { status: 200 }),
   ),
 ];

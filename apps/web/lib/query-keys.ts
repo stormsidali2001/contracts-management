@@ -35,7 +35,8 @@ export const agreementKeys = {
   lists: () => [...agreementKeys.all, 'list'] as const,
   list: (params: object) => [...agreementKeys.lists(), params] as const,
   details: () => [...agreementKeys.all, 'detail'] as const,
-  detail: (id: string, type: string) => [...agreementKeys.details(), id, type] as const,
+  detail: (id: string, type: string) =>
+    [...agreementKeys.details(), id, type] as const,
 };
 
 export const statisticsKeys = {

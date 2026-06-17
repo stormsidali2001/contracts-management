@@ -4,12 +4,10 @@ import { db } from '../db';
 import { DirectionView, DepartementView } from '@contracts/types';
 
 export const directionsHandlers = [
-  http.get(`${API_BASE}/directions`, () =>
-    HttpResponse.json(db.directions),
-  ),
+  http.get(`${API_BASE}/directions`, () => HttpResponse.json(db.directions)),
 
   http.post(`${API_BASE}/directions`, async ({ request }) => {
-    const body = await request.json() as Partial<DirectionView>;
+    const body = (await request.json()) as Partial<DirectionView>;
     const newDirection: DirectionView = {
       id: `dir-${Date.now()}`,
       title: body.title ?? '',
@@ -27,7 +25,11 @@ export const directionsHandlers = [
   }),
 
   http.post(`${API_BASE}/departements`, async ({ request }) => {
-    const body = await request.json() as { directionId: string; title: string; abriviation: string };
+    const body = (await request.json()) as {
+      directionId: string;
+      title: string;
+      abriviation: string;
+    };
     const direction = db.directions.find((d) => d.id === body.directionId);
     if (!direction) return new HttpResponse(null, { status: 404 });
 
@@ -43,7 +45,8 @@ export const directionsHandlers = [
 
   http.delete(`${API_BASE}/departements/:id`, ({ params }) => {
     for (const direction of db.directions) {
-      const idx = direction.departements?.findIndex((dep) => dep.id === params.id) ?? -1;
+      const idx =
+        direction.departements?.findIndex((dep) => dep.id === params.id) ?? -1;
       if (idx !== -1) {
         direction.departements!.splice(idx, 1);
         break;

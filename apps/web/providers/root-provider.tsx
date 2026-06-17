@@ -16,12 +16,29 @@ import OnboardingCard from '@/features/onboarding/components/OnboardingCard/Onbo
 import OnboardingTrigger from '@/features/onboarding/components/OnboardingTrigger/OnboardingTrigger';
 import { allTours } from '@/features/onboarding/data/tours';
 
-export default function RootProvider({ children }: { children: React.ReactNode }) {
-  const [ready, setReady] = useState(process.env.NEXT_PUBLIC_MOCK_MODE !== 'true');
+const isMock = process.env.NEXT_PUBLIC_MOCK_MODE === 'true';
+
+export default function RootProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const [ready, setReady] = useState(!isMock);
 
   useEffect(() => {
-    if (process.env.NEXT_PUBLIC_MOCK_MODE !== 'true') return;
-    import('@/mocks').then(({ initMocks }) => initMocks().then(() => setReady(true)));
+    console.log(`[App] Mode: ${isMock ? 'mock' : 'production'}`);
+
+    if (!isMock) {
+      console.log('[App] Data: live (backend)');
+      return;
+    }
+
+    import('@/mocks').then(({ initMocks }) =>
+      initMocks().then(() => {
+        console.log('[App] Data: seeded (MSW fixtures active)');
+        setReady(true);
+      }),
+    );
   }, []);
 
   if (!ready) return null;

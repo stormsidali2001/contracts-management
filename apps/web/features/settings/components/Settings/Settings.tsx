@@ -18,7 +18,8 @@ const Settings = () => {
 
   const user = useAuthStore((s) => s.user);
   const showSnackbar = useSnackbarStore((s) => s.showSnackbar);
-  const { mutate: toggleNotifications, isPending: isLoading } = useToggleNotifications();
+  const { mutate: toggleNotifications, isPending: isLoading } =
+    useToggleNotifications();
 
   const ROLE_LABELS: Record<string, string> = {
     ADMIN: 'Administrateur',
@@ -28,28 +29,44 @@ const Settings = () => {
 
   return (
     <div id="settings-page" className={styles.page}>
-
       {/* ── Page header ── */}
       <div id="settings-page-header" className={styles.pageHeader}>
         <div className={styles.pageHeaderLeft}>
           <Breadcrumb items={[{ label: 'Paramètres' }]} />
           <h1 className={styles.pageTitle}>Paramètres</h1>
-          <span className={styles.pageSubtitle}>Configurez votre compte et vos préférences</span>
+          <span className={styles.pageSubtitle}>
+            Configurez votre compte et vos préférences
+          </span>
         </div>
       </div>
 
       <div className={styles.content}>
-
         {/* ── Profile strip ── */}
         <div className={styles.profileCard}>
           <div className={styles.profileAvatar}>
-            {user?.imageUrl
-              ? <Image src={getAvatarSrc(user.imageUrl, user.role)} alt="Profil" width={64} height={64} unoptimized onError={(e) => { (e.currentTarget as HTMLImageElement).src = getRoleAvatar(user?.role); }} />
-              : <span className={styles.profileAvatarFallback}>{user?.firstName?.[0]?.toUpperCase() ?? '?'}</span>
-            }
+            {user?.imageUrl ? (
+              <Image
+                src={getAvatarSrc(user.imageUrl, user.role)}
+                alt="Profil"
+                width={64}
+                height={64}
+                unoptimized
+                onError={(e) => {
+                  (e.currentTarget as HTMLImageElement).src = getRoleAvatar(
+                    user?.role,
+                  );
+                }}
+              />
+            ) : (
+              <span className={styles.profileAvatarFallback}>
+                {user?.firstName?.[0]?.toUpperCase() ?? '?'}
+              </span>
+            )}
           </div>
           <div className={styles.profileInfo}>
-            <span className={styles.profileName}>{user?.firstName} {user?.lastName}</span>
+            <span className={styles.profileName}>
+              {user?.firstName} {user?.lastName}
+            </span>
             <span className={styles.profileEmail}>{user?.email}</span>
           </div>
           <div className={styles.profileBadge}>
@@ -59,7 +76,6 @@ const Settings = () => {
 
         {/* ── Settings card ── */}
         <div className={styles.settingsCard}>
-
           {/* Section: Préférences */}
           <div className={styles.sectionHeader}>
             <span>Préférences</span>
@@ -71,9 +87,12 @@ const Settings = () => {
               <NotificationsNoneOutlinedIcon sx={{ fontSize: 18 }} />
             </div>
             <div className={styles.settingBody}>
-              <span className={styles.settingTitle}>Notifications par email</span>
+              <span className={styles.settingTitle}>
+                Notifications par email
+              </span>
               <span className={styles.settingDesc}>
-                Recevez des alertes par email lorsque des événements importants surviennent dans l'application.
+                Recevez des alertes par email lorsque des événements importants
+                surviennent dans l'application.
               </span>
             </div>
             <div className={styles.settingControl}>
@@ -84,10 +103,21 @@ const Settings = () => {
                   <input
                     type="checkbox"
                     checked={!!user?.recieve_notifications}
-                    onChange={() => toggleNotifications(undefined, {
-                      onSuccess: () => showSnackbar({ message: 'Préférences mises à jour', severty: 'success' }),
-                      onError: (err: any) => showSnackbar({ message: err?.response?.data?.error ?? 'Erreur lors de la mise à jour' }),
-                    })}
+                    onChange={() =>
+                      toggleNotifications(undefined, {
+                        onSuccess: () =>
+                          showSnackbar({
+                            message: 'Préférences mises à jour',
+                            severty: 'success',
+                          }),
+                        onError: (err: any) =>
+                          showSnackbar({
+                            message:
+                              err?.response?.data?.error ??
+                              'Erreur lors de la mise à jour',
+                          }),
+                      })
+                    }
                   />
                   <div className={styles.toggleTrack} />
                   <div className={styles.toggleThumb} />
@@ -111,7 +141,8 @@ const Settings = () => {
             <div className={styles.settingBody}>
               <span className={styles.settingTitle}>Mot de passe</span>
               <span className={styles.settingDesc}>
-                Modifiez votre mot de passe de connexion. Choisissez un mot de passe fort d'au moins 6 caractères.
+                Modifiez votre mot de passe de connexion. Choisissez un mot de
+                passe fort d'au moins 6 caractères.
               </span>
             </div>
             <div className={styles.settingControl}>
@@ -124,11 +155,13 @@ const Settings = () => {
               </button>
             </div>
           </div>
-
         </div>
       </div>
 
-      <Modal open={changePasswordModal} onClose={() => setChangePasswordModal(false)}>
+      <Modal
+        open={changePasswordModal}
+        onClose={() => setChangePasswordModal(false)}
+      >
         <ChangePassword handleClose={() => setChangePasswordModal(false)} />
       </Modal>
     </div>

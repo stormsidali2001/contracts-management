@@ -9,7 +9,10 @@ export default function ConvensionPage() {
   const agreementId = params.convensionId;
   return (
     <DashboardLayout>
-      <ContractContent type='convension' agreementId={agreementId as string | undefined} />
+      <ContractContent
+        type="convension"
+        agreementId={agreementId as string | undefined}
+      />
     </DashboardLayout>
   );
 }

@@ -1,4 +1,4 @@
-export interface LengthOptions{
-    min?:number;
-    max?:number;
+export interface LengthOptions {
+  min?: number;
+  max?: number;
 }

@@ -1,7 +1,11 @@
 import { http, HttpResponse } from 'msw';
 import { API_BASE } from '../config';
 import { db } from '../db';
-import { AgreementView, AgreementStatus, AgreementType } from '@contracts/types';
+import {
+  AgreementView,
+  AgreementStatus,
+  AgreementType,
+} from '@contracts/types';
 
 export const agreementsHandlers = [
   http.get(`${API_BASE}/agreements`, ({ request }) => {
@@ -38,7 +42,10 @@ export const agreementsHandlers = [
       );
     }
 
-    return HttpResponse.json({ data: filtered.slice(offset, offset + limit), total: filtered.length });
+    return HttpResponse.json({
+      data: filtered.slice(offset, offset + limit),
+      total: filtered.length,
+    });
   }),
 
   http.get(`${API_BASE}/Agreements/:id`, ({ params }) => {
@@ -48,9 +55,16 @@ export const agreementsHandlers = [
   }),
 
   http.post(`${API_BASE}/Agreements`, async ({ request }) => {
-    const body = await request.json() as Partial<AgreementView> & { type: string };
-    const agrType = body.type === 'contract' ? AgreementType.CONTRACT : AgreementType.CONVENSION;
-    const existingOfType = db.agreements.filter((a) => a.type === agrType).length;
+    const body = (await request.json()) as Partial<AgreementView> & {
+      type: string;
+    };
+    const agrType =
+      body.type === 'contract'
+        ? AgreementType.CONTRACT
+        : AgreementType.CONVENSION;
+    const existingOfType = db.agreements.filter(
+      (a) => a.type === agrType,
+    ).length;
     const prefix = agrType === AgreementType.CONTRACT ? 'CTR' : 'CNV';
     const year = new Date().getFullYear();
 
@@ -62,8 +76,12 @@ export const agreementsHandlers = [
       amount: Number((body as any).amount ?? 0),
       signature_date: new Date((body as any).signature_date ?? Date.now()),
       expiration_date: new Date((body as any).expiration_date ?? Date.now()),
-      execution_start_date: new Date((body as any).execution_start_date ?? Date.now()),
-      execution_end_date: new Date((body as any).execution_end_date ?? Date.now()),
+      execution_start_date: new Date(
+        (body as any).execution_start_date ?? Date.now(),
+      ),
+      execution_end_date: new Date(
+        (body as any).execution_end_date ?? Date.now(),
+      ),
       createdAt: new Date(),
       status: AgreementStatus.NOT_EXECUTED,
       url: 'mock-doc.pdf',
@@ -76,7 +94,10 @@ export const agreementsHandlers = [
   }),
 
   http.patch(`${API_BASE}/Agreements/exec`, async ({ request }) => {
-    const body = await request.json() as { id: string; status: AgreementStatus };
+    const body = (await request.json()) as {
+      id: string;
+      status: AgreementStatus;
+    };
     const idx = db.agreements.findIndex((a) => a.id === body.id);
     if (idx === -1) return new HttpResponse(null, { status: 404 });
     db.agreements[idx] = { ...db.agreements[idx], status: body.status };

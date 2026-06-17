@@ -14,13 +14,17 @@ export const vendorsHandlers = [
 
     let filtered = db.vendors;
     if (search) {
-      filtered = filtered.filter((v) =>
-        v.company_name.toLowerCase().includes(search) ||
-        v.nif.includes(search) ||
-        v.nrc.toLowerCase().includes(search),
+      filtered = filtered.filter(
+        (v) =>
+          v.company_name.toLowerCase().includes(search) ||
+          v.nif.includes(search) ||
+          v.nrc.toLowerCase().includes(search),
       );
     }
-    return HttpResponse.json({ data: filtered.slice(offset, offset + limit), total: filtered.length });
+    return HttpResponse.json({
+      data: filtered.slice(offset, offset + limit),
+      total: filtered.length,
+    });
   }),
 
   http.get(`${API_BASE}/vendors/:id`, ({ params }) => {
@@ -30,7 +34,7 @@ export const vendorsHandlers = [
   }),
 
   http.post(`${API_BASE}/vendors`, async ({ request }) => {
-    const body = await request.json() as Partial<VendorView>;
+    const body = (await request.json()) as Partial<VendorView>;
     const newVendor: VendorView = {
       id: `ven-${Date.now()}`,
       num: `F-0${String(nextVendorNum++).padStart(2, '0')}`,
@@ -51,7 +55,7 @@ export const vendorsHandlers = [
   http.patch(`${API_BASE}/vendors/:id`, async ({ params, request }) => {
     const idx = db.vendors.findIndex((v) => v.id === params.id);
     if (idx === -1) return new HttpResponse(null, { status: 404 });
-    const body = await request.json() as Partial<VendorView>;
+    const body = (await request.json()) as Partial<VendorView>;
     db.vendors[idx] = { ...db.vendors[idx], ...body };
     return HttpResponse.json(db.vendors[idx]);
   }),
@@ -60,5 +64,9 @@ export const vendorsHandlers = [
     const idx = db.vendors.findIndex((v) => v.id === params.id);
     if (idx !== -1) db.vendors.splice(idx, 1);
     return new HttpResponse(null, { status: 200 });
+  }),
+
+  http.post(`${API_BASE}/vendors/image/upload`, () => {
+    return HttpResponse.json({ filename: 'default-vendor.png' });
   }),
 ];

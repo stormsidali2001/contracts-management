@@ -18,19 +18,33 @@ import { validateEmailOrUsername } from '@/shared/utils/validation/emailOrUserna
 import styles from '@/styles/Signin.module.css';
 
 const DEV_ACCOUNTS = [
-  { label: 'Admin',      username: 'admin.admin',       password: '123456' },
-  { label: 'Juridique',  username: 'juridical.adala',   password: '123456' },
-  { label: 'Employé',    username: 'storm.sidali',       password: '123456' },
+  { label: 'Admin', username: 'admin.admin', password: '123456' },
+  { label: 'Juridique', username: 'juridical.adala', password: '123456' },
+  { label: 'Employé', username: 'storm.sidali', password: '123456' },
 ];
 
 export default function SignIn() {
   const [illustrationError, setIllustrationError] = useState(false);
-  const { text: email, textChangeHandler: emailChangeHandler, shouldDisplayError, inputBlurHandler: emailBlurHandler, inputClearHandler: emailClearHandler } = useInput(validateEmailOrUsername);
-  const { text: password, textChangeHandler: passwordChangeHandler, inputClearHandler: passwordClearHandler } = useInput();
+  const {
+    text: email,
+    textChangeHandler: emailChangeHandler,
+    shouldDisplayError,
+    inputBlurHandler: emailBlurHandler,
+    inputClearHandler: emailClearHandler,
+  } = useInput(validateEmailOrUsername);
+  const {
+    text: password,
+    textChangeHandler: passwordChangeHandler,
+    inputClearHandler: passwordClearHandler,
+  } = useInput();
 
   const fillAccount = (username: string, pwd: string) => {
-    emailChangeHandler({ target: { value: username } } as React.ChangeEvent<HTMLInputElement>);
-    passwordChangeHandler({ target: { value: pwd } } as React.ChangeEvent<HTMLInputElement>);
+    emailChangeHandler({
+      target: { value: username },
+    } as React.ChangeEvent<HTMLInputElement>);
+    passwordChangeHandler({
+      target: { value: pwd },
+    } as React.ChangeEvent<HTMLInputElement>);
   };
   const router = useRouter();
   const { mutate: login, isPending } = useLogin();
@@ -52,7 +66,9 @@ export default function SignIn() {
         passwordClearHandler();
       },
       onError: (err: any) => {
-        showSnackbar({ message: err?.response?.data?.error ?? 'Identifiants incorrects' });
+        showSnackbar({
+          message: err?.response?.data?.error ?? 'Identifiants incorrects',
+        });
       },
     });
   };
@@ -67,7 +83,9 @@ export default function SignIn() {
       {/* ── Left brand panel ── */}
       <div className={styles.leftPanel}>
         <Link href="/" className={styles.brandTop}>
-          <GavelOutlinedIcon sx={{ fontSize: 22, color: tokens.color.navyMid }} />
+          <GavelOutlinedIcon
+            sx={{ fontSize: 22, color: tokens.color.navyMid }}
+          />
           <span className={styles.brandName}>{APP_NAME}</span>
         </Link>
 
@@ -86,12 +104,19 @@ export default function SignIn() {
             </div>
           )}
           <div className={styles.brandTagline}>
-            <h2>Gestion des <em>contrats</em> simplifiée.</h2>
-            <p>Suivez, analysez et gérez l&apos;ensemble de vos accords commerciaux en un seul endroit.</p>
+            <h2>
+              Gestion des <em>contrats</em> simplifiée.
+            </h2>
+            <p>
+              Suivez, analysez et gérez l&apos;ensemble de vos accords
+              commerciaux en un seul endroit.
+            </p>
           </div>
         </div>
 
-        <span className={styles.brandFooter}>© 2026 {APP_NAME} — Tous droits réservés</span>
+        <span className={styles.brandFooter}>
+          © 2026 {APP_NAME} — Tous droits réservés
+        </span>
       </div>
 
       {/* ── Right form panel ── */}
@@ -104,66 +129,81 @@ export default function SignIn() {
           <div className={styles.formWrapper}>
             {!isPending ? (
               <>
-              <form onSubmit={handleSubmit}>
-                <TextField
-                  onBlur={emailBlurHandler}
-                  helperText={shouldDisplayError && "adresse email ou nom d'utilisateur non valide"}
-                  error={shouldDisplayError}
-                  value={email}
-                  onChange={emailChangeHandler}
-                  autoComplete="username"
-                  size="small"
-                  className={styles.textField}
-                  label="Identifiant"
-                  type="text"
-                  fullWidth
-                />
-                <TextField
-                  value={password}
-                  onChange={passwordChangeHandler}
-                  autoComplete="current-password"
-                  size="small"
-                  className={styles.textField}
-                  label="Mot de passe"
-                  type="password"
-                  fullWidth
-                />
-                <div className={styles.forgotPassword}>
-                  <Link href="/forgot-password">Mot de passe oublié ?</Link>
-                </div>
-                <Button
-                  type="submit"
-                  disabled={shouldDisplayError || email.length === 0 || password.length === 0}
-                  variant="contained"
-                  color="primary"
-                  fullWidth
-                  size="medium"
-                  sx={{ mt: 1, py: 1.25, fontFamily: "'Outfit', sans-serif", fontSize: '14px', fontWeight: 600 }}
-                >
-                  Se connecter
-                </Button>
-              </form>
-
-              {process.env.NODE_ENV === 'development' && (
-                <div className={styles.devAccounts}>
-                  <span className={styles.devLabel}>Comptes de test</span>
-                  <div className={styles.devButtons}>
-                    {DEV_ACCOUNTS.map((a) => (
-                      <button
-                        key={a.username}
-                        type="button"
-                        className={styles.devBtn}
-                        onClick={() => fillAccount(a.username, a.password)}
-                      >
-                        {a.label}
-                      </button>
-                    ))}
+                <form onSubmit={handleSubmit}>
+                  <TextField
+                    onBlur={emailBlurHandler}
+                    helperText={
+                      shouldDisplayError &&
+                      "adresse email ou nom d'utilisateur non valide"
+                    }
+                    error={shouldDisplayError}
+                    value={email}
+                    onChange={emailChangeHandler}
+                    autoComplete="username"
+                    size="small"
+                    className={styles.textField}
+                    label="Identifiant"
+                    type="text"
+                    fullWidth
+                  />
+                  <TextField
+                    value={password}
+                    onChange={passwordChangeHandler}
+                    autoComplete="current-password"
+                    size="small"
+                    className={styles.textField}
+                    label="Mot de passe"
+                    type="password"
+                    fullWidth
+                  />
+                  <div className={styles.forgotPassword}>
+                    <Link href="/forgot-password">Mot de passe oublié ?</Link>
                   </div>
-                </div>
-              )}
+                  <Button
+                    type="submit"
+                    disabled={
+                      shouldDisplayError ||
+                      email.length === 0 ||
+                      password.length === 0
+                    }
+                    variant="contained"
+                    color="primary"
+                    fullWidth
+                    size="medium"
+                    sx={{
+                      mt: 1,
+                      py: 1.25,
+                      fontFamily: "'Outfit', sans-serif",
+                      fontSize: '14px',
+                      fontWeight: 600,
+                    }}
+                  >
+                    Se connecter
+                  </Button>
+                </form>
+
+                {process.env.NODE_ENV === 'development' && (
+                  <div className={styles.devAccounts}>
+                    <span className={styles.devLabel}>Comptes de test</span>
+                    <div className={styles.devButtons}>
+                      {DEV_ACCOUNTS.map((a) => (
+                        <button
+                          key={a.username}
+                          type="button"
+                          className={styles.devBtn}
+                          onClick={() => fillAccount(a.username, a.password)}
+                        >
+                          {a.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </>
             ) : (
-              <CircularProgress sx={{ margin: '40px auto', display: 'block' }} />
+              <CircularProgress
+                sx={{ margin: '40px auto', display: 'block' }}
+              />
             )}
           </div>
         </div>

@@ -51,7 +51,7 @@ export class CreateAgreementDTO {
     default: AgreementStatus.NOT_EXECUTED,
   })
   @IsEnum(AgreementStatus)
-  status: AgreementStatus;
+  status?: AgreementStatus;
 
   @ApiProperty({ example: 'asff/ss', required: true })
   @IsString()
