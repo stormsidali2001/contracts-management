@@ -1,5 +1,5 @@
 import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { UserRole } from 'src/core/types/UserRole.enum';
 import { UserService } from 'src/user/application/user.service';
 import { UserNotificationService } from 'src/user/application/user-notification.service';
@@ -12,8 +12,6 @@ import { ContractExpiringEvent } from '../../domain/events/contract-expiring.eve
 export class ContractExpiringHandler
   implements IEventHandler<ContractExpiringEvent>
 {
-  private readonly logger = new Logger(ContractExpiringHandler.name);
-
   constructor(
     private readonly userService: UserService,
     private readonly notificationService: UserNotificationService,
@@ -21,9 +19,6 @@ export class ContractExpiringHandler
   ) {}
 
   async handle(event: ContractExpiringEvent): Promise<void> {
-    this.logger.log(
-      `Handling ContractExpiringEvent for agreement ${event.agreementNumber}`,
-    );
     const { agreementNumber, daysUntilExpiry, executionEndDate } = event;
 
     const endDateLabel = new Date(executionEndDate).toLocaleDateString('fr-DZ');
@@ -42,8 +37,6 @@ export class ContractExpiringHandler
     );
     const juridicals = result.data;
 
-    this.logger.log(`Found ${juridicals.length} juridical users to notify`);
-
     if (juridicals.length === 0) return;
 
     const notifications = juridicals.map((u) => ({
@@ -52,7 +45,6 @@ export class ContractExpiringHandler
     }));
 
     const saved = await this.notificationService.saveForUsers(notifications);
-    this.logger.log(`Saved ${saved.length} notifications`);
 
     this.socketStateService.emitIfConnected(
       saved.map(({ userId, notification }) => ({

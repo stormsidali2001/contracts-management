@@ -85,11 +85,14 @@ pnpm dev
 You can populate the database with fake data using these commands:
 
 ```bash
-pnpm generate:directions
-pnpm generate:users -- 200
-pnpm generate:vendors -- 300
-pnpm generate:agreements -- 500
-pnpm generate:accounts
+pnpm seed:directions
+pnpm seed:users 200
+pnpm seed:vendors  300
+pnpm seed:agreements  500
+pnpm seed:accounts
+# or
+
+pnpm seed:all 300
 ```
 
 **Test Accounts:**
