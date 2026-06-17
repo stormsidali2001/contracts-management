@@ -1,97 +1,89 @@
-# CONTRACT MANAGEMENT PLATFORM
+# Contract Management Platform
 
 ![Project Thumbnail](apps/web/public/marketing-assets/project-thumbnail.png)
 
-A full-stack web application for managing organizational contracts and conventions across departments, featuring real-time, horizontally scalable live updates and automated expiry alerts.
+This is a full-stack system I built for a client during an internship to centralize how they manage contracts and conventions. It handles everything from vendor relationships to tracking execution statuses and automated expiry deadlines.
+
+The main technical goal was to ensure the UI feels alive. I used a combination of Socket.io and a Redis Pub/Sub broker so that any change—like creating a contract or completing an execution—is reflected on every connected user's dashboard instantly, without them having to refresh or poll the server.
 
 ---
 
-## 📝 Problem & Results
+## What it does
 
-**Problem:** The client needed an internal tool to centralize contract and convention tracking across departments, with visibility into vendor relationships, execution statuses, and upcoming expiry deadlines.
-
-**Results:**
-*   **Real-time Event Pipeline:** Socket.io backed by a Redis Pub/Sub broker routes live signals (`INC_AGR`, `SEND_EVENT`, `send_notification`) to scoped client rooms. Dashboard stats and notifications update instantly across all connected users with zero polling.
-*   **DDD & CQRS Architecture:** Domain events (`AgreementCreated`, `AgreementExecuted`, `ContractExpiring`) flow through `@nestjs/cqrs` EventBus into handlers that emit WebSocket signals, triggering TanStack Query cache invalidations for zero-latency UI updates.
-*   **Scalable Oversight:** Manages 500+ agreements, 300+ vendors, and multi-department hierarchies with role-based access (Admin / Employee / Juridical).
-*   **Automated Expiry Notifications:** Implemented 30/7/1-day alerts via daily cron → domain event → Redis-brokered Socket.io → per-user in-app alert.
-*   **Dynamic Statuses:** 6 derived contract statuses computed purely from date fields, ensuring no stored state and no stale data.
-
----
-
-## 🚀 Core Features
-
-### 📊 Real-time Dashboard & Statistics
+### Real-time Dashboard
 ![Real-time Statistics](apps/web/public/marketing-assets/real-time-statistics/frame-and-content-blended.jpeg)
-KPIs update the moment a contract is created or modified. No refresh needed. Track 500+ contracts with filterable date ranges and live WebSocket updates.
+The dashboard provides a live look at the organization's KPIs. Since it uses WebSockets, the charts and status cards update the moment data changes in the database.
 
-### 📝 Contract Status Tracking
+### Contract Tracking
 ![Contract Status Tracking](apps/web/public/marketing-assets/contract-status-tracking/merged.png)
-Filter and track all agreements by status, vendor, direction, or expiry date. Color-coded status pills (Executed, In Execution, Delayed, Not Executed) provide instant visibility.
+Users can filter through hundreds of agreements by vendor, department, or date. Each contract is assigned one of six statuses (like "Executed with Delay" or "Not Executed") which are calculated on the fly based on their dates.
 
-### 🔔 Automated Expiry Alerts
+### Expiry Alerts
 ![Automated Expiry Alerts](apps/web/public/marketing-assets/automated-expiry-alert/merged.png)
-Automatic alerts sent 30, 7, and 1 day before expiry. No manual follow-up required. Notifications are delivered in real-time to Juridical users.
+A background job runs every morning to find contracts nearing their end. It automatically pushes alerts to Juridical users at the 30, 7, and 1-day marks so no deadline is missed.
 
-### 👥 Role-Based Access Control
+### Access Control
 ![Access Control](apps/web/public/marketing-assets/access-control.png)
-Three distinct user roles (Admin, Employee, Juridical), each with scoped permissions and a tailored dashboard view. Each user sees exactly what they need.
+The platform uses role-based access for Admins, Employees, and Juridical staff. Everyone has a tailored view of the data based on what their role requires.
 
-### 🏢 Organizational Hierarchy
+### Organizational Structure
 ![Direction Hierarchy](apps/web/public/marketing-assets/direction-heirarchy/merged.png)
-Structure your organization into directions and departments to scope contracts precisely and filter statistics by organizational unit.
+The system mirrors the company's hierarchy, dividing everything into directions and sub-departments. This makes it easy to scope contracts and filter stats by specific units.
 
-### 🤝 Vendor Management
+### Vendor Directory
 ![Vendor Management](apps/web/public/marketing-assets/vendor-management/merged.png)
-Centralize all vendor information and track their associated contracts in one place. Includes a searchable and filterable directory with instant contract counts.
+A central place to manage vendor info, linked directly to every contract they've signed with the organization.
 
-### 🎓 Guided Onboarding
+### Onboarding Tour
 ![Guided Tour](apps/web/public/marketing-assets/guided-tour/merged.png)
-Role-aware interactive step-by-step tour that walks new users through the platform on first login, highlighting key UI elements tailored to their role.
+New users get an interactive walkthrough the first time they log in. The tour is role-aware, so an Admin sees different tips than a Juridical user.
 
 ---
 
-## 🛠 Tech Stack
+## How it works
 
-*   **Backend:** NestJS, CQRS (`@nestjs/cqrs`), TypeORM, PostgreSQL 16, Redis (Pub/Sub broker), Socket.io, `@nestjs/schedule`, Nodemailer.
-*   **Frontend:** Next.js 16 (App Router), TanStack Query (cache invalidation), Zustand, CSS Modules.
-*   **Infra:** pnpm + Turborepo monorepo, Docker Compose, shared `@contracts/types` package.
-*   **Patterns:** Domain-Driven Design (DDD), Domain Events, CQRS, Repository Pattern, RBAC, JWT Auth.
+The backend is built with NestJS using Domain-Driven Design (DDD) and CQRS. This keeps the business logic separated from the infrastructure. When an event happens (like a contract expiring), it flows through an internal event bus to handlers that trigger the real-time notifications.
+
+- **Backend:** NestJS, PostgreSQL, TypeORM, Redis (for scaling WebSockets), Socket.io.
+- **Frontend:** Next.js (App Router), TanStack Query for cache management, Zustand for state.
+- **Infrastructure:** Managed via Turborepo and Docker Compose.
 
 ---
 
-## ⚙️ Installation & Setup
+## Setup
 
-### 1. Prerequisites
-- [Docker](https://www.docker.com/) (for PostgreSQL and Redis)
-- [pnpm](https://pnpm.io/) 10.6.3+
+### Prerequisites
+- Docker
+- pnpm 10.6.3+
 - Node.js 18+
 
-### 2. Clone & Install
+### 1. Installation
 ```bash
 git clone https://github.com/stormsidali2001/contracts-management
 cd contracts-management
 pnpm install
 ```
 
-### 3. Start Infrastructure
+### 2. Infrastructure
 ```bash
 docker compose up -d
 ```
+This starts PostgreSQL and Redis.
 
-### 4. Configure Environment
-Create `apps/api/.env` with your database and Redis credentials (see `apps/api/.env-example`).
+### 3. Configuration
+Copy the example environment files in `apps/api/.env-example` to `.env` and fill in your database and JWT secrets.
 
-### 5. Start Development
+### 4. Run
 ```bash
 pnpm dev
 ```
 
 ---
 
-## 🧪 Testing & Data Generation
+## Testing & Data
 
-### Generate Fake Data
+You can populate the database with fake data using these commands:
+
 ```bash
 pnpm generate:directions
 pnpm generate:users -- 200
@@ -100,21 +92,7 @@ pnpm generate:agreements -- 500
 pnpm generate:accounts
 ```
 
-### Test Accounts
-| Role | Username | Password |
-|------|----------|----------|
-| ADMIN | admin.admin | 123456 |
-| JURIDICAL | juridical.adala | 123456 |
-| EMPLOYEE | storm.sidali | 123456 |
-
-### Running Tests
-```bash
-# Backend Tests
-cd apps/api
-pnpm test
-
-# E2E Tests (Playwright)
-cd apps/web
-pnpm test:e2e:mock  # Mock mode
-pnpm test:e2e:prod  # Prod mode (requires backend)
-```
+**Test Accounts:**
+- **Admin:** `admin.admin` / `123456`
+- **Juridical:** `juridical.adala` / `123456`
+- **Employee:** `storm.sidali` / `123456`
