@@ -6,6 +6,8 @@ This is a full-stack system I built for a client during an internship to central
 
 The main technical goal was to ensure the UI feels alive. I used a combination of Socket.io and a Redis Pub/Sub broker so that any change—like creating a contract or completing an execution—is reflected on every connected user's dashboard instantly, without them having to refresh or poll the server.
 
+> This project predates AI-assisted coding—work started with the [first commit](https://github.com/stormsidali2001/contracts-management/commit/91f88d9167c5f222fdd3e04f94624bbab935b47c) on 2022-09-06. Claude was later used only for a large UI and architecture refactoring pass.
+
 ---
 
 ## What it does
